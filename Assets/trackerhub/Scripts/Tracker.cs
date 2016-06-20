@@ -46,8 +46,11 @@ public class Tracker : MonoBehaviour
 	private List<Human> _humansToKill;
 
 	private UdpBroadcast _udpBroadcast;
+    private WriteSafeFile _writeSafeFile;
 
-	public Material WhiteMaterial;
+
+
+    public Material WhiteMaterial;
 
 	public string[] UnicastClients {
 		get {
@@ -68,8 +71,8 @@ public class Tracker : MonoBehaviour
 		_calibrationStatus = CalibrationProcess.FindCenter;
 
 		_udpBroadcast = new UdpBroadcast (TrackerProperties.Instance.broadcastPort);
-
-		_loadConfig ();
+        _writeSafeFile = new WriteSafeFile();
+        _loadConfig ();
 		_loadSavedSensors ();
 	}
 
@@ -124,10 +127,10 @@ public class Tracker : MonoBehaviour
 		}
 
 		_udpBroadcast.send (strToSend);
+        SaveRecordServer(strToSend);
+        // set human material
 
-		// set human material
-
-		foreach (Human h in _humans.Values) {
+        foreach (Human h in _humans.Values) {
 			if (h.seenBySensor != null && colorHumans)
 				CommonUtils.changeGameObjectMaterial (h.gameObject, Sensors [h.seenBySensor].Material);
 			else if (!colorHumans)
@@ -303,7 +306,29 @@ public class Tracker : MonoBehaviour
 		return Vector3.Distance (c, d);
 	}
 
-	internal void addUnicast (string address, string port)
+    // < Change >
+    /// <summary>
+    /// (Pt) Guarda as mensagens enviadas pelo servidor em ficheiros txt
+    /// (En) Store messages sent by the server in txt files
+    /// </summary>
+    /// <param name="strToSend"></param>
+    private void SaveRecordServer(string strToSend)
+    {
+        const string noneMessage = "0";
+        if (strToSend == noneMessage)
+        {
+            _writeSafeFile.StopRecording("Terminated Because No Messages");
+            // _writeSafeFile.StopRecording();
+        }
+        else
+        {
+            _writeSafeFile.Recording(strToSend);
+        }
+    }
+
+
+
+    internal void addUnicast (string address, string port)
 	{
 		_udpBroadcast.addUnicast (address, int.Parse (port));
 	}

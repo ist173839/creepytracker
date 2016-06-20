@@ -6,9 +6,9 @@ public class TrackerProperties : MonoBehaviour {
 
     private static TrackerProperties _singleton;
 
-    public int listenPort = 57743;
-    public int broadcastPort = 53804;
-	public int sendInterval = 50;
+    public int listenPort = 56555;
+    public int broadcastPort = 56839;
+    public int sendInterval = 50;
 
     [Range(0, 1)]
     public float mergeDistance = 0.3f;
