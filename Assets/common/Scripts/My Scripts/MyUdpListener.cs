@@ -11,14 +11,12 @@ public class MyUdpListener : MonoBehaviour {
     private UdpClient _udpClient = null;
     private IPEndPoint _anyIP;
     private List<string> _stringsToParse;
-    public int Port;
+    private int _port;
     private SaveMessage _saveMessage;
 
     void Start()
     {
-        // Port = 56558;
-        // Port = 58839;
-        Port = 57839;
+        _port = 57839;
         _saveMessage = new SaveMessage();
         UdpRestart();
 
@@ -33,13 +31,13 @@ public class MyUdpListener : MonoBehaviour {
 
         _stringsToParse = new List<string>();
         
-		_anyIP = new IPEndPoint(IPAddress.Any, Port);
+		_anyIP = new IPEndPoint(IPAddress.Any, _port);
         
         _udpClient = new UdpClient(_anyIP);
 
         _udpClient.BeginReceive(new AsyncCallback(this.ReceiveCallback), null);
 
-		Debug.Log("[UDPListener] Receiving in port: " + Port);
+		Debug.Log("[UDPListener] Receiving in port: " + _port);
     }
 
     private void ReceiveCallback(IAsyncResult ar)
