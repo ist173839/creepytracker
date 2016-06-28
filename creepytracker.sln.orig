@@ -1,6 +1,4 @@
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2008
-
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2015
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "creepytracker.CSharp.Plugins", "creepytracker.CSharp.Plugins.csproj", "{6D63FE95-0167-DCCF-C75F-CC10BDCFFC1C}"
@@ -31,6 +29,8 @@ Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
+<<<<<<< HEAD
+=======
 										GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Assembly-CSharp.csproj
 		Policies = $0
@@ -51,4 +51,5 @@ Global
 		$3.scope = text/plain
 	EndGlobalSection
 
+>>>>>>> refs/remotes/origin/master
 EndGlobal
