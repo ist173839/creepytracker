@@ -122,9 +122,13 @@ public class Tracker : MonoBehaviour
 			h.updateSkeleton ();
 
 			// get PDU
-			try {
+			try
+            {
 				strToSend += MessageSeparators.L1 + h.getPDU ();
-			} catch (Exception /*e*/) {
+			}
+			catch (Exception /*e*/)
+			{
+			    // ignored
 			}
 		}
 
