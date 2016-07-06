@@ -113,7 +113,7 @@ public class Sensor
 		foreach (Skeleton sk in bodiesMessage.Bodies) {
 			SensorBody b;
 
-			if (int.Parse (sk.bodyProperties [BodyPropertiesTypes.Confidence]) < TrackerProperties.Instance.confidenceTreshold) {
+			if (int.Parse (sk.BodyProperties [BodyPropertiesTypes.Confidence]) < TrackerProperties.Instance.confidenceTreshold) {
 				if (bodies.ContainsKey (sk.ID)) {
 					b = bodies [sk.ID];
 					b.updated = true;
@@ -131,7 +131,7 @@ public class Sensor
 				b.sensorID = SensorID;
 			}
 
-			b.LocalPosition = CommonUtils.pointKinectToUnity (sk.jointsPositions [Windows.Kinect.JointType.SpineBase]);
+			b.LocalPosition = CommonUtils.pointKinectToUnity (sk.JointsPositions [Windows.Kinect.JointType.SpineBase]);
 			b.updated = true;
 			b.lastUpdated = DateTime.Now;
 			b.skeleton = sk;
@@ -152,20 +152,20 @@ public class Sensor
 
 	internal void calibrationStep1 ()
 	{
-		center1 = CommonUtils.pointKinectToUnity (lastBodiesMessage.Bodies [0].jointsPositions [TrackerProperties.Instance.centerJoint]);
-		up1 = CommonUtils.pointKinectToUnity (lastBodiesMessage.Bodies [0].jointsPositions [TrackerProperties.Instance.upJointB]) - CommonUtils.pointKinectToUnity (lastBodiesMessage.Bodies [0].jointsPositions [TrackerProperties.Instance.upJointA]);
+		center1 = CommonUtils.pointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [TrackerProperties.Instance.centerJoint]);
+		up1 = CommonUtils.pointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [TrackerProperties.Instance.upJointB]) - CommonUtils.pointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [TrackerProperties.Instance.upJointA]);
 
-		_floorValues.Add (CommonUtils.pointKinectToUnity (lastBodiesMessage.Bodies [0].jointsPositions [Windows.Kinect.JointType.FootLeft]));
-		_floorValues.Add (CommonUtils.pointKinectToUnity (lastBodiesMessage.Bodies [0].jointsPositions [Windows.Kinect.JointType.FootRight]));
+		_floorValues.Add (CommonUtils.pointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [Windows.Kinect.JointType.FootLeft]));
+		_floorValues.Add (CommonUtils.pointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [Windows.Kinect.JointType.FootRight]));
 	}
 
 	internal void calibrationStep2 ()
 	{
-		center2 = CommonUtils.pointKinectToUnity (lastBodiesMessage.Bodies [0].jointsPositions [TrackerProperties.Instance.centerJoint]);
-		up2 = CommonUtils.pointKinectToUnity (lastBodiesMessage.Bodies [0].jointsPositions [TrackerProperties.Instance.upJointB]) - CommonUtils.pointKinectToUnity (lastBodiesMessage.Bodies [0].jointsPositions [TrackerProperties.Instance.upJointA]);
+		center2 = CommonUtils.pointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [TrackerProperties.Instance.centerJoint]);
+		up2 = CommonUtils.pointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [TrackerProperties.Instance.upJointB]) - CommonUtils.pointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [TrackerProperties.Instance.upJointA]);
 
-		_floorValues.Add (CommonUtils.pointKinectToUnity (lastBodiesMessage.Bodies [0].jointsPositions [Windows.Kinect.JointType.FootLeft]));
-		_floorValues.Add (CommonUtils.pointKinectToUnity (lastBodiesMessage.Bodies [0].jointsPositions [Windows.Kinect.JointType.FootRight]));
+		_floorValues.Add (CommonUtils.pointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [Windows.Kinect.JointType.FootLeft]));
+		_floorValues.Add (CommonUtils.pointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [Windows.Kinect.JointType.FootRight]));
 
 		// Begin calibration calculations
 
@@ -181,7 +181,7 @@ public class Sensor
 
 	internal void calibrationStep3 ()
 	{
-		Vector3 p = CommonUtils.pointKinectToUnity (lastBodiesMessage.Bodies [0].jointsPositions [Windows.Kinect.JointType.Head]);
+		Vector3 p = CommonUtils.pointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [Windows.Kinect.JointType.Head]);
 		if (_bestFitPlanePoints.Count == 0 || p != _bestFitPlanePoints [_bestFitPlanePoints.Count - 1]) {
 			_bestFitPlanePoints.Add (p);
 

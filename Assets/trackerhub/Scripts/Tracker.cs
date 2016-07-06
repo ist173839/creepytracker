@@ -95,7 +95,7 @@ public class Tracker : MonoBehaviour
 			s.updateBodies ();
 		}
 
-		mergeHumans ();
+		MergeHumans ();
 
 		List<Human> deadHumansToRemove = new List<Human> ();
 		foreach (Human h in _deadHumans) {
@@ -152,9 +152,9 @@ public class Tracker : MonoBehaviour
 			showHumanBodies = -1;
 
 		foreach (Human h in _humans.Values) {
-			CapsuleCollider collider = h.gameObject.GetComponent<CapsuleCollider> ();
-			if (collider != null)
-				collider.enabled = (showHumanBodies == -1);
+			CapsuleCollider humanCollider = h.gameObject.GetComponent<CapsuleCollider> ();
+			if (humanCollider != null)
+				humanCollider.enabled = (showHumanBodies == -1);
 
 			foreach (Transform child in h.gameObject.transform) {
 				if (child.gameObject.GetComponent<Renderer> () != null)
@@ -167,19 +167,25 @@ public class Tracker : MonoBehaviour
 		}
 	}
 
-	private void mergeHumans ()
+	private void MergeHumans ()
 	{
-		List<SensorBody> alone_bodies = new List<SensorBody> ();
+		List<SensorBody> aloneBodies = new List<SensorBody> ();
 
 		// refresh existing bodies
-		foreach (Sensor s in Sensors.Values) {
-			if (s.Active) {
-				foreach (KeyValuePair<string, SensorBody> sensorBody in s.bodies) {
+		foreach (Sensor s in Sensors.Values)
+        {
+			if (s.Active)
+            {
+				foreach (KeyValuePair<string, SensorBody> sensorBody in s.bodies)
+                {
 					bool alone = true;
 
-					foreach (KeyValuePair<int, Human> h in _humans) {
-						foreach (SensorBody humanBody in h.Value.bodies) {
-							if (sensorBody.Value.sensorID == humanBody.sensorID && sensorBody.Value.ID == humanBody.ID) {
+					foreach (KeyValuePair<int, Human> h in _humans)
+                    {
+						foreach (SensorBody humanBody in h.Value.bodies)
+                        {
+							if (sensorBody.Value.sensorID == humanBody.sensorID && sensorBody.Value.ID == humanBody.ID)
+                            {
 								humanBody.LocalPosition = sensorBody.Value.LocalPosition;
 								humanBody.lastUpdated = sensorBody.Value.lastUpdated;
 								humanBody.updated = sensorBody.Value.updated;
@@ -194,18 +200,20 @@ public class Tracker : MonoBehaviour
 					}
 
 					if (alone)
-						alone_bodies.Add (sensorBody.Value);
+						aloneBodies.Add (sensorBody.Value);
 				}
 			}
 		}
 
 		// refresh existing humans
-		foreach (KeyValuePair<int, Human> h in _humans) {
+		foreach (KeyValuePair<int, Human> h in _humans)
+        {
 			Vector3 position = new Vector3 ();
 			int numberOfBodies = 0;
 			List<SensorBody> deadBodies = new List<SensorBody> ();
 
-			foreach (SensorBody b in h.Value.bodies) {
+			foreach (SensorBody b in h.Value.bodies)
+            {
 				if (b.updated && Sensors [b.sensorID].Active)
 					position = (position * (float)numberOfBodies++ + b.WorldPosition) / (float)numberOfBodies;
 				else
@@ -228,12 +236,15 @@ public class Tracker : MonoBehaviour
 		}
 
 		// new bodies
-		foreach (SensorBody b in alone_bodies) {
+		foreach (SensorBody b in aloneBodies)
+        {
 			bool hasHuman = false;
 
 			// try to fit in existing humans
-			foreach (KeyValuePair<int, Human> h in _humans) {
-				if (calcHorizontalDistance (b.WorldPosition, h.Value.Position) < TrackerProperties.Instance.mergeDistance) {
+			foreach (KeyValuePair<int, Human> h in _humans)
+            {
+				if (calcHorizontalDistance (b.WorldPosition, h.Value.Position) < TrackerProperties.Instance.mergeDistance)
+                {
 					h.Value.Position = (h.Value.Position * (float)h.Value.bodies.Count + b.WorldPosition) / (float)(h.Value.bodies.Count + 1);
 					h.Value.bodies.Add (b);
 					hasHuman = true;
@@ -278,21 +289,29 @@ public class Tracker : MonoBehaviour
 
 		// merge humans
 		List<Human> mergedHumans = new List<Human> ();
-		foreach (KeyValuePair<int, Human> h1 in _humans) {
-			foreach (KeyValuePair<int, Human> h2 in _humans) {
-				if (h1.Value.ID != h2.Value.ID && !mergedHumans.Contains (h2.Value)) {
-					if (calcHorizontalDistance (h1.Value.Position, h2.Value.Position) < TrackerProperties.Instance.mergeDistance) {
+		foreach (KeyValuePair<int, Human> h1 in _humans)
+        {
+			foreach (KeyValuePair<int, Human> h2 in _humans)
+            {
+				if (h1.Value.ID != h2.Value.ID && !mergedHumans.Contains (h2.Value))
+                {
+					if (calcHorizontalDistance (h1.Value.Position, h2.Value.Position) < TrackerProperties.Instance.mergeDistance)
+                    {
 						Vector3 position = (h1.Value.Position * (float)h1.Value.bodies.Count + h2.Value.Position * (float)h2.Value.bodies.Count) / (float)(h1.Value.bodies.Count + h2.Value.bodies.Count);
 
 						if (h1.Value.ID < h2.Value.ID) {
 							h1.Value.Position = position;
-							foreach (SensorBody b in h2.Value.bodies) {
+							foreach (SensorBody b in h2.Value.bodies)
+                            {
 								h1.Value.bodies.Add (b);
 							}
 							mergedHumans.Add (h2.Value);
-						} else {
+						}
+                        else
+                        {
 							h2.Value.Position = position;
-							foreach (SensorBody b in h1.Value.bodies) {
+							foreach (SensorBody b in h1.Value.bodies)
+                            {
 								h2.Value.bodies.Add (b);
 							}
 							mergedHumans.Add (h1.Value);
@@ -302,7 +321,8 @@ public class Tracker : MonoBehaviour
 				}
 			}
 		}
-		foreach (Human h in mergedHumans) {
+		foreach (Human h in mergedHumans)
+        {
 			_humansToKill.Add (h);
 			_humans.Remove (h.ID);
 		}
@@ -337,17 +357,17 @@ public class Tracker : MonoBehaviour
 
 
 
-    internal void addUnicast (string address, string port)
+    internal void AddUnicast (string address, string port)
 	{
 		_udpBroadcast.addUnicast (address, int.Parse (port));
 	}
 
-	internal void removeUnicast (string key)
+	internal void RemoveUnicast (string key)
 	{
 		_udpBroadcast.removeUnicast (key);
 	}
 
-	internal void setNewCloud (CloudMessage cloud)
+	internal void SetNewCloud (CloudMessage cloud)
 	{
 		if (!Sensors.ContainsKey (cloud.KinectId)) {
 			Vector3 position = new Vector3 (Mathf.Ceil (Sensors.Count / 2.0f) * (Sensors.Count % 2 == 0 ? -1.0f : 1.0f), 1, 0);
@@ -358,7 +378,7 @@ public class Tracker : MonoBehaviour
 		Sensors [cloud.KinectId].updateCloud (cloud);
 	}
 
-	internal void setNewFrame (BodiesMessage bodies)
+	internal void SetNewFrame (BodiesMessage bodies)
 	{
 		if (!Sensors.ContainsKey (bodies.KinectId)) {
 			Vector3 position = new Vector3 (Mathf.Ceil (Sensors.Count / 2.0f) * (Sensors.Count % 2 == 0 ? -1.0f : 1.0f), 1, 0);
@@ -441,15 +461,19 @@ public class Tracker : MonoBehaviour
 		n.notifySend (NotificationLevel.INFO, "Calibration complete", "Config file updated", 5000);
 	}
 
-	internal Vector3 getJointPosition (int id, JointType joint)
+	internal Vector3 GetJointPosition (int id, JointType joint)
 	{
 		Human h = _humans [id];
 		SensorBody bestBody = h.bodies [0];
 		int confidence = bestBody.Confidence;
 
-		foreach (SensorBody b in h.bodies) {
+		foreach (SensorBody b in h.bodies)
+        {
+
+           
 			int bConfidence = b.Confidence;
-			if (bConfidence > confidence) {
+			if (bConfidence > confidence)
+            {
 				confidence = bConfidence;
 				bestBody = b;
 			}
@@ -457,10 +481,13 @@ public class Tracker : MonoBehaviour
 
 		h.seenBySensor = bestBody.sensorID;
 
-		return _sensors [bestBody.sensorID].pointSensorToScene (CommonUtils.pointKinectToUnity (bestBody.skeleton.jointsPositions [joint]));
+
+       
+
+        return _sensors [bestBody.sensorID].pointSensorToScene (CommonUtils.pointKinectToUnity (bestBody.skeleton.JointsPositions [joint]));
 	}
 
-	internal bool humanHasBodies (int id)
+	internal bool HumanHasBodies (int id)
 	{
 		return _humans.ContainsKey (id) && _humans [id].bodies.Count > 0;
 	}
@@ -473,7 +500,7 @@ public class Tracker : MonoBehaviour
 			foreach (Human h in _humans.Values) {
 				//GUI.Label(new Rect(10, Screen.height - (n++ * 50), 1000, 50), "Human " + h.ID + " as seen by " + h.seenBySensor);
 
-				Vector3 p = Camera.main.WorldToScreenPoint (h.Skeleton.getHead () + new Vector3 (0, 0.2f, 0));
+				Vector3 p = Camera.main.WorldToScreenPoint (h.Skeleton.GetHead () + new Vector3 (0, 0.2f, 0));
 				if (p.z > 0) {
 					GUI.Label (new Rect (p.x, Screen.height - p.y - 25, 100, 25), "" + h.ID);
 				}

@@ -53,7 +53,7 @@ public class UdpListener : MonoBehaviour {
 					try
             		{
 						BodiesMessage b = new BodiesMessage(splitmsg[1]);
-						gameObject.GetComponent<Tracker>().setNewFrame(b);
+						gameObject.GetComponent<Tracker>().SetNewFrame(b);
 					}catch (BodiesMessageException e)
             		{
                 		Debug.Log(e.Message);
@@ -61,7 +61,7 @@ public class UdpListener : MonoBehaviour {
 				}
 				if (splitmsg [0] == "CloudMessage") {
 					CloudMessage c = new CloudMessage(splitmsg[1]);
-					gameObject.GetComponent<Tracker>().setNewCloud(c);
+					gameObject.GetComponent<Tracker>().SetNewCloud(c);
 
 				}
 			}

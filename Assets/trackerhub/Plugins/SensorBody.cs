@@ -28,7 +28,7 @@ public class SensorBody
     { get { return gameObject.transform.position; } }
 
     public int Confidence
-    { get { return int.Parse(skeleton.bodyProperties[BodyPropertiesTypes.Confidence]); } }
+    { get { return int.Parse(skeleton.BodyProperties[BodyPropertiesTypes.Confidence]); } }
 
     public SensorBody(string ID, Transform parent)
     {

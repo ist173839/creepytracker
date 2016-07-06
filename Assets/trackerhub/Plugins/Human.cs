@@ -45,12 +45,12 @@ public class Human
         skeleton = this.gameObject.GetComponent<HumanSkeleton>();
         skeleton.tracker = tracker;
         skeleton.ID = ID;
-        skeleton.updateSkeleton();
+        skeleton.UpdateSkeleton();
     }
 
     internal void updateSkeleton()
     {
-        Skeleton.updateSkeleton();
+        Skeleton.UpdateSkeleton();
     }
 
     internal string getPDU()

@@ -26,24 +26,24 @@ public enum BodyPropertiesTypes
 
 public class Skeleton
 {
-    public Dictionary<BodyPropertiesTypes, string> bodyProperties;
-    public Dictionary<Kinect.JointType, Vector3> jointsPositions;
+    public Dictionary<BodyPropertiesTypes, string> BodyProperties;
+    public Dictionary<Kinect.JointType, Vector3> JointsPositions;
     public string Message;
     public string ID
     {
         get
         {
-            return bodyProperties[BodyPropertiesTypes.UID];
+            return BodyProperties[BodyPropertiesTypes.UID];
         }
     }
 
-    public string sensorID;
+    public string SensorId;
 
 
     public void _start()
     {
-        jointsPositions = new Dictionary<Windows.Kinect.JointType, Vector3>();
-        bodyProperties = new Dictionary<BodyPropertiesTypes, string>();
+        JointsPositions = new Dictionary<Windows.Kinect.JointType, Vector3>();
+        BodyProperties = new Dictionary<BodyPropertiesTypes, string>();
     }
 
     public Skeleton(Kinect.Body body)
@@ -51,10 +51,10 @@ public class Skeleton
         _start();
         Message = ""
             + BodyPropertiesTypes.UID.ToString() + MessageSeparators.SET + body.TrackingId
-            + MessageSeparators.L2 + BodyPropertiesTypes.Confidence.ToString() + MessageSeparators.SET + BodyConfidence(body)
-            + MessageSeparators.L2 + BodyPropertiesTypes.HandLeftState.ToString() + MessageSeparators.SET + body.HandLeftState
-            + MessageSeparators.L2 + BodyPropertiesTypes.HandLeftConfidence.ToString() + MessageSeparators.SET + body.HandLeftConfidence
-            + MessageSeparators.L2 + BodyPropertiesTypes.HandRightState.ToString() + MessageSeparators.SET + body.HandRightState
+            + MessageSeparators.L2 + BodyPropertiesTypes.Confidence.ToString()          + MessageSeparators.SET + BodyConfidence(body)
+            + MessageSeparators.L2 + BodyPropertiesTypes.HandLeftState.ToString()       + MessageSeparators.SET + body.HandLeftState
+            + MessageSeparators.L2 + BodyPropertiesTypes.HandLeftConfidence.ToString()  + MessageSeparators.SET + body.HandLeftConfidence
+            + MessageSeparators.L2 + BodyPropertiesTypes.HandRightState.ToString()      + MessageSeparators.SET + body.HandRightState
             + MessageSeparators.L2 + BodyPropertiesTypes.HandRightConfidence.ToString() + MessageSeparators.SET + body.HandRightConfidence;
 
         foreach (Kinect.JointType j in Enum.GetValues(typeof(Kinect.JointType)))
@@ -77,12 +77,12 @@ public class Skeleton
             {
                 if (Enum.IsDefined(typeof(BodyPropertiesTypes), statement[0]))
                 {
-                    bodyProperties[((BodyPropertiesTypes)Enum.Parse(typeof(BodyPropertiesTypes), statement[0]))] = statement[1];
+                    BodyProperties[((BodyPropertiesTypes)Enum.Parse(typeof(BodyPropertiesTypes), statement[0]))] = statement[1];
                 }
 
                 if (Enum.IsDefined(typeof(Windows.Kinect.JointType), statement[0]))
                 {
-                    jointsPositions[((Windows.Kinect.JointType)Enum.Parse(typeof(Windows.Kinect.JointType), statement[0]))] = CommonUtils.convertRpcStringToVector3(statement[1]);
+                    JointsPositions[((Windows.Kinect.JointType)Enum.Parse(typeof(Windows.Kinect.JointType), statement[0]))] = CommonUtils.convertRpcStringToVector3(statement[1]);
                 }
             }
         }

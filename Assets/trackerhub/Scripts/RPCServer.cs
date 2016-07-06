@@ -133,7 +133,7 @@ public class RPCServer : MonoBehaviour {
         try
         {
             BodiesMessage b = new BodiesMessage(bodies);
-            trackerGameObject.GetComponent<Tracker>().setNewFrame(b);
+            trackerGameObject.GetComponent<Tracker>().SetNewFrame(b);
         }
         catch (BodiesMessageException e)
         {
