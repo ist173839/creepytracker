@@ -55,7 +55,7 @@ public class ConfigProperties
 		}
 	}
 
-	public static string load(string filename, string property)
+	public static string Load(string filename, string property)
 	{
 		if (File.Exists(filename))
 		{

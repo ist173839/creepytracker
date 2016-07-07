@@ -550,29 +550,29 @@ public class Tracker : MonoBehaviour
 	{
 		string filePath = Application.dataPath + "/" + TrackerProperties.Instance.configFilename;
 
-		string port = ConfigProperties.load (filePath, "udp.listenport");
+		string port = ConfigProperties.Load (filePath, "udp.listenport");
 		if (port != "") {
 			TrackerProperties.Instance.listenPort = int.Parse (port);
 		}
 		resetListening ();
 
-		port = ConfigProperties.load (filePath, "udp.broadcastport");
+		port = ConfigProperties.Load (filePath, "udp.broadcastport");
 		if (port != "") {
 			TrackerProperties.Instance.broadcastPort = int.Parse (port);
 		}
 		resetBroadcast ();
 
-		string aux = ConfigProperties.load (filePath, "tracker.mergedistance");
+		string aux = ConfigProperties.Load (filePath, "tracker.mergedistance");
 		if (aux != "") {
 			TrackerProperties.Instance.mergeDistance = float.Parse (aux);
 		}
 
-		aux = ConfigProperties.load (filePath, "tracker.confidencethreshold");
+		aux = ConfigProperties.Load (filePath, "tracker.confidencethreshold");
 		if (aux != "") {
 			TrackerProperties.Instance.confidenceTreshold = int.Parse (aux);
 		}
 
-		aux = ConfigProperties.load (filePath, "udp.sendinternal");
+		aux = ConfigProperties.Load (filePath, "udp.sendinternal");
 		if (aux != "") {
 			TrackerProperties.Instance.confidenceTreshold = int.Parse (aux);
 		}
@@ -620,7 +620,7 @@ public class Tracker : MonoBehaviour
 		_saveConfig ();
 	}
 
-	public void hideAllClouds ()
+	public void HideAllClouds ()
 	{
 		foreach (Sensor s in _sensors.Values) {
 			s.lastCloud.hideFromView ();
@@ -632,7 +632,7 @@ public class Tracker : MonoBehaviour
 		udp.Send(data, data.Length, remoteEndPoint);
 	}
 
-	public void broadCastCloudRequests(bool continuous){
+	public void BroadCastCloudRequests(bool continuous){
 		UdpClient udp = new UdpClient ();
 		string message = CloudMessage.createRequestMessage (continuous?1:0); 
 		byte[] data = Encoding.UTF8.GetBytes (message);
