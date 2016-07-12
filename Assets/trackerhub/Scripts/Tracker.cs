@@ -34,7 +34,7 @@ public class Tracker : MonoBehaviour
 
 	private CalibrationProcess _calibrationStatus;
 	public CalibrationProcess CalibrationStatus 
-{
+    {
 		get 
 		{
 			return _calibrationStatus;
@@ -45,10 +45,7 @@ public class Tracker : MonoBehaviour
 			_calibrationStatus = value;
 		}
 	}
-
-
-
-
+    
 	private Dictionary<int, Human> _humans;
 
 	private List<Human> _deadHumans;
@@ -56,8 +53,7 @@ public class Tracker : MonoBehaviour
 
 	private UdpBroadcast _udpBroadcast;
     private WriteSafeFile _writeSafeFile;
-
-
+    private OptitrackManager _localOptitrackManager;
 
     public Material WhiteMaterial;
 
@@ -71,7 +67,8 @@ public class Tracker : MonoBehaviour
 
 	public bool colorHumans;
 
-	void Start ()
+
+    void Start ()
 	{
 		_sensors = new Dictionary<string, Sensor> ();
 		_humans = new Dictionary<int, Human> ();
@@ -79,8 +76,10 @@ public class Tracker : MonoBehaviour
 		_humansToKill = new List<Human> ();
 		_calibrationStatus = CalibrationProcess.FindCenter;
 
-		_udpBroadcast = new UdpBroadcast (TrackerProperties.Instance.broadcastPort);
+		_udpBroadcast  = new UdpBroadcast (TrackerProperties.Instance.broadcastPort);
         _writeSafeFile = new WriteSafeFile();
+        _localOptitrackManager = gameObject.GetComponent<OptitrackManager>();
+
         _loadConfig ();
 		_loadSavedSensors ();
 	}
@@ -139,8 +138,9 @@ public class Tracker : MonoBehaviour
 			}
 		}
 
-		_udpBroadcast.send (strToSend);
-        SaveRecordServer(strToSend);
+		_udpBroadcast.Send (strToSend);
+       // SaveRecordServer(strToSend);
+        SaveRecordServer(strToSend, _localOptitrackManager.PositionVector);
         // set human material
 
         foreach (Human h in _humans.Values) {
@@ -247,7 +247,7 @@ public class Tracker : MonoBehaviour
 			// try to fit in existing humans
 			foreach (KeyValuePair<int, Human> h in _humans)
             {
-				if (calcHorizontalDistance (b.WorldPosition, h.Value.Position) < TrackerProperties.Instance.mergeDistance)
+				if (CalcHorizontalDistance (b.WorldPosition, h.Value.Position) < TrackerProperties.Instance.mergeDistance)
                 {
 					h.Value.Position = (h.Value.Position * (float)h.Value.bodies.Count + b.WorldPosition) / (float)(h.Value.bodies.Count + 1);
 					h.Value.bodies.Add (b);
@@ -259,7 +259,7 @@ public class Tracker : MonoBehaviour
 			if (!hasHuman) {
 				// try to fit in dead humans
 				foreach (Human h in _deadHumans) {
-					if (calcHorizontalDistance (b.WorldPosition, h.Position) < TrackerProperties.Instance.mergeDistance) {
+					if (CalcHorizontalDistance (b.WorldPosition, h.Position) < TrackerProperties.Instance.mergeDistance) {
 						h.Position = (h.Position * (float)h.bodies.Count + b.WorldPosition) / (float)(h.bodies.Count + 1);
 						h.bodies.Add (b);
 						hasHuman = true;
@@ -299,7 +299,7 @@ public class Tracker : MonoBehaviour
             {
 				if (h1.Value.ID != h2.Value.ID && !mergedHumans.Contains (h2.Value))
                 {
-					if (calcHorizontalDistance (h1.Value.Position, h2.Value.Position) < TrackerProperties.Instance.mergeDistance)
+					if (CalcHorizontalDistance (h1.Value.Position, h2.Value.Position) < TrackerProperties.Instance.mergeDistance)
                     {
 						Vector3 position = (h1.Value.Position * (float)h1.Value.bodies.Count + h2.Value.Position * (float)h2.Value.bodies.Count) / (float)(h1.Value.bodies.Count + h2.Value.bodies.Count);
 
@@ -332,19 +332,20 @@ public class Tracker : MonoBehaviour
 		}
 	}
 
-	private float calcHorizontalDistance (Vector3 a, Vector3 b)
+	private static float CalcHorizontalDistance (Vector3 a, Vector3 b)
 	{
 		Vector3 c = new Vector3 (a.x, 0, a.z);
 		Vector3 d = new Vector3 (b.x, 0, b.z);
 		return Vector3.Distance (c, d);
 	}
 
+
     // < Change >
     /// <summary>
     /// (Pt) Guarda as mensagens enviadas pelo servidor em ficheiros txt
     /// (En) Store messages sent by the server in txt files
     /// </summary>
-    /// <param name="strToSend"></param>
+    /// <param name="strToSend"> Mensagem para Guardar </param>
     private void SaveRecordServer(string strToSend)
     {
         const string noneMessage = "0";
@@ -359,6 +360,27 @@ public class Tracker : MonoBehaviour
         }
     }
 
+
+    // < Change >
+    /// <summary>
+    /// (Pt) Guarda as mensagens enviadas pelo servidor em ficheiros txt
+    /// (En) Store messages sent by the server in txt files
+    /// </summary>
+    /// <param name="strToSend"> Mensagem para Guardar </param>
+    /// <param name="optiTrackPos"> Posicao Obtida pelo OptiTrack </param>
+    private void SaveRecordServer(string strToSend, Vector3 optiTrackPos)
+    {
+        const string noneMessage = "0";
+        if (strToSend == noneMessage)
+        {
+            _writeSafeFile.StopRecording("Terminated Because No Messages");
+            // _writeSafeFile.StopRecording();
+        }
+        else
+        {
+            _writeSafeFile.Recording(strToSend, optiTrackPos);
+        }
+    }
 
 
     internal void AddUnicast (string address, string port)
@@ -607,7 +629,7 @@ public class Tracker : MonoBehaviour
 
 	public void resetBroadcast ()
 	{
-		_udpBroadcast.reset (TrackerProperties.Instance.broadcastPort);
+		_udpBroadcast.Reset (TrackerProperties.Instance.broadcastPort);
 	}
 
 	public void resetListening ()

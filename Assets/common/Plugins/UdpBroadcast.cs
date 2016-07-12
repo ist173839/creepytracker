@@ -29,11 +29,11 @@ public class UdpBroadcast
     public UdpBroadcast(int port, int sendRate = 100)
 	{
 		_lastSent = DateTime.Now;
-		reset(port, sendRate);
+		Reset(port, sendRate);
         _unicastClients = new Dictionary<string, IPEndPoint>();
     }
 
-	public void reset(int port, int sendRate = 100)
+	public void Reset(int port, int sendRate = 100)
 	{
 		try
 		{
@@ -52,7 +52,7 @@ public class UdpBroadcast
         }
 	}
 	
-	public void send(string line)
+	public void Send(string line)
 	{
 		if (_streaming)
 		{

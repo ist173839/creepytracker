@@ -77,6 +77,7 @@
     <Compile Include="Assets\common\Plugins\ConfigProperties.cs" />
     <Compile Include="Assets\common\Plugins\KalmanFilterFloat.cs" />
     <Compile Include="Assets\common\Plugins\KalmanFilterVector3.cs" />
+    <Compile Include="Assets\common\Plugins\My Plugins\DirectMulticastSocketClient.cs" />
     <Compile Include="Assets\common\Plugins\My Plugins\SaveMessage.cs" />
     <Compile Include="Assets\common\Plugins\My Plugins\WriteSafeFile.cs" />
     <Compile Include="Assets\common\Plugins\UdpBroadcast.cs" />
@@ -85,6 +86,7 @@
     <Compile Include="Assets\common\Scripts\GridOverlay.cs" />
     <Compile Include="Assets\common\Scripts\Logger.cs" />
     <Compile Include="Assets\common\Scripts\My Scripts\MyUdpListener.cs" />
+    <Compile Include="Assets\common\Scripts\My Scripts\OptitrackManager.cs" />
     <Compile Include="Assets\common\Scripts\PointCloudSimple.cs" />
     <Compile Include="Assets\common\Scripts\UdpListener.cs" />
     <Compile Include="Assets\trackerhub\Plugins\Human.cs" />
