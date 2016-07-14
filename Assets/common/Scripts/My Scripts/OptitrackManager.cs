@@ -4,18 +4,22 @@ using System.Collections;
 //using NatNetML;
 using OptitrackManagement;
 
+// ReSharper disable once CheckNamespace
 public class OptitrackManager : MonoBehaviour
 {
     //public GameObject markerObject;
 
-    private string MyName = "HAL";
+    private readonly string _myName = "OptiTrack";
     //public string ClientIpAddress ="172.20.41.25";
     //public string ServerIpAddress ="172.20.41.24";
     public Vector3 PositionVector { get; set; }
-    public bool DeinitValue = false;
+    public Quaternion RotationQuaternion { get; set; }
+    private bool _deinitValue = false;
     public bool IsOn { get; private set; }
-
     public bool IsEmulate { get; set; }
+
+    private GameObject _optiTrackMarker;
+
 
     ~OptitrackManager()
     {
@@ -25,9 +29,9 @@ public class OptitrackManager : MonoBehaviour
 
     void Start()
     {
-        Debug.Log(MyName + ": i am alive");
+        Debug.Log(_myName + ": I am alive");
         OptitrackManagement.DirectMulticastSocketClient.Start();
-        PositionVector = transform.position;
+        _optiTrackMarker = null;
         IsEmulate = false;
     }
 
@@ -42,15 +46,25 @@ public class OptitrackManager : MonoBehaviour
             if (OptitrackManagement.DirectMulticastSocketClient.IsInit())
             {
                 StreemData networkData = OptitrackManagement.DirectMulticastSocketClient.GetStreemData();
+                PositionVector = networkData.RigidBody[0].Pos * 2.0f;
+                RotationQuaternion = networkData.RigidBody[0].Ori;
 
-                PositionVector = networkData.RigidBody[0].Pos*2.0f;
+                SetUpOptiTrackMarker();
             }
+            else
+            {
+                if (_optiTrackMarker != null)
+                {
+                    Destroy(_optiTrackMarker);
+                }
+            }
+
 
             // transform.position = PositionVector;
 
-            if (DeinitValue)
+            if (_deinitValue)
             {
-                DeinitValue = false;
+                _deinitValue = false;
                 OptitrackManagement.DirectMulticastSocketClient.Close();
             }
 
@@ -60,6 +74,41 @@ public class OptitrackManager : MonoBehaviour
         {
             //todo fazer qualquer coisa ou apagar else
         }
+    }
+
+    private void SetUpOptiTrackMarker()// Todo Testar
+    {
+        if (_optiTrackMarker == null)
+        {
+            _optiTrackMarker = MyCreateSphere("Opti Tracker Marker", PositionVector, 0.5f);
+            _optiTrackMarker.transform.position = PositionVector;
+        }
+        else
+        {
+            _optiTrackMarker.transform.position = PositionVector;
+        }
+    }
+
+    private static GameObject MyCreateSphere(string name, Vector3 position, float scale = 0.1f)
+    {
+        var gameObjectSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        gameObjectSphere.GetComponent<SphereCollider>().enabled = false;
+
+        gameObjectSphere.transform.localScale = new Vector3(scale, scale, scale);
+        gameObjectSphere.transform.position = position;
+        gameObjectSphere.name = name;
+        return gameObjectSphere;
+    }
+
+    private static GameObject MyCreateSphere(string name, float scale = 0.1f)
+    {
+        var gameObjectSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        gameObjectSphere.GetComponent<SphereCollider>().enabled = false;
+
+        gameObjectSphere.transform.localScale = new Vector3(scale, scale, scale);
+        gameObjectSphere.name = name;
+
+        return gameObjectSphere;
     }
 }
 

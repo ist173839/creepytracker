@@ -12,14 +12,12 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-
 /*
   "£Registo User Tracker Data;" + prefixoVersao + ";Tese de Mestrado de Francisco Henriques Venda, 73839;Inicio de Registo : " +
             _inicio.ToString("dd/MM/yyyy, HH:mm:ss") + ";Pasta Original : " + _target + ";Nome Ficheiro Original : " +
             _currentDocName + ";Info complementar : " + InfoCompl + ";£";
              
-    string registo = "«" + _cont++ + "_" + diff.TotalSeconds + "_" + diffIntervalo.TotalSeconds + "_" + agora.ToString("yyyy-MM-dd-HH-mm-ss-fff") + "&" + pos + "&" +"$" + mensagemKinect;
-      
+    string registo = "«" + _cont++ + "_" + diff.TotalSeconds + "_" + diffIntervalo.TotalSeconds + "_" + agora.ToString("yyyy-MM-dd-HH-mm-ss-fff") + "&" + pos + "&" +"$" + mensagemKinect;     
      */
 
 // ReSharper disable once CheckNamespace
@@ -35,9 +33,6 @@ public static class MyMessaSepa
     public const char SepaVec         = '|';
 }
 
-
-
-
 // ReSharper disable once CheckNamespace
 public class WriteSafeFile
 {
@@ -49,14 +44,12 @@ public class WriteSafeFile
     }
 
     private VersaoDisponivel _versaoActiva;
-
-
+    
     private DateTime _inicio;
     private DateTime _tempoMensagemAnterior;
 
     private StreamWriter Doc;
-
-
+    
     public string FolderDestino;
     public string DocName;
     public string InfoCompl;
@@ -223,9 +216,8 @@ public class WriteSafeFile
         _tempoMensagemAnterior = agora;
 #endif
     }
-
-
-    public void Recording(string mensagemKinect, Vector3 pos)
+    
+    public void Recording(string mensagemKinect, Vector3 pos, Quaternion ori)
     {
 #if !UNITY_ANDROID  || UNITY_EDITOR
         _target = Directory + "\\" + CurrentFolderDestino + "\\";
@@ -252,9 +244,11 @@ public class WriteSafeFile
                          MyMessaSepa.SepaRegisto      + diff.TotalSeconds +
                          MyMessaSepa.SepaRegisto      + diffIntervalo.TotalSeconds +
                          MyMessaSepa.SepaRegisto      + agora.ToString("yyyy-MM-dd-HH-mm-ss-fff") + 
-                         MyMessaSepa.InicioOptitrack  + Vector3ToString(pos) + MyMessaSepa.SepaOptitrack + MyMessaSepa.InicioOptitrack +
-                         MyMessaSepa.InicioMensagem   + mensagemKinect;
-     
+                         MyMessaSepa.InicioOptitrack  + 
+                                                      Vector3ToString(pos)    + MyMessaSepa.SepaOptitrack + 
+                                                      QuaternionToString(ori) + MyMessaSepa.SepaOptitrack + 
+                         MyMessaSepa.InicioOptitrack  +
+                         MyMessaSepa.InicioMensagem   + mensagemKinect; 
 
         Doc.WriteLine(registo);
         Doc.Close(); 
@@ -387,8 +381,7 @@ public class WriteSafeFile
         }
         return temp;
     }
-
-
+    
     private void SetInfoCompl()
     {
     #if UNITY_EDITOR
@@ -492,10 +485,7 @@ public class WriteSafeFile
         // Debug.Log("info : " + info);
 #endif
     }
-     */
-
-
-/*
+///////////////////////////////////////////////////////////////////////////////////////////////
     if (InfoCompl == "NADA") InfoCompl = "Server";
         else InfoCompl += ", Server"; 
      

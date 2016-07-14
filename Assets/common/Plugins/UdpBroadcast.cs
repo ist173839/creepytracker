@@ -77,21 +77,19 @@ public class UdpBroadcast
             }
 		}
 	}
-
-
-
+    
     // Unicast Stuff
 
-    private string genUnicastKey(string address, int port)
+    private string GenUnicastKey(string address, int port)
     {
         return address + ":" + port;
     }
    
-    internal void addUnicast(string address, int port)
+    internal void AddUnicast(string address, int port)
     {
         try
         {
-            _unicastClients[genUnicastKey(address, port)] = new IPEndPoint(IPAddress.Parse(address), port);   
+            _unicastClients[GenUnicastKey(address, port)] = new IPEndPoint(IPAddress.Parse(address), port);   
         }
         catch (Exception e)
         {
@@ -100,7 +98,7 @@ public class UdpBroadcast
         }
     }
 
-    internal void removeUnicast(string key)
+    internal void RemoveUnicast(string key)
     {if (_unicastClients.ContainsKey(key))
             _unicastClients.Remove(key);
     }

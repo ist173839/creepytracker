@@ -139,10 +139,9 @@ public class Tracker : MonoBehaviour
 		}
 
 		_udpBroadcast.Send (strToSend);
-       // SaveRecordServer(strToSend);
-        SaveRecordServer(strToSend, _localOptitrackManager.PositionVector);
-        // set human material
+        SaveRecordServer(strToSend);
 
+        // set human material
         foreach (Human h in _humans.Values) {
 			if (h.seenBySensor != null && colorHumans)
 				CommonUtils.changeGameObjectMaterial (h.gameObject, Sensors [h.seenBySensor].Material);
@@ -348,6 +347,9 @@ public class Tracker : MonoBehaviour
     /// <param name="strToSend"> Mensagem para Guardar </param>
     private void SaveRecordServer(string strToSend)
     {
+        //, _localOptitrackManager.PositionVector
+
+
         const string noneMessage = "0";
         if (strToSend == noneMessage)
         {
@@ -356,41 +358,19 @@ public class Tracker : MonoBehaviour
         }
         else
         {
-            _writeSafeFile.Recording(strToSend);
+            if (_localOptitrackManager.IsOn) _writeSafeFile.Recording(strToSend, _localOptitrackManager.PositionVector, _localOptitrackManager.RotationQuaternion);
+            else _writeSafeFile.Recording(strToSend);
         }
     }
-
-
-    // < Change >
-    /// <summary>
-    /// (Pt) Guarda as mensagens enviadas pelo servidor em ficheiros txt
-    /// (En) Store messages sent by the server in txt files
-    /// </summary>
-    /// <param name="strToSend"> Mensagem para Guardar </param>
-    /// <param name="optiTrackPos"> Posicao Obtida pelo OptiTrack </param>
-    private void SaveRecordServer(string strToSend, Vector3 optiTrackPos)
-    {
-        const string noneMessage = "0";
-        if (strToSend == noneMessage)
-        {
-            _writeSafeFile.StopRecording("Terminated Because No Messages");
-            // _writeSafeFile.StopRecording();
-        }
-        else
-        {
-            _writeSafeFile.Recording(strToSend, optiTrackPos);
-        }
-    }
-
-
+    
     internal void AddUnicast (string address, string port)
 	{
-		_udpBroadcast.addUnicast (address, int.Parse (port));
+		_udpBroadcast.AddUnicast (address, int.Parse (port));
 	}
 
 	internal void RemoveUnicast (string key)
 	{
-		_udpBroadcast.removeUnicast (key);
+		_udpBroadcast.RemoveUnicast (key);
 	}
 
 	internal void SetNewCloud (CloudMessage cloud)
@@ -663,3 +643,41 @@ public class Tracker : MonoBehaviour
 	}
 
 }
+/*
+ 
+     
+    // < Change >
+    /// <summary>
+    /// (Pt) Guarda as mensagens enviadas pelo servidor em ficheiros txt
+    /// (En) Store messages sent by the server in txt files
+    /// </summary>
+    /// <param name="strToSend"> Mensagem para Guardar </param>
+    /// <param name="optiTrackPos"> Posicao Obtida pelo OptiTrack </param>
+    /// <param name="optiTrackOri"></param>
+    private void SaveRecordServer(string strToSend, Vector3 optiTrackPos, Quaternion optiTrackOri)
+    {
+       
+
+        //_localOptitrackManager.IsOn//
+        const string noneMessage = "0";
+        if (strToSend == noneMessage)
+        {
+            _writeSafeFile.StopRecording("Terminated Because No Messages");
+            // _writeSafeFile.StopRecording();
+        }
+        else
+        {
+            _writeSafeFile.Recording(strToSend, optiTrackPos, optiTrackOri);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+     */
