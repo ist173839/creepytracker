@@ -46,7 +46,7 @@ public class OptitrackManager : MonoBehaviour
             if (OptitrackManagement.DirectMulticastSocketClient.IsInit())
             {
                 StreemData networkData = OptitrackManagement.DirectMulticastSocketClient.GetStreemData();
-                PositionVector = networkData.RigidBody[0].Pos * 2.0f;
+                PositionVector = networkData.RigidBody[0].Pos;//* 2.0f;
                 RotationQuaternion = networkData.RigidBody[0].Ori;
 
                 SetUpOptiTrackMarker();
@@ -57,6 +57,9 @@ public class OptitrackManager : MonoBehaviour
                 {
                     Destroy(_optiTrackMarker);
                 }
+
+                Debug.Log("Restart OptiTrack");
+                OptitrackManagement.DirectMulticastSocketClient.Start();
             }
 
 
@@ -80,7 +83,7 @@ public class OptitrackManager : MonoBehaviour
     {
         if (_optiTrackMarker == null)
         {
-            _optiTrackMarker = MyCreateSphere("Opti Tracker Marker", PositionVector, 0.5f);
+            _optiTrackMarker = MyCreateSphere("Opti Tracker Marker", PositionVector, 0.3f);
             _optiTrackMarker.transform.position = PositionVector;
         }
         else
@@ -93,7 +96,7 @@ public class OptitrackManager : MonoBehaviour
     {
         var gameObjectSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         gameObjectSphere.GetComponent<SphereCollider>().enabled = false;
-
+        gameObjectSphere.GetComponent<Renderer>().material.color = Color.red;
         gameObjectSphere.transform.localScale = new Vector3(scale, scale, scale);
         gameObjectSphere.transform.position = position;
         gameObjectSphere.name = name;
@@ -104,8 +107,8 @@ public class OptitrackManager : MonoBehaviour
     {
         var gameObjectSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         gameObjectSphere.GetComponent<SphereCollider>().enabled = false;
-
-        gameObjectSphere.transform.localScale = new Vector3(scale, scale, scale);
+        gameObjectSphere.GetComponent<Renderer>().material.color = Color.red;
+     gameObjectSphere.transform.localScale = new Vector3(scale, scale, scale);
         gameObjectSphere.name = name;
 
         return gameObjectSphere;

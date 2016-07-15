@@ -1,7 +1,6 @@
-%Config File created in 2016-06-07 20:35:45
+%Config File created in 2016-07-15 11:50:07
 udp.listenport=56555
 udp.broadcastport=56839
+udp.sendinterval=50
 tracker.mergedistance=0.4
 tracker.confidencethreshold=10
-udp.sendinterval=50
-tracker.filtergain=0
