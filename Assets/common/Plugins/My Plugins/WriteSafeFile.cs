@@ -23,16 +23,15 @@ using System.Text;
 // ReSharper disable once CheckNamespace
 public static class MyMessaSepa
 {
-    public const char InicioOptitrack = '&';
-    public const char InicioMensagem  = '$';
-    public const char InicioRegisto   = '«';
-    public const char SepaOptitrack   = '!';
-    public const char SepaCabeRoda    = ';';
-    public const char SepaRegisto     = '_';
-    public const char CabeRoda        = '£';
-    public const char SepaVec         = '|';
+    public const string InicioOptitrack = "&";
+    public const string InicioMensagem = "$";
+    public const string InicioRegisto = "«";
+    public const string SepaOptitrack = "!";
+    public const string SepaCabeRoda = ";";
+    public const string SepaRegisto = "_";
+    public const string CabeRoda = "£";
+    public const string SepaVec = "|";
 }
-
 // ReSharper disable once CheckNamespace
 public class WriteSafeFile
 {
@@ -248,7 +247,17 @@ public class WriteSafeFile
                                                       Vector3ToString(pos)    + MyMessaSepa.SepaOptitrack + 
                                                       QuaternionToString(ori) + MyMessaSepa.SepaOptitrack + 
                          MyMessaSepa.InicioOptitrack  +
-                         MyMessaSepa.InicioMensagem   + mensagemKinect; 
+                         MyMessaSepa.InicioMensagem   + mensagemKinect;
+
+
+        string registo1 = "«" + _cont++ + //  "_" +
+                          "_" + diff.TotalSeconds +
+                          "_" + diffIntervalo.TotalSeconds +
+                          "_" + agora.ToString("yyyy-MM-dd-HH-mm-ss-fff") +
+                          "&" + Vector3ToString(pos) + "!" + QuaternionToString(ori) + "!" +
+                          "&" + "$" + mensagemKinect;
+
+
 
         Doc.WriteLine(registo);
         Doc.Close(); 

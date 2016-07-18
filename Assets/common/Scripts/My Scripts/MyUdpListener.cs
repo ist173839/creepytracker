@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Linq;
@@ -19,7 +20,6 @@ public class MyUdpListener : MonoBehaviour {
         _port = 57839;
         _saveMessage = new SaveMessage();
         UdpRestart();
-
     }
 
     private void UdpRestart()
