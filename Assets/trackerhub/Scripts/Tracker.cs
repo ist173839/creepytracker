@@ -358,7 +358,7 @@ public class Tracker : MonoBehaviour
         }
         else
         {
-            if (_localOptitrackManager.IsOn) _writeSafeFile.Recording(strToSend, _localOptitrackManager.PositionVector, _localOptitrackManager.RotationQuaternion);
+            if (_localOptitrackManager.IsOn) _writeSafeFile.Recording(strToSend, _localOptitrackManager.GetPositionVector(), _localOptitrackManager.GetRotationQuaternion());
             else _writeSafeFile.Recording(strToSend);
         }
     }

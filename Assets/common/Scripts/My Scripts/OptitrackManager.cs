@@ -12,8 +12,10 @@ public class OptitrackManager : MonoBehaviour
     private readonly string _myName = "OptiTrack";
     //public string ClientIpAddress ="172.20.41.25";
     //public string ServerIpAddress ="172.20.41.24";
-    public Vector3 PositionVector { get; set; }
-    public Quaternion RotationQuaternion { get; set; }
+
+    private Vector3 PositionVector;
+    private Quaternion RotationQuaternion;
+
     private bool _deinitValue = false;
     public bool IsOn { get; private set; }
     public bool IsEmulate { get; set; }
@@ -79,16 +81,46 @@ public class OptitrackManager : MonoBehaviour
         }
     }
 
-    private void SetUpOptiTrackMarker()// Todo Testar
+
+    public void SetEmulateValues(Vector3 positionVector, Quaternion rotationQuaternion)
+    {
+
+        PositionVector = positionVector;
+        RotationQuaternion = rotationQuaternion;
+    }
+
+    private static Vector3 ConvertUnityVector3(Vector3 vector3)
+    {
+        return new Vector3(-1 * vector3.x, vector3.y, vector3.z);
+    }
+
+    public Vector3 GetPositionVector()
+    {
+        return PositionVector;
+    }
+
+    public Vector3 GetUnityPositionVector()
+    {
+        return ConvertUnityVector3(PositionVector);
+    }
+
+    public Quaternion GetRotationQuaternion()
+    {
+        return RotationQuaternion;
+    }
+
+
+
+    private void SetUpOptiTrackMarker()
     {
         if (_optiTrackMarker == null)
         {
-            _optiTrackMarker = MyCreateSphere("Opti Tracker Marker", PositionVector, 0.3f);
-            _optiTrackMarker.transform.position = PositionVector;
+            _optiTrackMarker = MyCreateSphere("Opti Tracker Marker", GetUnityPositionVector(), 0.3f);
+            _optiTrackMarker.transform.position = GetUnityPositionVector();
         }
         else
         {
-            _optiTrackMarker.transform.position = PositionVector;
+            _optiTrackMarker.transform.position = GetUnityPositionVector();
         }
     }
 

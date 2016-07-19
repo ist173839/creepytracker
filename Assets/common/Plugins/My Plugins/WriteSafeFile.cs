@@ -250,12 +250,12 @@ public class WriteSafeFile
                          MyMessaSepa.InicioMensagem   + mensagemKinect;
 
 
-        string registo1 = "«" + _cont++ + //  "_" +
-                          "_" + diff.TotalSeconds +
-                          "_" + diffIntervalo.TotalSeconds +
-                          "_" + agora.ToString("yyyy-MM-dd-HH-mm-ss-fff") +
-                          "&" + Vector3ToString(pos) + "!" + QuaternionToString(ori) + "!" +
-                          "&" + "$" + mensagemKinect;
+        //string registo1 = "«" + _cont + //  "_" +
+        //                  "_" + diff.TotalSeconds +
+        //                  "_" + diffIntervalo.TotalSeconds +
+        //                  "_" + agora.ToString("yyyy-MM-dd-HH-mm-ss-fff") +
+        //                  "&" + Vector3ToString(pos) + "!" + QuaternionToString(ori) + "!" +
+        //                  "&" + "$" + mensagemKinect;
 
 
 
@@ -268,24 +268,24 @@ public class WriteSafeFile
 
     private static string Vector3ToString(Vector3 vector3)
     {
-        return vector3.x.ToString(new NumberFormatInfo() { NumberDecimalSeparator = "," }) + MyMessaSepa.SepaVec + 
-               vector3.y.ToString(new NumberFormatInfo() { NumberDecimalSeparator = "," }) + MyMessaSepa.SepaVec + 
-               vector3.z.ToString(new NumberFormatInfo() { NumberDecimalSeparator = "," });
+        return vector3.x.ToString("0.000", new NumberFormatInfo() { NumberDecimalSeparator = "," }) + MyMessaSepa.SepaVec + 
+               vector3.y.ToString("0.000", new NumberFormatInfo() { NumberDecimalSeparator = "," }) + MyMessaSepa.SepaVec + 
+               vector3.z.ToString("0.000", new NumberFormatInfo() { NumberDecimalSeparator = "," });
     }
 
     private static string QuaternionToString(Quaternion quaternion)
     {
-        return quaternion.x.ToString(new NumberFormatInfo() { NumberDecimalSeparator = "," }) + MyMessaSepa.SepaVec +
-               quaternion.y.ToString(new NumberFormatInfo() { NumberDecimalSeparator = "," }) + MyMessaSepa.SepaVec +
-               quaternion.z.ToString(new NumberFormatInfo() { NumberDecimalSeparator = "," }) + MyMessaSepa.SepaVec +
-               quaternion.w.ToString(new NumberFormatInfo() { NumberDecimalSeparator = "," });
+        return quaternion.x.ToString("0.000", new NumberFormatInfo() { NumberDecimalSeparator = "," }) + MyMessaSepa.SepaVec +
+               quaternion.y.ToString("0.000", new NumberFormatInfo() { NumberDecimalSeparator = "," }) + MyMessaSepa.SepaVec +
+               quaternion.z.ToString("0.000", new NumberFormatInfo() { NumberDecimalSeparator = "," }) + MyMessaSepa.SepaVec +
+               quaternion.w.ToString("0.000", new NumberFormatInfo() { NumberDecimalSeparator = "," });
     }
 
     private void StopRecording()
     {
         if (!_activo) return;
         ResetMessage();
-        var infoFinal = "£" + DateTime.Now.ToString("yyyyMMddTHHmmss") + "£Fim£\n";
+        var infoFinal = "£" + DateTime.Now.ToString("yyyyMMddTHHmmss") + "£Fim£\n"; 
         Doc = new StreamWriter(_target + _currentDocName, true);
         if (InfoExtra != null) Doc.WriteLine(InfoExtra);
         Doc.WriteLine(infoFinal);

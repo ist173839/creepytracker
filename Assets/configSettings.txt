@@ -1,6 +1,11 @@
-%Config File created in 2016-07-15 11:50:07
+%Config File created in 2016-07-19 11:13:35
 udp.listenport=56555
 udp.broadcastport=56839
 udp.sendinterval=50
 tracker.mergedistance=0.4
 tracker.confidencethreshold=10
+kinect.ZELEONEL=ZELEONEL;0;1;0;0;0;0;1
+kinect.VANESSA=VANESSA;1;1;0;0;0;0;1
+kinect.TAVARES=TAVARES;-1;1;0;0;0;0;1
+kinect.MIRANDA=MIRANDA;2;1;0;0;0;0;1
+kinect.ESTEVES=ESTEVES;-2;1;0;0;0;0;1
