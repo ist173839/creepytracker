@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
+
 public class Sensor
 {
 	public string SensorID;
@@ -176,7 +177,7 @@ public class Sensor
 
 		Debug.Log (up);
 
-		doCalibCalcs (up, forward, right);
+		DoCalibCalcs (up, forward, right);
 	}
 
 	internal void calibrationStep3 ()
@@ -205,7 +206,7 @@ public class Sensor
 		Vector3 right = Vector3.Cross (normal, forward);
 		forward = Vector3.Cross (right, normal);
 
-		doCalibCalcs (normal, forward, right);
+		DoCalibCalcs (normal, forward, right);
 
 		// end
 
@@ -243,7 +244,7 @@ public class Sensor
 		return result;
 	}
 
-	private void doCalibCalcs (Vector3 up, Vector3 forward, Vector3 right)
+	private void DoCalibCalcs (Vector3 up, Vector3 forward, Vector3 right)
 	{
 		SensorGameObject.transform.position = Vector3.zero;
 		SensorGameObject.transform.rotation = Quaternion.identity;
