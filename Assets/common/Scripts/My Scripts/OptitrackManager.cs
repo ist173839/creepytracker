@@ -84,10 +84,10 @@ public class OptitrackManager : MonoBehaviour
                 StreemData networkData = OptitrackManagement.DirectMulticastSocketClient.GetStreemData();
                 PositionVector = networkData.RigidBody[0].Pos;//* 2.0f;
                 RotationQuaternion = networkData.RigidBody[0].Ori;
-                //CheckInput();
-                // var rotation = RotationQuaternion;
-                // var forward = rotation.eulerAngles;
-                //UpdateForwardObject(_forward, GetUnityPositionVector(), RotationQuaternion);
+                CheckInput();
+                var rotation = RotationQuaternion;
+                var forward = rotation.eulerAngles;
+                UpdateForwardObject(_forward, GetUnityPositionVector(), RotationQuaternion);
 
 
 
@@ -121,49 +121,49 @@ public class OptitrackManager : MonoBehaviour
         }
     }
 
-    //private void CheckInput()
-    //{
-    //    if (Input.GetKeyUp("o")) // Input.GetMouseButtonDown(0)
-    //    {
-    //        var temp = GetUnityPositionVector();
-    //        Debug.Log("O");
-    //        switch (_nextPos)
-    //        {
-    //            case Pos.pos1:
-    //                _nextPos = Pos.pos2;
+    private void CheckInput()
+    {
+        if (Input.GetKeyUp("o")) // Input.GetMouseButtonDown(0)
+        {
+            var temp = GetUnityPositionVector();
+            Debug.Log("O");
+            switch (_nextPos)
+            {
+                case Pos.pos1:
+                    _nextPos = Pos.pos2;
 
-    //                _pos1 = new Vector3(temp.x, 0.0f, temp.z);
-    //                Debug.Log("Pos 1 =  X = " + _pos1.Value.x + ", Z = " + _pos1.Value.z);
-    //                break;
-    //            case Pos.pos2:
-    //                _nextPos = Pos.pos1;
-    //                _pos2 =  new Vector3(temp.x, 0.0f, temp.z);
-    //                Debug.Log("Pos 2 : X = " + _pos2.Value.x + ", Z = " + _pos2.Value.z);
-    //                break;
-    //            default:
-    //                throw new ArgumentOutOfRangeException();
-    //        }
-    //    }
-    //    else if (Input.GetKeyUp("t"))
-    //    {
-    //        Debug.Log("T");
-    //        // ResetForward();
-    //        if (_pos1 != null && _pos2 != null)
-    //        {
-    //            _forward = _pos2.Value - _pos1.Value;
-    //            _forward = _forward.normalized;
-    //            Debug.Log("_forward : X = " + _forward.x + ", Z = " + _forward.z);
-    //        }
-    //    }
+                    _pos1 = new Vector3(temp.x, 0.0f, temp.z);
+                    Debug.Log("Pos 1 =  X = " + _pos1.Value.x + ", Z = " + _pos1.Value.z);
+                    break;
+                case Pos.pos2:
+                    _nextPos = Pos.pos1;
+                    _pos2 = new Vector3(temp.x, 0.0f, temp.z);
+                    Debug.Log("Pos 2 : X = " + _pos2.Value.x + ", Z = " + _pos2.Value.z);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+        else if (Input.GetKeyUp("t"))
+        {
+            Debug.Log("T");
+            // ResetForward();
+            if (_pos1 != null && _pos2 != null)
+            {
+                _forward = _pos2.Value - _pos1.Value;
+                _forward = _forward.normalized;
+                Debug.Log("_forward : X = " + _forward.x + ", Z = " + _forward.z);
+            }
+        }
 
-    //}
+    }
 
-    //private void UpdateForwardObject(Vector3 forward, Vector3 position, Quaternion rotation)
-    //{
-    //    _forwardGo.transform.forward = forward;
-    //    _forwardGo.transform.position = position;
-    //    _forwardGo.transform.rotation = rotation;
-    //}
+    private void UpdateForwardObject(Vector3 forward, Vector3 position, Quaternion rotation)
+    {
+        _forwardGo.transform.forward = forward;
+        _forwardGo.transform.position = position;
+        _forwardGo.transform.rotation = rotation;
+    }
 
     public void SetEmulateValues(Vector3 positionVector, Quaternion rotationQuaternion)
     {
