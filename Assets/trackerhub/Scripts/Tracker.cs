@@ -123,7 +123,7 @@ public class Tracker : MonoBehaviour
 			// get PDU
 			try
             {
-				strToSend += MessageSeparators.L1 + h.getPDU ();
+				strToSend += MessageSeparators.L1 + h.getPDU();
 			}
 			catch (Exception /*e*/)
 			{
@@ -133,7 +133,7 @@ public class Tracker : MonoBehaviour
 
 		foreach (Human h in _deadHumans) {
 			try {
-				strToSend += MessageSeparators.L1 + h.getPDU ();
+				strToSend += MessageSeparators.L1 + h.getPDU();
 			} catch (Exception /*e*/) {
 			}
 		}
@@ -169,6 +169,23 @@ public class Tracker : MonoBehaviour
 			}
 		}
 	}
+
+    //private string GetExtraInfo()
+    //{
+    //    string extra = null;
+
+    //    foreach (var h in _humans)
+    //    {
+    //        extra = h.Value.
+    //        //h.Value.Skeleton
+
+    //    }
+
+
+
+    //    return extra;
+    //}
+
 
 	private void MergeHumans ()
 	{
@@ -218,7 +235,7 @@ public class Tracker : MonoBehaviour
 			foreach (SensorBody b in h.Value.bodies)
             {
 				if (b.updated && Sensors [b.sensorID].Active)
-					position = (position * (float)numberOfBodies++ + b.WorldPosition) / (float)numberOfBodies;
+					position = (position * (float)numberOfBodies++ + b.WorldPosition) / (float) numberOfBodies;
 				else
 					deadBodies.Add (b);
 			}
@@ -330,6 +347,9 @@ public class Tracker : MonoBehaviour
 			_humans.Remove (h.ID);
 		}
 	}
+
+
+
 
 	private static float CalcHorizontalDistance (Vector3 a, Vector3 b)
 	{
