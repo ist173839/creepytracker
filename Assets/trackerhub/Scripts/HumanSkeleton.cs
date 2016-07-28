@@ -328,4 +328,14 @@ public class HumanSkeleton : MonoBehaviour
 		return headKalman.Value;
 	}
 
+    public Vector3 GetRightKnee()
+    {
+        return rightKneeKalman.Value;
+    }
+    public Vector3 GetLeftKnee()
+    {
+        return leftKneeKalman.Value;
+    }
+
+
 }

@@ -30,8 +30,6 @@ public class Tracker : MonoBehaviour
 		}
 	}
 	
-
-
 	private CalibrationProcess _calibrationStatus;
 	public CalibrationProcess CalibrationStatus 
     {
@@ -131,14 +129,16 @@ public class Tracker : MonoBehaviour
 			}
 		}
 
-		foreach (Human h in _deadHumans) {
-			try {
-				strToSend += MessageSeparators.L1 + h.getPDU();
-			} catch (Exception /*e*/) {
+		foreach (Human h in _deadHumans)
+        {
+			try
+            {
+				strToSend += MessageSeparators.L1 + h.getPDU() + GetKnees(h.ID);
 			}
+            catch (Exception /*e*/){}
 		}
 
-		_udpBroadcast.Send (strToSend);
+        _udpBroadcast.Send (strToSend);
         SaveRecordServer(strToSend);
 
         // set human material
@@ -317,7 +317,7 @@ public class Tracker : MonoBehaviour
                 {
 					if (CalcHorizontalDistance (h1.Value.Position, h2.Value.Position) < TrackerProperties.Instance.mergeDistance)
                     {
-						Vector3 position = (h1.Value.Position * (float)h1.Value.bodies.Count + h2.Value.Position * (float)h2.Value.bodies.Count) / (float)(h1.Value.bodies.Count + h2.Value.bodies.Count);
+						Vector3 position = (h1.Value.Position * (float) h1.Value.bodies.Count + h2.Value.Position * (float)h2.Value.bodies.Count) / (float)(h1.Value.bodies.Count + h2.Value.bodies.Count);
 
 						if (h1.Value.ID < h2.Value.ID) {
 							h1.Value.Position = position;
@@ -348,15 +348,63 @@ public class Tracker : MonoBehaviour
 		}
 	}
 
-
-
-
 	private static float CalcHorizontalDistance (Vector3 a, Vector3 b)
 	{
 		Vector3 c = new Vector3 (a.x, 0, a.z);
 		Vector3 d = new Vector3 (b.x, 0, b.z);
 		return Vector3.Distance (c, d);
 	}
+
+    // < Change >
+
+    private string GetKnees(int id)
+    {
+
+        //CommonUtils.convertVectorToStringRPC
+        var mensagem = "";
+        Human h = _humans[id];
+        //SensorBody bestBody = h.bodies[0];
+        mensagem += MessageSeparators.L4;
+
+        var kneeRightList = new List<Vector3>();
+        var kneeLeftList  = new List<Vector3>();
+
+        foreach (var b in h.bodies)
+        {
+            var kneeRight = _sensors[b.sensorID].pointSensorToScene(
+                CommonUtils.pointKinectToUnity(b.skeleton.JointsPositions[JointType.KneeRight]));
+            var kneeLeft = _sensors[b.sensorID].pointSensorToScene(
+                CommonUtils.pointKinectToUnity(b.skeleton.JointsPositions[JointType.KneeLeft]));
+
+            mensagem +=
+                "TrackingKneeRight" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(kneeRight) + MessageSeparators.L5 + b.skeleton.TrackingStateKneeRight +
+                MessageSeparators.L2 +
+                "TrackingKneeLeft"  + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(kneeLeft)  + MessageSeparators.L5 + b.skeleton.TrackingStateKneeLeft +
+                MessageSeparators.L2;
+           
+            // if (index + 1 < h.bodies.Count) mensagem += MessageSeparators.L2;
+
+            kneeRightList.Add(kneeRight);
+            kneeLeftList.Add(kneeLeft);
+        }
+        
+        var meanRightList = GetMeanList(kneeRightList);
+        var meanKneeLeft  = GetMeanList(kneeLeftList);
+
+        mensagem +=
+            "MeanKneeRight" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(meanRightList) +
+            MessageSeparators.L2 +
+            "MeanKneeLeft"  + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(meanKneeLeft);
+
+        return mensagem;
+    }
+
+    private static Vector3 GetMeanList(List<Vector3> meanList)
+    {
+        var meanResult = meanList.Aggregate(Vector3.zero, (current, nl) => current + nl);
+        meanResult /= meanList.Count;
+        return meanResult;
+    }
 
 
     // < Change >
@@ -506,9 +554,6 @@ public class Tracker : MonoBehaviour
 		}
 
 		h.seenBySensor = bestBody.sensorID;
-
-
-       
 
         return _sensors [bestBody.sensorID].pointSensorToScene (CommonUtils.pointKinectToUnity (bestBody.skeleton.JointsPositions [joint]));
 	}

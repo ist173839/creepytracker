@@ -54,7 +54,8 @@ public class UdpListener : MonoBehaviour {
             		{
 						BodiesMessage b = new BodiesMessage(splitmsg[1]);
 						gameObject.GetComponent<Tracker>().SetNewFrame(b);
-					}catch (BodiesMessageException e)
+					}
+                    catch (BodiesMessageException e)
             		{
                 		Debug.Log(e.Message);
             		}
