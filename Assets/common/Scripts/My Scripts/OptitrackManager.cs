@@ -84,10 +84,10 @@ public class OptitrackManager : MonoBehaviour
                 StreemData networkData = OptitrackManagement.DirectMulticastSocketClient.GetStreemData();
                 PositionVector = networkData.RigidBody[0].Pos;//* 2.0f;
                 RotationQuaternion = networkData.RigidBody[0].Ori;
-                CheckInput();
-                var rotation = RotationQuaternion;
-                var forward = rotation.eulerAngles;
-                UpdateForwardObject(_forward, GetUnityPositionVector(), RotationQuaternion);
+                //CheckInput();
+                //var rotation = RotationQuaternion;
+                //var forward = rotation.eulerAngles;
+                //UpdateForwardObject(_forward, GetUnityPositionVector(), RotationQuaternion);
 
 
 
@@ -171,9 +171,9 @@ public class OptitrackManager : MonoBehaviour
         RotationQuaternion = rotationQuaternion;
     }
 
-    private static Vector3 ConvertUnityVector3(Vector3 vector3)
+    private static Vector3 ConvertUnityVector3(Vector3 vec3)
     {
-        return new Vector3(-1*vector3.x, vector3.y, vector3.z);
+        return new Vector3(vec3.x, vec3.y, vec3.z);
     }
 
     public Vector3 GetPositionVector()
@@ -192,16 +192,18 @@ public class OptitrackManager : MonoBehaviour
     }
 
     private void SetUpOptiTrackMarker()
-    {
+    { 
+        var unityPositionVector = GetUnityPositionVector();
+
         if (_optiTrackMarker == null)
         {
-            _optiTrackMarker = MyCreateSphere("Opti Tracker Marker", GetUnityPositionVector(), 0.3f);
-            var unityPositionVector = GetUnityPositionVector();
+            
+            _optiTrackMarker = MyCreateSphere("Opti Tracker Marker", unityPositionVector, 0.3f);
             _optiTrackMarker.transform.position = unityPositionVector;
         }
         else
         {
-            _optiTrackMarker.transform.position = GetUnityPositionVector();
+            _optiTrackMarker.transform.position = unityPositionVector;
         }
     }
 

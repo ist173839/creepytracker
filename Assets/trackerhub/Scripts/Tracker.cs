@@ -114,28 +114,33 @@ public class Tracker : MonoBehaviour
 
 		string strToSend = "" + _humans.Count;
 
-		foreach (Human h in _humans.Values) {
+		foreach (Human h in _humans.Values)
+        {
 			// udpate Human Skeleton
 			h.updateSkeleton ();
 
 			// get PDU
 			try
-            {
-				strToSend += MessageSeparators.L1 + h.getPDU();
-			}
-			catch (Exception /*e*/)
 			{
-			    // ignored
+			    strToSend += MessageSeparators.L1 + h.getPDU()+ GetKnees(h);
 			}
+			catch (Exception e)
+            {
+                Debug.Log(e.Message + "\n" + e.StackTrace);
+            }
 		}
 
 		foreach (Human h in _deadHumans)
         {
-			try
+            try
             {
-				strToSend += MessageSeparators.L1 + h.getPDU() + GetKnees(h.ID);
-			}
-            catch (Exception /*e*/){}
+                strToSend += MessageSeparators.L1 + h.getPDU();// + GetKnees(h);
+            }
+            catch (Exception e)
+            {
+                Debug.Log(e.Message + "\n" + e.StackTrace);
+
+            }
 		}
 
         _udpBroadcast.Send (strToSend);
@@ -357,12 +362,16 @@ public class Tracker : MonoBehaviour
 
     // < Change >
 
-    private string GetKnees(int id)
+    private string GetKnees(Human h)
     {
 
         //CommonUtils.convertVectorToStringRPC
         var mensagem = "";
-        Human h = _humans[id];
+        //if (!_humans.ContainsKey(h1)) return null;
+
+        if(h == null || !_humans.ContainsValue(h)) return null;
+
+        //Human h = _humans[h1];
         //SensorBody bestBody = h.bodies[0];
         mensagem += MessageSeparators.L4;
 
