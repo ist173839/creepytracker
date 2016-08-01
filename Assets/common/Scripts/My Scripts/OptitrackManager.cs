@@ -97,7 +97,7 @@ public class OptitrackManager : MonoBehaviour
             {
                 if (_optiTrackMarker != null)
                 {
-                    Destroy(_optiTrackMarker);
+                  //  Destroy(_optiTrackMarker);
                 }
 
                 Debug.Log("Restart OptiTrack");
@@ -173,7 +173,7 @@ public class OptitrackManager : MonoBehaviour
 
     private static Vector3 ConvertUnityVector3(Vector3 vec3)
     {
-        return new Vector3(vec3.x, vec3.y, vec3.z);
+        return new Vector3(-1*vec3.x, vec3.y, vec3.z);
     }
 
     public Vector3 GetPositionVector()
