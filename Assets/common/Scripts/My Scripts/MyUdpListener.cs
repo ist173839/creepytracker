@@ -9,11 +9,13 @@ using System.Text;
 
 public class MyUdpListener : MonoBehaviour {
 
-    private UdpClient _udpClient = null;
-    private IPEndPoint _anyIP;
-    private List<string> _stringsToParse;
-    private int _port;
     private SaveMessage _saveMessage;
+    private IPEndPoint _anyIP;
+    private UdpClient _udpClient = null;
+
+    private List<string> _stringsToParse;
+
+    private int _port;
 
     void Start()
     {

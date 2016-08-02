@@ -13,33 +13,31 @@ public class OptitrackManager : MonoBehaviour
         pos1,
         pos2,
     }
-    
+
+    private Pos _nextPos;
+
+    private GameObject _forwardGo;
+    private GameObject _cylinder;
+    private GameObject _optiTrackMarker;
     //public GameObject markerObject;
 
+    private Vector3? _pos1;
+    private Vector3? _pos2;
+    
+    private Vector3 _positionVector;
+    private Vector3 _forward;
+
+    public bool IsEmulate { get;         set; }
+    public bool IsOn      { get; private set; }
+
+    private bool _deinitValue = false;
+    
     private readonly string _myName = "OptiTrack";
     //public string ClientIpAddress ="172.20.41.25";
     //public string ServerIpAddress ="172.20.41.24";
 
-
-    private GameObject _forwardGo;
-    private GameObject _cylinder;
-    private Vector3 _forward;
-
-    private Vector3? _pos1;
-    private Vector3? _pos2;
-
-    private Pos _nextPos;
-
-    private Vector3 PositionVector;
-    private Quaternion RotationQuaternion;
-
-    private bool _deinitValue = false;
-    public bool IsOn { get; private set; }
-    public bool IsEmulate { get; set; }
-
-    private GameObject _optiTrackMarker;
-
-
+    private Quaternion _rotationQuaternion;
+    
     ~OptitrackManager()
     {
         Debug.Log("OptitrackManager: Destruct");
@@ -82,8 +80,8 @@ public class OptitrackManager : MonoBehaviour
             if (OptitrackManagement.DirectMulticastSocketClient.IsInit())
             {
                 StreemData networkData = OptitrackManagement.DirectMulticastSocketClient.GetStreemData();
-                PositionVector = networkData.RigidBody[0].Pos;//* 2.0f;
-                RotationQuaternion = networkData.RigidBody[0].Ori;
+                _positionVector = networkData.RigidBody[0].Pos;//* 2.0f;
+                _rotationQuaternion = networkData.RigidBody[0].Ori;
                 //CheckInput();
                 //var rotation = RotationQuaternion;
                 //var forward = rotation.eulerAngles;
@@ -167,8 +165,8 @@ public class OptitrackManager : MonoBehaviour
 
     public void SetEmulateValues(Vector3 positionVector, Quaternion rotationQuaternion)
     {
-        PositionVector = positionVector;
-        RotationQuaternion = rotationQuaternion;
+        _positionVector = positionVector;
+        _rotationQuaternion = rotationQuaternion;
     }
 
     private static Vector3 ConvertUnityVector3(Vector3 vec3)
@@ -178,17 +176,17 @@ public class OptitrackManager : MonoBehaviour
 
     public Vector3 GetPositionVector()
     {
-        return PositionVector;
+        return _positionVector;
     }
 
     public Vector3 GetUnityPositionVector()
     {
-        return ConvertUnityVector3(PositionVector);
+        return ConvertUnityVector3(_positionVector);
     }
 
     public Quaternion GetRotationQuaternion()
     {
-        return RotationQuaternion;
+        return _rotationQuaternion;
     }
 
     private void SetUpOptiTrackMarker()

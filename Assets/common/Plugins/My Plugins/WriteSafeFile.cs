@@ -12,13 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-/*
-  "£Registo User Tracker Data;" + prefixoVersao + ";Tese de Mestrado de Francisco Henriques Venda, 73839;Inicio de Registo : " +
-            _inicio.ToString("dd/MM/yyyy, HH:mm:ss") + ";Pasta Original : " + _target + ";Nome Ficheiro Original : " +
-            _currentDocName + ";Info complementar : " + InfoCompl + ";£";
-             
-    string registo = "«" + _cont++ + "_" + diff.TotalSeconds + "_" + diffIntervalo.TotalSeconds + "_" + agora.ToString("yyyy-MM-dd-HH-mm-ss-fff") + "&" + pos + "&" +"$" + mensagemKinect;     
-     */
+
 
 // ReSharper disable once CheckNamespace
 public static class MyMessaSepa
@@ -43,42 +37,42 @@ public class WriteSafeFile
     }
 
     private VersaoDisponivel _versaoActiva;
-    
-    private DateTime _inicio;
+
     private DateTime _tempoMensagemAnterior;
+    private DateTime _inicio;
 
     private StreamWriter Doc;
-    
+
+    public string CurrentFolderDestino;
     public string FolderDestino;
-    public string DocName;
     public string InfoCompl;
     public string InfoExtra;
-    public string CurrentFolderDestino;
     public string Directory;
+    public string DocName;
 
     private string _defaultFolderDestino;
+    private string _caminhoCompleto;
     private string _defaultDocName;
     private string _currentDocName;
     private string _fileName;
     private string _target;
     private string _format;
-    private string _caminhoCompleto;
 
-    private int _cont;
     private int _specialTypeDocName;
+    private int _cont;
 
     private static readonly int TamanhoMaximo = 2 * (int) Math.Pow(2,20); //2 * (2^20)
 
     //  public bool DirectoryChange;
 
-    private bool _useDefaultFolder;
     private bool _useDefaultDocName;
+    private bool _useDefaultFolder;
     private bool _activo;
     private bool _first;
 
     public WriteSafeFile()
     {
-#if !UNITY_ANDROID || UNITY_EDITOR
+    #if !UNITY_ANDROID || UNITY_EDITOR
         _useDefaultDocName = true;
         _useDefaultFolder  = true;
         _activo            = false;
@@ -96,7 +90,7 @@ public class WriteSafeFile
         _specialTypeDocName = 0;
 	    _cont = 0;
         _versaoActiva = VersaoDisponivel.NaoActivo;
-#endif
+    #endif
     }
 
     ~WriteSafeFile()
@@ -218,7 +212,7 @@ public class WriteSafeFile
     
     public void Recording(string mensagemKinect, Vector3 pos, Quaternion ori)
     {
-#if !UNITY_ANDROID  || UNITY_EDITOR
+    #if !UNITY_ANDROID  || UNITY_EDITOR
         _target = Directory + "\\" + CurrentFolderDestino + "\\";
         //Debug.Log("Pasta : " + _target);
         CheckFileSize();
@@ -313,7 +307,7 @@ public class WriteSafeFile
 
     private void NovoRegisto(VersaoDisponivel versao)
     {
-#if !UNITY_ANDROID || UNITY_EDITOR
+    #if !UNITY_ANDROID || UNITY_EDITOR
         // _target = _directory + "\\" +_CurrentFolderDestino ;
 
         //  Para prevenir erros, não é uma situação esperada
@@ -375,7 +369,7 @@ public class WriteSafeFile
         Doc.Close();
         Debug.Log("Criar Novo Ficheiro : " + _currentDocName);
         // Debug.Log("info : " + info);
-#endif
+    #endif
     }
 
 
@@ -428,11 +422,18 @@ public class WriteSafeFile
     #endif
 
     }
+
 }
 
+
 /*
- 
-      private void NovoRegisto()
+  "£Registo User Tracker Data;" + prefixoVersao + ";Tese de Mestrado de Francisco Henriques Venda, 73839;Inicio de Registo : " +
+            _inicio.ToString("dd/MM/yyyy, HH:mm:ss") + ";Pasta Original : " + _target + ";Nome Ficheiro Original : " +
+            _currentDocName + ";Info complementar : " + InfoCompl + ";£";
+             
+    string registo = "«" + _cont++ + "_" + diff.TotalSeconds + "_" + diffIntervalo.TotalSeconds + "_" + agora.ToString("yyyy-MM-dd-HH-mm-ss-fff") + "&" + pos + "&" +"$" + mensagemKinect;     
+    ///////////////////////////////////////////////////////////////////////////////
+    private void NovoRegisto()
     {
 #if !UNITY_ANDROID || UNITY_EDITOR
         // _target = _directory + "\\" +_CurrentFolderDestino ;

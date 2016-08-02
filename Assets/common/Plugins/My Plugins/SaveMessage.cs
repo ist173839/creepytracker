@@ -15,41 +15,39 @@ using UnityEngine;
 
 public class SaveMessage
 {
-    private string _folderDestino;
-    private string _docName;
-    
+    private StreamWriter _doc;
+    private DateTime _inicio;
+
+    public string Separador { get; private set; }
+
     private readonly string _defaultFolderDestino;
-
-    private string _defaultDocName;
-    private string _currentDocName;
-
-    private readonly string _endMessage;
     private readonly string _startMessage;
+    private readonly string _endMessage;
+    private readonly string _directory;
+    private readonly string _format;
 
     private string _currentFolderDestino;
-    private readonly string _directory;
-
-    //  public bool DirectoryChange;
-
-    private bool _useDefaultFolder;
-    private bool _useDefaultDocName;
-    private bool _isInitiate;
-    private string _target;
-    private DateTime _inicio;
-    private StreamWriter _doc;
-    private readonly string _format;
     private string _caminhoCompleto;
-    private int _cont;
-    private int _specialTypeDocName;
+    private string _defaultDocName;
+    private string _currentDocName;
+    private string _recordingName;
+    private string _folderDestino;
     private string _fimCiclo;
-    
-    public string Separador { get; private set; }
+    private string _docName;
+    private string _target;
 
     public int NumColunas   { get; private set; }
 
     private static readonly int TamanhoMaximo = (int) Math.Pow(2, 30); // (2 ^ 30)
 
-    private string _recordingName;
+    private int _cont;
+    private int _specialTypeDocName;
+
+    //  public bool DirectoryChange;
+    private bool _useDefaultDocName;
+    private bool _useDefaultFolder;
+    private bool _isInitiate;
+
     public SaveMessage() 
     {
         _useDefaultFolder  = true;
@@ -84,6 +82,7 @@ public class SaveMessage
         if (File.Exists(_target + _currentDocName)) File.SetAttributes(_target + _currentDocName, FileAttributes.ReadOnly);
         
     }
+
     private void ResetRecord()
     {
         _recordingName = null;
@@ -101,7 +100,7 @@ public class SaveMessage
         Debug.Log("New File, Current Size = " + info.Length + " ( MAX = " + TamanhoMaximo + " )");
         StopRecording();
     }
-   
+
     public void RecordMessage(string message)
     {
         //#if !UNITY_ANDROID
