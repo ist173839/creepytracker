@@ -363,13 +363,13 @@ public class TrackerUI : MonoBehaviour
 			if (Physics.Raycast (ray, out hit)) {
 				if (hit.collider != null) {
 					if (hit.collider.gameObject.name.Contains ("Human")) {
-						_userTracker.showHumanBodies = int.Parse (hit.collider.gameObject.name.Remove (0, "Human ".Length));
+						_userTracker.ShowHumanBodies = int.Parse (hit.collider.gameObject.name.Remove (0, "Human ".Length));
 					} else
-						_userTracker.showHumanBodies = -1;
+						_userTracker.ShowHumanBodies = -1;
 				} else
-					_userTracker.showHumanBodies = -1;
+					_userTracker.ShowHumanBodies = -1;
 			} else
-				_userTracker.showHumanBodies = -1;
+				_userTracker.ShowHumanBodies = -1;
 		}
 	}
 

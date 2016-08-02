@@ -17,6 +17,14 @@ public enum CalibrationProcess
 	CalcNormal
 }
 
+public struct KneesInfo
+{
+    public int Id;
+    public Vector3 Pos;
+    public bool Track;
+}
+
+
 public class Tracker : MonoBehaviour
 {
 
@@ -61,10 +69,17 @@ public class Tracker : MonoBehaviour
 		}
 	}
 
-	public int showHumanBodies = -1;
+	public int ShowHumanBodies = -1;
 
-	public bool colorHumans;
+	public bool ColorHumans;
+    
 
+    public List<KneesInfo> RightKneesInfo;
+    public List<KneesInfo> LeftKneesInfo;
+
+    public int CountHuman;
+
+    public List<string> IdList;
 
     void Start ()
 	{
@@ -77,16 +92,28 @@ public class Tracker : MonoBehaviour
 		_udpBroadcast  = new UdpBroadcast (TrackerProperties.Instance.broadcastPort);
         _writeSafeFile = new WriteSafeFile();
         _localOptitrackManager = gameObject.GetComponent<OptitrackManager>();
+        
+        _loadConfig();
+        _loadSavedSensors();
 
-        _loadConfig ();
-		_loadSavedSensors ();
+
+        RightKneesInfo = new List<KneesInfo>();
+        LeftKneesInfo  = new List<KneesInfo>();
+        IdList         = new List<string>();
+
+        CountHuman = 0;
+
 	}
 
 	void Update ()
 	{
 
-		if (Input.GetKeyDown (KeyCode.C))
-			colorHumans = !colorHumans;
+        RightKneesInfo = new List<KneesInfo>();
+        LeftKneesInfo  = new List<KneesInfo>();
+        IdList = new List<string>();
+
+        if (Input.GetKeyDown (KeyCode.C))
+			ColorHumans = !ColorHumans;
 
 		foreach (Sensor s in _sensors.Values) {
 			s.updateBodies ();
@@ -114,15 +141,20 @@ public class Tracker : MonoBehaviour
 
 		string strToSend = "" + _humans.Count;
 
-		foreach (Human h in _humans.Values)
-        {
-			// udpate Human Skeleton
-			h.updateSkeleton ();
 
-			// get PDU
-			try
+	    CountHuman = _humans.Count;
+
+        foreach (Human h in _humans.Values)
+        {
+
+            IdList.Add(h.ID.ToString());
+            // udpate Human Skeleton
+            h.updateSkeleton ();
+           
+            // get PDU
+            try
 			{
-			    strToSend += MessageSeparators.L1 + h.getPDU()+ GetKnees(h);
+			    strToSend += MessageSeparators.L1 + h.getPDU() + GetKnees(h);
 			}
 			catch (Exception e)
             {
@@ -148,29 +180,29 @@ public class Tracker : MonoBehaviour
 
         // set human material
         foreach (Human h in _humans.Values) {
-			if (h.seenBySensor != null && colorHumans)
+			if (h.seenBySensor != null && ColorHumans)
 				CommonUtils.changeGameObjectMaterial (h.gameObject, Sensors [h.seenBySensor].Material);
-			else if (!colorHumans)
+			else if (!ColorHumans)
 				CommonUtils.changeGameObjectMaterial (h.gameObject, WhiteMaterial);
 		}
 
 		// show / hide human bodies
 
-		if (showHumanBodies != -1 && !_humans.ContainsKey (showHumanBodies))
-			showHumanBodies = -1;
+		if (ShowHumanBodies != -1 && !_humans.ContainsKey (ShowHumanBodies))
+			ShowHumanBodies = -1;
 
 		foreach (Human h in _humans.Values) {
 			CapsuleCollider humanCollider = h.gameObject.GetComponent<CapsuleCollider> ();
 			if (humanCollider != null)
-				humanCollider.enabled = (showHumanBodies == -1);
+				humanCollider.enabled = (ShowHumanBodies == -1);
 
 			foreach (Transform child in h.gameObject.transform) {
 				if (child.gameObject.GetComponent<Renderer> () != null)
-					child.gameObject.GetComponent<Renderer> ().enabled = (showHumanBodies == -1);
+					child.gameObject.GetComponent<Renderer> ().enabled = (ShowHumanBodies == -1);
 			}
 
 			foreach (SensorBody b in h.bodies) {
-				b.gameObject.GetComponent<Renderer> ().enabled = (showHumanBodies == h.ID);
+				b.gameObject.GetComponent<Renderer> ().enabled = (ShowHumanBodies == h.ID);
 			}
 		}
 	}
@@ -364,15 +396,14 @@ public class Tracker : MonoBehaviour
 
     private string GetKnees(Human h)
     {
-
-        //CommonUtils.convertVectorToStringRPC
+        // CommonUtils.convertVectorToStringRPC
         var mensagem = "";
-        //if (!_humans.ContainsKey(h1)) return null;
+        // if (!_humans.ContainsKey(h1)) return null;
 
         if(h == null || !_humans.ContainsValue(h)) return null;
 
-        //Human h = _humans[h1];
-        //SensorBody bestBody = h.bodies[0];
+        // Human h = _humans[h1];
+        // SensorBody bestBody = h.bodies[0];
         mensagem += MessageSeparators.L4;
 
         var kneeRightList = new List<Vector3>();
@@ -385,10 +416,28 @@ public class Tracker : MonoBehaviour
             var kneeLeft = _sensors[b.sensorID].pointSensorToScene(
                 CommonUtils.pointKinectToUnity(b.skeleton.JointsPositions[JointType.KneeLeft]));
 
+
+            var trackingStateKneeRight = b.skeleton.TrackingStateKneeRight;
+            var trackingStateKneeLeft = b.skeleton.TrackingStateKneeLeft;
+
+            RightKneesInfo.Add(new KneesInfo
+            {
+                Id =  h.ID,
+                Pos = kneeRight,
+                Track = (trackingStateKneeRight == TrackingState.Tracked)
+            });
+
+            LeftKneesInfo.Add(new KneesInfo
+            {
+                Id = h.ID,
+                Pos = kneeLeft,
+                Track = (trackingStateKneeLeft == TrackingState.Tracked)
+            });
+
             mensagem +=
-                "TrackingKneeRight" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(kneeRight) + MessageSeparators.L5 + b.skeleton.TrackingStateKneeRight +
+                "TrackingKneeRight" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(kneeRight) + MessageSeparators.L5 + trackingStateKneeRight +
                 MessageSeparators.L2 +
-                "TrackingKneeLeft"  + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(kneeLeft)  + MessageSeparators.L5 + b.skeleton.TrackingStateKneeLeft +
+                "TrackingKneeLeft"  + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(kneeLeft)  + MessageSeparators.L5 + trackingStateKneeLeft +
                 MessageSeparators.L2;
            
             // if (index + 1 < h.bodies.Count) mensagem += MessageSeparators.L2;
@@ -552,8 +601,6 @@ public class Tracker : MonoBehaviour
 
 		foreach (SensorBody b in h.bodies)
         {
-
-           
 			int bConfidence = b.Confidence;
 			if (bConfidence > confidence)
             {
@@ -572,32 +619,7 @@ public class Tracker : MonoBehaviour
 		return _humans.ContainsKey (id) && _humans [id].bodies.Count > 0;
 	}
 
-	void OnGUI ()
-	{
-		//int n = 1;
-
-		if (showHumanBodies == -1) {
-			foreach (Human h in _humans.Values) {
-				//GUI.Label(new Rect(10, Screen.height - (n++ * 50), 1000, 50), "Human " + h.ID + " as seen by " + h.seenBySensor);
-
-				Vector3 p = Camera.main.WorldToScreenPoint (h.Skeleton.GetHead () + new Vector3 (0, 0.2f, 0));
-				if (p.z > 0) {
-					GUI.Label (new Rect (p.x, Screen.height - p.y - 25, 100, 25), "" + h.ID);
-				}
-			}
-		}
-
-		foreach (Sensor s in Sensors.Values) {
-			if (s.Active) {
-				Vector3 p = Camera.main.WorldToScreenPoint (s.SensorGameObject.transform.position + new Vector3 (0, 0.05f, 0));
-				if (p.z > 0) {
-					GUI.Label (new Rect (p.x, Screen.height - p.y - 25, 100, 25), "" + s.SensorID);
-				}
-			}
-		}
-	}
-
-	private void _saveConfig ()
+    private void _saveConfig ()
 	{
 		string filePath = Application.dataPath + "/" + TrackerProperties.Instance.configFilename;
 		ConfigProperties.clear (filePath);
@@ -622,7 +644,7 @@ public class Tracker : MonoBehaviour
 		}
 	}
 
-	private void _loadConfig ()
+    private void _loadConfig ()
 	{
 		string filePath = Application.dataPath + "/" + TrackerProperties.Instance.configFilename;
 
@@ -659,7 +681,7 @@ public class Tracker : MonoBehaviour
 		}*/
 	}
 
-	private void _loadSavedSensors ()
+    private void _loadSavedSensors ()
 	{
 		foreach (String line in ConfigProperties.loadKinects(Application.dataPath + "/" + TrackerProperties.Instance.configFilename)) {
 			string[] values = line.Split (';');
@@ -681,22 +703,22 @@ public class Tracker : MonoBehaviour
 		}
 	}
 
-	public void resetBroadcast ()
+    public void resetBroadcast ()
 	{
 		_udpBroadcast.Reset (TrackerProperties.Instance.broadcastPort);
 	}
 
-	public void resetListening ()
+    public void resetListening ()
 	{
 		gameObject.GetComponent<UdpListener> ().udpRestart ();
 	}
 
-	public void Save ()
+    public void Save ()
 	{
 		_saveConfig ();
 	}
 
-	public void HideAllClouds ()
+    public void HideAllClouds ()
 	{
 		foreach (Sensor s in _sensors.Values) {
 			s.lastCloud.hideFromView ();
@@ -708,7 +730,7 @@ public class Tracker : MonoBehaviour
 		udp.Send(data, data.Length, remoteEndPoint);
 	}
 
-	public void BroadCastCloudRequests(bool continuous){
+    public void BroadCastCloudRequests(bool continuous){
 		UdpClient udp = new UdpClient ();
 		string message = CloudMessage.createRequestMessage (continuous?1:0); 
 		byte[] data = Encoding.UTF8.GetBytes (message);
@@ -716,6 +738,30 @@ public class Tracker : MonoBehaviour
 		udp.Send (data, data.Length, remoteEndPoint);
 	}
 
+    void OnGUI ()
+    {
+        //int n = 1;
+
+        if (ShowHumanBodies == -1) {
+            foreach (Human h in _humans.Values) {
+                //GUI.Label(new Rect(10, Screen.height - (n++ * 50), 1000, 50), "Human " + h.ID + " as seen by " + h.seenBySensor);
+
+                Vector3 p = Camera.main.WorldToScreenPoint (h.Skeleton.GetHead () + new Vector3 (0, 0.2f, 0));
+                if (p.z > 0) {
+                    GUI.Label (new Rect (p.x, Screen.height - p.y - 25, 100, 25), "" + h.ID);
+                }
+            }
+        }
+
+        foreach (Sensor s in Sensors.Values) {
+            if (s.Active) {
+                Vector3 p = Camera.main.WorldToScreenPoint (s.SensorGameObject.transform.position + new Vector3 (0, 0.05f, 0));
+                if (p.z > 0) {
+                    GUI.Label (new Rect (p.x, Screen.height - p.y - 25, 100, 25), "" + s.SensorID);
+                }
+            }
+        }
+    }
 }
 /*
  
