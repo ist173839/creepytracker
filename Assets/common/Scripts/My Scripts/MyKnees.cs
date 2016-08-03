@@ -57,11 +57,15 @@ public class MyKnees : MonoBehaviour {
         {
             //idUpdateList.Add(id);
             if (GameObject.Find(id)) continue;
+
             var human = new GameObject { name = id };
             human.transform.parent = _humans.transform;
+
             _humanList.Add(human);
             _idList.Add(id);
 
+            CreateKnees(id, Knee.Right, human.transform);
+            CreateKnees(id, Knee.Left,  human.transform);
 
         }
 
@@ -69,25 +73,50 @@ public class MyKnees : MonoBehaviour {
         
         foreach (var except in listExcept)
         {
+
             var obj = GameObject.Find(except);
+            
+            for (var i = 0; i < obj.transform.childCount; i++)
+            {
+                Destroy(obj.transform.GetChild(i).gameObject);
+            }
+            
             _humanList.Remove(obj);
             _idList.Remove(except);
             Destroy(obj);
         }
-        
-        foreach (var rightKnee in rightKneesInfo)
-        {
-            
-        }
 
-        foreach (var leftKnee in leftKneesInfo)
-	    {
-	        
-	    }
+        UpdateKnees(rightKneesInfo, Knee.Right);
+        UpdateKnees(leftKneesInfo,  Knee.Left);
+        
+    }
+
+    private void UpdateKnees(List<KneesInfo> theKnees, Knee thisKnee)
+    {
+        foreach (var kneesInfo in theKnees)
+        {
+            var kneeName = kneesInfo.Id + "_" + thisKnee;
+
+            var knee = GameObject.Find(kneeName);
+            if (knee == null)
+            {
+                Debug.Log("Knee not found");
+                continue;
+            }
+
+            knee.transform.position = kneesInfo.Pos;
+            
+            knee.GetComponent<Renderer>().material.color = kneesInfo.Track ? _colorTrack : _colorInferred;
+        }
     }
 
 
-    private GameObject CreateKnees(KneesInfo info, Knee knee)
+    private static GameObject CreateKnees(string id, Knee knee, Transform parent)
+    {
+        return MyCreateSphere(id + "_" + knee, parent, Color.white);
+    }
+
+    private GameObject CreateKnees(KneesInfo info, Knee knee, Transform parent)
     {
         var nameKnee = info.Id.ToString() + "_" + knee;
 
@@ -95,16 +124,19 @@ public class MyKnees : MonoBehaviour {
 
         var pos = info.Pos;
 
-        return MyCreateSphere(nameKnee, pos, infoColor);
-
+        return MyCreateSphere(nameKnee, pos, parent, infoColor);
     }
 
-    private string GetId(string nameId)
+    private string GetId(string nameKnee)
     {
         char[] del = { '_' };
-        return nameId.Split(del)[0];
+        return nameKnee.Split(del)[0];
     }
-
+    private string GetKnee(string nameKnee)
+    {
+        char[] del = { '_' };
+        return nameKnee.Split(del)[1];
+    }
 
     private static GameObject MyCreateSphere(string name, Vector3 position, Transform parent, float scale = 0.1f)
     {
@@ -130,13 +162,17 @@ public class MyKnees : MonoBehaviour {
     private static GameObject MyCreateSphere(string name, Vector3 position, Transform parent, Color cor, float scale = 0.1f)
     {
         var gameObjectSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+
         gameObjectSphere.GetComponent<SphereCollider>().enabled = false;
+
         gameObjectSphere.GetComponent<Renderer>().material = (Material)Instantiate(Resources.Load("Materials/Mt_Transparent"));
         gameObjectSphere.GetComponent<Renderer>().material.color = cor;
+
         gameObjectSphere.transform.localScale = new Vector3(scale, scale, scale);
         gameObjectSphere.transform.position = position;
         gameObjectSphere.transform.parent = parent;
         gameObjectSphere.name = name;
+
         return gameObjectSphere;
     }
 
@@ -149,11 +185,10 @@ public class MyKnees : MonoBehaviour {
         gameObjectSphere.transform.localScale = new Vector3(scale, scale, scale);
         gameObjectSphere.transform.position = position;
         gameObjectSphere.name = name;
-       
+
         return gameObjectSphere;
     }
-
-
+    
 }
 
 /*
@@ -175,4 +210,8 @@ public class MyKnees : MonoBehaviour {
            {
 
            }
-        */
+
+ 
+     
+     *
+     * */
