@@ -428,7 +428,7 @@ public class Tracker : MonoBehaviour
             var trackingStateKneeRight = b.skeleton.TrackingStateKneeRight;
             var trackingStateKneeLeft  = b.skeleton.TrackingStateKneeLeft;
 
-            Debug.Log("h id = " + h.ID + ", b.sensorID = " + bodySensorId + ", kneeRight : x = " + kneeRight.x + ", y = " + kneeRight.y + ", z = " + kneeRight.z);
+            //Debug.Log("h id = " + h.ID + ", b.sensorID = " + bodySensorId + ", kneeRight : x = " + kneeRight.x + ", y = " + kneeRight.y + ", z = " + kneeRight.z);
 
             var key = h.ID + "_" + bodySensorId;
             if (RightKneesInfo.ContainsKey(key) && LeftKneesInfo.ContainsKey(key)) continue;
