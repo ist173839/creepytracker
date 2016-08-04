@@ -48,7 +48,7 @@ public class MyKnees : MonoBehaviour {
     {
         var rightKneesInfo = _localTracker.RightKneesInfo;
         var leftKneesInfo  = _localTracker.LeftKneesInfo;
-	    var countHuman     = _localTracker.CountHuman;
+	    //var countHuman     = _localTracker.CountHuman;
 
         var idList = _localTracker.IdList;
         // var idUpdateList = new List<string>();
@@ -68,15 +68,12 @@ public class MyKnees : MonoBehaviour {
             var body =  _localTracker.GetHuman(int.Parse(id)).bodies;
             foreach (var b in body)
             {
-                var newBody = new GameObject { name = "Body " + b.ID };
+                var newBody = new GameObject { name = "Body_" + b.sensorID };
                 newBody.transform.parent = human.transform;
 
-                CreateKnees(id, b.ID, Knee.Right, newBody.transform);
-                CreateKnees(id, b.ID, Knee.Left,  newBody.transform);
+                CreateKnees(id, b.sensorID, Knee.Right, newBody.transform);
+                CreateKnees(id, b.sensorID, Knee.Left,  newBody.transform);
             }
-
-           
-
         }
 
         var listExcept = _idList.Except(idList).ToList();
@@ -105,7 +102,7 @@ public class MyKnees : MonoBehaviour {
     {
         foreach (var kneesInfo in theKnees)
         {
-            var kneeName = kneesInfo.Value.IdHuman + "_" + kneesInfo.Value.IdBody +"_" + thisKnee;
+            var kneeName = kneesInfo.Value.IdHuman + "_" + kneesInfo.Value.IdBody + "_" + thisKnee;
 
             var knee = GameObject.Find(kneeName);
             if (knee == null)

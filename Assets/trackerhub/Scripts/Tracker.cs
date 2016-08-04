@@ -413,33 +413,38 @@ public class Tracker : MonoBehaviour
 
 
         Debug.Log("1  kneeRightList.Count = " + kneeRightList.Count);
-        Debug.Log("1  kneeLeftList.Count = " + kneeLeftList.Count);
+        Debug.Log("1  kneeLeftList.Count = "  + kneeLeftList.Count);
 
         foreach (var b in h.bodies)
         {
-            var kneeRight = _sensors[b.sensorID].pointSensorToScene(
+            var bodySensorId = b.sensorID;
+
+            var kneeRight = _sensors[bodySensorId].pointSensorToScene(
                 CommonUtils.pointKinectToUnity(b.skeleton.JointsPositions[JointType.KneeRight]));
-            var kneeLeft = _sensors[b.sensorID].pointSensorToScene(
+            var kneeLeft = _sensors[bodySensorId].pointSensorToScene(
                 CommonUtils.pointKinectToUnity(b.skeleton.JointsPositions[JointType.KneeLeft]));
 
 
             var trackingStateKneeRight = b.skeleton.TrackingStateKneeRight;
             var trackingStateKneeLeft  = b.skeleton.TrackingStateKneeLeft;
 
-            Debug.Log("h id = " + h.ID + ", b.sensorID = " + b.sensorID + ", kneeRight : x = " + kneeRight.x + ", y = " + kneeRight.y + ", z = " + kneeRight.z);
+            Debug.Log("h id = " + h.ID + ", b.sensorID = " + bodySensorId + ", kneeRight : x = " + kneeRight.x + ", y = " + kneeRight.y + ", z = " + kneeRight.z);
 
-            RightKneesInfo.Add(h.ID + "_" + b.ID, new KneesInfo
-            {
-                IdHuman =  h.ID,
-                IdBody = b.ID,
-                Pos = kneeRight,
-                Track = (trackingStateKneeRight == TrackingState.Tracked)
-            });
+            var key = h.ID + "_" + bodySensorId;
+            if (RightKneesInfo.ContainsKey(key) && LeftKneesInfo.ContainsKey(key)) continue;
 
-            LeftKneesInfo.Add(h.ID + "_" + b.ID, new KneesInfo
+            RightKneesInfo.Add(key, new KneesInfo
             {
                 IdHuman = h.ID,
-                IdBody = b.ID,
+                IdBody  = bodySensorId,
+                Pos     = kneeRight,
+                Track   = (trackingStateKneeRight == TrackingState.Tracked)
+            });
+
+            LeftKneesInfo.Add(key, new KneesInfo
+            {
+                IdHuman = h.ID,
+                IdBody = bodySensorId,
                 Pos = kneeLeft,
                 Track = (trackingStateKneeLeft == TrackingState.Tracked)
             });
@@ -449,7 +454,7 @@ public class Tracker : MonoBehaviour
                 MessageSeparators.L2 +
                 "TrackingKneeLeft"  + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(kneeLeft)  + MessageSeparators.L5 + trackingStateKneeLeft +
                 MessageSeparators.L2;
-           
+
             // if (index + 1 < h.bodies.Count) mensagem += MessageSeparators.L2;
 
             kneeRightList.Add(kneeRight);
