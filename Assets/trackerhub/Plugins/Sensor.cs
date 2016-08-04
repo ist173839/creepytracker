@@ -98,13 +98,14 @@ public class Sensor
 		lastCloud.setToView ();
 	}
 
-	internal void updateBodies ()
+	internal void UpdateBodies ()
 	{
+        BodiesMessage bodiesMessage = lastBodiesMessage;
 
-		BodiesMessage bodiesMessage = lastBodiesMessage;
+        //Debug.Log("bodiesMessage = " + bodiesMessage.Message);
 
-		if (bodiesMessage == null)
-			return;
+
+		if (bodiesMessage == null) return;
 
 		foreach (KeyValuePair<string, SensorBody> sb in bodies) {
 			sb.Value.updated = false;

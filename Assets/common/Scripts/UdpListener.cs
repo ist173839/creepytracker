@@ -49,7 +49,11 @@ public class UdpListener : MonoBehaviour {
             _stringsToParse.RemoveAt(0);
 			if(stringToParse != null){
 				string[] splitmsg = stringToParse.Split (MessageSeparators.L0);
-				if(splitmsg[0] == "BodiesMessage"){
+				if(splitmsg[0] == "BodiesMessage")
+                {
+
+                   // Debug.Log("B = " + splitmsg[1]);
+
 					try
             		{
 						BodiesMessage b = new BodiesMessage(splitmsg[1]);

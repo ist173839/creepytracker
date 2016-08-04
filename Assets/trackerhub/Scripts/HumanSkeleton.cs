@@ -168,8 +168,9 @@ public class HumanSkeleton : MonoBehaviour
 				Vector3 projectedLastForward = new Vector3 (lastForward.x, 0, lastForward.z);
 
 				if (Vector3.Angle (projectedLastForward, projectedForward) > 90)
- {                //if (Vector3.Angle(projectedLastForward, -projectedForward) < Vector3.Angle(projectedLastForward, projectedForward)) // the same as above
-					mirror = !mirror;
+                //if (Vector3.Angle(projectedLastForward, -projectedForward) < Vector3.Angle(projectedLastForward, projectedForward)) // the same as above
+                {
+                    mirror = !mirror;
 					forward = CalcUnfilteredForward ();
 					projectedForward = new Vector3 (forward.x, 0, forward.z);
 				}
@@ -177,7 +178,7 @@ public class HumanSkeleton : MonoBehaviour
 				// Front for sure?
 
 				Vector3 elbowHand1 = tracker.GetJointPosition (ID, JointType.HandRight) - tracker.GetJointPosition (ID, JointType.ElbowRight);
-				Vector3 elbowHand2 = tracker.GetJointPosition (ID, JointType.HandLeft) - tracker.GetJointPosition (ID, JointType.ElbowLeft);
+				Vector3 elbowHand2 = tracker.GetJointPosition (ID, JointType.HandLeft)  - tracker.GetJointPosition (ID, JointType.ElbowLeft);
 
 				if (Vector3.Angle (elbowHand1, -projectedForward) < 30 || Vector3.Angle (elbowHand2, -projectedForward) < 30) {
 					mirror = !mirror;

@@ -55,7 +55,7 @@ public class MyKnees : MonoBehaviour {
 
         foreach (var id in idList)
         {
-            //idUpdateList.Add(id);
+            //idUpdateList.Add(idHuman);
             if (GameObject.Find(id)) continue;
 
             var human = new GameObject { name = id };
@@ -64,8 +64,18 @@ public class MyKnees : MonoBehaviour {
             _humanList.Add(human);
             _idList.Add(id);
 
-            CreateKnees(id, Knee.Right, human.transform);
-            CreateKnees(id, Knee.Left,  human.transform);
+           
+            var body =  _localTracker.GetHuman(int.Parse(id)).bodies;
+            foreach (var b in body)
+            {
+                var newBody = new GameObject { name = "Body " + b.ID };
+                newBody.transform.parent = human.transform;
+
+                CreateKnees(id, b.ID, Knee.Right, newBody.transform);
+                CreateKnees(id, b.ID, Knee.Left,  newBody.transform);
+            }
+
+           
 
         }
 
@@ -91,11 +101,11 @@ public class MyKnees : MonoBehaviour {
         
     }
 
-    private void UpdateKnees(List<KneesInfo> theKnees, Knee thisKnee)
+    private void UpdateKnees(Dictionary<string, KneesInfo> theKnees, Knee thisKnee)
     {
         foreach (var kneesInfo in theKnees)
         {
-            var kneeName = kneesInfo.Id + "_" + thisKnee;
+            var kneeName = kneesInfo.Value.IdHuman + "_" + kneesInfo.Value.IdBody +"_" + thisKnee;
 
             var knee = GameObject.Find(kneeName);
             if (knee == null)
@@ -104,21 +114,21 @@ public class MyKnees : MonoBehaviour {
                 continue;
             }
 
-            knee.transform.position = kneesInfo.Pos;
+            knee.transform.position = kneesInfo.Value.Pos;
             
-            knee.GetComponent<Renderer>().material.color = kneesInfo.Track ? _colorTrack : _colorInferred;
+            knee.GetComponent<Renderer>().material.color = kneesInfo.Value.Track ? _colorTrack : _colorInferred;
         }
     }
 
 
-    private static GameObject CreateKnees(string id, Knee knee, Transform parent)
+    private static GameObject CreateKnees(string idHuman, string idBody, Knee knee, Transform parent)
     {
-        return MyCreateSphere(id + "_" + knee, parent, Color.white);
+        return MyCreateSphere(idHuman + "_" + idBody + "_" + knee, parent, Color.white);
     }
 
     private GameObject CreateKnees(KneesInfo info, Knee knee, Transform parent)
     {
-        var nameKnee = info.Id.ToString() + "_" + knee;
+        var nameKnee = info.IdHuman.ToString() + "_" + knee;
 
         var infoColor = info.Track ? _colorTrack : _colorInferred;
 
@@ -127,15 +137,20 @@ public class MyKnees : MonoBehaviour {
         return MyCreateSphere(nameKnee, pos, parent, infoColor);
     }
 
-    private string GetId(string nameKnee)
+    private string GetIdHuman(string nameKnee)
     {
         char[] del = { '_' };
         return nameKnee.Split(del)[0];
     }
-    private string GetKnee(string nameKnee)
+    private string GetIdBody(string nameKnee)
     {
         char[] del = { '_' };
         return nameKnee.Split(del)[1];
+    }
+    private string GetKnee(string nameKnee)
+    {
+        char[] del = { '_' };
+        return nameKnee.Split(del)[2];
     }
 
     private static GameObject MyCreateSphere(string name, Vector3 position, Transform parent, float scale = 0.1f)

@@ -19,7 +19,8 @@ public enum CalibrationProcess
 
 public struct KneesInfo
 {
-    public int Id;
+    public int IdHuman;
+    public string IdBody;
     public Vector3 Pos;
     public bool Track;
 }
@@ -74,8 +75,11 @@ public class Tracker : MonoBehaviour
 	public bool ColorHumans;
     
 
-    public List<KneesInfo> RightKneesInfo;
-    public List<KneesInfo> LeftKneesInfo;
+    //public List<KneesInfo> RightKneesInfo;
+    //public List<KneesInfo> LeftKneesInfo;
+
+    public Dictionary<string, KneesInfo> RightKneesInfo;
+    public Dictionary<string, KneesInfo> LeftKneesInfo;
 
     public int CountHuman;
 
@@ -95,10 +99,9 @@ public class Tracker : MonoBehaviour
         
         _loadConfig();
         _loadSavedSensors();
-
-
-        RightKneesInfo = new List<KneesInfo>();
-        LeftKneesInfo  = new List<KneesInfo>();
+        
+        RightKneesInfo = new Dictionary<string, KneesInfo>();
+        LeftKneesInfo  = new Dictionary<string, KneesInfo>();
         IdList         = new List<string>();
 
         CountHuman = 0;
@@ -108,15 +111,15 @@ public class Tracker : MonoBehaviour
 	void Update ()
 	{
 
-        RightKneesInfo = new List<KneesInfo>();
-        LeftKneesInfo  = new List<KneesInfo>();
+        RightKneesInfo = new Dictionary<string, KneesInfo>();
+        LeftKneesInfo  = new Dictionary<string, KneesInfo>();
         IdList = new List<string>();
 
         if (Input.GetKeyDown (KeyCode.C))
 			ColorHumans = !ColorHumans;
 
 		foreach (Sensor s in _sensors.Values) {
-			s.updateBodies ();
+			s.UpdateBodies ();
 		}
 
 		MergeHumans ();
@@ -147,14 +150,14 @@ public class Tracker : MonoBehaviour
         foreach (Human h in _humans.Values)
         {
 
-            IdList.Add(h.ID.ToString());
+             IdList.Add(h.ID.ToString());
             // udpate Human Skeleton
             h.updateSkeleton ();
            
             // get PDU
             try
-			{
-			    strToSend += MessageSeparators.L1 + h.getPDU() + GetKnees(h);
+            {
+                strToSend += MessageSeparators.L1 + h.getPDU() + GetKnees(h);
 			}
 			catch (Exception e)
             {
@@ -175,6 +178,7 @@ public class Tracker : MonoBehaviour
             }
 		}
 
+        //Debug.Log("Send = " + strToSend);
         _udpBroadcast.Send (strToSend);
         SaveRecordServer(strToSend);
 
@@ -207,24 +211,22 @@ public class Tracker : MonoBehaviour
 		}
 	}
 
-    //private string GetExtraInfo()
-    //{
-    //    string extra = null;
-
-    //    foreach (var h in _humans)
-    //    {
-    //        extra = h.Value.
-    //        //h.Value.Skeleton
-
-    //    }
 
 
+    public Dictionary<int, Human> GetHumans()
+    {
+        return _humans;
+    }
 
-    //    return extra;
-    //}
+
+    public  Human GetHuman(int id)
+    {
+        return _humans[id];
+    }
 
 
-	private void MergeHumans ()
+
+    private void MergeHumans ()
 	{
 		List<SensorBody> aloneBodies = new List<SensorBody> ();
 
@@ -409,6 +411,10 @@ public class Tracker : MonoBehaviour
         var kneeRightList = new List<Vector3>();
         var kneeLeftList  = new List<Vector3>();
 
+
+        Debug.Log("1  kneeRightList.Count = " + kneeRightList.Count);
+        Debug.Log("1  kneeLeftList.Count = " + kneeLeftList.Count);
+
         foreach (var b in h.bodies)
         {
             var kneeRight = _sensors[b.sensorID].pointSensorToScene(
@@ -418,18 +424,22 @@ public class Tracker : MonoBehaviour
 
 
             var trackingStateKneeRight = b.skeleton.TrackingStateKneeRight;
-            var trackingStateKneeLeft = b.skeleton.TrackingStateKneeLeft;
+            var trackingStateKneeLeft  = b.skeleton.TrackingStateKneeLeft;
 
-            RightKneesInfo.Add(new KneesInfo
+            Debug.Log("h id = " + h.ID + ", b.sensorID = " + b.sensorID + ", kneeRight : x = " + kneeRight.x + ", y = " + kneeRight.y + ", z = " + kneeRight.z);
+
+            RightKneesInfo.Add(h.ID + "_" + b.ID, new KneesInfo
             {
-                Id =  h.ID,
+                IdHuman =  h.ID,
+                IdBody = b.ID,
                 Pos = kneeRight,
                 Track = (trackingStateKneeRight == TrackingState.Tracked)
             });
 
-            LeftKneesInfo.Add(new KneesInfo
+            LeftKneesInfo.Add(h.ID + "_" + b.ID, new KneesInfo
             {
-                Id = h.ID,
+                IdHuman = h.ID,
+                IdBody = b.ID,
                 Pos = kneeLeft,
                 Track = (trackingStateKneeLeft == TrackingState.Tracked)
             });
@@ -445,14 +455,27 @@ public class Tracker : MonoBehaviour
             kneeRightList.Add(kneeRight);
             kneeLeftList.Add(kneeLeft);
         }
-        
-        var meanRightList = GetMeanList(kneeRightList);
-        var meanKneeLeft  = GetMeanList(kneeLeftList);
+
+        Debug.Log("2  kneeRightList.Count = " + kneeRightList.Count);
+        Debug.Log("2  kneeLeftList.Count = " + kneeLeftList.Count);
+
+
+        var meanKneeRight = GetMeanList(kneeRightList);
+        var meanKneeLeft = GetMeanList(kneeLeftList);
 
         mensagem +=
-            "MeanKneeRight" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(meanRightList) +
+            "MeanKneeRight" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(meanKneeRight) +
             MessageSeparators.L2 +
-            "MeanKneeLeft"  + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(meanKneeLeft);
+            "MeanKneeLeft" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(meanKneeLeft);
+
+        var meanTrackKneeRight = GetMeanTrackList(RightKneesInfo);
+        var meanTrackKneeLeft = GetMeanTrackList(LeftKneesInfo);
+
+        mensagem +=
+           "MeanTrackKneeRight" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(meanTrackKneeRight) +
+           MessageSeparators.L2 +
+           "MeanTrackKneeLeft" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(meanTrackKneeLeft);
+        
 
         return mensagem;
     }
@@ -464,6 +487,23 @@ public class Tracker : MonoBehaviour
         return meanResult;
     }
 
+    private static Vector3 GetMeanTrackList(Dictionary<string, KneesInfo> meanList)
+    {
+        var meanResult = Vector3.zero;
+        int trackCount = 0;
+
+        foreach (var info in meanList)
+        {
+            if (info.Value.Track)
+            {
+                trackCount++;
+                meanResult = meanResult + info.Value.Pos;
+            }
+            
+        }
+        meanResult /= trackCount;
+        return meanResult;
+    }
 
     // < Change >
     /// <summary>
@@ -512,8 +552,13 @@ public class Tracker : MonoBehaviour
 
 	internal void SetNewFrame (BodiesMessage bodies)
 	{
-		if (!Sensors.ContainsKey (bodies.KinectId)) {
+        //Debug.Log("bodies = " + bodies.Message + ", KinectId = " + bodies.KinectId);
+
+
+        if (!Sensors.ContainsKey (bodies.KinectId))
+        {
 			Vector3 position = new Vector3 (Mathf.Ceil (Sensors.Count / 2.0f) * (Sensors.Count % 2 == 0 ? -1.0f : 1.0f), 1, 0);
+            
 
 			Sensors [bodies.KinectId] = new Sensor (bodies.KinectId, (GameObject)Instantiate (Resources.Load ("Prefabs/KinectSensorPrefab"), position, Quaternion.identity));
 		}
@@ -672,7 +717,7 @@ public class Tracker : MonoBehaviour
 
 		aux = ConfigProperties.Load (filePath, "udp.sendinterval");
 		if (aux != "") {
-			TrackerProperties.Instance.confidenceTreshold = int.Parse (aux);
+			TrackerProperties.Instance.sendInterval = int.Parse (aux);
 		}
 
 		/*aux = ConfigProperties.load (filePath, "tracker.filtergain");
@@ -764,6 +809,23 @@ public class Tracker : MonoBehaviour
     }
 }
 /*
+ * 
+ *   
+ *    //private string GetExtraInfo()
+    //{
+    //    string extra = null;
+
+    //    foreach (var h in _humans)
+    //    {
+    //        extra = h.Value.
+    //        //h.Value.Skeleton
+
+    //    }
+
+
+
+    //    return extra;
+    //}
  
      
     // < Change >
