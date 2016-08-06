@@ -14,6 +14,10 @@ public class MyKnees : MonoBehaviour {
 
     private List<GameObject> _humanList;
 
+
+    private List<string> _rightKneeList;
+    private List<string> _leftKneeList;
+
     private List<string> _idList;
 
     private Tracker _localTracker;
@@ -28,7 +32,10 @@ public class MyKnees : MonoBehaviour {
     void Start () {
         _localTracker = gameObject.GetComponent<Tracker>();
 
-        _humanList = new List<GameObject>();
+        _humanList     = new List<GameObject>();
+        _rightKneeList = new List<string>();
+        _leftKneeList  = new List<string>();
+
         _idList    = new List<string>();
 
         _colorTrack = Color.blue;
@@ -69,8 +76,12 @@ public class MyKnees : MonoBehaviour {
                 var newBody = new GameObject { name = "Body_" + b.sensorID };
                 newBody.transform.parent = human.transform;
 
-                CreateKnees(id, b.sensorID, Knee.Right, newBody.transform);
-                CreateKnees(id, b.sensorID, Knee.Left,  newBody.transform);
+                var newRightKnee = CreateKnees(id, b.sensorID, Knee.Right, newBody.transform);
+                var newLeftKnee = CreateKnees(id, b.sensorID, Knee.Left,  newBody.transform);
+
+                _rightKneeList.Add(newRightKnee.name);
+                _leftKneeList.Add(newLeftKnee.name);
+
             }
         }
 
@@ -80,12 +91,9 @@ public class MyKnees : MonoBehaviour {
         {
 
             var obj = GameObject.Find(except);
-            
-            for (var i = 0; i < obj.transform.childCount; i++)
-            {
-                Destroy(obj.transform.GetChild(i).gameObject);
-            }
-            
+
+            KillAllChildren(obj);
+
             _humanList.Remove(obj);
             _idList.Remove(except);
             Destroy(obj);
@@ -98,9 +106,15 @@ public class MyKnees : MonoBehaviour {
 
     private void UpdateKnees(Dictionary<string, KneesInfo> theKnees, Knee thisKnee)
     {
+
+        var tempKneeList =  new List<string>();
+  
+
         foreach (var kneesInfo in theKnees)
         {
             var kneeName = kneesInfo.Value.IdHuman + "_" + kneesInfo.Value.IdBody + "_" + thisKnee;
+
+            tempKneeList.Add(kneeName);
 
             var knee = GameObject.Find(kneeName);
             if (knee == null)
@@ -112,6 +126,41 @@ public class MyKnees : MonoBehaviour {
             knee.transform.position = kneesInfo.Value.Pos;
             
             knee.GetComponent<Renderer>().material.color = kneesInfo.Value.Track ? _colorTrack : _colorInferred;
+        }
+
+        var listExcept = thisKnee == Knee.Right ? _rightKneeList.Except(tempKneeList).ToList() : _leftKneeList.Except(tempKneeList).ToList();
+        
+        foreach (var except in listExcept)
+        {
+
+            var obj = GameObject.Find(except);
+
+            KillAllChildren(obj);
+
+            if (thisKnee == Knee.Right)
+            {
+                _rightKneeList.Remove(obj.name);
+            }
+            else
+            {
+                _leftKneeList.Remove(obj.name);
+            }
+
+            //_humanList.Remove(obj);
+            //_idList.Remove(except);
+            
+            Destroy(obj);
+        }
+
+
+
+    }
+
+    private static void KillAllChildren(GameObject obj)
+    {
+        for (var i = 0; i < obj.transform.childCount; i++)
+        {
+            Destroy(obj.transform.GetChild(i).gameObject);
         }
     }
 
