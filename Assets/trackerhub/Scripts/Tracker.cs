@@ -219,7 +219,7 @@ public class Tracker : MonoBehaviour
     }
 
 
-    public  Human GetHuman(int id)
+    public Human GetHuman(int id)
     {
         return _humans[id];
     }

@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 [RequireComponent(typeof(Tracker))]
 public class MyKnees : MonoBehaviour {
@@ -43,6 +44,9 @@ public class MyKnees : MonoBehaviour {
     public bool Track;
 
 
+    private Vector3? _lastRigthPosition;
+    private Vector3? _lastLeftPosition;
+
     // Use this for initialization
     void Start () {
         _localTracker = gameObject.GetComponent<Tracker>();
@@ -70,6 +74,10 @@ public class MyKnees : MonoBehaviour {
 
         _humans = new GameObject { name = "Humans" };
         _humans.transform.parent = transform;
+
+
+        _lastRigthPosition = null;
+        _lastLeftPosition  = null;
     }
 	
 	// Update is called once per frame
@@ -139,8 +147,21 @@ public class MyKnees : MonoBehaviour {
         UpdateKnees(rightKneesInfo, _idList, Knee.Right, OtherKnee.Mean);
         UpdateKnees(leftKneesInfo,  _idList, Knee.Left,  OtherKnee.Mean);
 
-        //UpdateKnees(rightKneesInfo, _idList, Knee.Right, OtherKnee.Close);
-        //UpdateKnees(leftKneesInfo,  _idList, Knee.Left,  OtherKnee.Close);
+
+
+
+	    //if (_lastRigthPosition == null)
+	    //{
+
+     //       _lastRigthPosition =  
+
+
+     //   }
+     ////  ;
+     //   _lastLeftPosition = null;
+
+        UpdateKnees(rightKneesInfo, _idList, Knee.Right, OtherKnee.Close);
+        UpdateKnees(leftKneesInfo,  _idList, Knee.Left,  OtherKnee.Close);
 
 
 
@@ -158,15 +179,31 @@ public class MyKnees : MonoBehaviour {
                 Debug.Log("Knee not found");
                 continue;
             }
-
-
-            if (otherKnee == OtherKnee.Mean)
+            
+            switch (otherKnee)
             {
-                knee.transform.position = GetMeanList(theKnees, Track);
+                case OtherKnee.Mean:
+                    knee.transform.position = GetMeanList(theKnees, Track);
+                    break;
+                case OtherKnee.Close:
+                    switch (thisKnee)
+                    {
+                        case Knee.Right:
+                            knee.transform.position = CloseKnee(theKnees, _localTracker, Knee.Right, Track, idHuman, _lastRigthPosition);
+                            break;
+                        case Knee.Left:
+                            knee.transform.position = CloseKnee(theKnees, _localTracker, Knee.Left, Track, idHuman, _lastLeftPosition);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException("thisKnee", thisKnee, null);
+                    }
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("otherKnee", otherKnee, null);
             }
 
 
-         //   knee.transform.position = kneesInfo.Value.Pos.Value;
+            //   knee.transform.position = kneesInfo.Value.Pos.Value;
 
             knee.GetComponent<Renderer>().material.color = otherKnee == OtherKnee.Mean ? _colorMean : _colorCloser;
         }
@@ -174,7 +211,7 @@ public class MyKnees : MonoBehaviour {
 
     private void UpdateKnees(Dictionary<string, KneesInfo> theKnees, Knee thisKnee)
     {
-        var tempKneeList =  new List<string>();
+        var tempKneeList = new List<string>();
 
         foreach (var kneesInfo in theKnees)
         {
@@ -190,12 +227,12 @@ public class MyKnees : MonoBehaviour {
             }
 
             knee.transform.position = kneesInfo.Value.Pos.Value;
-            
+
             knee.GetComponent<Renderer>().material.color = kneesInfo.Value.Track ? _colorTrack : _colorInferred;
         }
 
         var listExcept = thisKnee == Knee.Right ? _rightKneeList.Except(tempKneeList).ToList() : _leftKneeList.Except(tempKneeList).ToList();
-        
+
         foreach (var except in listExcept)
         {
             var obj = GameObject.Find(except);
@@ -254,31 +291,50 @@ public class MyKnees : MonoBehaviour {
     }
 
 
-    private static Vector3? CloseKnee(Vector3 lastPosition, List<KneesInfo> kneesList, bool track)
+    private static Vector3 CloseKnee(Dictionary<string, KneesInfo> kneesList, Tracker localTracker, Knee thisKnee, bool track, string idHuman, Vector3? lastPosition)
     {
-        var res = lastPosition;
+        var human = localTracker.GetHuman(Convert.ToInt32(idHuman));
+
+        Vector3 position;
+        if (lastPosition != null) position = lastPosition.Value;
+        else
+        {
+            switch (thisKnee)
+            {
+                case Knee.Right:
+                    position = human.Skeleton.GetRightKnee();
+                    break;
+                case Knee.Left:
+                    position = human.Skeleton.GetLeftKnee();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("thisKnee", thisKnee, null);
+            }
+        }
+
+        var res = new Vector3();
         var diff = float.MaxValue;
-        var t = 0;
+        //var t = 0;
         foreach (var info in kneesList)
         {
             if (track)
             {
-                if (!info.Track) continue;
-                t++;
-                var d = (info.Pos.Value - lastPosition).magnitude;
+                if (!info.Value.Track) continue;
+                //t++;
+                var d = (info.Value.Pos.Value - position).magnitude;
                 if (!(d < diff)) continue;
                 diff = d;
-                res = info.Pos.Value;
+                res = info.Value.Pos.Value;
             }
             else
             {
-                var d = (info.Pos.Value - lastPosition).magnitude;
+                var d = (info.Value.Pos.Value - position).magnitude;
                 if (!(d < diff)) continue;
                 diff = d;
-                res = info.Pos.Value;
+                res = info.Value.Pos.Value;
             }
         }
-        if ((track && t == 0) || kneesList.Count == 0 || Math.Abs(diff - float.MaxValue) < 0) return null;
+        // if ((track && t == 0) || kneesList.Count == 0 || Math.Abs(diff - float.MaxValue) < 0) return null;
 
         return res;
     }

@@ -280,7 +280,7 @@ public class HumanSkeleton : MonoBehaviour
 		}
 	}
 
-	internal string getPDU ()
+	internal string GetPdu ()
 	{
 		if (canSend) {
 			string pdu = BodyPropertiesTypes.UID.ToString () + MessageSeparators.SET + ID + MessageSeparators.L2;
