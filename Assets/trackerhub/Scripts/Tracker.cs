@@ -21,7 +21,7 @@ public struct KneesInfo
 {
     public int IdHuman;
     public string IdBody;
-    public Vector3 Pos;
+    public AdaptiveDoubleExponentialFilterVector3 Pos;
     public bool Track;
 }
 
@@ -412,17 +412,24 @@ public class Tracker : MonoBehaviour
         var kneeLeftList  = new List<Vector3>();
 
 
-        Debug.Log("1  kneeRightList.Count = " + kneeRightList.Count);
-        Debug.Log("1  kneeLeftList.Count = "  + kneeLeftList.Count);
+        //Debug.Log("1  kneeRightList.Count = " + kneeRightList.Count);
+        //Debug.Log("1  kneeLeftList.Count = "  + kneeLeftList.Count);
 
         foreach (var b in h.bodies)
         {
             var bodySensorId = b.sensorID;
 
-            var kneeRight = _sensors[bodySensorId].pointSensorToScene(
-                CommonUtils.pointKinectToUnity(b.skeleton.JointsPositions[JointType.KneeRight]));
-            var kneeLeft = _sensors[bodySensorId].pointSensorToScene(
-                CommonUtils.pointKinectToUnity(b.skeleton.JointsPositions[JointType.KneeLeft]));
+            var kneeRight = new AdaptiveDoubleExponentialFilterVector3
+            {
+                Value = _sensors[bodySensorId].pointSensorToScene(
+                    CommonUtils.pointKinectToUnity(b.skeleton.JointsPositions[JointType.KneeRight]))
+            };
+
+            var kneeLeft = new AdaptiveDoubleExponentialFilterVector3
+            {
+                Value = _sensors[bodySensorId].pointSensorToScene(
+                    CommonUtils.pointKinectToUnity(b.skeleton.JointsPositions[JointType.KneeLeft]))
+            };
 
 
             var trackingStateKneeRight = b.skeleton.TrackingStateKneeRight;
@@ -450,15 +457,15 @@ public class Tracker : MonoBehaviour
             });
 
             mensagem +=
-                "TrackingKneeRight" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(kneeRight) + MessageSeparators.L5 + trackingStateKneeRight +
+                "TrackingKneeRight" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(kneeRight.Value) + MessageSeparators.L5 + trackingStateKneeRight +
                 MessageSeparators.L2 +
-                "TrackingKneeLeft"  + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(kneeLeft)  + MessageSeparators.L5 + trackingStateKneeLeft +
+                "TrackingKneeLeft"  + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(kneeLeft.Value)  + MessageSeparators.L5 + trackingStateKneeLeft +
                 MessageSeparators.L2;
 
             // if (index + 1 < h.bodies.Count) mensagem += MessageSeparators.L2;
 
-            kneeRightList.Add(kneeRight);
-            kneeLeftList.Add(kneeLeft);
+            kneeRightList.Add(kneeRight.Value);
+            kneeLeftList.Add(kneeLeft.Value);
         }
 
         Debug.Log("2  kneeRightList.Count = " + kneeRightList.Count);
@@ -502,7 +509,7 @@ public class Tracker : MonoBehaviour
             if (info.Value.Track)
             {
                 trackCount++;
-                meanResult = meanResult + info.Value.Pos;
+                meanResult = meanResult + info.Value.Pos.Value;
             }
             
         }

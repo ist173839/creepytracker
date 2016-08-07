@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,11 +13,19 @@ public class MyKnees : MonoBehaviour {
         Left
     }
 
+
+    public enum OtherKnee
+    {
+        Mean,
+        Close
+    }
+
     private List<GameObject> _humanList;
 
 
     private List<string> _rightKneeList;
     private List<string> _leftKneeList;
+    private List<string> _meanKneeList;
 
     private List<string> _idList;
 
@@ -25,7 +34,13 @@ public class MyKnees : MonoBehaviour {
     private Color _colorTrack;
     private Color _colorInferred;
 
+    private Color _colorMean;
+    private Color _colorCloser;
+
     private GameObject _humans;
+
+
+    public bool Track;
 
 
     // Use this for initialization
@@ -33,8 +48,11 @@ public class MyKnees : MonoBehaviour {
         _localTracker = gameObject.GetComponent<Tracker>();
 
         _humanList     = new List<GameObject>();
+
         _rightKneeList = new List<string>();
         _leftKneeList  = new List<string>();
+        _meanKneeList  = new List<string>();
+
 
         _idList    = new List<string>();
 
@@ -43,7 +61,13 @@ public class MyKnees : MonoBehaviour {
 
         _colorInferred = Color.green;
         _colorInferred.a = 0.5f;
-        
+
+        _colorMean = Color.yellow;
+        _colorMean.a = 0.5f;
+
+        _colorCloser = Color.black;
+        _colorCloser.a = 0.5f;
+
         _humans = new GameObject { name = "Humans" };
         _humans.transform.parent = transform;
     }
@@ -68,8 +92,7 @@ public class MyKnees : MonoBehaviour {
 
             _humanList.Add(human);
             _idList.Add(id);
-
-           
+            
             var body =  _localTracker.GetHuman(int.Parse(id)).bodies;
             foreach (var b in body)
             {
@@ -83,17 +106,27 @@ public class MyKnees : MonoBehaviour {
                 _leftKneeList.Add(newLeftKnee.name);
 
             }
+
+            var newMean = new GameObject { name = "Mean" };
+            newMean.transform.parent = human.transform;
+
+            CreateKnees(human.name, OtherKnee.Mean, Knee.Right, newMean.transform);
+            CreateKnees(human.name, OtherKnee.Mean, Knee.Left,  newMean.transform);
+
+            var newClose = new GameObject { name = "Close" };
+            newClose.transform.parent = human.transform;
+
+            CreateKnees(human.name, OtherKnee.Close, Knee.Right, newClose.transform);
+            CreateKnees(human.name, OtherKnee.Close, Knee.Left,  newClose.transform);
+            
         }
 
         var listExcept = _idList.Except(idList).ToList();
         
         foreach (var except in listExcept)
         {
-
             var obj = GameObject.Find(except);
-
             KillAllChildren(obj);
-
             _humanList.Remove(obj);
             _idList.Remove(except);
             Destroy(obj);
@@ -101,14 +134,47 @@ public class MyKnees : MonoBehaviour {
 
         UpdateKnees(rightKneesInfo, Knee.Right);
         UpdateKnees(leftKneesInfo,  Knee.Left);
-        
+
+
+        UpdateKnees(rightKneesInfo, _idList, Knee.Right, OtherKnee.Mean);
+        UpdateKnees(leftKneesInfo,  _idList, Knee.Left,  OtherKnee.Mean);
+
+        //UpdateKnees(rightKneesInfo, _idList, Knee.Right, OtherKnee.Close);
+        //UpdateKnees(leftKneesInfo,  _idList, Knee.Left,  OtherKnee.Close);
+
+
+
+    }
+
+    private void UpdateKnees(Dictionary<string, KneesInfo> theKnees, List<string> idList, Knee thisKnee, OtherKnee otherKnee)
+    {
+        foreach (var idHuman in idList)
+        {
+            var kneeName = idHuman + "_" + otherKnee + "_" + thisKnee;
+
+            var knee = GameObject.Find(kneeName);
+            if (knee == null)
+            {
+                Debug.Log("Knee not found");
+                continue;
+            }
+
+
+            if (otherKnee == OtherKnee.Mean)
+            {
+                knee.transform.position = GetMeanList(theKnees, Track);
+            }
+
+
+         //   knee.transform.position = kneesInfo.Value.Pos.Value;
+
+            knee.GetComponent<Renderer>().material.color = otherKnee == OtherKnee.Mean ? _colorMean : _colorCloser;
+        }
     }
 
     private void UpdateKnees(Dictionary<string, KneesInfo> theKnees, Knee thisKnee)
     {
-
         var tempKneeList =  new List<string>();
-  
 
         foreach (var kneesInfo in theKnees)
         {
@@ -123,7 +189,7 @@ public class MyKnees : MonoBehaviour {
                 continue;
             }
 
-            knee.transform.position = kneesInfo.Value.Pos;
+            knee.transform.position = kneesInfo.Value.Pos.Value;
             
             knee.GetComponent<Renderer>().material.color = kneesInfo.Value.Track ? _colorTrack : _colorInferred;
         }
@@ -132,28 +198,51 @@ public class MyKnees : MonoBehaviour {
         
         foreach (var except in listExcept)
         {
-
             var obj = GameObject.Find(except);
-
             KillAllChildren(obj);
-
-            if (thisKnee == Knee.Right)
+            switch (thisKnee)
             {
-                _rightKneeList.Remove(obj.name);
+                case Knee.Right:
+                    _rightKneeList.Remove(obj.name);
+                    break;
+                case Knee.Left:
+                    _leftKneeList.Remove(obj.name);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("thisKnee", thisKnee, null);
             }
-            else
-            {
-                _leftKneeList.Remove(obj.name);
-            }
-
-            //_humanList.Remove(obj);
-            //_idList.Remove(except);
-            
+            // _humanList.Remove(obj);
+            // _idList.Remove(except);
             Destroy(obj);
         }
+    }
 
+    /////////////////////////////////////////////
 
+    private static Vector3 GetMeanList(Dictionary<string, KneesInfo> meanList, bool track)
+    {
+        return track ? GetMeanTrackList(meanList) : GetMeanList(meanList);
+    }
 
+    private static Vector3 GetMeanList(Dictionary<string, KneesInfo> meanList)
+    {
+        var meanResult = meanList.Aggregate(Vector3.zero, (current, pair) => current + pair.Value.Pos.Value);
+        meanResult /= meanList.Count;
+        return meanResult;
+    }
+
+    private static Vector3 GetMeanTrackList(Dictionary<string, KneesInfo> meanList)
+    {
+        var meanResult = Vector3.zero;
+        var trackCount = 0;
+        foreach (var info in meanList)
+        {
+            if (!info.Value.Track) continue;
+            trackCount++;
+            meanResult = meanResult + info.Value.Pos.Value;
+        }
+        meanResult /= trackCount;
+        return meanResult;
     }
 
     private static void KillAllChildren(GameObject obj)
@@ -162,6 +251,43 @@ public class MyKnees : MonoBehaviour {
         {
             Destroy(obj.transform.GetChild(i).gameObject);
         }
+    }
+
+
+    private static Vector3? CloseKnee(Vector3 lastPosition, List<KneesInfo> kneesList, bool track)
+    {
+        var res = lastPosition;
+        var diff = float.MaxValue;
+        var t = 0;
+        foreach (var info in kneesList)
+        {
+            if (track)
+            {
+                if (!info.Track) continue;
+                t++;
+                var d = (info.Pos.Value - lastPosition).magnitude;
+                if (!(d < diff)) continue;
+                diff = d;
+                res = info.Pos.Value;
+            }
+            else
+            {
+                var d = (info.Pos.Value - lastPosition).magnitude;
+                if (!(d < diff)) continue;
+                diff = d;
+                res = info.Pos.Value;
+            }
+        }
+        if ((track && t == 0) || kneesList.Count == 0 || Math.Abs(diff - float.MaxValue) < 0) return null;
+
+        return res;
+    }
+
+
+    /////////////////////////////////////////////
+    private static GameObject CreateKnees(string idHuman, OtherKnee otherKneen, Knee knee, Transform parent)
+    {
+        return MyCreateSphere(idHuman + "_" + otherKneen + "_" + knee, parent, Color.white);
     }
 
 
@@ -178,22 +304,24 @@ public class MyKnees : MonoBehaviour {
 
         var pos = info.Pos;
 
-        return MyCreateSphere(nameKnee, pos, parent, infoColor);
+        return MyCreateSphere(nameKnee, pos.Value, parent, infoColor);
     }
 
     private string GetIdHuman(string nameKnee)
     {
-        char[] del = { '_' };
+        char[] del = {'_'};
         return nameKnee.Split(del)[0];
     }
+
     private string GetIdBody(string nameKnee)
     {
-        char[] del = { '_' };
+        char[] del = {'_'};
         return nameKnee.Split(del)[1];
     }
+
     private string GetKnee(string nameKnee)
     {
-        char[] del = { '_' };
+        char[] del = {'_'};
         return nameKnee.Split(del)[2];
     }
 
@@ -211,7 +339,7 @@ public class MyKnees : MonoBehaviour {
     {
         var gameObjectSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         gameObjectSphere.GetComponent<SphereCollider>().enabled = false;
-        gameObjectSphere.GetComponent<Renderer>().material = (Material)Instantiate(Resources.Load("Materials/Mt_Transparent"));
+        gameObjectSphere.GetComponent<Renderer>().material = (Material) Instantiate(Resources.Load("Materials/Mt_Transparent"));
         gameObjectSphere.transform.localScale = new Vector3(scale, scale, scale);
         gameObjectSphere.name = name;
 
@@ -224,7 +352,7 @@ public class MyKnees : MonoBehaviour {
 
         gameObjectSphere.GetComponent<SphereCollider>().enabled = false;
 
-        gameObjectSphere.GetComponent<Renderer>().material = (Material)Instantiate(Resources.Load("Materials/Mt_Transparent"));
+        gameObjectSphere.GetComponent<Renderer>().material = (Material) Instantiate(Resources.Load("Materials/Mt_Transparent"));
         gameObjectSphere.GetComponent<Renderer>().material.color = cor;
 
         gameObjectSphere.transform.localScale = new Vector3(scale, scale, scale);
@@ -239,7 +367,7 @@ public class MyKnees : MonoBehaviour {
     {
         var gameObjectSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         gameObjectSphere.GetComponent<SphereCollider>().enabled = false;
-        gameObjectSphere.GetComponent<Renderer>().material = (Material)Instantiate(Resources.Load("Materials/Mt_Transparent"));
+        gameObjectSphere.GetComponent<Renderer>().material = (Material) Instantiate(Resources.Load("Materials/Mt_Transparent"));
         gameObjectSphere.GetComponent<Renderer>().material.color = cor;
         gameObjectSphere.transform.localScale = new Vector3(scale, scale, scale);
         gameObjectSphere.transform.position = position;
@@ -247,7 +375,6 @@ public class MyKnees : MonoBehaviour {
 
         return gameObjectSphere;
     }
-    
 }
 
 /*
