@@ -117,9 +117,7 @@ public class Tracker : MonoBehaviour
 	void FixedUpdate ()
 	{
 
-        RightKneesInfo = new Dictionary<string, KneesInfo>();
-        LeftKneesInfo  = new Dictionary<string, KneesInfo>();
-        IdList = new List<string>();
+       
 
         if (Input.GetKeyDown (KeyCode.C))
 			ColorHumans = !ColorHumans;
@@ -230,6 +228,11 @@ public class Tracker : MonoBehaviour
 
     private string GetKnees(Human h)
     {
+        RightKneesInfo = new Dictionary<string, KneesInfo>();
+        LeftKneesInfo  = new Dictionary<string, KneesInfo>();
+        IdList         = new List<string>();
+
+
         // CommonUtils.convertVectorToStringRPC
         var mensagem = "";
         // if (!_humans.ContainsKey(h1)) return null;
@@ -263,11 +266,8 @@ public class Tracker : MonoBehaviour
             "MeanTrackKneeRight" + MessageSeparators.SET + stringMeanTrackKneeRight +
             MessageSeparators.L2 +
             "MeanTrackKneeLeft" + MessageSeparators.SET + stringMeanTrackKneeLeft;
-
-
-
-
-
+        
+        
         var closeKneeRight = CloseKnee(RightKneesInfo, h, Knee.Right, false, _lastRigthKneePosition);
         var closeKneeLeft  = CloseKnee(LeftKneesInfo,  h, Knee.Left,  false, _lastLeftKneePosition);
 
