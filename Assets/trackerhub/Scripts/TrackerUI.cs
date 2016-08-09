@@ -282,7 +282,7 @@ public class TrackerUI : MonoBehaviour
 			TrackerProperties.Instance.listenPort = int.Parse (GUI.TextField (new Rect (left, top, 50, 20), "" + TrackerProperties.Instance.listenPort));
 			left += 55;
 			if (GUI.Button (new Rect (left, top, 50, 25), "Reset")) {
-				_userTracker.resetListening ();
+				_userTracker.ResetListening ();
 				_userTracker.Save ();
 
 				DoNotify n = gameObject.GetComponent<DoNotify> ();
@@ -297,7 +297,7 @@ public class TrackerUI : MonoBehaviour
 			TrackerProperties.Instance.broadcastPort = int.Parse (GUI.TextField (new Rect (left, top, 50, 20), "" + TrackerProperties.Instance.broadcastPort));
 			left += 55;
 			if (GUI.Button (new Rect (left, top, 50, 25), "Reset")) {
-				_userTracker.resetBroadcast ();
+				_userTracker.ResetBroadcast ();
 				_userTracker.Save ();
 
 				DoNotify n = gameObject.GetComponent<DoNotify> ();

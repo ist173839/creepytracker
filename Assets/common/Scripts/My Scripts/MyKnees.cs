@@ -23,11 +23,8 @@ public enum OtherKnee
 [RequireComponent(typeof(Tracker))]
 public class MyKnees : MonoBehaviour {
 
-  
-
     private Dictionary<string, GameObject> _humanList;
-
-
+    
     private List<string> _rightKneeList;
     private List<string> _leftKneeList;
     private List<string> _meanKneeList;
