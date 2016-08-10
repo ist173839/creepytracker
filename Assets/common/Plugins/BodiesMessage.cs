@@ -35,6 +35,10 @@ public class Skeleton
     public Kinect.TrackingState TrackingStateKneeRight;
     public Kinect.TrackingState TrackingStateKneeLeft;
 
+    public bool IsMirrorBody;
+
+
+    private Vector3 lastForwardBody;
 
     public string ID
     {
@@ -51,6 +55,7 @@ public class Skeleton
     {
         JointsPositions = new Dictionary<Windows.Kinect.JointType, Vector3>();
         BodyProperties = new Dictionary<BodyPropertiesTypes, string>();
+        lastForwardBody = Vector3.zero;
     }
 
     public Skeleton(Kinect.Body body)
@@ -92,18 +97,24 @@ public class Skeleton
                     JointsPositions[((Windows.Kinect.JointType) Enum.Parse(typeof(Windows.Kinect.JointType), statement[0]))] = CommonUtils.convertRpcStringToVector3(statement[1]);
                 }
 
-                if (Enum.IsDefined(typeof(Kinect.TrackingState), statement[1]))
-                {
-                    if (statement[0] == "Tracking_" + Kinect.JointType.KneeRight.ToString())
-                    {
-                        TrackingStateKneeRight = (Windows.Kinect.TrackingState) Enum.Parse(typeof(Windows.Kinect.TrackingState), statement[1]);
-                    }
-                    else if (statement[0] == "Tracking_" + Kinect.JointType.KneeLeft.ToString())
-                    {
-                        TrackingStateKneeLeft = (Windows.Kinect.TrackingState)Enum.Parse(typeof(Windows.Kinect.TrackingState), statement[1]);
-                    }
-                
-                }
+                ExtraStatement(statement);
+            }
+        }
+    }
+
+    private void ExtraStatement(string[] statement)
+    {
+        if (Enum.IsDefined(typeof(Kinect.TrackingState), statement[1]))
+        {
+            if (statement[0] == "Tracking_" + Kinect.JointType.KneeRight.ToString())
+            {
+                TrackingStateKneeRight =
+                    (Windows.Kinect.TrackingState) Enum.Parse(typeof(Windows.Kinect.TrackingState), statement[1]);
+            }
+            else if (statement[0] == "Tracking_" + Kinect.JointType.KneeLeft.ToString())
+            {
+                TrackingStateKneeLeft =
+                    (Windows.Kinect.TrackingState) Enum.Parse(typeof(Windows.Kinect.TrackingState), statement[1]);
             }
         }
     }

@@ -130,13 +130,13 @@ public class HumanSkeleton : MonoBehaviour
 
 	}
 
-	private GameObject CreateSphere (string name, float scale = 0.1f)
+	private GameObject CreateSphere (string sphereName, float scale = 0.1f)
 	{
 		GameObject gameObjectSphere = GameObject.CreatePrimitive (PrimitiveType.Sphere);
 		gameObjectSphere.GetComponent<SphereCollider> ().enabled = false;
 		gameObjectSphere.transform.parent = transform;
 		gameObjectSphere.transform.localScale = new Vector3 (scale, scale, scale);
-		gameObjectSphere.name = name;
+		gameObjectSphere.name = sphereName;
 		return gameObjectSphere;
 	}
 
@@ -274,7 +274,8 @@ public class HumanSkeleton : MonoBehaviour
 				floorForwardGameObject.transform.position = new Vector3 (pos.x, 0.001f, pos.z);
 				floorForwardGameObject.transform.parent = transform;
 
-			} catch (Exception e) {
+			} catch (Exception e)
+            {
 				Debug.Log (e.Message + "\n" + e.StackTrace);
 			}
 		}
@@ -329,14 +330,28 @@ public class HumanSkeleton : MonoBehaviour
 		return headKalman.Value;
 	}
 
-    public Vector3 GetRightKnee()
+
+    public Vector3 GetKnee(Knee knee)
     {
-        return rightKneeKalman.Value;
-    }
-    public Vector3 GetLeftKnee()
-    {
-        return leftKneeKalman.Value;
+        switch (knee)
+        {
+            case Knee.Right:
+                return GetRightKnee();
+                
+            case Knee.Left:
+                return GetLeftKnee();
+            default:
+                throw new ArgumentOutOfRangeException("knee", knee, null);
+        }
     }
 
+    private Vector3 GetRightKnee()
+    {
+        return rightKneeKalman == null ? tracker.GetJointPosition(ID, JointType.KneeRight) : rightKneeKalman.Value;
+    }
 
+    private Vector3 GetLeftKnee()
+    {
+        return leftKneeKalman == null ? tracker.GetJointPosition(ID, JointType.KneeLeft) : leftKneeKalman.Value;
+    }
 }

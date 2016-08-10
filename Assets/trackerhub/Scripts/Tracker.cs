@@ -21,7 +21,7 @@ public struct KneesInfo
 {
     public int IdHuman;
     public string IdBody;
-    public AdaptiveDoubleExponentialFilterVector3 Pos;
+    public Vector3 Pos;
     public bool Track;
 }
 
@@ -116,8 +116,11 @@ public class Tracker : MonoBehaviour
 
 	void FixedUpdate ()
 	{
+        RightKneesInfo = new Dictionary<string, KneesInfo>();
+        LeftKneesInfo  = new Dictionary<string, KneesInfo>();
+        IdList         = new List<string>();
 
-       
+
 
         if (Input.GetKeyDown (KeyCode.C))
 			ColorHumans = !ColorHumans;
@@ -154,7 +157,7 @@ public class Tracker : MonoBehaviour
         foreach (Human h in _humans.Values)
         {
 
-             IdList.Add(h.ID.ToString());
+             IdList.Add(h.ID.ToString());// "SpecialHuman " +
             // udpate Human Skeleton
             h.updateSkeleton ();
            
@@ -228,11 +231,7 @@ public class Tracker : MonoBehaviour
 
     private string GetKnees(Human h)
     {
-        RightKneesInfo = new Dictionary<string, KneesInfo>();
-        LeftKneesInfo  = new Dictionary<string, KneesInfo>();
-        IdList         = new List<string>();
-
-
+        
         // CommonUtils.convertVectorToStringRPC
         // if (!_humans.ContainsKey(h1)) return null;
 
@@ -296,32 +295,136 @@ public class Tracker : MonoBehaviour
         return mensagem;
     }
 
-    private void SaveTheKnees(Human h)
+
+    private void SaveTheMirrorKnees(Human h)
     {
-        //var kneeRightList = new List<Vector3>();
-        //var kneeLeftList  = new List<Vector3>();
-
-
-        //Debug.Log("1  kneeRightList.Count = " + kneeRightList.Count);
-        //Debug.Log("1  kneeLeftList.Count = "  + kneeLeftList.Count);
+        var mainRightKnee = h.Skeleton.GetKnee(Knee.Right);
+        var mainLeftKnee  = h.Skeleton.GetKnee(Knee.Left);
 
         foreach (var b in h.bodies)
         {
             var bodySensorId = b.sensorID;
 
-            var kneeRight = new AdaptiveDoubleExponentialFilterVector3
+            var knee1 = _sensors[bodySensorId].pointSensorToScene(
+                CommonUtils.pointKinectToUnity(b.skeleton.JointsPositions[JointType.KneeRight]));
+
+            var knee2 = _sensors[bodySensorId].pointSensorToScene(
+                CommonUtils.pointKinectToUnity(b.skeleton.JointsPositions[JointType.KneeLeft]));
+
+
+            var diff1 = (knee1 - mainRightKnee).sqrMagnitude;
+            var diff2 = (knee2 - mainRightKnee).sqrMagnitude;
+
+
+            var diff3 = (knee1 - mainLeftKnee).sqrMagnitude;
+            var diff4 = (knee2 - mainLeftKnee).sqrMagnitude;
+
+            var kneeRight = new Vector3();
+            var kneeLeft  = new Vector3();
+            
+            if (diff1 < diff2)
             {
-                Value = _sensors[bodySensorId].pointSensorToScene(
-                    CommonUtils.pointKinectToUnity(b.skeleton.JointsPositions[JointType.KneeRight]))
-            };
-
-            var kneeLeft = new AdaptiveDoubleExponentialFilterVector3
+                kneeRight = knee1;
+                kneeLeft  = knee2;
+            }
+            else if (diff1 > diff2)
             {
-                Value = _sensors[bodySensorId].pointSensorToScene(
-                    CommonUtils.pointKinectToUnity(b.skeleton.JointsPositions[JointType.KneeLeft]))
-            };
+                kneeRight = knee2;
+                kneeLeft  = knee1; 
+            }
+            else if(Math.Abs(diff1 - diff2) < 0)
+            {
+                if (diff3 < diff4)
+                {
+                    kneeRight = knee2;
+                    kneeLeft  = knee1;
+                }
+                else if (diff3 >= diff4)
+                {
+                    kneeRight = knee1;
+                    kneeLeft  = knee2;
+                }
+            }
 
+            //var kneeRight = new AdaptiveDoubleExponentialFilterVector3
+            //{
+            //    Value = _sensors[bodySensorId].pointSensorToScene(
+            //        CommonUtils.pointKinectToUnity(b.skeleton.JointsPositions[JointType.KneeRight]))
+            //};
 
+            //var kneeLeft = new AdaptiveDoubleExponentialFilterVector3
+            //{
+            //    Value = _sensors[bodySensorId].pointSensorToScene(
+            //        CommonUtils.pointKinectToUnity(b.skeleton.JointsPositions[JointType.KneeLeft]))
+            //};
+            
+            var trackingStateKneeRight = b.skeleton.TrackingStateKneeRight;
+            var trackingStateKneeLeft  = b.skeleton.TrackingStateKneeLeft;
+
+            // Debug.Log("h id = " + h.ID + ", b.sensorID = " + bodySensorId + ", kneeRight : x = " + kneeRight.x + ", y = " + kneeRight.y + ", z = " + kneeRight.z);
+
+            var key = h.ID + "_" + bodySensorId;
+            if (RightKneesInfo.ContainsKey(key) && LeftKneesInfo.ContainsKey(key)) continue;
+
+            RightKneesInfo.Add(key, new KneesInfo
+            {
+                IdHuman = h.ID,
+                IdBody = bodySensorId,
+                Pos = kneeRight,
+                Track = (trackingStateKneeRight == TrackingState.Tracked)
+            });
+
+            LeftKneesInfo.Add(key, new KneesInfo
+            {
+                IdHuman = h.ID,
+                IdBody = bodySensorId,
+                Pos = kneeLeft,
+                Track = (trackingStateKneeLeft == TrackingState.Tracked)
+            });
+
+            //mensagem +=
+            //    "TrackingKneeRight" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(kneeRight.Value) + MessageSeparators.L5 + trackingStateKneeRight +
+            //    MessageSeparators.L2 +
+            //    "TrackingKneeLeft"  + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(kneeLeft.Value)  + MessageSeparators.L5 + trackingStateKneeLeft +
+            //    MessageSeparators.L2;
+
+            // if (index + 1 < h.bodies.Count) mensagem += MessageSeparators.L2;
+
+            //kneeRightList.Add(kneeRight.Value);
+            //kneeLeftList.Add(kneeLeft.Value);
+        }
+    }
+
+    private void SaveTheKnees(Human h)
+    {
+        //var kneeRightList = new List<Vector3>();
+        //var kneeLeftList  = new List<Vector3>();
+        
+        //Debug.Log("1  kneeRightList.Count = " + kneeRightList.Count);
+        //Debug.Log("1  kneeLeftList.Count = "  + kneeLeftList.Count);
+        
+        foreach (var b in h.bodies)
+        {
+            var bodySensorId = b.sensorID;
+
+            //var kneeRight = new AdaptiveDoubleExponentialFilterVector3
+            //{
+            //    Value = _sensors[bodySensorId].pointSensorToScene(
+            //        CommonUtils.pointKinectToUnity(b.skeleton.JointsPositions[JointType.KneeRight]))
+            //};
+
+            //var kneeLeft = new AdaptiveDoubleExponentialFilterVector3
+            //{
+            //    Value = _sensors[bodySensorId].pointSensorToScene(
+            //        CommonUtils.pointKinectToUnity(b.skeleton.JointsPositions[JointType.KneeLeft]))
+            //};
+
+            var kneeRight = _sensors[bodySensorId].pointSensorToScene(
+                CommonUtils.pointKinectToUnity(b.skeleton.JointsPositions[JointType.KneeRight]));
+            
+            var kneeLeft = _sensors[bodySensorId].pointSensorToScene(
+                CommonUtils.pointKinectToUnity(b.skeleton.JointsPositions[JointType.KneeLeft]));
+            
             var trackingStateKneeRight = b.skeleton.TrackingStateKneeRight;
             var trackingStateKneeLeft  = b.skeleton.TrackingStateKneeLeft;
 
@@ -367,7 +470,7 @@ public class Tracker : MonoBehaviour
             return null;
         }
 
-        var meanResult = meanList.Aggregate(Vector3.zero, (current, pair) => current + pair.Value.Pos.Value);
+        var meanResult = meanList.Aggregate(Vector3.zero, (current, pair) => current + pair.Value.Pos);
         meanResult /= meanList.Count;
         return meanResult;
     }
@@ -386,7 +489,7 @@ public class Tracker : MonoBehaviour
         {
             if (!info.Value.Track) continue;
             trackCount++;
-            meanResult = meanResult + info.Value.Pos.Value;
+            meanResult = meanResult + info.Value.Pos;
         }
 
         if (trackCount == 0) return GetMeanList(meanList);
@@ -405,22 +508,7 @@ public class Tracker : MonoBehaviour
 
     private static Vector3 GetLastPosition(Human human, Knee thisKnee, Vector3? lastPosition)
     {
-        Vector3 position;
-        if (lastPosition != null) position = lastPosition.Value;
-        else
-        {
-            switch (thisKnee)
-            {
-                case Knee.Right:
-                    position = human.Skeleton.GetRightKnee();
-                    break;
-                case Knee.Left:
-                    position = human.Skeleton.GetLeftKnee();
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("thisKnee", thisKnee, null);
-            }
-        }
+        var position = lastPosition ?? human.Skeleton.GetKnee(thisKnee);
         return position;
     }
 
@@ -439,10 +527,10 @@ public class Tracker : MonoBehaviour
 
         foreach (var info in kneesList)
         {
-            var d = (info.Value.Pos.Value - position).magnitude;
+            var d = (info.Value.Pos - position).magnitude;
             if (!(d < diff)) continue;
             diff = d;
-            res = info.Value.Pos.Value;
+            res = info.Value.Pos;
         }
 
         if (Math.Abs(diff - float.MaxValue) < 0) return null;
@@ -461,10 +549,10 @@ public class Tracker : MonoBehaviour
         {
             if (!info.Value.Track) continue;
             hasTrack = true;
-            var d = (info.Value.Pos.Value - position).magnitude;
+            var d = (info.Value.Pos - position).magnitude;
             if (!(d < diff)) continue;
             diff = d;
-            res = info.Value.Pos.Value;
+            res = info.Value.Pos;
         }
 
         if (!hasTrack) return GetCloseKnee(kneesList, position);
@@ -998,7 +1086,17 @@ public class Tracker : MonoBehaviour
 
 
 
-
+     switch (thisKnee)
+            {
+                case Knee.Right:
+                    position = human.Skeleton.GetKnee(thisKnee);
+                    break;
+                case Knee.Left:
+                    position = human.Skeleton.GetLeftKnee();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("thisKnee", thisKnee, null);
+            }
 
 
 

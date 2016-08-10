@@ -41,7 +41,7 @@ public class UdpListener : MonoBehaviour {
 		_udpClient.BeginReceive(new AsyncCallback(this.ReceiveCallback), null);
     }
 
-    void FixedUpdate() // Update
+    void Update() // Update
     {
         while (_stringsToParse.Count > 0)
         {
