@@ -90,10 +90,10 @@ public class Tracker : MonoBehaviour
 
     void Start ()
 	{
-		_sensors = new Dictionary<string, Sensor> ();
-		_humans = new Dictionary<int, Human> ();
-		_deadHumans = new List<Human> ();
-		_humansToKill = new List<Human> ();
+		_sensors           = new Dictionary<string, Sensor> ();
+		_humans            = new Dictionary<int, Human> ();
+		_deadHumans        = new List<Human> ();
+		_humansToKill      = new List<Human> ();
 		_calibrationStatus = CalibrationProcess.FindCenter;
 
 		_udpBroadcast  = new UdpBroadcast (TrackerProperties.Instance.broadcastPort);
@@ -164,11 +164,13 @@ public class Tracker : MonoBehaviour
             // get PDU
             try
             {
+
+
                 strToSend += MessageSeparators.L1 + h.getPDU() + GetKnees(h);
 			}
 			catch (Exception e)
             {
-                Debug.Log(e.Message + "\n" + e.StackTrace);
+                Debug.Log(e.Message + "\n" + e.StackTrace + "\n");
             }
 		}
 
@@ -868,6 +870,7 @@ public class Tracker : MonoBehaviour
 	internal Vector3 GetJointPosition (int id, JointType joint)
 	{
 		Human h = _humans [id];
+
 		SensorBody bestBody = h.bodies [0];
 		int confidence = bestBody.Confidence;
 

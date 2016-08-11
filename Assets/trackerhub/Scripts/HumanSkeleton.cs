@@ -82,33 +82,33 @@ public class HumanSkeleton : MonoBehaviour
 		leftFoot = CreateSphere ("leftFoot");
 		rightFoot = CreateSphere ("rightFoot");
 
-		headKalman = new AdaptiveDoubleExponentialFilterVector3 ();
-		neckKalman = new AdaptiveDoubleExponentialFilterVector3 ();
+		headKalman          = new AdaptiveDoubleExponentialFilterVector3 ();
+		neckKalman          = new AdaptiveDoubleExponentialFilterVector3 ();
 		spineShoulderKalman = new AdaptiveDoubleExponentialFilterVector3 ();
-		spineMidKalman = new AdaptiveDoubleExponentialFilterVector3 ();
-		spineBaseKalman = new AdaptiveDoubleExponentialFilterVector3 ();
+		spineMidKalman      = new AdaptiveDoubleExponentialFilterVector3 ();
+		spineBaseKalman     = new AdaptiveDoubleExponentialFilterVector3 ();
 
-		leftShoulderKalman = new AdaptiveDoubleExponentialFilterVector3 ();
-		leftElbowKalman = new AdaptiveDoubleExponentialFilterVector3 ();
-		leftWristKalman = new AdaptiveDoubleExponentialFilterVector3 ();
-		leftHandKalman = new AdaptiveDoubleExponentialFilterVector3 ();
-		leftThumbKalman = new AdaptiveDoubleExponentialFilterVector3 ();
-		leftHandTipKalman = new AdaptiveDoubleExponentialFilterVector3 ();
-		leftHipKalman = new AdaptiveDoubleExponentialFilterVector3 ();
-		leftKneeKalman = new AdaptiveDoubleExponentialFilterVector3 ();
-		leftAnkleKalman = new AdaptiveDoubleExponentialFilterVector3 ();
-		leftFootKalman = new AdaptiveDoubleExponentialFilterVector3 ();
+		leftShoulderKalman  = new AdaptiveDoubleExponentialFilterVector3 ();
+		leftElbowKalman     = new AdaptiveDoubleExponentialFilterVector3 ();
+		leftWristKalman     = new AdaptiveDoubleExponentialFilterVector3 ();
+		leftHandKalman      = new AdaptiveDoubleExponentialFilterVector3 ();
+		leftThumbKalman     = new AdaptiveDoubleExponentialFilterVector3 ();
+		leftHandTipKalman   = new AdaptiveDoubleExponentialFilterVector3 ();
+		leftHipKalman       = new AdaptiveDoubleExponentialFilterVector3 ();
+		leftKneeKalman      = new AdaptiveDoubleExponentialFilterVector3 ();
+		leftAnkleKalman     = new AdaptiveDoubleExponentialFilterVector3 ();
+		leftFootKalman      = new AdaptiveDoubleExponentialFilterVector3 ();
 
 		rightShoulderKalman = new AdaptiveDoubleExponentialFilterVector3 ();
-		rightElbowKalman = new AdaptiveDoubleExponentialFilterVector3 ();
-		rightWristKalman = new AdaptiveDoubleExponentialFilterVector3 ();
-		rightHandKalman = new AdaptiveDoubleExponentialFilterVector3 ();
-		rightThumbKalman = new AdaptiveDoubleExponentialFilterVector3 ();
-		rightHandTipKalman = new AdaptiveDoubleExponentialFilterVector3 ();
-		rightHipKalman = new AdaptiveDoubleExponentialFilterVector3 ();
-		rightKneeKalman = new AdaptiveDoubleExponentialFilterVector3 ();
-		rightAnkleKalman = new AdaptiveDoubleExponentialFilterVector3 ();
-		rightFootKalman = new AdaptiveDoubleExponentialFilterVector3 ();
+		rightElbowKalman    = new AdaptiveDoubleExponentialFilterVector3 ();
+		rightWristKalman    = new AdaptiveDoubleExponentialFilterVector3 ();
+		rightHandKalman     = new AdaptiveDoubleExponentialFilterVector3 ();
+		rightThumbKalman    = new AdaptiveDoubleExponentialFilterVector3 ();
+		rightHandTipKalman  = new AdaptiveDoubleExponentialFilterVector3 ();
+		rightHipKalman      = new AdaptiveDoubleExponentialFilterVector3 ();
+		rightKneeKalman     = new AdaptiveDoubleExponentialFilterVector3 ();
+		rightAnkleKalman    = new AdaptiveDoubleExponentialFilterVector3 ();
+		rightFootKalman     = new AdaptiveDoubleExponentialFilterVector3 ();
 
 		canSend = true;
 
@@ -128,6 +128,7 @@ public class HumanSkeleton : MonoBehaviour
 		floorForwardGameObject.tag = "nocolor";
 		floorForwardGameObject.transform.parent = transform;
 
+        
 	}
 
 	private GameObject CreateSphere (string sphereName, float scale = 0.1f)
@@ -158,7 +159,8 @@ public class HumanSkeleton : MonoBehaviour
 
 	public void UpdateSkeleton ()
 	{
-		if (tracker.HumanHasBodies (ID)) {
+		if (tracker.HumanHasBodies (ID))
+        {
 			// Update Forward (mirror or not to mirror?)
 
 			Vector3 forward = CalcUnfilteredForward ();
@@ -192,6 +194,8 @@ public class HumanSkeleton : MonoBehaviour
 
 			try
             {
+
+
 				headKalman.Value          = tracker.GetJointPosition (ID, JointType.Head);
 				neckKalman.Value          = tracker.GetJointPosition (ID, JointType.Neck);
 				spineShoulderKalman.Value = tracker.GetJointPosition (ID, JointType.SpineShoulder);
@@ -274,7 +278,8 @@ public class HumanSkeleton : MonoBehaviour
 				floorForwardGameObject.transform.position = new Vector3 (pos.x, 0.001f, pos.z);
 				floorForwardGameObject.transform.parent = transform;
 
-			} catch (Exception e)
+			}
+            catch (Exception e)
             {
 				Debug.Log (e.Message + "\n" + e.StackTrace);
 			}

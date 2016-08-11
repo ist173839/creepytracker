@@ -50,7 +50,7 @@ public class MyUdpListener : MonoBehaviour {
         _udpClient.BeginReceive(new AsyncCallback(this.ReceiveCallback), null);
     }
 
-    void Update()
+    void FixedUpdate()
     {
         if (Input.GetKeyUp("r")) // Input.GetMouseButtonDown(0)
         {
