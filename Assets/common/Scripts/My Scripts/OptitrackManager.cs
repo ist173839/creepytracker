@@ -1,4 +1,9 @@
-﻿using UnityEngine;
+﻿/*************************************************************************************************
+    Dissertação - Mestrado em Engenharia Informática e de Computadores
+    Francisco Henriques Venda, nº 73839
+    Modificado
+*************************************************************************************************/
+using UnityEngine;
 using System;
 using System.Collections;
 //using NatNetML;

@@ -1,4 +1,9 @@
-﻿using System;
+﻿/*************************************************************************************************
+    Dissertação - Mestrado em Engenharia Informática e de Computadores
+    Francisco Henriques Venda, nº 73839
+    Modificado
+*************************************************************************************************/
+using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;

@@ -62,6 +62,7 @@ public class Tracker : MonoBehaviour
     private WriteSafeFile _writeSafeFile;
     private OptitrackManager _localOptitrackManager;
 
+    // ReSharper disable once UnassignedField.Global
     public Material WhiteMaterial;
 
 	public string[] UnicastClients {
@@ -131,18 +132,18 @@ public class Tracker : MonoBehaviour
 
 		MergeHumans ();
 
-		List<Human> deadHumansToRemove = new List<Human> ();
-		foreach (Human h in _deadHumans) {
+		var deadHumansToRemove = new List<Human> ();
+		foreach (var h in _deadHumans) {
 			if (DateTime.Now > h.timeOfDeath.AddMilliseconds (1000))
 				deadHumansToRemove.Add (h);
 		}
 
-		foreach (Human h in deadHumansToRemove) {
+		foreach (var h in deadHumansToRemove) {
 			Destroy (h.gameObject);
 			_deadHumans.Remove (h);
 		}
 
-		foreach (Human h in _humansToKill) {
+		foreach (var h in _humansToKill) {
 			Destroy (h.gameObject);
 		}
 		_humansToKill.Clear ();
@@ -154,7 +155,7 @@ public class Tracker : MonoBehaviour
 
 	    CountHuman = _humans.Count;
 
-        foreach (Human h in _humans.Values)
+        foreach (var h in _humans.Values)
         {
 
              IdList.Add(h.ID.ToString());// "SpecialHuman " +
@@ -174,7 +175,7 @@ public class Tracker : MonoBehaviour
             }
 		}
 
-		foreach (Human h in _deadHumans)
+		foreach (var h in _deadHumans)
         {
             try
             {
@@ -192,7 +193,7 @@ public class Tracker : MonoBehaviour
         SaveRecordServer(strToSend);
 
         // set human material
-        foreach (Human h in _humans.Values) {
+        foreach (var h in _humans.Values) {
 			if (h.seenBySensor != null && ColorHumans)
 				CommonUtils.changeGameObjectMaterial (h.gameObject, Sensors [h.seenBySensor].Material);
 			else if (!ColorHumans)
@@ -204,7 +205,7 @@ public class Tracker : MonoBehaviour
 		if (ShowHumanBodies != -1 && !_humans.ContainsKey (ShowHumanBodies))
 			ShowHumanBodies = -1;
 
-		foreach (Human h in _humans.Values) {
+		foreach (var h in _humans.Values) {
 			CapsuleCollider humanCollider = h.gameObject.GetComponent<CapsuleCollider> ();
 			if (humanCollider != null)
 				humanCollider.enabled = (ShowHumanBodies == -1);
@@ -269,8 +270,8 @@ public class Tracker : MonoBehaviour
             "MeanTrackKneeLeft" + MessageSeparators.SET + stringMeanTrackKneeLeft;
         
         
-        var closeKneeRight = CloseKnee(RightKneesInfo, h, Knee.Right, false, _lastRigthKneePosition);
-        var closeKneeLeft  = CloseKnee(LeftKneesInfo,  h, Knee.Left,  false, _lastLeftKneePosition);
+        var closeKneeRight = CloseKnee(RightKneesInfo, h, Side.Right, false, _lastRigthKneePosition);
+        var closeKneeLeft  = CloseKnee(LeftKneesInfo,  h, Side.Left,  false, _lastLeftKneePosition);
 
         var stringCloseKneeRight = closeKneeRight == null ? "null" : CommonUtils.convertVectorToStringRPC(closeKneeRight.Value);
         var stringCloseKneeLeft  = closeKneeLeft  == null ? "null" : CommonUtils.convertVectorToStringRPC(closeKneeLeft.Value);
@@ -281,8 +282,8 @@ public class Tracker : MonoBehaviour
             "CloseKneeLeft"  + MessageSeparators.SET + stringCloseKneeLeft;
 
 
-        var closeTrackKneeRight = CloseKnee(RightKneesInfo, h, Knee.Right, true, _lastRigthKneePosition);
-        var closeTrackKneeLeft  = CloseKnee(LeftKneesInfo,  h, Knee.Left,  true, _lastLeftKneePosition);
+        var closeTrackKneeRight = CloseKnee(RightKneesInfo, h, Side.Right, true, _lastRigthKneePosition);
+        var closeTrackKneeLeft  = CloseKnee(LeftKneesInfo,  h, Side.Left,  true, _lastLeftKneePosition);
 
 
         var stringCloseTrackKneeRight = closeTrackKneeRight == null ? "null" : CommonUtils.convertVectorToStringRPC(closeTrackKneeRight.Value);
@@ -293,15 +294,15 @@ public class Tracker : MonoBehaviour
             MessageSeparators.L2 +
             "CloseTrackKneeLeft"  + MessageSeparators.SET + stringCloseTrackKneeLeft;
         
-        //  GetLastPosition(Tracker localTracker, Knee thisKnee, string idHuman, );
+        //  GetLastPosition(Tracker localTracker, Side thisSide, string idHuman, );
         return mensagem;
     }
 
 
     private void SaveTheMirrorKnees(Human h)
     {
-        var mainRightKnee = h.Skeleton.GetKnee(Knee.Right);
-        var mainLeftKnee  = h.Skeleton.GetKnee(Knee.Left);
+        var mainRightKnee = h.Skeleton.GetKnee(Side.Right);
+        var mainLeftKnee  = h.Skeleton.GetKnee(Side.Left);
 
         foreach (var b in h.bodies)
         {
@@ -500,17 +501,18 @@ public class Tracker : MonoBehaviour
         return meanResult;
     }
     
-    private static Vector3? CloseKnee(Dictionary<string, KneesInfo> kneesList, Human human, Knee thisKnee, bool track, Vector3? lastPosition)
+    private static Vector3? CloseKnee(Dictionary<string, KneesInfo> kneesList, Human human, Side thisSide, bool track, Vector3? lastPosition)
     {
-        var position = GetLastPosition(human, thisKnee, lastPosition);
+        var position = GetLastPosition(human, thisSide, lastPosition);
 
         lastPosition = GetCloserKnee(kneesList, track, position);
         return lastPosition;
     }
 
-    private static Vector3 GetLastPosition(Human human, Knee thisKnee, Vector3? lastPosition)
+    private static Vector3 GetLastPosition(Human human, Side thisSide, Vector3? lastPosition)
     {
-        var position = lastPosition ?? human.Skeleton.GetKnee(thisKnee);
+        // ReSharper disable once MergeConditionalExpression
+        var position = lastPosition != null ? lastPosition.Value : human.Skeleton.GetKnee(thisSide);
         return position;
     }
 
@@ -1091,10 +1093,10 @@ public class Tracker : MonoBehaviour
 
      switch (thisKnee)
             {
-                case Knee.Right:
+                case Side.Right:
                     position = human.Skeleton.GetKnee(thisKnee);
                     break;
-                case Knee.Left:
+                case Side.Left:
                     position = human.Skeleton.GetLeftKnee();
                     break;
                 default:

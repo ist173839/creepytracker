@@ -336,17 +336,17 @@ public class HumanSkeleton : MonoBehaviour
 	}
 
 
-    public Vector3 GetKnee(Knee knee)
+    public Vector3 GetKnee(Side side)
     {
-        switch (knee)
+        switch (side)
         {
-            case Knee.Right:
+            case Side.Right:
                 return GetRightKnee();
                 
-            case Knee.Left:
+            case Side.Left:
                 return GetLeftKnee();
             default:
-                throw new ArgumentOutOfRangeException("knee", knee, null);
+                throw new ArgumentOutOfRangeException("side", side, null);
         }
     }
 
