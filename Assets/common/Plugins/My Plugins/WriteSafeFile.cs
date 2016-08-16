@@ -25,6 +25,8 @@ public static class MyMessaSepa
     public const string SepaRegisto = "_";
     public const string CabeRoda = "£";
     public const string SepaVec = "|";
+    public const string SepaCol = "+";
+
 }
 // ReSharper disable once CheckNamespace
 public class WriteSafeFile

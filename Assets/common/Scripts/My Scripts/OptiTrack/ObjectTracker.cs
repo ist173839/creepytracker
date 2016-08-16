@@ -19,6 +19,8 @@ public class ObjectTracker: MonoBehaviour {
     
     private Tracker _localTracker;
 
+    private WriteMatrix _myWriteMatrix;
+
     private Point _currentPoint = Point.Point1;
 
     public int MatrixUpdateTimer = 10;
@@ -44,14 +46,14 @@ public class ObjectTracker: MonoBehaviour {
     ///////////////////////////////////////////////////////
     public Side HandToUse = Side.Right;
 
-    private int _mainId = 0;
+    public int MainId;
 
     // Use this for initialization
     void Start () {
 
         _localTracker = gameObject.GetComponent<Tracker>();
+        _myWriteMatrix = new WriteMatrix();
 
-        
         // If autosampling is enabled, start Coroutines
         if (AutoUpdatePoints)
         {
@@ -93,9 +95,9 @@ public class ObjectTracker: MonoBehaviour {
 
         if (idList.Count == 0) return false;
 
-        if (!idList.Contains(_mainId))
+        if (!idList.Contains(MainId))
         {
-            _mainId = idList[0];
+            MainId = idList[0];
         }
 
         return true;
@@ -125,8 +127,8 @@ public class ObjectTracker: MonoBehaviour {
         var rigidBodies = OptitrackManagement.DirectMulticastSocketClient.GetStreemData().RigidBody;
         
         // Use points from either the right hand or the left hand, in order to have a reference point in both coordinate systems
-        var rightHand = _localTracker.GetJointPosition(_mainId, JointType.HandRight);
-        var leftHand  = _localTracker.GetJointPosition(_mainId, JointType.HandLeft);
+        var rightHand = _localTracker.GetJointPosition(MainId, JointType.HandRight);
+        var leftHand  = _localTracker.GetJointPosition(MainId, JointType.HandLeft);
     
         switch (HandToUse)
         {
@@ -255,9 +257,10 @@ public class ObjectTracker: MonoBehaviour {
         OTmatrix.m33 = 1;
 
         TransformOTtoCt = CTmatrix * OTmatrix.inverse;
-
+        
+        _myWriteMatrix.SaveMatrix(TransformOTtoCt);
         // Update the transform matrix being used in the OptidrawScript
-       // Optidraw.GetComponent<OptiDrawScript>().transformMatrix = transformOTtoCT;
+        // Optidraw.GetComponent<OptiDrawScript>().transformMatrix = TransformOTtoCt;
     }
 
     /*

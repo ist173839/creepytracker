@@ -33,8 +33,10 @@ public class OptitrackManager : MonoBehaviour
     public bool IsEmulate { get;         set; }
     public bool IsOn      { get; private set; }
 
-    private bool _deinitValue = false;
+    public bool UseMatrix;
 
+    private bool _deinitValue = false;
+    
     private Vector3? _pos1;
     private Vector3? _pos2;
 
@@ -91,9 +93,11 @@ public class OptitrackManager : MonoBehaviour
                 //_positionVector = networkData.RigidBody[0].Pos;//* 2.0f;
 
 
+                var bodyPos = networkData.RigidBody[0].Pos;
+                var posVec = TransformMatrix * bodyPos;
+                var positionMatrixVector = new Vector3(posVec.x, posVec.y, posVec.z);
 
-                var posVec = TransformMatrix * networkData.RigidBody[0].Pos;
-                _positionVector = new Vector3(posVec.x, posVec.y, posVec.z);
+                _positionVector = UseMatrix ? positionMatrixVector : bodyPos;
 
 
                 _rotationQuaternion = networkData.RigidBody[0].Ori;
