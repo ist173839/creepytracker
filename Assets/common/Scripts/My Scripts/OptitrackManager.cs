@@ -26,20 +26,22 @@ public class OptitrackManager : MonoBehaviour
     private GameObject _optiTrackMarker;
     //public GameObject markerObject;
 
-    private Vector3? _pos1;
-    private Vector3? _pos2;
-    
-    private Vector3 _positionVector;
-    private Vector3 _forward;
+    private readonly string _myName = "OptiTrack";
+    //public string ClientIpAddress ="172.20.41.25";
+    //public string ServerIpAddress ="172.20.41.24";
 
     public bool IsEmulate { get;         set; }
     public bool IsOn      { get; private set; }
 
     private bool _deinitValue = false;
-    
-    private readonly string _myName = "OptiTrack";
-    //public string ClientIpAddress ="172.20.41.25";
-    //public string ServerIpAddress ="172.20.41.24";
+
+    private Vector3? _pos1;
+    private Vector3? _pos2;
+
+    private Vector3 _positionVector;
+    private Vector3 _forward;
+
+    public Matrix4x4 TransformMatrix = Matrix4x4.identity;
 
     private Quaternion _rotationQuaternion;
     
@@ -85,15 +87,23 @@ public class OptitrackManager : MonoBehaviour
             if (OptitrackManagement.DirectMulticastSocketClient.IsInit())
             {
                 StreemData networkData = OptitrackManagement.DirectMulticastSocketClient.GetStreemData();
-                _positionVector = networkData.RigidBody[0].Pos;//* 2.0f;
+
+                //_positionVector = networkData.RigidBody[0].Pos;//* 2.0f;
+
+
+
+                var posVec = TransformMatrix * networkData.RigidBody[0].Pos;
+                _positionVector = new Vector3(posVec.x, posVec.y, posVec.z);
+
+
                 _rotationQuaternion = networkData.RigidBody[0].Ori;
+
+
                 //CheckInput();
                 //var rotation = RotationQuaternion;
                 //var forward = rotation.eulerAngles;
                 //UpdateForwardObject(_forward, GetUnityPositionVector(), RotationQuaternion);
-
-
-
+                
                 SetUpOptiTrackMarker();
             }
             else

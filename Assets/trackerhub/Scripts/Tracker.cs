@@ -89,6 +89,9 @@ public class Tracker : MonoBehaviour
     public int CountHuman;
 
     public List<string> IdList;
+    public List<int>    IdIntList;
+
+
 
     void Start ()
 	{
@@ -110,6 +113,8 @@ public class Tracker : MonoBehaviour
         AllKneesInfo   = new Dictionary<string, KneesInfo>();
 
         IdList         = new List<string>();
+        IdIntList      = new List<int>();
+
 
         _lastRigthKneePosition = null;
         _lastLeftKneePosition  = null;
@@ -123,9 +128,11 @@ public class Tracker : MonoBehaviour
         RightKneesInfo = new Dictionary<string, KneesInfo>();
         LeftKneesInfo  = new Dictionary<string, KneesInfo>();
 	    AllKneesInfo   = new Dictionary<string, KneesInfo>();
-        IdList         = new List<string>();
 
-        
+        IdList         = new List<string>();
+        IdIntList      = new List<int>();
+
+
         if (Input.GetKeyDown (KeyCode.C))
 			ColorHumans = !ColorHumans;
 
@@ -161,15 +168,15 @@ public class Tracker : MonoBehaviour
         foreach (var h in _humans.Values)
         {
 
-             IdList.Add(h.ID.ToString());// "SpecialHuman " +
+            IdList.Add(h.ID.ToString());// "SpecialHuman " +
+            IdIntList.Add(h.ID);
+            
             // udpate Human Skeleton
             h.updateSkeleton ();
            
             // get PDU
             try
             {
-
-
                 strToSend += MessageSeparators.L1 + h.getPDU() + GetKnees(h);
 			}
 			catch (Exception e)
@@ -182,12 +189,11 @@ public class Tracker : MonoBehaviour
         {
             try
             {
-                strToSend += MessageSeparators.L1 + h.getPDU();// + GetKnees(h);
+                strToSend += MessageSeparators.L1 + h.getPDU(); // + GetKnees(h);
             }
             catch (Exception e)
             {
                 Debug.Log(e.Message + "\n" + e.StackTrace);
-
             }
 		}
 
@@ -233,6 +239,13 @@ public class Tracker : MonoBehaviour
     public Human GetHuman(int id)
     {
         return _humans[id];
+    }
+
+    private static Vector3 GetLastPosition(Human human, Side thisSide, Vector3? lastPosition)
+    {
+        // ReSharper disable once MergeConditionalExpression
+        var position = lastPosition != null ? lastPosition.Value : human.Skeleton.GetKnee(thisSide);
+        return position;
     }
 
     private string GetKnees(Human h)
@@ -303,7 +316,6 @@ public class Tracker : MonoBehaviour
         //  GetLastPosition(Tracker localTracker, Side thisSide, string idHuman, );
         return mensagem;
     }
-
 
     private void SaveTheMirrorKnees(Human h)
     {
@@ -542,21 +554,13 @@ public class Tracker : MonoBehaviour
         meanResult /= trackCount;
         return meanResult;
     }
-    
+
     private static Vector3? CloseKnee(Dictionary<string, KneesInfo> kneesList, Human human, Side thisSide, bool track, Vector3? lastPosition)
     {
         var position = GetLastPosition(human, thisSide, lastPosition);
 
         lastPosition = GetCloserKnee(kneesList, track, position);
         return lastPosition;
-    }
-
-
-    private static Vector3 GetLastPosition(Human human, Side thisSide, Vector3? lastPosition)
-    {
-        // ReSharper disable once MergeConditionalExpression
-        var position = lastPosition != null ? lastPosition.Value : human.Skeleton.GetKnee(thisSide);
-        return position;
     }
 
     private static Vector3? GetCloserKnee(Dictionary<string, KneesInfo> kneesList, bool track, Vector3 position)

@@ -85,9 +85,12 @@
     <Compile Include="Assets\common\Scripts\DoNotify.cs" />
     <Compile Include="Assets\common\Scripts\GridOverlay.cs" />
     <Compile Include="Assets\common\Scripts\Logger.cs" />
-    <Compile Include="Assets\common\Scripts\My Scripts\ApplyTransformation.cs" />
     <Compile Include="Assets\common\Scripts\My Scripts\MyKnees.cs" />
     <Compile Include="Assets\common\Scripts\My Scripts\MyUdpListener.cs" />
+    <Compile Include="Assets\common\Scripts\My Scripts\OptiTrack\ApplyTransformation.cs" />
+    <Compile Include="Assets\common\Scripts\My Scripts\OptiTrack\ObjectTracker.cs" />
+    <Compile Include="Assets\common\Scripts\My Scripts\OptiTrack\OptiDrawScript.cs" />
+    <Compile Include="Assets\common\Scripts\My Scripts\OptiTrack\OptiObjects.cs" />
     <Compile Include="Assets\common\Scripts\My Scripts\OptitrackManager.cs" />
     <Compile Include="Assets\common\Scripts\PointCloudSimple.cs" />
     <Compile Include="Assets\common\Scripts\UdpListener.cs" />
