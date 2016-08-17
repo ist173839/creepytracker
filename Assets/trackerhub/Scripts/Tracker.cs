@@ -92,6 +92,8 @@ public class Tracker : MonoBehaviour
     public List<int>    IdIntList;
 
 
+    public bool SendKnees;
+
 
     void Start ()
 	{
@@ -120,6 +122,7 @@ public class Tracker : MonoBehaviour
         _lastLeftKneePosition  = null;
 
         CountHuman = 0;
+        SendKnees = true;
 
 	}
 
@@ -173,11 +176,12 @@ public class Tracker : MonoBehaviour
             
             // udpate Human Skeleton
             h.updateSkeleton ();
-           
+            
             // get PDU
             try
             {
-                strToSend += MessageSeparators.L1 + h.getPDU() + GetKnees(h);
+                strToSend += MessageSeparators.L1 + h.getPDU(); 
+                if(SendKnees) strToSend += GetKnees(h);
 			}
 			catch (Exception e)
             {

@@ -78,6 +78,8 @@
     <Compile Include="Assets\common\Plugins\KalmanFilterFloat.cs" />
     <Compile Include="Assets\common\Plugins\KalmanFilterVector3.cs" />
     <Compile Include="Assets\common\Plugins\My Plugins\DirectMulticastSocketClient.cs" />
+    <Compile Include="Assets\common\Plugins\My Plugins\ObterStringValues.cs" />
+    <Compile Include="Assets\common\Plugins\My Plugins\ReadMatrix.cs" />
     <Compile Include="Assets\common\Plugins\My Plugins\SaveMessage.cs" />
     <Compile Include="Assets\common\Plugins\My Plugins\WriteMatrix.cs" />
     <Compile Include="Assets\common\Plugins\My Plugins\WriteSafeFile.cs" />
