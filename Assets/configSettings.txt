@@ -1,4 +1,4 @@
-%Config File created in 2016-08-16 17:22:41
+%Config File created in 2016-08-17 14:11:23
 udp.listenport=56555
 udp.broadcastport=56839
 udp.sendinterval=50
