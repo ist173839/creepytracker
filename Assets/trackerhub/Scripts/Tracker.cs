@@ -175,12 +175,12 @@ public class Tracker : MonoBehaviour
             IdIntList.Add(h.ID);
             
             // udpate Human Skeleton
-            h.updateSkeleton ();
+            h.UpdateSkeleton ();
             
             // get PDU
             try
             {
-                strToSend += MessageSeparators.L1 + h.getPDU(); 
+                strToSend += MessageSeparators.L1 + h.GetPdu(); 
                 if(SendKnees) strToSend += GetKnees(h);
 			}
 			catch (Exception e)
@@ -193,7 +193,7 @@ public class Tracker : MonoBehaviour
         {
             try
             {
-                strToSend += MessageSeparators.L1 + h.getPDU(); // + GetKnees(h);
+                strToSend += MessageSeparators.L1 + h.GetPdu(); // + GetKnees(h);
             }
             catch (Exception e)
             {
@@ -330,10 +330,10 @@ public class Tracker : MonoBehaviour
         {
             var bodySensorId = b.sensorID;
 
-            var knee1 = _sensors[bodySensorId].pointSensorToScene(
+            var knee1 = _sensors[bodySensorId].PointSensorToScene(
                 CommonUtils.pointKinectToUnity(b.skeleton.JointsPositions[JointType.KneeRight]));
 
-            var knee2 = _sensors[bodySensorId].pointSensorToScene(
+            var knee2 = _sensors[bodySensorId].PointSensorToScene(
                 CommonUtils.pointKinectToUnity(b.skeleton.JointsPositions[JointType.KneeLeft]));
 
 
@@ -462,10 +462,10 @@ public class Tracker : MonoBehaviour
             //        CommonUtils.pointKinectToUnity(b.skeleton.JointsPositions[JointType.KneeLeft]))
             //};
 
-            var kneeRight = _sensors[bodySensorId].pointSensorToScene(
+            var kneeRight = _sensors[bodySensorId].PointSensorToScene(
                 CommonUtils.pointKinectToUnity(b.skeleton.JointsPositions[JointType.KneeRight]));
             
-            var kneeLeft = _sensors[bodySensorId].pointSensorToScene(
+            var kneeLeft = _sensors[bodySensorId].PointSensorToScene(
                 CommonUtils.pointKinectToUnity(b.skeleton.JointsPositions[JointType.KneeLeft]));
             
             var trackingStateKneeRight = b.skeleton.TrackingStateKneeRight;
@@ -829,7 +829,7 @@ public class Tracker : MonoBehaviour
 			Sensors [cloud.KinectId] = new Sensor (cloud.KinectId, (GameObject)Instantiate (Resources.Load ("Prefabs/KinectSensorPrefab"), position, Quaternion.identity));
 		}
 		
-		Sensors [cloud.KinectId].updateCloud (cloud);
+		Sensors [cloud.KinectId].UpdateCloud (cloud);
 	}
 
 	internal void SetNewFrame (BodiesMessage bodies)
@@ -854,7 +854,7 @@ public class Tracker : MonoBehaviour
 		foreach (Sensor sensor in _sensors.Values) {
 			if (sensor.Active) {
 				if (sensor.lastBodiesMessage != null && sensor.lastBodiesMessage.Bodies.Count == 1) {
-					sensor.calibrationStep1 ();
+					sensor.CalibrationStep1 ();
 				} else
 					cannotCalibrate = true;
 			}
@@ -876,9 +876,9 @@ public class Tracker : MonoBehaviour
 
 		foreach (Sensor sensor in _sensors.Values) {
 			if (sensor.lastBodiesMessage != null && sensor.lastBodiesMessage.Bodies.Count == 1 && sensor.Active) {
-				sensor.calibrationStep2 ();
+				sensor.CalibrationStep2 ();
 
-				avgCenter += sensor.pointSensorToScene (sensor.CalibAuxPoint);
+				avgCenter += sensor.PointSensorToScene (sensor.CalibAuxPoint);
 				sensorCount += 1;
 			}
 		}
@@ -887,7 +887,7 @@ public class Tracker : MonoBehaviour
 
 		foreach (Sensor sensor in _sensors.Values) {
 			if (sensor.lastBodiesMessage.Bodies.Count == 1 && sensor.Active) {
-				sensor.move (avgCenter - sensor.pointSensorToScene (sensor.CalibAuxPoint));   
+				sensor.move (avgCenter - sensor.PointSensorToScene (sensor.CalibAuxPoint));   
 			}
 		}
 
@@ -901,7 +901,7 @@ public class Tracker : MonoBehaviour
 	{
 		foreach (Sensor sensor in _sensors.Values) {
 			if (sensor.lastBodiesMessage != null && sensor.lastBodiesMessage.Bodies.Count == 1 && sensor.Active) {
-				sensor.calibrationStep3 ();
+				sensor.CalibrationStep3 ();
 			}
 		}
 	}
@@ -910,7 +910,7 @@ public class Tracker : MonoBehaviour
 	{
 		foreach (Sensor sensor in _sensors.Values) {
 			if (sensor.lastBodiesMessage != null && sensor.lastBodiesMessage.Bodies.Count == 1 && sensor.Active) {
-				sensor.calibrationStep4 ();
+				sensor.CalibrationStep4 ();
 			}
 		}
 
@@ -939,7 +939,7 @@ public class Tracker : MonoBehaviour
 
 		h.seenBySensor = bestBody.sensorID;
 
-        return _sensors [bestBody.sensorID].pointSensorToScene (CommonUtils.pointKinectToUnity (bestBody.skeleton.JointsPositions [joint]));
+        return _sensors [bestBody.sensorID].PointSensorToScene (CommonUtils.pointKinectToUnity (bestBody.skeleton.JointsPositions [joint]));
 	}
 
 	internal bool HumanHasBodies (int id)

@@ -34,41 +34,49 @@ public class Sensor
 
 	private List<Vector3> _bestFitPlanePoints;
 
-	public bool Active {
-		get {
+	public bool Active
+    {
+		get
+        {
 			return _active;
 		}
 
-		set {
+		set
+        {
 			_active = value;
 			_sensorGameObject.SetActive (_active);
 		}
 	}
 
-	public Vector3 CalibAuxPoint {
-		get {
+	public Vector3 CalibAuxPoint
+    {
+		get
+        {
 			return center1;
 		}
 	}
 
-	public Material Material {
-		get {
+	public Material Material
+    {
+		get
+        {
 			return _material;
 		}
 
-		set {
+		set
+        {
 			_material = value;
 		}
 	}
 
-	public Sensor (string sensorID, GameObject sensorGameObject)
+	public Sensor (string sensorId, GameObject sensorGameObject)
 	{
 		bodies = new Dictionary<string, SensorBody> ();
 		_active = true;
-		SensorID = sensorID;
+		SensorID = sensorId;
 		lastBodiesMessage = null;
 		_sensorGameObject = sensorGameObject;
-		SensorGameObject.name = sensorID;
+		SensorGameObject.name = sensorId;
 		center1 = new Vector3 ();
 		center2 = new Vector3 ();
 		up1 = new Vector3 ();
@@ -87,12 +95,12 @@ public class Sensor
 		lastCloud = cloudobj.GetComponent<PointCloudSimple> ();
 	}
 
-	internal Vector3 pointSensorToScene (Vector3 p)
+	internal Vector3 PointSensorToScene (Vector3 p)
 	{
 		return SensorGameObject.transform.localToWorldMatrix.MultiplyPoint (p);
 	}
 
-	internal void updateCloud (CloudMessage cl)
+	internal void UpdateCloud (CloudMessage cl)
 	{
 		lastCloud.setPoints (cl.Points, cl.id);
 		lastCloud.setToView ();
@@ -124,9 +132,12 @@ public class Sensor
 				continue;
 			}
 
-			if (bodies.ContainsKey (sk.ID)) {   //existing bodies
+			if (bodies.ContainsKey (sk.ID))
+            {   //existing bodies
 				b = bodies [sk.ID];
-			} else {   // new bodies
+			}
+            else
+            {   // new bodies
 				b = new SensorBody (sk.ID, SensorGameObject.transform);
 				b.gameObject.GetComponent<Renderer> ().material = Material;
 				bodies [sk.ID] = b;
@@ -141,18 +152,21 @@ public class Sensor
 
 		// remove bodies no longer present
 		List<string> keysToRemove = new List<string> ();
-		foreach (KeyValuePair<string, SensorBody> sb in bodies) {
-			if (!sb.Value.updated) {
+		foreach (KeyValuePair<string, SensorBody> sb in bodies)
+        {
+			if (!sb.Value.updated)
+            {
 				GameObject.Destroy (sb.Value.gameObject);
 				keysToRemove.Add (sb.Key);
 			}
 		}
-		foreach (string key in keysToRemove) {
+		foreach (string key in keysToRemove)
+        {
 			bodies.Remove (key);
 		}
 	}
 
-	internal void calibrationStep1 ()
+	internal void CalibrationStep1 ()
 	{
 		center1 = CommonUtils.pointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [TrackerProperties.Instance.centerJoint]);
 		up1 = CommonUtils.pointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [TrackerProperties.Instance.upJointB]) - CommonUtils.pointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [TrackerProperties.Instance.upJointA]);
@@ -161,7 +175,7 @@ public class Sensor
 		_floorValues.Add (CommonUtils.pointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [Windows.Kinect.JointType.FootRight]));
 	}
 
-	internal void calibrationStep2 ()
+	internal void CalibrationStep2 ()
 	{
 		center2 = CommonUtils.pointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [TrackerProperties.Instance.centerJoint]);
 		up2 = CommonUtils.pointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [TrackerProperties.Instance.upJointB]) - CommonUtils.pointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [TrackerProperties.Instance.upJointA]);
@@ -181,7 +195,7 @@ public class Sensor
 		DoCalibCalcs (up, forward, right);
 	}
 
-	internal void calibrationStep3 ()
+	internal void CalibrationStep3 ()
 	{
 		Vector3 p = CommonUtils.pointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [Windows.Kinect.JointType.Head]);
 		if (_bestFitPlanePoints.Count == 0 || p != _bestFitPlanePoints [_bestFitPlanePoints.Count - 1]) {
@@ -193,9 +207,9 @@ public class Sensor
 		}
 	}
 
-	internal void calibrationStep4 ()
+	internal void CalibrationStep4 ()
 	{
-		Vector3 normal = computeBestFitNormal (_bestFitPlanePoints.ToArray (), _bestFitPlanePoints.Count);//new Vector3 (nx, ny, nz).normalized;
+		Vector3 normal = ComputeBestFitNormal (_bestFitPlanePoints.ToArray (), _bestFitPlanePoints.Count);//new Vector3 (nx, ny, nz).normalized;
 		if (normal.y < 0)
 			normal = -normal;
 
@@ -215,7 +229,7 @@ public class Sensor
 	}
 
 	// Thanks Sara :)
-	private Vector3 computeBestFitNormal (Vector3[] v, int n)
+	private Vector3 ComputeBestFitNormal (Vector3[] v, int n)
 	{
 
 		// Zero out sum
@@ -267,7 +281,7 @@ public class Sensor
 		float min = float.PositiveInfinity;
 
 		foreach (Vector3 v in _floorValues) {
-			Vector3 tmp = pointSensorToScene (v);
+			Vector3 tmp = PointSensorToScene (v);
 
 			if (tmp.y < min)
 				minv = tmp;

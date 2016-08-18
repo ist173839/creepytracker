@@ -45,9 +45,10 @@ public class UdpListener : MonoBehaviour {
     {
         while (_stringsToParse.Count > 0)
         {
-            string stringToParse = _stringsToParse.First();
+            var stringToParse = _stringsToParse.First();
             _stringsToParse.RemoveAt(0);
-			if(stringToParse != null){
+			if(stringToParse != null)
+            {
 				string[] splitmsg = stringToParse.Split (MessageSeparators.L0);
 				if(splitmsg[0] == "BodiesMessage")
                 {
@@ -64,10 +65,10 @@ public class UdpListener : MonoBehaviour {
                 		Debug.Log(e.Message);
             		}
 				}
-				if (splitmsg [0] == "CloudMessage") {
+				if (splitmsg [0] == "CloudMessage")
+                {
 					CloudMessage c = new CloudMessage(splitmsg[1]);
 					gameObject.GetComponent<Tracker>().SetNewCloud(c);
-
 				}
 			}
         }

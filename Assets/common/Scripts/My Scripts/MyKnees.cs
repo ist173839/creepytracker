@@ -100,10 +100,19 @@ public class MyKnees : MonoBehaviour {
 	
 	// Update is called once per frame
 	void FixedUpdate ()
+	{
+        if (_localTracker.SendKnees)
+        {
+            MyKneesFixedUpdate();
+        }
+	   
+	}
+
+    private void MyKneesFixedUpdate()
     {
         var rightKneesInfo = _localTracker.RightKneesInfo;
         var leftKneesInfo  = _localTracker.LeftKneesInfo;
-	    //var countHuman     = _localTracker.CountHuman;
+       // var countHuman     = _localTracker.CountHuman;
 
         var idList = _localTracker.IdList;
         // var idUpdateList = new List<string>();
@@ -115,7 +124,7 @@ public class MyKnees : MonoBehaviour {
             //idUpdateList.Add(idHuman);
             if (GameObject.Find(id)) continue;
 
-            var human = new GameObject { name = id };
+            var human = new GameObject {name = id};
             human.transform.parent = _humans.transform;
 
             _humanDictionary.Add(id, human);
@@ -130,11 +139,11 @@ public class MyKnees : MonoBehaviour {
 
         DestroyAllHumans(idList);
 
-	    if (_isShowAll) UpdateAllTheKnees(rightKneesInfo, leftKneesInfo);
-        
-	    UpdateAllTheMeanKnees(rightKneesInfo, leftKneesInfo);
-        
-	    UpdateAllTheCloseKnees(rightKneesInfo, leftKneesInfo);
+        if (_isShowAll) UpdateAllTheKnees(rightKneesInfo, leftKneesInfo);
+
+        UpdateAllTheMeanKnees(rightKneesInfo, leftKneesInfo);
+
+        UpdateAllTheCloseKnees(rightKneesInfo, leftKneesInfo);
     }
 
     private void DestroyAllHumans(List<string> idList)

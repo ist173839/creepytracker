@@ -67,9 +67,9 @@ public class ObjectTracker: MonoBehaviour {
 	{
 	    if (!SetMainId() || _localTracker == null) return;
 
-	    // Manual Calibration with C
+	    // Manual Calibration with S
 	    // After 3 points get collected, the transformation matrix is calculated
-	    if (Input.GetKeyDown(KeyCode.C))
+	    if (Input.GetKeyDown(KeyCode.S))
 	    {
 	        Debug.Log("Calibration Point: " + _currentPoint + "\n");
 	        Calibration3Points();

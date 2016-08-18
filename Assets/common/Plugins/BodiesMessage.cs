@@ -80,11 +80,11 @@ public class Skeleton
         _start();
 
         Message = body;
-        List<string> bodyAttributes = new List<string>(body.Split(MessageSeparators.L2));
-        foreach (string attr in bodyAttributes)
+        var bodyAttributes = new List<string>(body.Split(MessageSeparators.L2));
+        foreach (var attr in bodyAttributes)
         {
             
-            string[] statement = attr.Split(MessageSeparators.SET);
+            var statement = attr.Split(MessageSeparators.SET);
             if (statement.Length == 2)
             {
                 if (Enum.IsDefined(typeof(BodyPropertiesTypes), statement[0]))
@@ -121,7 +121,7 @@ public class Skeleton
 
     private int BodyConfidence(Kinect.Body body)
     {
-        int confidence = 0;
+        var confidence = 0;
 
         foreach (Kinect.Joint j in body.Joints.Values)
         {

@@ -48,12 +48,12 @@ public class Human
         skeleton.UpdateSkeleton();
     }
 
-    internal void updateSkeleton()
+    internal void UpdateSkeleton()
     {
         Skeleton.UpdateSkeleton();
     }
 
-    internal string getPDU()
+    internal string GetPdu()
     {
         return "Sensor" + MessageSeparators.SET + seenBySensor + MessageSeparators.L2 + Skeleton.GetPdu();
     }

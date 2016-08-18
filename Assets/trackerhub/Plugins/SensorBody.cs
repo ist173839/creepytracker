@@ -24,15 +24,13 @@ public class SensorBody
             gameObject.transform.localPosition = position;
         }
     }
-    public Vector3 WorldPosition
-    { get { return gameObject.transform.position; } }
+    public Vector3 WorldPosition { get { return gameObject.transform.position; } }
 
-    public int Confidence
-    { get { return int.Parse(skeleton.BodyProperties[BodyPropertiesTypes.Confidence]); } }
+    public int Confidence { get { return int.Parse(skeleton.BodyProperties[BodyPropertiesTypes.Confidence]); } }
 
-    public SensorBody(string ID, Transform parent)
+    public SensorBody(string id, Transform parent)
     {
-        this.ID = ID;
+        this.ID = id;
         gameObject = GameObject.CreatePrimitive(PrimitiveType.Capsule);
         gameObject.GetComponent<CapsuleCollider>().enabled = false;
         gameObject.transform.localScale = new Vector3(0.4f, 0.5f, 0.4f);
