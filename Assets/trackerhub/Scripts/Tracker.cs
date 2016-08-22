@@ -122,7 +122,7 @@ public class Tracker : MonoBehaviour
         _lastLeftKneePosition  = null;
 
         CountHuman = 0;
-        SendKnees = true;
+        SendKnees = false;
 
 	}
 
