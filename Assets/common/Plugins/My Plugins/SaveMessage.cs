@@ -124,16 +124,34 @@ public class SaveMessage
       /// </summary>
        private void SetUpHeader()
     {
-       // _positionThreshold,  (_numSteps) 
-       var info = "Registo"                            + Separador + "Tempo Absoluto (Segundos)" + Separador + "Directo ou WIP"              + Separador +
-                  "Vel. Real (Directa)"                + Separador + "Vel. Virtual (WIP)"        + Separador + "Threshold de Velocidade"     + Separador +
-                  "Threshold do Passo (WIP)"           + Separador + "N. Passos Total (WIP)"     + Separador + "N. Passos Direito (WIP)"     + Separador + 
-                  "N. Passos Esquerdo (WIP)"           + Separador + "Joelho Direito (y)"        + Separador + "Joelho Esquerdo (y)"         + Separador + 
-                  "Desvio Joelho Direito"              + Separador + "Desvio Joelho Esquerdo"      + Separador + "Hip (Vector 2)"              + Separador + 
-                  "Head (Vector 3)"                    + Separador + "Direito FootStates (WIP)"  + Separador + "Esquerdo FootStates (WIP)"   + Separador + 
-                  "Direito FootTransitionEvents (WIP)" + Separador + "Esquerdo FootTransitionEvents (WIP)";
+        // _positionThreshold,  (_numSteps) 
+        var info = "Registo" + Separador + "Tempo Absoluto (Segundos)" + Separador + "Metodo de Deslocamento Em Uso" + Separador +
+             "Vel. Real (Directa),(Valor Usado)" + Separador + "Vel. Virtual (WIP),(Valor Usado)" + Separador + "Vel. Virtual + Aumento (WIP),(Valor Usado)" + Separador + "Speed (Valor Usado)" + Separador +
+             "Vel. Real (Directa),(K),(Normal)" + Separador + "Vel. Real (Directa),(K),(Kalman)" + Separador + "Vel. Real (Directa),(K),(Adeff)" + Separador +
+             "Speed (K),(Normal)" + Separador + "Speed (K),(Kalman)" + Separador + "Speed (K),(Adeff)" + Separador +
+             "Vel. Virtual (WIP),(Normal)" + Separador + "Vel. Virtual (WIP),(Kalman)" + Separador + "Vel. Virtual (WIP),(Adeff)" + Separador +
+             "Vel. Real (Directa),(OT),(Normal)" + Separador + "Vel. Real (Directa),(OT),(Kalman)" + Separador + "Vel. Real (Directa),(OT),(Adeff)" + Separador +
+             "Speed (OT),(Normal)" + Separador + "Speed (OT),(Kalman)" + Separador + "Speed (OT),(Adeff)" + Separador +
+             "Opti Track Position (Normal)" + Separador + "Opti Track Position (Kalman)" + Separador + "Opti Track Position (Adeff)" + Separador + "Opti Track Rotation" + Separador +
+             "Joint Vel. Real (K),(Vector 2)" + Separador + "Joint Camera (K),(Vector 3)" + Separador + "Joelho Direito  (y),(Valor Usado)" + Separador + "Joelho Esquerdo (y),(Valor Usado)" + Separador +
+             "Joelho Direito  (y),(Normal)" + Separador + "Joelho Direito (y),(Kalman)" + Separador + "Joelho Direito  (y),(Adeff)" + Separador +
+             "Joelho Esquerdo (y),(Normal)" + Separador + "Joelho Esquerdo (y),(Kalman)" + Separador + "Joelho Esquerdo (y),(Adeff)" + Separador +
+             "Desvio Joelho Direito" + Separador + "Desvio Joelho Esquerdo" + Separador +
+             "Direito FootStates (WIP)" + Separador + "Esquerdo FootStates (WIP)" + Separador +
+             "Direito FootTransitionEvents (WIP)" + Separador + "Esquerdo FootTransitionEvents (WIP)" + Separador +
+             "N. Passos Total (WIP)" + Separador + "N. Passos Direito (WIP)" + Separador + "N. Passos Esquerdo (WIP)" + Separador +
+             "Altura (Valor Usado)" + Separador + "Altura (Kinect)" + Separador + "Altura (Opti Track)" + Separador +
+             "Threshold de Velocidade (Kinect) " + Separador + "Threshold de Aceleracao (Kinect)" + Separador +
+             "Threshold de Velocidade (OptiTrack) " + Separador + "Threshold de Aceleracao (OptiTrack)" + Separador +
+             "Threshold do Passo (WIP)" + Separador + "Nome Joint Vel. Real (Kinect)" + Separador + "Nome Joint Camera (Kinect)" + Separador +
+             "Velocidade Real Filter Mode Use" + Separador + "Velocidade Wip Filter Mode Use" + Separador +
+             "Wip Knee Filter Mode Use" + Separador + "Speed Filter Mode Use" + Separador +
+             "Camera Mode" + Separador + "Device Mode" + Separador +
+             "Height Mode" + Separador + "Forward Mode" + Separador +
+             "Tempo" + Separador + "Aumento (WIP)" + Separador + "Id" + Separador + "Teste Utilizador";
 
-       WriteStringInDoc(info, true);
+
+        WriteStringInDoc(info, true);
     }
 
     private void SetUpFileAndDirectory()
@@ -170,7 +188,7 @@ public class SaveMessage
     {
         if (_useDefaultDocName)
         {
-            _currentDocName = "WVD_V5_" + DateTime.Now.ToString("yyyyMMddTHHmmss") ;
+            _currentDocName = "WVD_V7.5_" + DateTime.Now.ToString("yyyyMMddTHHmmss") ;
             _currentDocName = SolveDuplicateFileNames() + _format;
         }
         else
@@ -265,6 +283,31 @@ public class SaveMessage
 }
 
 /*
+ //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ 
+     * 
+     * 
+     * 
+     * 
+    private void SetUpHeader()
+    {
+       // _positionThreshold,  (_numSteps) 
+       var info = "Registo"                            + Separador + "Tempo Absoluto (Segundos)" + Separador + "Directo ou WIP"              + Separador +
+                  "Vel. Real (Directa)"                + Separador + "Vel. Virtual (WIP)"        + Separador + "Threshold de Velocidade"     + Separador +
+                  "Threshold do Passo (WIP)"           + Separador + "N. Passos Total (WIP)"     + Separador + "N. Passos Direito (WIP)"     + Separador + 
+                  "N. Passos Esquerdo (WIP)"           + Separador + "Joelho Direito (y)"        + Separador + "Joelho Esquerdo (y)"         + Separador + 
+                  "Desvio Joelho Direito"              + Separador + "Desvio Joelho Esquerdo"      + Separador + "Hip (Vector 2)"              + Separador + 
+                  "Head (Vector 3)"                    + Separador + "Direito FootStates (WIP)"  + Separador + "Esquerdo FootStates (WIP)"   + Separador + 
+                  "Direito FootTransitionEvents (WIP)" + Separador + "Esquerdo FootTransitionEvents (WIP)";
+
+       WriteStringInDoc(info, true);
+    }
+ * 
+ * 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ * 
+ * 
+ * 
  * 
  *  private void GetNumCol(string s)
     {
@@ -284,9 +327,7 @@ public class SaveMessage
         _fimCiclo += "0";
     }
      
-     */
-/*
- * 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
  *  private void GetNumCol(string s)
     {
         char[] del = Separador.ToCharArray();
@@ -363,9 +404,9 @@ public class SaveMessage
         NumColunas = 0;
     }
      
-     */
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // _positionThreshold,  (_numSteps) 
-/*  
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     var info = "Registo"                            + Separador + "Tempo Absoluto (Segundos)" + Separador + "Directo ou WIP"              + Separador +
                "Vel. Real (Directa)"                + Separador + "Vel. Virtual (WIP)"        + Separador + "Threshold de Velocidade"     + Separador +
                "Threshold do Passo (WIP)"           + Separador + "Número Passos Total (WIP)" + Separador + "Número Passos Direito (WIP)" + Separador + 
@@ -373,9 +414,7 @@ public class SaveMessage
                "Diff Joelho Direito"                + Separador + "Diff Joelho Esquerdo"      + Separador + "Hip (Vector 2)"              + Separador + 
                "Head (Vector 3)"                    + Separador + "Direito FootStates (WIP)"  + Separador + "Esquerdo FootStates (WIP)"   + Separador + 
                "Direito FootTransitionEvents (WIP)" + Separador + "Esquerdo FootTransitionEvents (WIP)";
-*/
-/*
- 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
      
     public void RecordData(float thresholdVelocidade, float thresholdPosition, float velocidadeReal, float velocidadeWip, float rightDiff, float leftDiff, int numSteps, int rightNumSteps, int leftNumSteps, string estadoActual, string rightFootState, string leftFootState, string rightFootTransitionEvents, string leftFootTransitionEvents, Vector3 rightKnee, Vector3 leftKnee, Vector3 hip, Vector3 head)
     {
@@ -406,8 +445,7 @@ public class SaveMessage
 //#endif
     }
      
-     
-     */
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //"Registo" + "Tempo Absoluto (Segundos)" + "Threshold de Velocidade" + "_positionThreshold (WIP)" + "Vel. Real (Directa)" + "Vel. Virtual (WIP)" 
 //+ "Directo ou WIP" + "Número de passos Total (WIP)"+ "Número de passos Direito (WIP)" (_numSteps) + "Número de Passos Esquerdo (WIP)" (_numSteps) 
 //"Joelho Direito (y)" + "Joelho Esquerdo (y)" + "Diff Joelho Direito" + "Diff Joelho Esquerdo" + "Hip (Vector 2)" + "Head (Vector 3)";
@@ -426,7 +464,7 @@ public class SaveMessage
 //var velWip = velocidadeWip.ToString(new NumberFormatInfo() {NumberDecimalSeparator = ","});
 
 // Debug.Log("C " + temp + "\n  " + _target + temp + _format + "  Bool "+ File.Exists(_target + temp + _format));
-/*
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
          var registo = _cont++     + Separador + diff.TotalSeconds + Separador + deltaTime     + Separador + threshold    + Separador + 
                     joint       + Separador + velocidadeReal    + Separador + velocidadeWip + Separador + estadoActual + Separador + 
                     rightKnee.y + Separador + leftKnee.y        + Separador + rightDiff     + Separador + leftDiff     + Separador + 
