@@ -923,11 +923,7 @@ public class Tracker : MonoBehaviour
 		n.notifySend (NotificationLevel.INFO, "Calibration complete", "Config file updated", 5000);
 	}
 
-<<<<<<< HEAD
 	internal Vector3 GetJointPosition (int id, JointType joint)
-=======
-	internal Vector3 getJointPosition (int id, JointType joint, Vector3 garbage)
->>>>>>> refs/remotes/origin/master
 	{
 		Human h = _humans [id];
 
@@ -959,40 +955,38 @@ public class Tracker : MonoBehaviour
         return _sensors [bestBody.sensorID].PointSensorToScene (CommonUtils.pointKinectToUnity (bestBody.skeleton.JointsPositions [joint]));
 	}
 
-    internal Vector3 getJointPosition(int id, JointType joint, Vector3 garbage)
+    internal Vector3 GetJointPosition(int id, JointType joint, Vector3 garbage)
     {
-        {
-            Human h = _humans[id]; 
-            SensorBody bestBody = h.bodies[0];
-            int confidence = bestBody.Confidence;
-            int lastSensorConfidence = 0;
-            SensorBody lastSensorBody = null;
+        var h = _humans[id]; 
+        var bestBody = h.bodies[0];
+        var confidence = bestBody.Confidence;
+        var lastSensorConfidence = 0;
+        SensorBody lastSensorBody = null;
 
-                foreach (SensorBody b in h.bodies)
-                {
-                    int bConfidence = b.Confidence;
+            foreach (SensorBody b in h.bodies)
+            {
+                var bConfidence = b.Confidence;
                    
-                    if (bConfidence > confidence)
-                    {
-                        confidence = bConfidence; 
-                        bestBody = b; 
-                    }
-                    
-                    
-                     if (b.sensorID == h.seenBySensor)
-                    {
-                        lastSensorConfidence = bConfidence;
-                        lastSensorBody = b;
-                    }
+                if (bConfidence > confidence)
+                {
+                    confidence = bConfidence; 
+                    bestBody = b; 
                 }
+                    
+                if (b.sensorID == h.seenBySensor)
+                {
+                    lastSensorConfidence = bConfidence;
+                    lastSensorBody = b;
+                }
+            }
             
-            if (lastSensorBody == null || (bestBody.sensorID != h.seenBySensor && confidence > (lastSensorConfidence + 1)))
-                h.seenBySensor = bestBody.sensorID;
-                 else
-                    bestBody = lastSensorBody;
+        if (lastSensorBody == null || (bestBody.sensorID != h.seenBySensor && confidence > (lastSensorConfidence + 1)))
+            h.seenBySensor = bestBody.sensorID;
+        else
+            bestBody = lastSensorBody;
 
-            return _sensors[bestBody.sensorID].PointSensorToScene(CommonUtils.pointKinectToUnity(bestBody.skeleton.JointsPositions[joint]));
-        }
+        return _sensors[bestBody.sensorID].PointSensorToScene(CommonUtils.pointKinectToUnity(bestBody.skeleton.JointsPositions[joint]));
+        
     }
 
 
@@ -1112,11 +1106,8 @@ public class Tracker : MonoBehaviour
 		udp.Send (data, data.Length, remoteEndPoint);
 	}
 
-<<<<<<< HEAD
-	public void BroadCastCloudRequests(bool continuous)
-=======
+
 	public void broadCastCloudRequests (bool continuous)
->>>>>>> refs/remotes/origin/master
 	{
 		UdpClient udp = new UdpClient ();
 		string message = CloudMessage.createRequestMessage (continuous ? 1 : 0); 

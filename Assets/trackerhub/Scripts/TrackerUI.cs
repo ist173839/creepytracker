@@ -172,7 +172,7 @@ public class TrackerUI : MonoBehaviour
 			if (_userTracker.Sensors.Count > 0) {
 
 				if (GUI.Button (new Rect (left, top, 60, 20), "Request")) {
-					_userTracker.BroadCastCloudRequests(_continuous);
+					_userTracker.broadCastCloudRequests(_continuous);
 				}
 				_continuous = GUI.Toggle(new Rect(left,top+20,90,20),_continuous,"Continuous");
 				if (GUI.Button (new Rect (left + 70, top, 60, 20), "Hide")) {
