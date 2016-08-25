@@ -38,10 +38,12 @@ public class Tracker : MonoBehaviour
 			return _sensors;
 		}
 	}
-	
+
+
+
 	private CalibrationProcess _calibrationStatus;
 	public CalibrationProcess CalibrationStatus 
-    {
+{
 		get 
 		{
 			return _calibrationStatus;
@@ -52,7 +54,10 @@ public class Tracker : MonoBehaviour
 			_calibrationStatus = value;
 		}
 	}
-    
+
+
+
+
 	private Dictionary<int, Human> _humans;
 
 	private List<Human> _deadHumans;
@@ -94,6 +99,7 @@ public class Tracker : MonoBehaviour
 
     public bool SendKnees;
 
+	public bool colorHumans;
 
     void Start ()
 	{
@@ -205,9 +211,10 @@ public class Tracker : MonoBehaviour
         _udpBroadcast.Send (strToSend);
         SaveRecordServer(strToSend);
 
-        // set human material
-        foreach (var h in _humans.Values) {
-			if (h.seenBySensor != null && ColorHumans)
+		// set human material
+
+		foreach (Human h in _humans.Values) {
+			if (h.seenBySensor != null && colorHumans)
 				CommonUtils.changeGameObjectMaterial (h.gameObject, Sensors [h.seenBySensor].Material);
 			else if (!ColorHumans)
 				CommonUtils.changeGameObjectMaterial (h.gameObject, WhiteMaterial);
@@ -926,6 +933,8 @@ public class Tracker : MonoBehaviour
 
 		SensorBody bestBody = h.bodies [0];
 		int confidence = bestBody.Confidence;
+		int lastSensorConfidence = 0;
+		SensorBody lastSensorBody = null;
 
 		foreach (SensorBody b in h.bodies)
         {
@@ -935,9 +944,17 @@ public class Tracker : MonoBehaviour
 				confidence = bConfidence;
 				bestBody = b;
 			}
+
+			if (b.sensorID == h.seenBySensor) {
+				lastSensorConfidence = bConfidence;
+				lastSensorBody = b;
+			}
 		}
 
-		h.seenBySensor = bestBody.sensorID;
+		if (lastSensorBody == null || (bestBody.sensorID != h.seenBySensor && confidence > (lastSensorConfidence + 1)))
+			h.seenBySensor = bestBody.sensorID;
+		else
+			bestBody = lastSensorBody;
 
         return _sensors [bestBody.sensorID].PointSensorToScene (CommonUtils.pointKinectToUnity (bestBody.skeleton.JointsPositions [joint]));
 	}
@@ -1053,14 +1070,15 @@ public class Tracker : MonoBehaviour
 		}
 		UdpClient udp = new UdpClient ();
 		string message = CloudMessage.createRequestMessage (2); 
-		byte[] data = Encoding.UTF8.GetBytes(message);
-		IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Broadcast, TrackerProperties.Instance.listenPort + 1);
-		udp.Send(data, data.Length, remoteEndPoint);
+		byte[] data = Encoding.UTF8.GetBytes (message);
+		IPEndPoint remoteEndPoint = new IPEndPoint (IPAddress.Broadcast, TrackerProperties.Instance.listenPort + 1);
+		udp.Send (data, data.Length, remoteEndPoint);
 	}
 
-    public void BroadCastCloudRequests(bool continuous){
+	public void BroadCastCloudRequests(bool continuous)
+	{
 		UdpClient udp = new UdpClient ();
-		string message = CloudMessage.createRequestMessage (continuous?1:0); 
+		string message = CloudMessage.createRequestMessage (continuous ? 1 : 0); 
 		byte[] data = Encoding.UTF8.GetBytes (message);
 		IPEndPoint remoteEndPoint = new IPEndPoint (IPAddress.Broadcast, TrackerProperties.Instance.listenPort + 1);
 		udp.Send (data, data.Length, remoteEndPoint);
