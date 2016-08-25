@@ -959,7 +959,44 @@ public class Tracker : MonoBehaviour
         return _sensors [bestBody.sensorID].PointSensorToScene (CommonUtils.pointKinectToUnity (bestBody.skeleton.JointsPositions [joint]));
 	}
 
-	internal bool HumanHasBodies (int id)
+    internal Vector3 getJointPosition(int id, JointType joint, Vector3 garbage)
+    {
+        {
+            Human h = _humans[id]; 
+            SensorBody bestBody = h.bodies[0];
+            int confidence = bestBody.Confidence;
+            int lastSensorConfidence = 0;
+            SensorBody lastSensorBody = null;
+
+                foreach (SensorBody b in h.bodies)
+                {
+                    int bConfidence = b.Confidence;
+                   
+                    if (bConfidence > confidence)
+                    {
+                        confidence = bConfidence; 
+                        bestBody = b; 
+                    }
+                    
+                    
+                     if (b.sensorID == h.seenBySensor)
+                    {
+                        lastSensorConfidence = bConfidence;
+                        lastSensorBody = b;
+                    }
+                }
+            
+            if (lastSensorBody == null || (bestBody.sensorID != h.seenBySensor && confidence > (lastSensorConfidence + 1)))
+                h.seenBySensor = bestBody.sensorID;
+                 else
+                    bestBody = lastSensorBody;
+
+            return _sensors[bestBody.sensorID].PointSensorToScene(CommonUtils.pointKinectToUnity(bestBody.skeleton.JointsPositions[joint]));
+        }
+    }
+
+
+    internal bool HumanHasBodies (int id)
 	{
 		return _humans.ContainsKey (id) && _humans [id].bodies.Count > 0;
 	}
