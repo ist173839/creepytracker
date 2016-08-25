@@ -31,10 +31,8 @@ public class Tracker : MonoBehaviour
 
 	private Dictionary<string, Sensor> _sensors;
 
-	public Dictionary<string, Sensor> Sensors
-	{
-		get 
-		{
+	public Dictionary<string, Sensor> Sensors {
+		get {
 			return _sensors;
 		}
 	}
@@ -42,15 +40,13 @@ public class Tracker : MonoBehaviour
 
 
 	private CalibrationProcess _calibrationStatus;
-	public CalibrationProcess CalibrationStatus 
-{
-		get 
-		{
+
+	public CalibrationProcess CalibrationStatus {
+		get {
 			return _calibrationStatus;
 		}
 
-		set 
-		{
+		set {
 			_calibrationStatus = value;
 		}
 	}
@@ -927,7 +923,11 @@ public class Tracker : MonoBehaviour
 		n.notifySend (NotificationLevel.INFO, "Calibration complete", "Config file updated", 5000);
 	}
 
+<<<<<<< HEAD
 	internal Vector3 GetJointPosition (int id, JointType joint)
+=======
+	internal Vector3 getJointPosition (int id, JointType joint, Vector3 garbage)
+>>>>>>> refs/remotes/origin/master
 	{
 		Human h = _humans [id];
 
@@ -1112,7 +1112,11 @@ public class Tracker : MonoBehaviour
 		udp.Send (data, data.Length, remoteEndPoint);
 	}
 
+<<<<<<< HEAD
 	public void BroadCastCloudRequests(bool continuous)
+=======
+	public void broadCastCloudRequests (bool continuous)
+>>>>>>> refs/remotes/origin/master
 	{
 		UdpClient udp = new UdpClient ();
 		string message = CloudMessage.createRequestMessage (continuous ? 1 : 0); 
