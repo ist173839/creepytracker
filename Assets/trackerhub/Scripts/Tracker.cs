@@ -31,42 +31,25 @@ public class Tracker : MonoBehaviour
 
 	private Dictionary<string, Sensor> _sensors;
 
-	public Dictionary<string, Sensor> Sensors {
-		get {
+	public Dictionary<string, Sensor> Sensors
+    {
+		get
+        {
 			return _sensors;
 		}
 	}
-<<<<<<< HEAD
-<<<<<<< HEAD
-	
-	private CalibrationProcess _calibrationStatus;
-	public CalibrationProcess CalibrationStatus 
-    {
-		get 
-		{
-=======
-=======
->>>>>>> origin/FHV-Alt
-
-
-
 	private CalibrationProcess _calibrationStatus;
 
 	public CalibrationProcess CalibrationStatus {
-		get {
-<<<<<<< HEAD
->>>>>>> daf3ad77531542f081c24e39ed1f34c34ff3a3c8
-=======
->>>>>>> origin/FHV-Alt
-			return _calibrationStatus;
+		get
+        {
+            return _calibrationStatus;
 		}
-
-		set {
+		set
+        {
 			_calibrationStatus = value;
 		}
 	}
-
-
 
 
 	private Dictionary<int, Human> _humans;
@@ -937,16 +920,10 @@ public class Tracker : MonoBehaviour
 		DoNotify n = gameObject.GetComponent<DoNotify> ();
 		n.notifySend (NotificationLevel.INFO, "Calibration complete", "Config file updated", 5000);
 	}
+    
+	
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 	internal Vector3 GetJointPosition (int id, JointType joint)
-=======
-	internal Vector3 getJointPosition (int id, JointType joint, Vector3 garbage)
->>>>>>> daf3ad77531542f081c24e39ed1f34c34ff3a3c8
-=======
-	internal Vector3 GetJointPosition (int id, JointType joint)
->>>>>>> origin/FHV-Alt
 	{
 		Human h = _humans [id];
 
@@ -1128,19 +1105,9 @@ public class Tracker : MonoBehaviour
 		IPEndPoint remoteEndPoint = new IPEndPoint (IPAddress.Broadcast, TrackerProperties.Instance.listenPort + 1);
 		udp.Send (data, data.Length, remoteEndPoint);
 	}
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-    public void BroadCastCloudRequests(bool continuous){
-=======
-	public void broadCastCloudRequests (bool continuous)
+    
+	public void BroadCastCloudRequests (bool continuous)
 	{
->>>>>>> daf3ad77531542f081c24e39ed1f34c34ff3a3c8
-=======
-
-	public void broadCastCloudRequests (bool continuous)
-	{
->>>>>>> origin/FHV-Alt
 		UdpClient udp = new UdpClient ();
 		string message = CloudMessage.createRequestMessage (continuous ? 1 : 0); 
 		byte[] data = Encoding.UTF8.GetBytes (message);
