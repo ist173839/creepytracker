@@ -31,24 +31,31 @@ public class Tracker : MonoBehaviour
 
 	private Dictionary<string, Sensor> _sensors;
 
-	public Dictionary<string, Sensor> Sensors
-	{
-		get 
-		{
+	public Dictionary<string, Sensor> Sensors {
+		get {
 			return _sensors;
 		}
 	}
+<<<<<<< HEAD
 	
 	private CalibrationProcess _calibrationStatus;
 	public CalibrationProcess CalibrationStatus 
     {
 		get 
 		{
+=======
+
+
+
+	private CalibrationProcess _calibrationStatus;
+
+	public CalibrationProcess CalibrationStatus {
+		get {
+>>>>>>> daf3ad77531542f081c24e39ed1f34c34ff3a3c8
 			return _calibrationStatus;
 		}
 
-		set 
-		{
+		set {
 			_calibrationStatus = value;
 		}
 	}
@@ -920,12 +927,18 @@ public class Tracker : MonoBehaviour
 		n.notifySend (NotificationLevel.INFO, "Calibration complete", "Config file updated", 5000);
 	}
 
+<<<<<<< HEAD
 	internal Vector3 GetJointPosition (int id, JointType joint)
+=======
+	internal Vector3 getJointPosition (int id, JointType joint, Vector3 garbage)
+>>>>>>> daf3ad77531542f081c24e39ed1f34c34ff3a3c8
 	{
 		Human h = _humans [id];
 
 		SensorBody bestBody = h.bodies [0];
 		int confidence = bestBody.Confidence;
+		int lastSensorConfidence = 0;
+		SensorBody lastSensorBody = null;
 
 		foreach (SensorBody b in h.bodies)
         {
@@ -935,9 +948,17 @@ public class Tracker : MonoBehaviour
 				confidence = bConfidence;
 				bestBody = b;
 			}
+
+			if (b.sensorID == h.seenBySensor) {
+				lastSensorConfidence = bConfidence;
+				lastSensorBody = b;
+			}
 		}
 
-		h.seenBySensor = bestBody.sensorID;
+		if (lastSensorBody == null || (bestBody.sensorID != h.seenBySensor && confidence > (lastSensorConfidence + 1)))
+			h.seenBySensor = bestBody.sensorID;
+		else
+			bestBody = lastSensorBody;
 
         return _sensors [bestBody.sensorID].PointSensorToScene (CommonUtils.pointKinectToUnity (bestBody.skeleton.JointsPositions [joint]));
 	}
@@ -1053,14 +1074,19 @@ public class Tracker : MonoBehaviour
 		}
 		UdpClient udp = new UdpClient ();
 		string message = CloudMessage.createRequestMessage (2); 
-		byte[] data = Encoding.UTF8.GetBytes(message);
-		IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Broadcast, TrackerProperties.Instance.listenPort + 1);
-		udp.Send(data, data.Length, remoteEndPoint);
+		byte[] data = Encoding.UTF8.GetBytes (message);
+		IPEndPoint remoteEndPoint = new IPEndPoint (IPAddress.Broadcast, TrackerProperties.Instance.listenPort + 1);
+		udp.Send (data, data.Length, remoteEndPoint);
 	}
 
+<<<<<<< HEAD
     public void BroadCastCloudRequests(bool continuous){
+=======
+	public void broadCastCloudRequests (bool continuous)
+	{
+>>>>>>> daf3ad77531542f081c24e39ed1f34c34ff3a3c8
 		UdpClient udp = new UdpClient ();
-		string message = CloudMessage.createRequestMessage (continuous?1:0); 
+		string message = CloudMessage.createRequestMessage (continuous ? 1 : 0); 
 		byte[] data = Encoding.UTF8.GetBytes (message);
 		IPEndPoint remoteEndPoint = new IPEndPoint (IPAddress.Broadcast, TrackerProperties.Instance.listenPort + 1);
 		udp.Send (data, data.Length, remoteEndPoint);
