@@ -37,6 +37,7 @@ public class Tracker : MonoBehaviour
 		}
 	}
 <<<<<<< HEAD
+<<<<<<< HEAD
 	
 	private CalibrationProcess _calibrationStatus;
 	public CalibrationProcess CalibrationStatus 
@@ -44,6 +45,8 @@ public class Tracker : MonoBehaviour
 		get 
 		{
 =======
+=======
+>>>>>>> origin/FHV-Alt
 
 
 
@@ -51,7 +54,10 @@ public class Tracker : MonoBehaviour
 
 	public CalibrationProcess CalibrationStatus {
 		get {
+<<<<<<< HEAD
 >>>>>>> daf3ad77531542f081c24e39ed1f34c34ff3a3c8
+=======
+>>>>>>> origin/FHV-Alt
 			return _calibrationStatus;
 		}
 
@@ -59,7 +65,10 @@ public class Tracker : MonoBehaviour
 			_calibrationStatus = value;
 		}
 	}
-    
+
+
+
+
 	private Dictionary<int, Human> _humans;
 
 	private List<Human> _deadHumans;
@@ -101,6 +110,7 @@ public class Tracker : MonoBehaviour
 
     public bool SendKnees;
 
+	public bool colorHumans;
 
     void Start ()
 	{
@@ -212,9 +222,10 @@ public class Tracker : MonoBehaviour
         _udpBroadcast.Send (strToSend);
         SaveRecordServer(strToSend);
 
-        // set human material
-        foreach (var h in _humans.Values) {
-			if (h.seenBySensor != null && ColorHumans)
+		// set human material
+
+		foreach (Human h in _humans.Values) {
+			if (h.seenBySensor != null && colorHumans)
 				CommonUtils.changeGameObjectMaterial (h.gameObject, Sensors [h.seenBySensor].Material);
 			else if (!ColorHumans)
 				CommonUtils.changeGameObjectMaterial (h.gameObject, WhiteMaterial);
@@ -928,10 +939,14 @@ public class Tracker : MonoBehaviour
 	}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	internal Vector3 GetJointPosition (int id, JointType joint)
 =======
 	internal Vector3 getJointPosition (int id, JointType joint, Vector3 garbage)
 >>>>>>> daf3ad77531542f081c24e39ed1f34c34ff3a3c8
+=======
+	internal Vector3 GetJointPosition (int id, JointType joint)
+>>>>>>> origin/FHV-Alt
 	{
 		Human h = _humans [id];
 
@@ -963,7 +978,42 @@ public class Tracker : MonoBehaviour
         return _sensors [bestBody.sensorID].PointSensorToScene (CommonUtils.pointKinectToUnity (bestBody.skeleton.JointsPositions [joint]));
 	}
 
-	internal bool HumanHasBodies (int id)
+    internal Vector3 GetJointPosition(int id, JointType joint, Vector3 garbage)
+    {
+        var h = _humans[id]; 
+        var bestBody = h.bodies[0];
+        var confidence = bestBody.Confidence;
+        var lastSensorConfidence = 0;
+        SensorBody lastSensorBody = null;
+
+            foreach (SensorBody b in h.bodies)
+            {
+                var bConfidence = b.Confidence;
+                   
+                if (bConfidence > confidence)
+                {
+                    confidence = bConfidence; 
+                    bestBody = b; 
+                }
+                    
+                if (b.sensorID == h.seenBySensor)
+                {
+                    lastSensorConfidence = bConfidence;
+                    lastSensorBody = b;
+                }
+            }
+            
+        if (lastSensorBody == null || (bestBody.sensorID != h.seenBySensor && confidence > (lastSensorConfidence + 1)))
+            h.seenBySensor = bestBody.sensorID;
+        else
+            bestBody = lastSensorBody;
+
+        return _sensors[bestBody.sensorID].PointSensorToScene(CommonUtils.pointKinectToUnity(bestBody.skeleton.JointsPositions[joint]));
+        
+    }
+
+
+    internal bool HumanHasBodies (int id)
 	{
 		return _humans.ContainsKey (id) && _humans [id].bodies.Count > 0;
 	}
@@ -1080,11 +1130,17 @@ public class Tracker : MonoBehaviour
 	}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     public void BroadCastCloudRequests(bool continuous){
 =======
 	public void broadCastCloudRequests (bool continuous)
 	{
 >>>>>>> daf3ad77531542f081c24e39ed1f34c34ff3a3c8
+=======
+
+	public void broadCastCloudRequests (bool continuous)
+	{
+>>>>>>> origin/FHV-Alt
 		UdpClient udp = new UdpClient ();
 		string message = CloudMessage.createRequestMessage (continuous ? 1 : 0); 
 		byte[] data = Encoding.UTF8.GetBytes (message);
