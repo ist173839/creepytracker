@@ -61,7 +61,14 @@ public class HumanSkeleton : MonoBehaviour
 
 	private GameObject floorForwardGameObject;
 
-	void Start ()
+
+    private string HandLeftState;
+    private string HandRightState;
+
+
+
+
+    void Start ()
 	{
 		CapsuleCollider humanCollider = gameObject.AddComponent<CapsuleCollider> ();
 		humanCollider.radius = 0.25f;
@@ -128,8 +135,11 @@ public class HumanSkeleton : MonoBehaviour
 		floorForwardGameObject.tag = "nocolor";
 		floorForwardGameObject.transform.parent = transform;
 
-        
-	}
+
+        HandLeftState  = "Null";
+        HandRightState = "Null";
+
+}
 
 	private GameObject CreateSphere (string sphereName, float scale = 0.1f)
 	{
@@ -162,9 +172,14 @@ public class HumanSkeleton : MonoBehaviour
 	{
 		if (tracker.HumanHasBodies (ID))
         {
-			// Update Forward (mirror or not to mirror?)
+            HandRightState = tracker.GetHandState(ID, Side.Right);
+            HandLeftState =  tracker.GetHandState(ID, Side.Left);
 
-			Vector3 forward = CalcUnfilteredForward ();
+
+
+            // Update Forward (mirror or not to mirror?)
+
+            Vector3 forward = CalcUnfilteredForward ();
 
 			if (lastForward != Vector3.zero)
             {
@@ -181,11 +196,12 @@ public class HumanSkeleton : MonoBehaviour
 
 				// Front for sure?
 
-                Vector3 elbowHand1 = tracker.GetJointPosition(ID, JointType.HandRight, rightHandKalman.Value) - tracker.GetJointPosition (ID, JointType.ElbowRight, rightElbowKalman.Value);
+                Vector3 elbowHand1 = tracker.GetJointPosition (ID, JointType.HandRight, rightHandKalman.Value) - tracker.GetJointPosition (ID, JointType.ElbowRight, rightElbowKalman.Value);
 				Vector3 elbowHand2 = tracker.GetJointPosition (ID, JointType.HandLeft, leftHandKalman.Value) - tracker.GetJointPosition (ID, JointType.ElbowLeft, leftElbowKalman.Value);
 
+                
 
-				if (Vector3.Angle (elbowHand1, -projectedForward) < 30 || Vector3.Angle (elbowHand2, -projectedForward) < 30) {
+                if (Vector3.Angle (elbowHand1, -projectedForward) < 30 || Vector3.Angle (elbowHand2, -projectedForward) < 30) {
 					mirror = !mirror;
 					forward = CalcUnfilteredForward ();
 				}
@@ -291,38 +307,41 @@ public class HumanSkeleton : MonoBehaviour
 		if (canSend) {
 			string pdu = BodyPropertiesTypes.UID.ToString () + MessageSeparators.SET + ID + MessageSeparators.L2;
 
-			pdu += BodyPropertiesTypes.HandLeftState.ToString () + MessageSeparators.SET + "Null" + MessageSeparators.L2;
-			pdu += BodyPropertiesTypes.HandLeftConfidence.ToString () + MessageSeparators.SET + "Null" + MessageSeparators.L2;
-			pdu += BodyPropertiesTypes.HandRightState.ToString () + MessageSeparators.SET + "Null" + MessageSeparators.L2;
-			pdu += BodyPropertiesTypes.HandRightConfidence.ToString () + MessageSeparators.SET + "Null" + MessageSeparators.L2;
+			pdu += BodyPropertiesTypes.HandLeftState.ToString ()      + MessageSeparators.SET + HandLeftState  + MessageSeparators.L2;
+			pdu += BodyPropertiesTypes.HandLeftConfidence.ToString()  + MessageSeparators.SET + "Null"         + MessageSeparators.L2;
+			pdu += BodyPropertiesTypes.HandRightState.ToString ()     + MessageSeparators.SET + HandRightState + MessageSeparators.L2;
+			pdu += BodyPropertiesTypes.HandRightConfidence.ToString() + MessageSeparators.SET + "Null"         + MessageSeparators.L2;
 
-			pdu += "head" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (headKalman.Value) + MessageSeparators.L2;
-			pdu += "neck" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (neckKalman.Value) + MessageSeparators.L2;
+
+
+
+			pdu += "head"          + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (headKalman.Value)          + MessageSeparators.L2;
+			pdu += "neck"          + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (neckKalman.Value)          + MessageSeparators.L2;
 			pdu += "spineShoulder" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (spineShoulderKalman.Value) + MessageSeparators.L2;
-			pdu += "spineMid" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (spineMidKalman.Value) + MessageSeparators.L2;
-			pdu += "spineBase" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (spineBaseKalman.Value) + MessageSeparators.L2;
+			pdu += "spineMid"      + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (spineMidKalman.Value)      + MessageSeparators.L2;
+			pdu += "spineBase"     + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (spineBaseKalman.Value)     + MessageSeparators.L2;
 
 			pdu += "leftShoulder" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (leftShoulderKalman.Value) + MessageSeparators.L2;
-			pdu += "leftElbow" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (leftElbowKalman.Value) + MessageSeparators.L2;
-			pdu += "leftWrist" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (leftWristKalman.Value) + MessageSeparators.L2;
-			pdu += "leftHand" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (leftHandKalman.Value) + MessageSeparators.L2;
-			pdu += "leftThumb" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (leftThumbKalman.Value) + MessageSeparators.L2;
-			pdu += "leftHandTip" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (leftHandTipKalman.Value) + MessageSeparators.L2;
-			pdu += "leftHip" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (leftHipKalman.Value) + MessageSeparators.L2;
-			pdu += "leftKnee" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (leftKneeKalman.Value) + MessageSeparators.L2;
-			pdu += "leftAnkle" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (leftAnkleKalman.Value) + MessageSeparators.L2;
-			pdu += "leftFoot" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (leftFootKalman.Value) + MessageSeparators.L2;
+			pdu += "leftElbow"    + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (leftElbowKalman.Value)    + MessageSeparators.L2;
+			pdu += "leftWrist"    + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (leftWristKalman.Value)    + MessageSeparators.L2;
+			pdu += "leftHand"     + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (leftHandKalman.Value)     + MessageSeparators.L2;
+			pdu += "leftThumb"    + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (leftThumbKalman.Value)    + MessageSeparators.L2;
+			pdu += "leftHandTip"  + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (leftHandTipKalman.Value)  + MessageSeparators.L2;
+			pdu += "leftHip"      + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (leftHipKalman.Value)      + MessageSeparators.L2;
+			pdu += "leftKnee"     + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (leftKneeKalman.Value)     + MessageSeparators.L2;
+			pdu += "leftAnkle"    + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (leftAnkleKalman.Value)    + MessageSeparators.L2;
+			pdu += "leftFoot"     + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (leftFootKalman.Value)     + MessageSeparators.L2;
 
 			pdu += "rightShoulder" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (rightShoulderKalman.Value) + MessageSeparators.L2;
-			pdu += "rightElbow" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (rightElbowKalman.Value) + MessageSeparators.L2;
-			pdu += "rightWrist" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (rightWristKalman.Value) + MessageSeparators.L2;
-			pdu += "rightHand" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (rightHandKalman.Value) + MessageSeparators.L2;
-			pdu += "rightThumb" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (rightThumbKalman.Value) + MessageSeparators.L2;
-			pdu += "rightHandTip" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (rightHandTipKalman.Value) + MessageSeparators.L2;
-			pdu += "rightHip" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (rightHipKalman.Value) + MessageSeparators.L2;
-			pdu += "rightKnee" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (rightKneeKalman.Value) + MessageSeparators.L2;
-			pdu += "rightAnkle" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (rightAnkleKalman.Value) + MessageSeparators.L2;
-			pdu += "rightFoot" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (rightFootKalman.Value);
+			pdu += "rightElbow"    + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (rightElbowKalman.Value)    + MessageSeparators.L2;
+			pdu += "rightWrist"    + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (rightWristKalman.Value)    + MessageSeparators.L2;
+			pdu += "rightHand"     + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (rightHandKalman.Value)     + MessageSeparators.L2;
+			pdu += "rightThumb"    + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (rightThumbKalman.Value)    + MessageSeparators.L2;
+			pdu += "rightHandTip"  + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (rightHandTipKalman.Value)  + MessageSeparators.L2;
+			pdu += "rightHip"      + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (rightHipKalman.Value)      + MessageSeparators.L2;
+			pdu += "rightKnee"     + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (rightKneeKalman.Value)     + MessageSeparators.L2;
+			pdu += "rightAnkle"    + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (rightAnkleKalman.Value)    + MessageSeparators.L2;
+			pdu += "rightFoot"     + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (rightFootKalman.Value);
 
 			return pdu;
 		}

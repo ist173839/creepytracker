@@ -990,6 +990,71 @@ public class Tracker : MonoBehaviour
     }
 
 
+
+
+    internal string GetHandState(int id, Side side)
+    {
+        var h = _humans[id];
+        var bestBody = h.bodies[0];
+        var confidence = bestBody.Confidence;
+        var lastSensorConfidence = 0;
+        SensorBody lastSensorBody = null;
+
+        foreach (SensorBody b in h.bodies)
+        {
+            var bConfidence = b.Confidence;
+
+            if (bConfidence > confidence)
+            {
+                confidence = bConfidence;
+                bestBody = b;
+            }
+
+            if (b.sensorID == h.seenBySensor)
+            {
+                lastSensorConfidence = bConfidence;
+                lastSensorBody = b;
+            }
+        }
+
+        if (lastSensorBody == null || (bestBody.sensorID != h.seenBySensor && confidence > (lastSensorConfidence + 1)))
+            h.seenBySensor = bestBody.sensorID;
+        else
+            bestBody = lastSensorBody;
+
+        var st = GetHandStateFromBody(side, bestBody);
+
+        // body.HandLeftState = HandState.Closed;
+        // body.HandLeftState = HandState.Open;
+        // body.HandLeftState = HandState.Unknown;
+        if (st == "Closed" || st == "Open")
+        {
+            return st;
+        }
+        foreach (SensorBody b in h.bodies)
+        {
+            st = GetHandStateFromBody(side, b);
+            if (st == "Closed") return st;
+        }
+        return "Unknown";
+
+        //return _sensors[bestBody.sensorID].PointSensorToScene(CommonUtils.pointKinectToUnity(body.skeleton.JointsPositions[joint]));
+    }
+
+    private static string GetHandStateFromBody(Side side, SensorBody body)
+    {
+        switch (side)
+        {
+            case Side.Right:
+                return body.skeleton.BodyProperties[BodyPropertiesTypes.HandRightState];
+            case Side.Left:
+                return body.skeleton.BodyProperties[BodyPropertiesTypes.HandLeftState];
+            default:
+                throw new ArgumentOutOfRangeException("side", side, null);
+        }
+    }
+
+
     internal bool HumanHasBodies (int id)
 	{
 		return _humans.ContainsKey (id) && _humans [id].bodies.Count > 0;
