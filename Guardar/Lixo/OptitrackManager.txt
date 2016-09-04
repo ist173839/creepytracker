@@ -1,0 +1,17 @@
+/*
+  for (int i = 0; i < OptitrackManagement.DirectMulticastSocketClient.GetStreemData().NOtherMarkers; i++)
+        {
+            if (markers[i].markerGameObject == null)
+            {
+                if (markerObject == null)
+                    markerObject = GameObject.Find("Marker Prefab");
+                markers[i].markerGameObject = (GameObject)Instantiate(markerObject, markers[i].pos, Quaternion.identity);
+            }
+            else {
+                markers[i].markerGameObject.transform.position = markers[i].pos *10;
+            }
+        }
+     
+     
+     
+     */

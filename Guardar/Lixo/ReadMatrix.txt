@@ -1,0 +1,174 @@
+//private Vector3 GetObjectScale(RepresentationMode representation)
+    //{
+    //    Vector3 scale;
+    //    switch (representation)
+    //    {
+    //        case RepresentationMode.Sphere:
+    //            scale = new Vector3(0.5f, 1.0f, 0.5f);
+    //            break;
+    //        case RepresentationMode.Cube:
+    //            scale = new Vector3(0.5f, 0.6f, 0.5f);
+    //            break;
+    //        case RepresentationMode.Object:
+    //            scale = new Vector3(0.015f, 0.015f, 0.015f);
+    //            break;
+    //        default:
+    //            throw new ArgumentOutOfRangeException("representation", representation, null);
+    //    }
+    //    return scale;
+    //}
+
+    //private float GetObjectY(RepresentationMode representation)
+    //{
+    //    float y;
+    //    switch (representation)
+    //    {
+    //        case RepresentationMode.Sphere:
+    //            y = -1.20f;
+    //            break;
+    //        case RepresentationMode.Cube:
+    //            y = -1.20f;
+    //            break;
+    //        case RepresentationMode.Object:
+    //            y = -1.50f;
+    //            break;
+    //        default:
+    //            throw new ArgumentOutOfRangeException("representation", representation, null);
+    //    }
+    //    return y;
+    //}
+
+    //private Quaternion GetLimitRotation(LimitPositionMode mode)
+    //{
+    //    Quaternion quaternion;
+    //    switch (mode)
+    //    {
+    //        case LimitPositionMode.Front:
+    //            quaternion = Quaternion.Euler(0.0f, 90.0f, -90.0f);
+    //            break;
+    //        case LimitPositionMode.Right:
+    //            quaternion = Quaternion.Euler(0.0f, 0.0f, 90.0f);
+    //            break;
+    //        case LimitPositionMode.Left:
+    //            quaternion = Quaternion.Euler(0.0f, 0.0f, -90.0f);
+    //            break;
+    //        case LimitPositionMode.Behind:
+    //            quaternion = Quaternion.Euler(0.0f, -90.0f, -90.0f);
+    //            break;
+    //        default:
+    //            throw new ArgumentOutOfRangeException("mode", mode, null);
+    //    }
+
+    //    return quaternion;
+    //}
+
+
+    //public List<WorldIndicator> GetWorldList(string cleanText)
+    //{
+
+    //    if (cleanText == null)
+    //        return null;
+
+    //    var list = new List<WorldIndicator>();
+
+    //    for (var i = 1; i < ObterStringValues.ObterNumLinha(cleanText); i++)
+    //    {
+    //        var linha = ObterStringValues.ObterLinha(cleanText, i);
+    //        var typeString = ObterStringValues.GetType(linha);
+    //        if (typeString == "Centro") continue;
+    //        var type = ObterStringValues.ConvertStringToIndicatorType(typeString);
+
+    //        // if (type == null) continue;
+    //        switch (type)
+    //        {
+    //            case IndicatorType.Limit:
+    //                {
+    //                    var modeString = ObterStringValues.GetMode(linha);
+    //                    var mode = ObterStringValues.ConvertStringToLimitMode(modeString);
+
+
+    //                    if (mode != null)
+    //                    {
+    //                        list.Add
+    //                        (
+    //                            new WorldIndicator
+    //                            {
+    //                                Position = ConvertVector2In3(ObterStringValues.GetWorldVectorPosition(linha)),
+    //                                Rotation = GetLimitRotation(mode.Value),
+    //                                Scale = new Vector3(0.5f, 1.0f, 0.5f),
+
+    //                                Material = MaterialType.Transparent,
+    //                                Type = type.Value,
+    //                                Raio = 0.5f,
+    //                            }
+    //                        );
+    //                    }
+    //                }
+    //                break;
+    //            case IndicatorType.Obstacle:
+    //                {
+    //                    var modeString = ObterStringValues.GetMode(linha);
+    //                    var mode = ObterStringValues.ConvertStringToRepresentationMode(modeString);
+    //                    if (mode != null)
+    //                    {
+    //                        list.Add
+    //                        (
+    //                            new WorldIndicator
+    //                            {
+    //                                Position = ConvertVector2In3(ObterStringValues.GetWorldVectorPosition(linha), GetObjectY(mode.Value)),
+    //                                Rotation = Quaternion.Euler(00.0f, 00.0f, 00.0f),
+    //                                Scale = GetObjectScale(mode.Value),
+
+    //                                Material = MaterialType.Transparent,
+    //                                Representation = mode.Value,
+    //                                Type = type.Value,
+    //                                Raio = 0.5f,
+    //                            }
+    //                        );
+    //                    }
+    //                }
+    //                break;
+    //            case null:
+    //                continue;
+    //            default: throw new ArgumentOutOfRangeException();
+    //        }
+    //    }
+    //    return list;
+    //}
+
+
+    
+//SafeActions(cleanFile);
+
+//Debug.Log("<ProcessAllDoc> Ficheiro Lido: " + _fileToEmulateName);
+//_isSetUp = true;
+
+
+// if (!IsDebug) return;
+
+//if (_directory != _wsf.Directory || _currentFolderDestino != _wsf.CurrentFolderDestino) ActualizarDirectorio();
+
+//if (_isSetUp) return;
+//_registoAccao.Clear();
+//_isRelogioActivo = false;
+//_nextAction = 0;
+//_ciclos = 0;
+
+
+//list.Add(new VirtualWorldTest
+//    {
+
+//    }
+//);
+
+//  Debug.Log("ReadDoc: Accao: Num = " + GetNum(tempoLinha) + ", Desvio = " + GetDiff(tempoLinha) + ", Mensagem = " + mensagemLinha);
+//_registoAccao.Add(_fileVersion == Versao.Versao3
+//    ? new Accao
+//    {
+//        Num = GetNum(tempoLinha),
+//        Diff = GetDiff(tempoLinha),
+//        Mensagem = mensagemLinha,
+//        OptiPos = ObterOptiPos(optiLinha),
+//        OptiRot = ObterOptiRot(optiLinha),
+//    }
+//    : new Accao { Num = GetNum(tempoLinha), Diff = GetDiff(tempoLinha), Mensagem = mensagemLinha });

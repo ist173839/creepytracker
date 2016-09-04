@@ -209,9 +209,9 @@ public class Tracker : MonoBehaviour
 
 		foreach (Human h in _humans.Values) {
 			if (h.seenBySensor != null && colorHumans)
-				CommonUtils.changeGameObjectMaterial (h.gameObject, Sensors [h.seenBySensor].Material);
+				CommonUtils.ChangeGameObjectMaterial (h.gameObject, Sensors [h.seenBySensor].Material);
 			else if (!ColorHumans)
-				CommonUtils.changeGameObjectMaterial (h.gameObject, WhiteMaterial);
+				CommonUtils.ChangeGameObjectMaterial (h.gameObject, WhiteMaterial);
 		}
 
 		// show / hide human bodies
@@ -332,10 +332,10 @@ public class Tracker : MonoBehaviour
             var bodySensorId = b.sensorID;
 
             var knee1 = _sensors[bodySensorId].PointSensorToScene(
-                CommonUtils.pointKinectToUnity(b.skeleton.JointsPositions[JointType.KneeRight]));
+                CommonUtils.PointKinectToUnity(b.skeleton.JointsPositions[JointType.KneeRight]));
 
             var knee2 = _sensors[bodySensorId].PointSensorToScene(
-                CommonUtils.pointKinectToUnity(b.skeleton.JointsPositions[JointType.KneeLeft]));
+                CommonUtils.PointKinectToUnity(b.skeleton.JointsPositions[JointType.KneeLeft]));
 
 
             var diff1 = (knee1 - mainRightKnee).sqrMagnitude;
@@ -464,10 +464,10 @@ public class Tracker : MonoBehaviour
             //};
 
             var kneeRight = _sensors[bodySensorId].PointSensorToScene(
-                CommonUtils.pointKinectToUnity(b.skeleton.JointsPositions[JointType.KneeRight]));
+                CommonUtils.PointKinectToUnity(b.skeleton.JointsPositions[JointType.KneeRight]));
             
             var kneeLeft = _sensors[bodySensorId].PointSensorToScene(
-                CommonUtils.pointKinectToUnity(b.skeleton.JointsPositions[JointType.KneeLeft]));
+                CommonUtils.PointKinectToUnity(b.skeleton.JointsPositions[JointType.KneeLeft]));
             
             var trackingStateKneeRight = b.skeleton.TrackingStateKneeRight;
             var trackingStateKneeLeft  = b.skeleton.TrackingStateKneeLeft;
@@ -952,7 +952,7 @@ public class Tracker : MonoBehaviour
 		else
 			bestBody = lastSensorBody;
 
-        return _sensors [bestBody.sensorID].PointSensorToScene (CommonUtils.pointKinectToUnity (bestBody.skeleton.JointsPositions [joint]));
+        return _sensors [bestBody.sensorID].PointSensorToScene (CommonUtils.PointKinectToUnity (bestBody.skeleton.JointsPositions [joint]));
 	}
 
     internal Vector3 GetJointPosition(int id, JointType joint, Vector3 garbage)
@@ -985,7 +985,7 @@ public class Tracker : MonoBehaviour
         else
             bestBody = lastSensorBody;
 
-        return _sensors[bestBody.sensorID].PointSensorToScene(CommonUtils.pointKinectToUnity(bestBody.skeleton.JointsPositions[joint]));
+        return _sensors[bestBody.sensorID].PointSensorToScene(CommonUtils.PointKinectToUnity(bestBody.skeleton.JointsPositions[joint]));
         
     }
 
@@ -1205,143 +1205,4 @@ public class Tracker : MonoBehaviour
         }
     }
 }
-/*
- * 
- * 
- * 
- * 
-    private static Vector3? CloseKneeFromAll(Dictionary<string, KneesInfo> kneesList, Human human, Side thisSide, bool track, Vector3? lastPosition)
-    {
-        var position = GetLastPosition(human, thisSide, lastPosition);
 
-        lastPosition = GetCloserKneeFromAll(kneesList, track, position);
-        return lastPosition;
-    }
-
-
-    private static Vector3? GetCloserKneeFromAll(Dictionary<string, KneesInfo> kneesList, bool track, Vector3 position)
-    {
-        return track ? GetCloseKneeTrackFromAll(kneesList, position) : GetCloseKneeFromAll(kneesList, position);
-    }
-
-    private static Vector3? GetCloseKneeFromAll(Dictionary<string, KneesInfo> kneesList, Vector3 position)
-    {
-
-        if (kneesList.Count == 0) return null;
-
-        var res = new Vector3();
-        var diff = float.MaxValue;
-
-        foreach (var info in kneesList)
-        {
-            var d = (info.Value.Pos - position).magnitude;
-            if (!(d < diff)) continue;
-            diff = d;
-            res = info.Value.Pos;
-        }
-
-        if (Math.Abs(diff - float.MaxValue) < 0) return null;
-        return res;
-    }
-
-    private static Vector3? GetCloseKneeTrackFromAll(Dictionary<string, KneesInfo> kneesList, Vector3 position)
-    {
-        if (kneesList.Count == 0) return null;
-
-        var res = new Vector3();
-        var diff = float.MaxValue;
-        var hasTrack = false;
-
-        foreach (var info in kneesList)
-        {
-            if (!info.Value.Track) continue;
-            hasTrack = true;
-            var d = (info.Value.Pos - position).magnitude;
-            if (!(d < diff)) continue;
-            diff = d;
-            res = info.Value.Pos;
-        }
-
-        if (!hasTrack) return GetCloseKnee(kneesList, position);
-
-        if (Math.Abs(diff - float.MaxValue) < 0) return null;
-
-
-        return res;
-    }
-
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
- *    //private string GetExtraInfo()
-    //{
-    //    string extra = null;
-
-    //    foreach (var h in _humans)
-    //    {
-    //        extra = h.Value.
-    //        //h.Value.Skeleton
-
-    //    }
-
-
-
-    //    return extra;
-    //}
- 
-     
-    // < Change >
-    /// <summary>
-    /// (Pt) Guarda as mensagens enviadas pelo servidor em ficheiros txt
-    /// (En) Store messages sent by the server in txt files
-    /// </summary>
-    /// <param name="strToSend"> Mensagem para Guardar </param>
-    /// <param name="optiTrackPos"> Posicao Obtida pelo OptiTrack </param>
-    /// <param name="optiTrackOri"></param>
-    private void SaveRecordServer(string strToSend, Vector3 optiTrackPos, Quaternion optiTrackOri)
-    {
-       
-
-        //_localOptitrackManager.IsOn//
-        const string noneMessage = "0";
-        if (strToSend == noneMessage)
-        {
-            _writeSafeFile.StopRecording("Terminated Because No Messages");
-            // _writeSafeFile.StopRecording();
-        }
-        else
-        {
-            _writeSafeFile.Recording(strToSend, optiTrackPos, optiTrackOri);
-        }
-    }
-
-
-     //Debug.Log("2  kneeRightList.Count = " + kneeRightList.Count);
-        //Debug.Log("2  kneeLeftList.Count = " + kneeLeftList.Count);
-
-
-
-     switch (thisKnee)
-            {
-                case Side.Right:
-                    position = human.Skeleton.GetKnee(thisKnee);
-                    break;
-                case Side.Left:
-                    position = human.Skeleton.GetLeftKnee();
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("thisKnee", thisKnee, null);
-            }
-
-
-
-
-     */

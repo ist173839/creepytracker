@@ -10,15 +10,14 @@ using System.Collections;
 using OptitrackManagement;
 
 // ReSharper disable once CheckNamespace
+// ReSharper disable once ClassNeverInstantiated.Global
 public class OptitrackManager : MonoBehaviour
 {
-
     enum Pos
     {
-        pos1,
-        pos2,
+        Pos1,
+        Pos2,
     }
-
     private Pos _nextPos;
 
     private GameObject _forwardGo;
@@ -72,7 +71,7 @@ public class OptitrackManager : MonoBehaviour
         _cylinder.transform.up = Vector3.forward;
         _cylinder.transform.parent = _forwardGo.transform;
 
-        _nextPos = Pos.pos1;
+        _nextPos = Pos.Pos1;
         _pos1 = _pos2 = null;
         _forward = Vector3.forward;
 
@@ -146,14 +145,14 @@ public class OptitrackManager : MonoBehaviour
             Debug.Log("O");
             switch (_nextPos)
             {
-                case Pos.pos1:
-                    _nextPos = Pos.pos2;
+                case Pos.Pos1:
+                    _nextPos = Pos.Pos2;
 
                     _pos1 = new Vector3(temp.x, 0.0f, temp.z);
                     Debug.Log("Pos 1 =  X = " + _pos1.Value.x + ", Z = " + _pos1.Value.z);
                     break;
-                case Pos.pos2:
-                    _nextPos = Pos.pos1;
+                case Pos.Pos2:
+                    _nextPos = Pos.Pos1;
                     _pos2 = new Vector3(temp.x, 0.0f, temp.z);
                     Debug.Log("Pos 2 : X = " + _pos2.Value.x + ", Z = " + _pos2.Value.z);
                     break;
@@ -247,20 +246,3 @@ public class OptitrackManager : MonoBehaviour
     }
 }
 
-/*
-  for (int i = 0; i < OptitrackManagement.DirectMulticastSocketClient.GetStreemData().NOtherMarkers; i++)
-        {
-            if (markers[i].markerGameObject == null)
-            {
-                if (markerObject == null)
-                    markerObject = GameObject.Find("Marker Prefab");
-                markers[i].markerGameObject = (GameObject)Instantiate(markerObject, markers[i].pos, Quaternion.identity);
-            }
-            else {
-                markers[i].markerGameObject.transform.position = markers[i].pos *10;
-            }
-        }
-     
-     
-     
-     */

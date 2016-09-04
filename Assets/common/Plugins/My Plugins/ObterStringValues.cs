@@ -67,6 +67,3 @@ using UnityEngine;
 
 }
 
-//var t1 = text.Split(del)[1];
-//  x = (float)Convert.ToDouble(text.Split(MyMessaSepa.SepaVec[0])[0], new NumberFormatInfo() { NumberDecimalSeparator = "," }),
-//  y = (float)Convert.ToDouble(text.Split(MyMessaSepa.SepaVec[0])[1], new NumberFormatInfo() { NumberDecimalSeparator = "," }),

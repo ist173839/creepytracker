@@ -6,7 +6,7 @@ using Kinect = Windows.Kinect;
 
 public class CommonUtils
 {
-    internal const int decimalsRound = 3;
+    internal const int DecimalsRound = 3;
 
     internal static Vector3 _convertToVector3(Kinect.CameraSpacePoint p)
     {
@@ -15,15 +15,15 @@ public class CommonUtils
 
     internal static string convertVectorToStringRPC(Vector3 v)
     {
-        return "" + Math.Round(v.x, decimalsRound) + MessageSeparators.L3 + Math.Round(v.y, decimalsRound) + MessageSeparators.L3 + Math.Round(v.z, decimalsRound);
+        return "" + Math.Round(v.x, DecimalsRound) + MessageSeparators.L3 + Math.Round(v.y, DecimalsRound) + MessageSeparators.L3 + Math.Round(v.z, DecimalsRound);
     }
 
-    internal static string convertQuaternionToStringRPC(Quaternion v)
+    internal static string ConvertQuaternionToStringRpc(Quaternion v)
     {
         return "" + v.w + MessageSeparators.L3 + v.x + MessageSeparators.L3 + v.y + MessageSeparators.L3 + v.y;
     }
 
-    internal static Vector3 convertRpcStringToVector3(string v)
+    internal static Vector3 ConvertRpcStringToVector3(string v)
     {
         string[] p = v.Split(MessageSeparators.L3);
         return new Vector3(float.Parse(p[0].Replace(',','.')), float.Parse(p[1].Replace(',', '.')), float.Parse(p[2].Replace(',', '.')));
@@ -34,7 +34,7 @@ public class CommonUtils
         return convertVectorToStringRPC(new Vector3(position.X, position.Y, position.Z));
     }
 
-    internal static Quaternion convertRpcStringToQuaternion(string v)
+    internal static Quaternion ConvertRpcStringToQuaternion(string v)
     {
         string[] p = v.Split(MessageSeparators.L3);
         return new Quaternion(float.Parse(p[1].Replace(',', '.')), float.Parse(p[2].Replace(',', '.')), float.Parse(p[2].Replace(',', '.')), float.Parse(p[0].Replace(',', '.')));
@@ -55,7 +55,7 @@ public class CommonUtils
         return sum / vectors.Length;
     }
 
-    internal static void changeGameObjectMaterial(GameObject go, Material mat)
+    internal static void ChangeGameObjectMaterial(GameObject go, Material mat)
     {
         if (go.GetComponent<Renderer>() != null) go.GetComponent<Renderer>().material = mat;
         foreach (Transform child in go.transform)
@@ -64,7 +64,7 @@ public class CommonUtils
         }
     }
 
-    internal static GameObject newGameObject(Vector3 v)
+    internal static GameObject NewGameObject(Vector3 v)
     {
         GameObject go = new GameObject();
         go.transform.position = v;
@@ -77,7 +77,7 @@ public class CommonUtils
         return ++userIDs;
     }
 
-    internal static Vector3 pointKinectToUnity(Vector3 p)
+    internal static Vector3 PointKinectToUnity(Vector3 p)
     {
         return new Vector3(-p.x, p.y, p.z);
     }
@@ -85,20 +85,20 @@ public class CommonUtils
     public static List<Color> colors = new List<Color>()
     {
         //Color.red,
-        hexToColor("#e9b96e"),
-        hexToColor("#fce94f"),
-        hexToColor("#8ae234"),
-        hexToColor("#fcaf3e"),
-        hexToColor("#729fcf"),
-        hexToColor("#ad7fa8"),
-        hexToColor("#cc0000"),
-        hexToColor("#4e9a06"),
-        hexToColor("#ce5c00"),
-        hexToColor("#204a87"),
-        hexToColor("#5c3566")
+        HexToColor("#e9b96e"),
+        HexToColor("#fce94f"),
+        HexToColor("#8ae234"),
+        HexToColor("#fcaf3e"),
+        HexToColor("#729fcf"),
+        HexToColor("#ad7fa8"),
+        HexToColor("#cc0000"),
+        HexToColor("#4e9a06"),
+        HexToColor("#ce5c00"),
+        HexToColor("#204a87"),
+        HexToColor("#5c3566")
     };
 
-    internal static Color hexToColor(string hex)
+    internal static Color HexToColor(string hex)
     {
         hex = hex.Replace("0x", "");//in case the string is formatted 0xFFFFFF
         hex = hex.Replace("#", "");//in case the string is formatted #FFFFFF

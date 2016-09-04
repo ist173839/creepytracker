@@ -1,0 +1,182 @@
+
+
+/*
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * switch (thisKnee)
+            {
+                case Side.Right:
+                    position = human.Skeleton.GetRightKnee();
+                    break;
+                case Side.Left:
+                    position = human.Skeleton.GetLeftKnee();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("thisKnee", thisKnee, null);
+            }
+ * 
+ * 
+ * 
+ * 
+ * 
+     //   Debug.Log("_idList");
+     //   foreach (var i in _idList)
+     //   {
+     //       Debug.Log("i = " + i);
+     //   }
+     //   Debug.Log("idList");
+     //   foreach (var i in idList)
+	 //   {
+     //       Debug.Log("i = " + i);
+     //   }
+
+ * 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        foreach (var h in _humanList)
+        {
+            idUpdateList.Add(h.name);
+            if (idList.Contains(h.name)) { }
+        }
+
+        if (idList.Contains(h.name)) { }
+        else { }
+
+
+    // if (_lastRigthPosition == null)
+    // {
+    // _lastRigthPosition =  
+    //   }
+    //  
+    //   _lastLeftPosition = null;
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ 
+ private void UpdateKnees(Dictionary</ string, KneesInfo> theKnees, List<string> idList, Side thisKnee, OtherKnee otherKnee)
+{
+   foreach (var idHuman in idList)
+   {
+       var kneeName = idHuman + "_" + otherKnee + "_" + thisKnee;
+
+       var knee = GetKneeObject(otherKnee, kneeName, idHuman);
+       if (knee == null) continue;
+   
+       if (theKnees.Count == 0)
+       {
+           knee.transform.position = Vector3.zero;
+       }
+       else
+       {
+           switch (otherKnee)
+           {
+               case OtherKnee.Mean:
+
+                   knee.transform.position = GetMeanList(theKnees, Track);
+                   break;
+               case OtherKnee.Close:
+                   switch (thisKnee)
+                   {
+                       case Side.Right:
+                           _lastRigthPosition = knee.transform.position = CloseKnee(theKnees, _localTracker, Side.Right, Track, idHuman, _lastRigthPosition);
+                           break;
+                       case Side.Left:
+                           _lastLeftPosition  = knee.transform.position = CloseKnee(theKnees, _localTracker, Side.Left, Track, idHuman, _lastLeftPosition);
+                           break;
+                       default:
+                           throw new ArgumentOutOfRangeException("thisKnee", thisKnee, null);
+                   }
+                   break;
+               default:
+                   throw new ArgumentOutOfRangeException("otherKnee", otherKnee, null);
+           }
+       }
+       
+      // knee.GetComponent<Renderer>().material.color = otherKnee == OtherKnee.Mean ? _colorMean : _colorCloser;
+   }
+}
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    private static Vector3 GetCloseKnee(Dictionary<string, KneesInfo> kneesList, bool track, Vector3 position)
+    {
+        if (kneesList.Count == 0) return Vector3.zero;
+
+        var res = new Vector3();
+        var diff = float.MaxValue;
+        var hasTrack = false;
+
+        foreach (var info in kneesList)
+        {
+            if (track)
+            {
+                if (!info.Value.Track) continue;
+                hasTrack = true;
+                var d = (info.Value.Pos.Value - position).magnitude;
+                if (!(d < diff)) continue;
+                diff = d;
+                res = info.Value.Pos.Value;
+            }
+            else
+            {
+                var d = (info.Value.Pos.Value - position).magnitude;
+                if (!(d < diff)) continue;
+                diff = d;
+                res = info.Value.Pos.Value;
+            }
+        }
+
+        if (track && !hasTrack || Math.Abs(diff - float.MaxValue) < 0) return Vector3.zero;
+
+
+        return res;
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    private static int GetTheCloseKnee(Dictionary<string, KneesInfo> kneesList, bool track, int t, Vector3 position, ref float diff, ref Vector3 res)
+    {
+        foreach (var info in kneesList)
+        {
+            if (track)
+            {
+                if (!info.Value.Track) continue;
+                t++;
+                var d = (info.Value.Pos.Value - position).magnitude;
+                if (!(d < diff)) continue;
+                diff = d;
+                res = info.Value.Pos.Value;
+            }
+            else
+            {
+                var d = (info.Value.Pos.Value - position).magnitude;
+                if (!(d < diff)) continue;
+                diff = d;
+                res = info.Value.Pos.Value;
+            }
+        }
+        return t;
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    private static Vector3 GetTheCloseKneeTrack(Dictionary<string, KneesInfo> kneesList, bool track, int t, Vector3 position, ref float diff, ref Vector3 res)
+    {
+        var isTrack = false;
+        foreach (var info in kneesList)
+        {
+            if (!info.Value.Track) continue;
+            isTrack = true;
+            var d = (info.Value.Pos.Value - position).magnitude;
+            if (!(d < diff)) continue;
+            diff = d;
+            res = info.Value.Pos.Value;
+        }
+        if (!isTrack)
+        {
+        }
+
+        return res;
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+ * 
+ */

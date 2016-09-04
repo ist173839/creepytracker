@@ -94,7 +94,7 @@ public class Skeleton
 
                 if (Enum.IsDefined(typeof(Windows.Kinect.JointType), statement[0]))
                 {
-                    JointsPositions[((Windows.Kinect.JointType) Enum.Parse(typeof(Windows.Kinect.JointType), statement[0]))] = CommonUtils.convertRpcStringToVector3(statement[1]);
+                    JointsPositions[((Windows.Kinect.JointType) Enum.Parse(typeof(Windows.Kinect.JointType), statement[0]))] = CommonUtils.ConvertRpcStringToVector3(statement[1]);
                 }
 
                // ExtraStatement(statement);
