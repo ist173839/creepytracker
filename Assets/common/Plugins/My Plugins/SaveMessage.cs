@@ -36,6 +36,8 @@ public class SaveMessage
     private string _docName;
     private string _target;
 
+    private string _header;
+
     public int NumColunas   { get; private set; }
 
     private static readonly int TamanhoMaximo = (int) Math.Pow(2, 30); // (2 ^ 30)
@@ -47,6 +49,9 @@ public class SaveMessage
     private bool _useDefaultDocName;
     private bool _useDefaultFolder;
     private bool _isInitiate;
+
+
+
 
     public SaveMessage() 
     {
@@ -69,10 +74,19 @@ public class SaveMessage
         _target = _directory + "\\" + _currentFolderDestino + "\\";
 
 
+        
+
         _isInitiate = false;
         _recordingName = null;
         _cont = 0;
         NumColunas = 0;
+
+
+        _header = GetHeader();
+
+
+
+
     }
 
     ~SaveMessage()
@@ -103,8 +117,13 @@ public class SaveMessage
 
     public void RecordMessage(string message)
     {
-        //#if !UNITY_ANDROID
-        if (!_isInitiate) SetUpFileAndDirectory();
+       
+        if (message == _header)
+        {
+            _isInitiate = false;
+        }
+
+        if (!_isInitiate) SetUpFileAndDirectory(message);
         //if (message != _startMessage  && !_isInitiate)
         //{
         //} else
@@ -116,11 +135,28 @@ public class SaveMessage
         }
         else
             WriteStringInDoc(message, true);
-        //#endif
+        
     }
 
-     
-       private void SetUpHeader()
+    private string GetHeader()
+    {
+        
+        return "Registo" + Separador + "Tempo Absoluto (Segundos)" + Separador + "Metodo de Deslocamento Em Uso" + Separador +
+             "Vel. Real (Directa, Kalman)" + Separador + "Vel. Virtual (WIP, Kalman)" + Separador +
+             "Vel. Real (Directa, Normal)" + Separador + "Vel. Virtual (WIP, Normal)" + Separador +
+             "Vel. Virtual + Aumento (WIP)" + Separador + "Joint Vel. Real (Vector 2)" + Separador + "Joint Camera (Vector 3)" + Separador +
+             "Joelho Direito (y)" + Separador + "Joelho Esquerdo (y)" + Separador +
+             "Desvio Joelho Direito" + Separador + "Desvio Joelho Esquerdo" + Separador +
+             "Direito FootStates (WIP)" + Separador + "Esquerdo FootStates (WIP)" + Separador +
+             "Direito FootTransitionEvents (WIP)" + Separador + "Esquerdo FootTransitionEvents (WIP)" + Separador +
+             "N. Passos Total (WIP)" + Separador + "N. Passos Direito (WIP)" + Separador + "N. Passos Esquerdo (WIP)" + Separador +
+             "Altura" + Separador + "Threshold de Velocidade Directa" + Separador + "Threshold de Velocidade WIP" + Separador +
+             "Threshold do Passo (WIP)" + Separador + "Nome Joint Vel. Real (Kinect)" + Separador + "Nome Joint Camera (Kinect)" + Separador +
+             "Tempo" + Separador + "Aumento (WIP)" + Separador + "Id";
+    }
+
+
+    private void SetUpHeader()
     {
         // _positionThreshold,  (_numSteps) 
 
@@ -140,6 +176,27 @@ public class SaveMessage
         WriteStringInDoc(info, true);
     }
 
+    private void SetUpHeader(string first)
+    {
+        // _positionThreshold,  (_numSteps) 
+
+        var info = "Registo" + Separador + "Tempo Absoluto (Segundos)" + Separador + "Metodo de Deslocamento Em Uso" + Separador +
+             "Vel. Real (Directa, Kalman)" + Separador + "Vel. Virtual (WIP, Kalman)" + Separador +
+             "Vel. Real (Directa, Normal)" + Separador + "Vel. Virtual (WIP, Normal)" + Separador +
+             "Vel. Virtual + Aumento (WIP)" + Separador + "Joint Vel. Real (Vector 2)" + Separador + "Joint Camera (Vector 3)" + Separador +
+             "Joelho Direito (y)" + Separador + "Joelho Esquerdo (y)" + Separador +
+             "Desvio Joelho Direito" + Separador + "Desvio Joelho Esquerdo" + Separador +
+             "Direito FootStates (WIP)" + Separador + "Esquerdo FootStates (WIP)" + Separador +
+             "Direito FootTransitionEvents (WIP)" + Separador + "Esquerdo FootTransitionEvents (WIP)" + Separador +
+             "N. Passos Total (WIP)" + Separador + "N. Passos Direito (WIP)" + Separador + "N. Passos Esquerdo (WIP)" + Separador +
+             "Altura" + Separador + "Threshold de Velocidade Directa" + Separador + "Threshold de Velocidade WIP" + Separador +
+             "Threshold do Passo (WIP)" + Separador + "Nome Joint Vel. Real (Kinect)" + Separador + "Nome Joint Camera (Kinect)" + Separador +
+             "Tempo" + Separador + "Aumento (WIP)" + Separador + "Id";
+
+        if (first == info) return;
+        WriteStringInDoc(info, true);
+    }
+
     private void SetUpFileAndDirectory()
     {
         // _target = _directory + "\\" +_CurrentFolderDestino ;
@@ -148,6 +205,16 @@ public class SaveMessage
         SetUpHeader();
         _isInitiate = true;
     }
+
+    private void SetUpFileAndDirectory(string first)
+    {
+        // _target = _directory + "\\" +_CurrentFolderDestino ;
+        SetUpDirectory();
+        SetFileName();
+        SetUpHeader(first);
+        _isInitiate = true;
+    }
+
 
     private void WriteStringInDoc(string registo, bool isAppend)
     {
