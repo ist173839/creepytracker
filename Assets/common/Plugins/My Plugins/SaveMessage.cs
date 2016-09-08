@@ -69,13 +69,9 @@ public class SaveMessage
         
         _caminhoCompleto = null;
         _specialTypeDocName = 0;
-        
             
         _target = _directory + "\\" + _currentFolderDestino + "\\";
-
-
         
-
         _isInitiate = false;
         _recordingName = null;
         _cont = 0;
@@ -142,36 +138,23 @@ public class SaveMessage
     {
         
         return "Registo" + Separador + "Tempo Absoluto (Segundos)" + Separador + "Metodo de Deslocamento Em Uso" + Separador +
-             "Vel. Real (Directa, Kalman)" + Separador + "Vel. Virtual (WIP, Kalman)" + Separador +
-             "Vel. Real (Directa, Normal)" + Separador + "Vel. Virtual (WIP, Normal)" + Separador +
-             "Vel. Virtual + Aumento (WIP)" + Separador + "Joint Vel. Real (Vector 2)" + Separador + "Joint Camera (Vector 3)" + Separador +
-             "Joelho Direito (y)" + Separador + "Joelho Esquerdo (y)" + Separador +
-             "Desvio Joelho Direito" + Separador + "Desvio Joelho Esquerdo" + Separador +
-             "Direito FootStates (WIP)" + Separador + "Esquerdo FootStates (WIP)" + Separador +
-             "Direito FootTransitionEvents (WIP)" + Separador + "Esquerdo FootTransitionEvents (WIP)" + Separador +
-             "N. Passos Total (WIP)" + Separador + "N. Passos Direito (WIP)" + Separador + "N. Passos Esquerdo (WIP)" + Separador +
-             "Altura" + Separador + "Threshold de Velocidade Directa" + Separador + "Threshold de Velocidade WIP" + Separador +
-             "Threshold do Passo (WIP)" + Separador + "Nome Joint Vel. Real (Kinect)" + Separador + "Nome Joint Camera (Kinect)" + Separador +
-             "Tempo" + Separador + "Aumento (WIP)" + Separador + "Id";
+            "Vel. Real (Directa, Normal)" + Separador + "Vel. Real (Directa, Kalman)" + Separador +
+            "Vel. Virtual (WIP, Normal)" + Separador + "Vel. Virtual (WIP, Kalman)" + Separador + "Vel. Virtual (WIP, Event, Normal)" + Separador +
+            "Vel. Virtual + Aumento (WIP)" + Separador + "Joint Vel. Real (Vector 2)" + Separador + "Joint Camera (Vector 3)" + Separador +
+            "Joelho Direito (y)" + Separador + "Joelho Esquerdo (y)" + Separador +
+            "Desvio Joelho Direito" + Separador + "Desvio Joelho Esquerdo" + Separador +
+            "Direito FootStates (WIP)" + Separador + "Esquerdo FootStates (WIP)" + Separador +
+            "Direito FootTransitionEvents (WIP)" + Separador + "Esquerdo FootTransitionEvents (WIP)" + Separador +
+            "N. Passos Total (WIP)" + Separador + "N. Passos Direito (WIP)" + Separador + "N. Passos Esquerdo (WIP)" + Separador +
+            "Altura" + Separador + "Threshold de Velocidade Directa" + Separador + "Threshold de Velocidade WIP" + Separador + "Threshold do Passo (WIP)" + Separador +
+            "Nome Joint Vel. Real (Kinect)" + Separador + "Nome Joint Camera (Kinect)" + Separador + "Tempo" + Separador + "Aumento (WIP)" + Separador + "Id";
     }
-
-
+    
     private void SetUpHeader()
     {
         // _positionThreshold,  (_numSteps) 
 
-        var info = "Registo" + Separador + "Tempo Absoluto (Segundos)" + Separador + "Metodo de Deslocamento Em Uso" + Separador +
-             "Vel. Real (Directa, Kalman)" + Separador + "Vel. Virtual (WIP, Kalman)" + Separador +
-             "Vel. Real (Directa, Normal)" + Separador + "Vel. Virtual (WIP, Normal)" + Separador +
-             "Vel. Virtual + Aumento (WIP)" + Separador + "Joint Vel. Real (Vector 2)" + Separador + "Joint Camera (Vector 3)" + Separador +
-             "Joelho Direito (y)" + Separador + "Joelho Esquerdo (y)" + Separador +
-             "Desvio Joelho Direito" + Separador + "Desvio Joelho Esquerdo" + Separador +
-             "Direito FootStates (WIP)" + Separador + "Esquerdo FootStates (WIP)" + Separador +
-             "Direito FootTransitionEvents (WIP)" + Separador + "Esquerdo FootTransitionEvents (WIP)" + Separador +
-             "N. Passos Total (WIP)" + Separador + "N. Passos Direito (WIP)" + Separador + "N. Passos Esquerdo (WIP)" + Separador +
-             "Altura" + Separador + "Threshold de Velocidade Directa" + Separador + "Threshold de Velocidade WIP" + Separador +
-             "Threshold do Passo (WIP)" + Separador + "Nome Joint Vel. Real (Kinect)" + Separador + "Nome Joint Camera (Kinect)" + Separador +
-             "Tempo" + Separador + "Aumento (WIP)" + Separador + "Id";
+        var info = _header;//GetHeader();
 
         WriteStringInDoc(info, true);
     }
@@ -180,18 +163,7 @@ public class SaveMessage
     {
         // _positionThreshold,  (_numSteps) 
 
-        var info = "Registo" + Separador + "Tempo Absoluto (Segundos)" + Separador + "Metodo de Deslocamento Em Uso" + Separador +
-             "Vel. Real (Directa, Kalman)" + Separador + "Vel. Virtual (WIP, Kalman)" + Separador +
-             "Vel. Real (Directa, Normal)" + Separador + "Vel. Virtual (WIP, Normal)" + Separador +
-             "Vel. Virtual + Aumento (WIP)" + Separador + "Joint Vel. Real (Vector 2)" + Separador + "Joint Camera (Vector 3)" + Separador +
-             "Joelho Direito (y)" + Separador + "Joelho Esquerdo (y)" + Separador +
-             "Desvio Joelho Direito" + Separador + "Desvio Joelho Esquerdo" + Separador +
-             "Direito FootStates (WIP)" + Separador + "Esquerdo FootStates (WIP)" + Separador +
-             "Direito FootTransitionEvents (WIP)" + Separador + "Esquerdo FootTransitionEvents (WIP)" + Separador +
-             "N. Passos Total (WIP)" + Separador + "N. Passos Direito (WIP)" + Separador + "N. Passos Esquerdo (WIP)" + Separador +
-             "Altura" + Separador + "Threshold de Velocidade Directa" + Separador + "Threshold de Velocidade WIP" + Separador +
-             "Threshold do Passo (WIP)" + Separador + "Nome Joint Vel. Real (Kinect)" + Separador + "Nome Joint Camera (Kinect)" + Separador +
-             "Tempo" + Separador + "Aumento (WIP)" + Separador + "Id";
+        var info = _header;//GetHeader();
 
         if (first == info) return;
         WriteStringInDoc(info, true);
@@ -241,7 +213,7 @@ public class SaveMessage
     {
         if (_useDefaultDocName)
         {
-            _currentDocName = "WVD_V8.5_" + DateTime.Now.ToString("yyyyMMddTHHmmss") ;
+            _currentDocName = "WVD_V9_" + DateTime.Now.ToString("yyyyMMddTHHmmss") ;
             _currentDocName = SolveDuplicateFileNames() + _format;
         }
         else

@@ -48,7 +48,7 @@ public class OptitrackManager : MonoBehaviour
     
     ~OptitrackManager()
     {
-        Debug.Log("OptitrackManager: Destruct");
+        Debug.Log("OptitrackManager: Destruct (END)");
         OptitrackManagement.DirectMulticastSocketClient.Close();
     }
 
