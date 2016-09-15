@@ -13,10 +13,24 @@ using System.Text;
 using UnityEngine;
 
 
+public enum ControloMode
+{
+    KeyboardMouse,
+    // ReSharper disable once InconsistentNaming
+    WIP,
+    // ReSharper disable once InconsistentNaming
+    CWIP,
+    WalkGear
+}
+
+
 public class SaveMessage
 {
     private StreamWriter _doc;
     private DateTime _inicio;
+
+    private ControloMode _activeControloMode;
+
 
     public string Separador { get; private set; }
 
@@ -37,6 +51,11 @@ public class SaveMessage
     private string _target;
 
     private string _header;
+
+    private string _headerCwip;
+    private string _headerWip;
+    private string _headerWalkGear;
+    private string _headerKeyboardMouse;
 
     public int NumColunas   { get; private set; }
 
@@ -78,11 +97,12 @@ public class SaveMessage
         NumColunas = 0;
 
 
+        _activeControloMode  = ControloMode.CWIP;
+        _headerCwip          = GetCwipHeader();
+        _headerWip           = GetWipHeader();
+        _headerWalkGear      = GetWalkGearHeader();
+        _headerKeyboardMouse = GetKeyboardMouseHeader();
         _header = GetHeader();
-
-
-
-
     }
 
     ~SaveMessage()
@@ -114,10 +134,7 @@ public class SaveMessage
     public void RecordMessage(string message)
     {
        
-        if (message == _header)
-        {
-            _isInitiate = false;
-        }
+        CheckHeaders(message);
 
         if (!_isInitiate) SetUpFileAndDirectory(message);
         //if (message != _startMessage  && !_isInitiate)
@@ -134,27 +151,105 @@ public class SaveMessage
         
     }
 
+    private void CheckHeaders(string message)
+    {
+        if (message == _headerCwip && _activeControloMode != ControloMode.CWIP)
+        {
+            _activeControloMode = ControloMode.CWIP;
+            _isInitiate = false;
+        }
+        else if (message == _headerWip && _activeControloMode != ControloMode.WIP)
+        {
+            _activeControloMode = ControloMode.WIP;
+            _isInitiate = false;
+        }
+        else if (message == _headerWalkGear && _activeControloMode != ControloMode.WalkGear)
+        {
+            _activeControloMode = ControloMode.WalkGear;
+            _isInitiate = false;
+
+        }
+        else if (message == _headerKeyboardMouse && _activeControloMode != ControloMode.KeyboardMouse)
+        {
+            _activeControloMode = ControloMode.KeyboardMouse;
+            _isInitiate = false;
+        }
+
+
+        //if (message == _headerCwip || message == _headerWip || message == _headerWalkGear || message == _headerKeyboardMouse)
+        //{
+        //    _isInitiate = false;
+        //}
+    }
+
     private string GetHeader()
     {
-        
-        return "Registo" + Separador + "Tempo Absoluto (Segundos)" + Separador + "Metodo de Deslocamento Em Uso" + Separador +
-            "Vel. Real (Directa, Normal)" + Separador + "Vel. Real (Directa, Kalman)" + Separador +
-            "Vel. Virtual (WIP, Normal)" + Separador + "Vel. Virtual (WIP, Kalman)" + Separador + "Vel. Virtual (WIP, Event, Normal)" + Separador +
-            "Vel. Virtual + Aumento (WIP)" + Separador + "Joint Vel. Real (Vector 2)" + Separador + "Joint Camera (Vector 3)" + Separador +
-            "Joelho Direito (y)" + Separador + "Joelho Esquerdo (y)" + Separador +
-            "Desvio Joelho Direito" + Separador + "Desvio Joelho Esquerdo" + Separador +
-            "Direito FootStates (WIP)" + Separador + "Esquerdo FootStates (WIP)" + Separador +
-            "Direito FootTransitionEvents (WIP)" + Separador + "Esquerdo FootTransitionEvents (WIP)" + Separador +
-            "N. Passos Total (WIP)" + Separador + "N. Passos Direito (WIP)" + Separador + "N. Passos Esquerdo (WIP)" + Separador +
-            "Altura" + Separador + "Threshold de Velocidade Directa" + Separador + "Threshold de Velocidade WIP" + Separador + "Threshold do Passo (WIP)" + Separador +
-            "Nome Joint Vel. Real (Kinect)" + Separador + "Nome Joint Camera (Kinect)" + Separador + "Tempo" + Separador + "Aumento (WIP)" + Separador + "Id";
+        switch (_activeControloMode)
+        {
+            case ControloMode.KeyboardMouse:
+                return _headerKeyboardMouse;
+            case ControloMode.WIP:
+                return _headerWip;
+            case ControloMode.CWIP:
+                return _headerCwip;
+            case ControloMode.WalkGear:
+                return _headerWalkGear;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    private string GetCwipHeader()
+    {
+        // "Metodo de Deslocamento Em Uso" + Separador + 
+
+        return "Registo" + Separador + "Tempo Absoluto (Segundos)" + Separador + "Metodo de Deslocamento Em Uso" + Separador + "Estado Actual " + Separador +
+               "Vel. Real (Directa, Normal)" + Separador + "Vel. Real (Directa, Kalman)" + Separador +
+               "Vel. Virtual (WIP, Normal)" + Separador + "Vel. Virtual (WIP, Kalman)" + Separador +
+               "Vel. Virtual (WIP, Event, Normal)" + Separador + "Vel. Virtual (WIP, Event, Kalman)" + Separador +
+               "Vel. Virtual + Aumento (WIP)" + Separador + "Joint Vel. Real (Vector 2)" + Separador + "Joint Camera (Vector 3)" + Separador +
+               "Joelho Direito (y)" + Separador + "Joelho Esquerdo (y)" + Separador +
+               "Desvio Joelho Direito" + Separador + "Desvio Joelho Esquerdo" + Separador +
+               "Direito FootStates (WIP)" + Separador + "Esquerdo FootStates (WIP)" + Separador +
+               "Direito FootTransitionEvents (WIP)" + Separador + "Esquerdo FootTransitionEvents (WIP)" + Separador +
+               "N. Passos Total (WIP)" + Separador + "N. Passos Direito (WIP)" + Separador + "N. Passos Esquerdo (WIP)" + Separador +
+               "Altura" + Separador + "Threshold de Velocidade Directa" + Separador + "Threshold de Velocidade WIP" + Separador + "Threshold do Passo (WIP)" + Separador +
+               "Nome Joint Vel. Real (Kinect)" + Separador + "Nome Joint Camera (Kinect)" + Separador + "Tempo" + Separador + "Aumento (WIP)" + Separador + "Id";
+    }
+
+
+    private string GetWipHeader()
+    {
+        return
+            "Registo" + Separador + "Tempo Absoluto (Segundos)" + Separador + "Metodo de Deslocamento Em Uso" + Separador + "Estado Actual " + Separador +
+            "Vel. Virtual (WIP, Normal)" + Separador + "Vel. Virtual (WIP, Kalman)" + Separador + "Vel. Virtual (WIP, Event, Normal)" + Separador + "Vel. Virtual (WIP, Event, Kalman)" + Separador +
+            "Vel. Virtual + Aumento (WIP)" + Separador + "Joint Camera (Vector 3)" + Separador + "Joelho Direito (y)" + Separador + "Joelho Esquerdo (y)" + Separador +
+            "Desvio Joelho Direito" + Separador + "Desvio Joelho Esquerdo" + Separador + "Direito FootStates (WIP)" + Separador + "Esquerdo FootStates (WIP)" + Separador +
+            "Direito FootTransitionEvents (WIP)" + Separador + "Esquerdo FootTransitionEvents (WIP)" + Separador + "N. Passos Total (WIP)" + Separador + "N. Passos Direito (WIP)" + Separador +
+            "N. Passos Esquerdo (WIP)" + Separador + "Altura" + Separador + "Threshold de Velocidade WIP" + Separador + "Threshold do Passo (WIP)" + Separador +
+            "Nome Joint Camera (Kinect)" + Separador + "Tempo" + Separador + "Aumento (WIP)" + Separador + "Id";
+    }
+
+
+    private string GetWalkGearHeader()
+    {
+        return
+            "Registo" + Separador + "Tempo Absoluto (Segundos)" + Separador + "Metodo de Deslocamento Em Uso" + Separador + "Estado Actual " + Separador +
+            "Vel. Real (Directa, Normal)" + Separador + "Vel. Real (Directa, Kalman)" + Separador + "Joint Vel. Real (Vector 2)" + Separador + "Joint Camera (Vector 3)" + Separador +
+            "Threshold de Velocidade Directa" + Separador + "Nome Joint Vel. Real (Kinect)" + Separador + "Nome Joint Camera (Kinect)" + Separador + "Tempo" + Separador +
+            "Id";
+    }
+
+    private string GetKeyboardMouseHeader()
+    {
+        return "Registo" + Separador + "Tempo Absoluto (Segundos)" + Separador + "Metodo de Deslocamento Em Uso" + Separador + "Tempo";
     }
     
     private void SetUpHeader()
     {
         // _positionThreshold,  (_numSteps) 
 
-        var info = _header;//GetHeader();
+        var info = GetHeader(); // _header;//
 
         WriteStringInDoc(info, true);
     }
@@ -163,7 +258,7 @@ public class SaveMessage
     {
         // _positionThreshold,  (_numSteps) 
 
-        var info = _header;//GetHeader();
+        var info = GetHeader(); // _header;//
 
         if (first == info) return;
         WriteStringInDoc(info, true);
@@ -306,3 +401,26 @@ public class SaveMessage
     }
 
 }
+/*
+ 
+     
+      private string GetHeader()
+    {
+        
+        return "Registo" + Separador + "Tempo Absoluto (Segundos)" + Separador + "Metodo de Deslocamento Em Uso" + Separador +
+            "Vel. Real (Directa, Normal)" + Separador + "Vel. Real (Directa, Kalman)" + Separador +
+            "Vel. Virtual (WIP, Normal)" + Separador + "Vel. Virtual (WIP, Kalman)" + Separador + "Vel. Virtual (WIP, Event, Normal)" + Separador +
+            "Vel. Virtual + Aumento (WIP)" + Separador + "Joint Vel. Real (Vector 2)" + Separador + "Joint Camera (Vector 3)" + Separador +
+            "Joelho Direito (y)" + Separador + "Joelho Esquerdo (y)" + Separador +
+            "Desvio Joelho Direito" + Separador + "Desvio Joelho Esquerdo" + Separador +
+            "Direito FootStates (WIP)" + Separador + "Esquerdo FootStates (WIP)" + Separador +
+            "Direito FootTransitionEvents (WIP)" + Separador + "Esquerdo FootTransitionEvents (WIP)" + Separador +
+            "N. Passos Total (WIP)" + Separador + "N. Passos Direito (WIP)" + Separador + "N. Passos Esquerdo (WIP)" + Separador +
+            "Altura" + Separador + "Threshold de Velocidade Directa" + Separador + "Threshold de Velocidade WIP" + Separador + "Threshold do Passo (WIP)" + Separador +
+            "Nome Joint Vel. Real (Kinect)" + Separador + "Nome Joint Camera (Kinect)" + Separador + "Tempo" + Separador + "Aumento (WIP)" + Separador + "Id";
+    }
+     
+     
+     
+     
+     */
