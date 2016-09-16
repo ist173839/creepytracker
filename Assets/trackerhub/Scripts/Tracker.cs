@@ -73,27 +73,29 @@ public class Tracker : MonoBehaviour
 	public int ShowHumanBodies = -1;
 
 	public bool ColorHumans;
-    
+    public bool colorHumans;
+
+    ///////////////////////////////////////////////////////////////////////
 
     //public List<KneesInfo> RightKneesInfo;
     //public List<KneesInfo> LeftKneesInfo;
 
     public Dictionary<string, KneesInfo> RightKneesInfo;
     public Dictionary<string, KneesInfo> LeftKneesInfo;
-    public Dictionary<string, KneesInfo> AllKneesInfo;
+    private Dictionary<string, KneesInfo> _allKneesInfo;
+
+    public List<int>    IdIntList;
+    public List<string> IdList;
+
+    private TrackerUI _localTrackerUi;
+
+    public int CountHuman;
+
+    public bool SendKnees;
 
     private Vector3? _lastRigthKneePosition;
     private Vector3? _lastLeftKneePosition;
 
-    public int CountHuman;
-
-    public List<string> IdList;
-    public List<int>    IdIntList;
-
-
-    public bool SendKnees;
-
-	public bool colorHumans;
 
     void Start ()
 	{
@@ -112,7 +114,7 @@ public class Tracker : MonoBehaviour
         
         RightKneesInfo = new Dictionary<string, KneesInfo>();
         LeftKneesInfo  = new Dictionary<string, KneesInfo>();
-        AllKneesInfo   = new Dictionary<string, KneesInfo>();
+        _allKneesInfo   = new Dictionary<string, KneesInfo>();
 
         IdList         = new List<string>();
         IdIntList      = new List<int>();
@@ -123,14 +125,14 @@ public class Tracker : MonoBehaviour
 
         CountHuman = 0;
         SendKnees = false;
+        _localTrackerUi = gameObject.GetComponent<TrackerUI>();
+    }
 
-	}
-
-	void FixedUpdate ()
+    void FixedUpdate ()
 	{
         RightKneesInfo = new Dictionary<string, KneesInfo>();
         LeftKneesInfo  = new Dictionary<string, KneesInfo>();
-	    AllKneesInfo   = new Dictionary<string, KneesInfo>();
+	    _allKneesInfo   = new Dictionary<string, KneesInfo>();
 
         IdList         = new List<string>();
         IdIntList      = new List<int>();
@@ -409,7 +411,7 @@ public class Tracker : MonoBehaviour
             });
 
 
-            AllKneesInfo.Add(key + "_1", new KneesInfo
+            _allKneesInfo.Add(key + "_1", new KneesInfo
             {
                 IdHuman = h.ID,
                 IdBody = bodySensorId,
@@ -418,7 +420,7 @@ public class Tracker : MonoBehaviour
             });
 
 
-            AllKneesInfo.Add(key + "_2", new KneesInfo
+            _allKneesInfo.Add(key + "_2", new KneesInfo
             {
                 IdHuman = h.ID,
                 IdBody = bodySensorId,
@@ -494,7 +496,7 @@ public class Tracker : MonoBehaviour
             });
 
 
-            AllKneesInfo.Add(key + "_1", new KneesInfo
+            _allKneesInfo.Add(key + "_1", new KneesInfo
             {
                 IdHuman = h.ID,
                 IdBody = bodySensorId,
@@ -502,7 +504,7 @@ public class Tracker : MonoBehaviour
                 Track = (trackingStateKneeRight == TrackingState.Tracked)
             });
             
-            AllKneesInfo.Add(key + "_2", new KneesInfo
+            _allKneesInfo.Add(key + "_2", new KneesInfo
             {
                 IdHuman = h.ID,
                 IdBody = bodySensorId,
@@ -638,8 +640,13 @@ public class Tracker : MonoBehaviour
         }
         else
         {
-            if (_localOptitrackManager.IsOn) _writeSafeFile.Recording(strToSend, _localOptitrackManager.GetPositionVector(), _localOptitrackManager.GetRotationQuaternion());
-            else _writeSafeFile.Recording(strToSend);
+            if (_localTrackerUi == null || _localTrackerUi.UseRecord)
+            {
+                _writeSafeFile.IsRecording = true;
+                if (_localOptitrackManager.IsOn) _writeSafeFile.Recording(strToSend, _localOptitrackManager.GetPositionVector(), _localOptitrackManager.GetRotationQuaternion());
+                else _writeSafeFile.Recording(strToSend);
+            }
+            else if (!_localTrackerUi.UseRecord) _writeSafeFile.IsRecording = false;
         }
     }
 

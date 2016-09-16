@@ -56,6 +56,9 @@ public class TrackerUI : MonoBehaviour
 	private string newUnicastPort;
 	private bool _continuous;
 
+
+    public bool UseRecord { get; set;}
+
 	void Start ()
 	{
 		_userTracker = gameObject.GetComponent<Tracker> ();
@@ -69,6 +72,9 @@ public class TrackerUI : MonoBehaviour
 		newUnicastPort = "";
 
 		packetsPerSec = 1000 / TrackerProperties.Instance.sendInterval;
+
+	    UseRecord = false;
+
 	}
 
 	void Update ()
@@ -265,7 +271,8 @@ public class TrackerUI : MonoBehaviour
 			}
 		}
 
-		if (_menuAction == MenuAction.NetworkSettings) {
+		if (_menuAction == MenuAction.NetworkSettings)
+        {
 			top = iconSize + iconSize / 2;
 			left = Screen.width - 250;
 
@@ -317,9 +324,14 @@ public class TrackerUI : MonoBehaviour
 				DoNotify n = gameObject.GetComponent<DoNotify> ();
 				n.notifySend (NotificationLevel.INFO, "Udp Broadcast", "Sending " + packetsPerSec + " packets / sec", 2000);
 			}
+            top += 35;
+            left = Screen.width - 250 + 20;
 
-			// Unicast Settings
-			/*
+            UseRecord = GUI.Toggle(new Rect(left, top, 100, 25), UseRecord, "Record");
+            Debug.Log("UseRecord = " + UseRecord);
+
+            // Unicast Settings
+            /*
             top += 60;
             left = Screen.width - 250;
 
@@ -355,7 +367,7 @@ public class TrackerUI : MonoBehaviour
             }
             */
 
-		}
+        }
 
 		if (Input.GetMouseButtonDown (0)) {
 			RaycastHit hit;

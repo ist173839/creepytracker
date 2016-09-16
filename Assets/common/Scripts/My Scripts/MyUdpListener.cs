@@ -17,16 +17,20 @@ public class MyUdpListener : MonoBehaviour {
     private SaveMessage _saveMessage;
     private IPEndPoint _anyIP;
     private UdpClient _udpClient = null;
-
+  
     private List<string> _stringsToParse;
 
     private int _port;
+
+
 
     void Start()
     {
         _port = 57839;
         _saveMessage = new SaveMessage();
         UdpRestart();
+
+       
     }
 
     private void UdpRestart()
@@ -63,7 +67,7 @@ public class MyUdpListener : MonoBehaviour {
             Debug.Log("R");
         }
 
-
+       
         while (_stringsToParse.Count > 0)
         {
             string stringToParse = _stringsToParse.First();
@@ -82,3 +86,18 @@ public class MyUdpListener : MonoBehaviour {
         OnApplicationQuit();
     }
 }
+    /*
+  if (_localTrackerUi == null || _localTrackerUi.UseRecord)
+            {
+                Debug.Log("Save");
+                _saveMessage.IsRecording = true;
+              
+            }
+            else if(!_localTrackerUi.UseRecord)
+            {
+                _saveMessage.IsRecording = false;
+            }
+     
+     
+     
+     */

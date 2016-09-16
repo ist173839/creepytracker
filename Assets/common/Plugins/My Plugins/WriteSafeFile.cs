@@ -72,6 +72,20 @@ public class WriteSafeFile
     private bool _activo;
     private bool _first;
 
+    private bool _isRecording;
+
+    public bool IsRecording
+    {
+        get { return _isRecording; }
+        set
+        {
+            if (value == false) StopRecording("Turn Off");
+            _isRecording = value;
+        }
+    }
+
+
+
     public WriteSafeFile()
     {
     #if !UNITY_ANDROID || UNITY_EDITOR
@@ -184,7 +198,6 @@ public class WriteSafeFile
 
     public void Recording(string mensagemKinect)
     {
-#if !UNITY_ANDROID  || UNITY_EDITOR
         _target = Directory + "\\" + CurrentFolderDestino + "\\";
         //Debug.Log("Pasta : " + _target);
         CheckFileSize();
@@ -192,6 +205,7 @@ public class WriteSafeFile
 
 
         //_caminhoCompleto = _target + _CurrentDocName;
+
 
         Doc = new StreamWriter(_target + _currentDocName, true);
         DateTime agora = DateTime.Now;
@@ -204,12 +218,12 @@ public class WriteSafeFile
         TimeSpan diff = agora - _inicio;// 
         TimeSpan diffIntervalo = agora - _tempoMensagemAnterior;
 
-        string registo = "«" + _cont++ + "_" + diff.TotalSeconds + "_" + diffIntervalo.TotalSeconds + "_" + agora.ToString("yyyy-MM-dd-HH-mm-ss-fff") + "$"+ mensagemKinect; 
+        string registo = "«" + _cont++ + "_" + diff.TotalSeconds + "_" + diffIntervalo.TotalSeconds + "_" + agora.ToString("yyyy-MM-dd-HH-mm-ss-fff") + "$"+ mensagemKinect;
         Doc.WriteLine(registo);
         Doc.Close(); // Todo Apenas um Doc.Close
 
         _tempoMensagemAnterior = agora;
-#endif
+        if (!IsRecording) StopRecording("Turn Off");
     }
     
     public void Recording(string mensagemKinect, Vector3 pos, Quaternion ori)

@@ -62,14 +62,34 @@ public class SaveMessage
     private static readonly int TamanhoMaximo = (int) Math.Pow(2, 30); // (2 ^ 30)
 
     private int _cont;
+
     private int _specialTypeDocName;
 
     //  public bool DirectoryChange;
+
     private bool _useDefaultDocName;
+
     private bool _useDefaultFolder;
+
     private bool _isInitiate;
 
+    private bool _isRecording;
 
+    public bool IsRecording
+    {
+        get { return _isRecording; }
+        set
+        {
+
+            if (!value)
+            {
+                _isInitiate = false;
+                StopRecording();
+            }
+
+            _isRecording = value;
+        }
+    }
 
 
     public SaveMessage() 
@@ -133,7 +153,11 @@ public class SaveMessage
 
     public void RecordMessage(string message)
     {
-       
+        if (!IsRecording)
+        {
+            StopRecording();
+            return;
+        }
         CheckHeaders(message);
 
         if (!_isInitiate) SetUpFileAndDirectory(message);
