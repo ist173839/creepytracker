@@ -123,7 +123,7 @@ public class Sensor
 		foreach (Skeleton sk in bodiesMessage.Bodies) {
 			SensorBody b;
 
-			if (int.Parse (sk.BodyProperties [BodyPropertiesTypes.Confidence]) < TrackerProperties.Instance.confidenceTreshold) {
+			if (int.Parse (sk.BodyProperties [BodyPropertiesTypes.Confidence]) < TrackerProperties.Instance.ConfidenceTreshold) {
 				if (bodies.ContainsKey (sk.ID)) {
 					b = bodies [sk.ID];
 					b.updated = true;
@@ -168,8 +168,8 @@ public class Sensor
 
 	internal void CalibrationStep1 ()
 	{
-		center1 = CommonUtils.PointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [TrackerProperties.Instance.centerJoint]);
-		up1 = CommonUtils.PointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [TrackerProperties.Instance.upJointB]) - CommonUtils.PointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [TrackerProperties.Instance.upJointA]);
+		center1 = CommonUtils.PointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [TrackerProperties.Instance.CenterJoint]);
+		up1 = CommonUtils.PointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [TrackerProperties.Instance.UpJointB]) - CommonUtils.PointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [TrackerProperties.Instance.UpJointA]);
 
 		_floorValues.Add (CommonUtils.PointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [Windows.Kinect.JointType.FootLeft]));
 		_floorValues.Add (CommonUtils.PointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [Windows.Kinect.JointType.FootRight]));
@@ -177,8 +177,8 @@ public class Sensor
 
 	internal void CalibrationStep2 ()
 	{
-		center2 = CommonUtils.PointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [TrackerProperties.Instance.centerJoint]);
-		up2 = CommonUtils.PointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [TrackerProperties.Instance.upJointB]) - CommonUtils.PointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [TrackerProperties.Instance.upJointA]);
+		center2 = CommonUtils.PointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [TrackerProperties.Instance.CenterJoint]);
+		up2 = CommonUtils.PointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [TrackerProperties.Instance.UpJointB]) - CommonUtils.PointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [TrackerProperties.Instance.UpJointA]);
 
 		_floorValues.Add (CommonUtils.PointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [Windows.Kinect.JointType.FootLeft]));
 		_floorValues.Add (CommonUtils.PointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [Windows.Kinect.JointType.FootRight]));

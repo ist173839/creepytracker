@@ -1,0 +1,83 @@
+
+/*
+ * 
+ *  // public GameObject OptiTracker;
+    // public GameObject Optidraw;
+    // public GameObject CreepyTracker;
+
+
+
+
+
+
+
+ *    //if (rightHand == null && leftHand == null)
+        //{
+        //    Debug.LogError("Hands not Found\n");
+        //}
+ * 
+ * 
+ * 
+ *
+
+    ////if (rightHand != null)
+                //else 
+                //if(leftHand != null)
+                //{
+                //    Debug.Log("Right Hand Not Found, Left Hand Use");
+                //    positionFromCreepyTracker = leftHand.Value;
+                //}
+
+    //if (leftHand != null)
+                //else if (rightHand != null)
+                //{
+                //    Debug.Log("Left Hand Not Found, Right Hand Use");
+                //    positionFromCreepyTracker = rightHand.Value;
+                //}
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+// TrackerClient tracker = CreepyTracker.GetComponent<TrackerClient>();
+
+
+// Since calibration is expected to have a single person and a single object being captured
+// We try to get the first id and the first object in the rigidbody array from Optitrack
+
+string id = "";
+Skeleton s = null;
+        try
+        {
+            id = ids[0];
+            s = _localTrackerClient.GetSkeleton(id).GetComponent<Skeleton>();
+        }
+
+        catch (Exception)
+        {
+            s = null;
+        
+    }
+    
+     * 
+     *
+     *
+    // If the Human from the first id exists and the first object is instanciated
+        if (s != null && rigidBodies[OptiObjectIndex] != null)
+        {
+     * 
+     * 
+     *    s.getRightHandPosition();
+     * 
+ */

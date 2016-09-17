@@ -18,23 +18,19 @@ public enum Side
     Left
 }
 
-
 public enum OtherKnee
 {
     Mean,
     Close
 }
 
-
 [RequireComponent(typeof(Tracker))]
 public class MyKnees : MonoBehaviour {
 
     private Dictionary<string, GameObject> _humanDictionary;
-
-
+    
     private List<GameObject>  _objectList;
-
-
+    
     private List<string> _rightKneeList;
     private List<string> _leftKneeList;
     private List<string> _meanKneeList;
@@ -54,10 +50,8 @@ public class MyKnees : MonoBehaviour {
 
     public bool Track;
 
-
     private bool _isShowAll;
-
-
+    
     private Vector3? _lastRigthPosition;
     private Vector3? _lastLeftPosition;
 

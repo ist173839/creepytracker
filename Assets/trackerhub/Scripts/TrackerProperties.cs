@@ -6,21 +6,19 @@ public class TrackerProperties : MonoBehaviour {
 
     private static TrackerProperties _singleton;
 
-    public int listenPort = 56555;
-    public int broadcastPort = 56839;
-    public int sendInterval = 50;
+    public int ListenPort = 56555;
+    public int BroadcastPort = 56839;
+    public int SendInterval = 50;
 
-    [Range(0, 1)]
-    public float mergeDistance = 0.3f;
+    [Range(0, 1)]  public float MergeDistance = 0.3f;
 
-    [Range(0, 17)]
-    public int confidenceTreshold = 7;
+    [Range(0, 17)] public int ConfidenceTreshold = 7;
 
-    public Windows.Kinect.JointType centerJoint = Windows.Kinect.JointType.SpineShoulder;
-    public Windows.Kinect.JointType upJointA = Windows.Kinect.JointType.SpineBase;
-    public Windows.Kinect.JointType upJointB = Windows.Kinect.JointType.SpineShoulder;
+    public Windows.Kinect.JointType CenterJoint = Windows.Kinect.JointType.SpineShoulder;
+    public Windows.Kinect.JointType UpJointA    = Windows.Kinect.JointType.SpineBase;
+    public Windows.Kinect.JointType UpJointB    = Windows.Kinect.JointType.SpineShoulder;
 
-    public string configFilename = "configSettings.txt";
+    public string ConfigFilename = "configSettings.txt";
 
     private TrackerProperties()
     {

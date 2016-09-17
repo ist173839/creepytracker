@@ -15,9 +15,6 @@ public enum MatrixFiles
     File_01,
 }
 
-
-
-
 // ReSharper disable once CheckNamespace
 public class ReadMatrix
 {

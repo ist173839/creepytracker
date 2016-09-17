@@ -71,7 +71,7 @@ public class TrackerUI : MonoBehaviour
 		newUnicastAddress = "";
 		newUnicastPort = "";
 
-		packetsPerSec = 1000 / TrackerProperties.Instance.sendInterval;
+		packetsPerSec = 1000 / TrackerProperties.Instance.SendInterval;
 
 	    UseRecord = false;
 
@@ -286,14 +286,14 @@ public class TrackerUI : MonoBehaviour
 			GUI.Label (new Rect (left, top, 150, 25), "Sensors port:");
 			left += 100;
 
-			TrackerProperties.Instance.listenPort = int.Parse (GUI.TextField (new Rect (left, top, 50, 20), "" + TrackerProperties.Instance.listenPort));
+			TrackerProperties.Instance.ListenPort = int.Parse (GUI.TextField (new Rect (left, top, 50, 20), "" + TrackerProperties.Instance.ListenPort));
 			left += 55;
 			if (GUI.Button (new Rect (left, top, 50, 25), "Reset")) {
 				_userTracker.ResetListening ();
 				_userTracker.Save ();
 
 				DoNotify n = gameObject.GetComponent<DoNotify> ();
-				n.notifySend (NotificationLevel.INFO, "Udp Listening", "Listening to port " + TrackerProperties.Instance.listenPort, 2000);
+				n.notifySend (NotificationLevel.INFO, "Udp Listening", "Listening to port " + TrackerProperties.Instance.ListenPort, 2000);
 			}
 			top += 35;
 
@@ -301,14 +301,14 @@ public class TrackerUI : MonoBehaviour
 			GUI.Label (new Rect (left, top, 150, 25), "Broadcast port:");
 			left += 100;
 
-			TrackerProperties.Instance.broadcastPort = int.Parse (GUI.TextField (new Rect (left, top, 50, 20), "" + TrackerProperties.Instance.broadcastPort));
+			TrackerProperties.Instance.BroadcastPort = int.Parse (GUI.TextField (new Rect (left, top, 50, 20), "" + TrackerProperties.Instance.BroadcastPort));
 			left += 55;
 			if (GUI.Button (new Rect (left, top, 50, 25), "Reset")) {
 				_userTracker.ResetBroadcast ();
 				_userTracker.Save ();
 
 				DoNotify n = gameObject.GetComponent<DoNotify> ();
-				n.notifySend (NotificationLevel.INFO, "Udp Broadcast", "Sending to port " + TrackerProperties.Instance.broadcastPort, 2000);
+				n.notifySend (NotificationLevel.INFO, "Udp Broadcast", "Sending to port " + TrackerProperties.Instance.BroadcastPort, 2000);
 			}
 
 			top += 35;
@@ -318,7 +318,7 @@ public class TrackerUI : MonoBehaviour
 			packetsPerSec = int.Parse (GUI.TextField (new Rect (left, top, 50, 20), "" + packetsPerSec));
 			left += 55;
 			if (GUI.Button (new Rect (left, top, 50, 25), "Reset")) {
-				TrackerProperties.Instance.sendInterval = 1000 / packetsPerSec;
+				TrackerProperties.Instance.SendInterval = 1000 / packetsPerSec;
 				_userTracker.Save ();
 
 				DoNotify n = gameObject.GetComponent<DoNotify> ();

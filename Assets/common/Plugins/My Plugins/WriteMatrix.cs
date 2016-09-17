@@ -11,20 +11,6 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-
-//public static class MyMessaSepa
-//{
-//    public const char InicioOptitrack = '&';
-//    public const char InicioMensagem = '$';
-//    public const char InicioRegisto = '«';
-//    public const char SepaOptitrack = '!';
-//    public const char SepaCabeRoda = ';';
-//    public const char SepaRegisto = '_';
-//    public const char CabeRoda = '£';
-//    public const char SepaVec = '|';
-//}
-
-
 // ReSharper disable once CheckNamespace
 public class WriteMatrix
 {

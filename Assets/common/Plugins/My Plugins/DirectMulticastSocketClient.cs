@@ -90,18 +90,21 @@ namespace OptitrackManagement
     public static class DirectMulticastSocketClient
     {
         private static Socket _client;
-        private static bool _isInitRecieveStatus = false;
-        private static bool _isIsActiveThread = false;
+
         private static StreemData _streemData = null;
-        private static String _strFrameLog = String.Empty;
+
+        private static string _strFrameLog = string.Empty;
+        private static string _multicastIPAddress = "239.255.42.99";
+
+        public static bool DEBUG = false;
+
+        private static bool _isInitRecieveStatus = false;
+        private static bool _isIsActiveThread    = false;
 
         //bool returnValue = false;
         private static int _dataPort = 1511;
         private static int _commandPort = 1510;
-        private static string _multicastIPAddress = "239.255.42.99";
-        
 
-        static bool DEBUG = false;
 
         private static void StartClient()
         {

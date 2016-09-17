@@ -1,0 +1,15 @@
+    /*
+  if (_localTrackerUi == null || _localTrackerUi.UseRecord)
+            {
+                Debug.Log("Save");
+                _saveMessage.IsRecording = true;
+              
+            }
+            else if(!_localTrackerUi.UseRecord)
+            {
+                _saveMessage.IsRecording = false;
+            }
+     
+     
+     
+     */

@@ -105,7 +105,7 @@ public class Tracker : MonoBehaviour
 		_humansToKill      = new List<Human> ();
 		_calibrationStatus = CalibrationProcess.FindCenter;
 
-		_udpBroadcast  = new UdpBroadcast (TrackerProperties.Instance.broadcastPort);
+		_udpBroadcast  = new UdpBroadcast (TrackerProperties.Instance.BroadcastPort);
         _writeSafeFile = new WriteSafeFile();
         _localOptitrackManager = gameObject.GetComponent<OptitrackManager>();
         
@@ -727,7 +727,7 @@ public class Tracker : MonoBehaviour
 			// try to fit in existing humans
 			foreach (KeyValuePair<int, Human> h in _humans)
             {
-				if (CalcHorizontalDistance (b.WorldPosition, h.Value.Position) < TrackerProperties.Instance.mergeDistance)
+				if (CalcHorizontalDistance (b.WorldPosition, h.Value.Position) < TrackerProperties.Instance.MergeDistance)
                 {
 					h.Value.Position = (h.Value.Position * (float)h.Value.bodies.Count + b.WorldPosition) / (float)(h.Value.bodies.Count + 1);
 					h.Value.bodies.Add (b);
@@ -739,7 +739,7 @@ public class Tracker : MonoBehaviour
 			if (!hasHuman) {
 				// try to fit in dead humans
 				foreach (Human h in _deadHumans) {
-					if (CalcHorizontalDistance (b.WorldPosition, h.Position) < TrackerProperties.Instance.mergeDistance) {
+					if (CalcHorizontalDistance (b.WorldPosition, h.Position) < TrackerProperties.Instance.MergeDistance) {
 						h.Position = (h.Position * (float)h.bodies.Count + b.WorldPosition) / (float)(h.bodies.Count + 1);
 						h.bodies.Add (b);
 						hasHuman = true;
@@ -779,7 +779,7 @@ public class Tracker : MonoBehaviour
             {
 				if (h1.Value.ID != h2.Value.ID && !mergedHumans.Contains (h2.Value))
                 {
-					if (CalcHorizontalDistance (h1.Value.Position, h2.Value.Position) < TrackerProperties.Instance.mergeDistance)
+					if (CalcHorizontalDistance (h1.Value.Position, h2.Value.Position) < TrackerProperties.Instance.MergeDistance)
                     {
 						Vector3 position = (h1.Value.Position * (float) h1.Value.bodies.Count + h2.Value.Position * (float)h2.Value.bodies.Count) / (float)(h1.Value.bodies.Count + h2.Value.bodies.Count);
 
@@ -1069,17 +1069,17 @@ public class Tracker : MonoBehaviour
 
     private void _saveConfig ()
 	{
-		string filePath = Application.dataPath + "/" + TrackerProperties.Instance.configFilename;
+		string filePath = Application.dataPath + "/" + TrackerProperties.Instance.ConfigFilename;
 		ConfigProperties.clear (filePath);
 
 		ConfigProperties.writeComment (filePath, "Config File created in " + DateTime.Now.ToString ("yyyy-MM-dd HH:mm:ss"));
 
 		// save properties
-		ConfigProperties.save (filePath, "udp.listenport", "" + TrackerProperties.Instance.listenPort);
-		ConfigProperties.save (filePath, "udp.broadcastport", "" + TrackerProperties.Instance.broadcastPort);
-		ConfigProperties.save (filePath, "udp.sendinterval", "" + TrackerProperties.Instance.sendInterval);
-		ConfigProperties.save (filePath, "tracker.mergedistance", "" + TrackerProperties.Instance.mergeDistance);
-		ConfigProperties.save (filePath, "tracker.confidencethreshold", "" + TrackerProperties.Instance.confidenceTreshold);
+		ConfigProperties.save (filePath, "udp.listenport", "" + TrackerProperties.Instance.ListenPort);
+		ConfigProperties.save (filePath, "udp.broadcastport", "" + TrackerProperties.Instance.BroadcastPort);
+		ConfigProperties.save (filePath, "udp.sendinterval", "" + TrackerProperties.Instance.SendInterval);
+		ConfigProperties.save (filePath, "tracker.mergedistance", "" + TrackerProperties.Instance.MergeDistance);
+		ConfigProperties.save (filePath, "tracker.confidencethreshold", "" + TrackerProperties.Instance.ConfidenceTreshold);
 //		ConfigProperties.save (filePath, "tracker.filtergain", "" + AdaptiveDoubleExponentialFilterFloat.Gain);
 
 		// save sensors
@@ -1094,33 +1094,33 @@ public class Tracker : MonoBehaviour
 
     private void _loadConfig ()
 	{
-		string filePath = Application.dataPath + "/" + TrackerProperties.Instance.configFilename;
+		string filePath = Application.dataPath + "/" + TrackerProperties.Instance.ConfigFilename;
 
 		string port = ConfigProperties.Load (filePath, "udp.listenport");
 		if (port != "") {
-			TrackerProperties.Instance.listenPort = int.Parse (port);
+			TrackerProperties.Instance.ListenPort = int.Parse (port);
 		}
 		ResetListening ();
 
 		port = ConfigProperties.Load (filePath, "udp.broadcastport");
 		if (port != "") {
-			TrackerProperties.Instance.broadcastPort = int.Parse (port);
+			TrackerProperties.Instance.BroadcastPort = int.Parse (port);
 		}
 		ResetBroadcast ();
 
 		string aux = ConfigProperties.Load (filePath, "tracker.mergedistance");
 		if (aux != "") {
-			TrackerProperties.Instance.mergeDistance = float.Parse (aux);
+			TrackerProperties.Instance.MergeDistance = float.Parse (aux);
 		}
 
 		aux = ConfigProperties.Load (filePath, "tracker.confidencethreshold");
 		if (aux != "") {
-			TrackerProperties.Instance.confidenceTreshold = int.Parse (aux);
+			TrackerProperties.Instance.ConfidenceTreshold = int.Parse (aux);
 		}
 
 		aux = ConfigProperties.Load (filePath, "udp.sendinterval");
 		if (aux != "") {
-			TrackerProperties.Instance.sendInterval = int.Parse (aux);
+			TrackerProperties.Instance.SendInterval = int.Parse (aux);
 		}
 
 		/*aux = ConfigProperties.load (filePath, "tracker.filtergain");
@@ -1131,7 +1131,7 @@ public class Tracker : MonoBehaviour
 
     private void _loadSavedSensors ()
 	{
-		foreach (String line in ConfigProperties.loadKinects(Application.dataPath + "/" + TrackerProperties.Instance.configFilename)) {
+		foreach (String line in ConfigProperties.loadKinects(Application.dataPath + "/" + TrackerProperties.Instance.ConfigFilename)) {
 			string[] values = line.Split (';');
 
 			string id = values [0];
@@ -1153,7 +1153,7 @@ public class Tracker : MonoBehaviour
 
     public void ResetBroadcast ()
 	{
-		_udpBroadcast.Reset (TrackerProperties.Instance.broadcastPort);
+		_udpBroadcast.Reset (TrackerProperties.Instance.BroadcastPort);
 	}
 
     public void ResetListening ()
@@ -1174,7 +1174,7 @@ public class Tracker : MonoBehaviour
 		UdpClient udp = new UdpClient ();
 		string message = CloudMessage.createRequestMessage (2); 
 		byte[] data = Encoding.UTF8.GetBytes (message);
-		IPEndPoint remoteEndPoint = new IPEndPoint (IPAddress.Broadcast, TrackerProperties.Instance.listenPort + 1);
+		IPEndPoint remoteEndPoint = new IPEndPoint (IPAddress.Broadcast, TrackerProperties.Instance.ListenPort + 1);
 		udp.Send (data, data.Length, remoteEndPoint);
 	}
     
@@ -1183,7 +1183,7 @@ public class Tracker : MonoBehaviour
 		UdpClient udp = new UdpClient ();
 		string message = CloudMessage.createRequestMessage (continuous ? 1 : 0); 
 		byte[] data = Encoding.UTF8.GetBytes (message);
-		IPEndPoint remoteEndPoint = new IPEndPoint (IPAddress.Broadcast, TrackerProperties.Instance.listenPort + 1);
+		IPEndPoint remoteEndPoint = new IPEndPoint (IPAddress.Broadcast, TrackerProperties.Instance.ListenPort + 1);
 		udp.Send (data, data.Length, remoteEndPoint);
 	}
 

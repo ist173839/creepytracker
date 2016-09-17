@@ -7,17 +7,16 @@ using System.Collections.Generic;
 
 public class UdpBroadcast
 {
-	private string _address;
-	private int _port;
-	
-	private IPEndPoint _remoteEndPoint;
-	private UdpClient _udp;
-
-	private DateTime _lastSent;
-
-	private bool _streaming = false;
-
     private Dictionary<string, IPEndPoint> _unicastClients;
+
+    private UdpClient _udp;
+
+    private IPEndPoint _remoteEndPoint;
+
+    private DateTime _lastSent;
+
+    private string _address;
+
     public string[] UnicastClients
     {
         get
@@ -25,6 +24,10 @@ public class UdpBroadcast
             return (new List<string>(_unicastClients.Keys)).ToArray();
         }
     }
+
+    private int _port;
+
+    private bool _streaming = false;
 
     public UdpBroadcast(int port, int sendRate = 100)
 	{
@@ -58,7 +61,7 @@ public class UdpBroadcast
 		{
 			try
 			{
-				if (DateTime.Now > _lastSent.AddMilliseconds(TrackerProperties.Instance.sendInterval))
+				if (DateTime.Now > _lastSent.AddMilliseconds(TrackerProperties.Instance.SendInterval))
 				{
 					byte[] data = Encoding.UTF8.GetBytes(line);
 
@@ -79,8 +82,7 @@ public class UdpBroadcast
 	}
     
     // Unicast Stuff
-
-    private string GenUnicastKey(string address, int port)
+    private static string GenUnicastKey(string address, int port)
     {
         return address + ":" + port;
     }

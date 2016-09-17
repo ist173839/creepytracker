@@ -17,8 +17,8 @@ public class RPCServer : MonoBehaviour {
     {
         showNetworkOptions = false;
 
-        port = "" + TrackerProperties.Instance.listenPort;
-        broadcastPort = "" + TrackerProperties.Instance.broadcastPort;
+        port = "" + TrackerProperties.Instance.ListenPort;
+        broadcastPort = "" + TrackerProperties.Instance.BroadcastPort;
 
         Network.InitializeServer(32, int.Parse(port), false);
     }
@@ -105,7 +105,7 @@ public class RPCServer : MonoBehaviour {
             left += 50 + 10;
             if (GUI.Button(new Rect(left, top, 50, 25), "Reset"))
             {
-                TrackerProperties.Instance.broadcastPort = int.Parse(broadcastPort);
+                TrackerProperties.Instance.BroadcastPort = int.Parse(broadcastPort);
                 trackerGameObject.GetComponent<Tracker>().ResetBroadcast();
                 showNetworkOptions = false;
             }

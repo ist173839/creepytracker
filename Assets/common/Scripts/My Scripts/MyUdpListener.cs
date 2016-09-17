@@ -12,6 +12,8 @@ using System.Net.Sockets;
 using System.Linq;
 using System.Text;
 
+// ReSharper disable once CheckNamespace
+// ReSharper disable once UnusedMember.Global
 public class MyUdpListener : MonoBehaviour {
 
     private SaveMessage _saveMessage;
@@ -21,16 +23,12 @@ public class MyUdpListener : MonoBehaviour {
     private List<string> _stringsToParse;
 
     private int _port;
-
-
-
+    
     void Start()
     {
         _port = 57839;
         _saveMessage = new SaveMessage();
         UdpRestart();
-
-       
     }
 
     private void UdpRestart()
@@ -86,18 +84,3 @@ public class MyUdpListener : MonoBehaviour {
         OnApplicationQuit();
     }
 }
-    /*
-  if (_localTrackerUi == null || _localTrackerUi.UseRecord)
-            {
-                Debug.Log("Save");
-                _saveMessage.IsRecording = true;
-              
-            }
-            else if(!_localTrackerUi.UseRecord)
-            {
-                _saveMessage.IsRecording = false;
-            }
-     
-     
-     
-     */

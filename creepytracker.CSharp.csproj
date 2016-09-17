@@ -13,11 +13,13 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile></CompilerResponseFile>
+    <CompilerResponseFile>
+    </CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.4.0f3</UnityVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <LangVersion Condition=" '$(VisualStudioVersion)' != '10.0' ">4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -94,7 +96,7 @@
     <Compile Include="Assets\common\Scripts\My Scripts\OptiTrack\ObjectTracker.cs" />
     <Compile Include="Assets\common\Scripts\My Scripts\OptiTrack\OptiDrawScript.cs" />
     <Compile Include="Assets\common\Scripts\My Scripts\OptiTrack\OptiObjects.cs" />
-    <Compile Include="Assets\common\Scripts\My Scripts\OptitrackManager.cs" />
+    <Compile Include="Assets\common\Scripts\My Scripts\OptiTrack\OptitrackManager.cs" />
     <Compile Include="Assets\common\Scripts\PointCloudSimple.cs" />
     <Compile Include="Assets\common\Scripts\UdpListener.cs" />
     <Compile Include="Assets\trackerhub\Plugins\Human.cs" />

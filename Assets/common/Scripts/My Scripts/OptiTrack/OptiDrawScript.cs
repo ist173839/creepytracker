@@ -9,25 +9,32 @@ using OptitrackManagement;
 
 
 //WARNING: THIS SCRIPT SHOULD BE ASSOCIATED TO THE CAMERA!
+// ReSharper disable once CheckNamespace
+// ReSharper disable once UnusedMember.Global
 public class OptiDrawScript : MonoBehaviour {
 
-    public Vector3 world_scale_offset;
-
-    public Vector3 CameraOffset;
     public GameObject MarkerObject;
     public GameObject TrailObject;
     public GameObject RigidBodyObject;
     public GameObject PenObject;
     public GameObject MenuObject;
     public GameObject DrawLimits;
-    private Vector3 _mLastMarkerPos;
+
+    private GameObject _currTrail;
+    private GameObject _lastTrail;
+
     public Transform WorldObjects;
+
+    private Vector3 _mLastMarkerPos;
+
+    public Vector3 WorldScaleOffset;
+
+    public Vector3 CameraOffset;
+
     public float OptiTrackPosMultiplyer;
 
     private string message_to_show;
 
-    private GameObject _currTrail;
-    private GameObject _lastTrail;
     //private OVRCameraController RiftCamController;
    // private OVRCameraRig RiftCamController;
 
@@ -41,7 +48,7 @@ public class OptiDrawScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        world_scale_offset = Vector3.zero;
+        WorldScaleOffset = Vector3.zero;
         message_to_show = "";
         OptitrackManagement.DirectMulticastSocketClient.Start();
 
@@ -65,7 +72,7 @@ public class OptiDrawScript : MonoBehaviour {
         OptitrackManagement.DirectMulticastSocketClient.Update();
         ProcessOptiTrackInput();
 
-        DrawLimits.transform.position = world_scale_offset;
+        DrawLimits.transform.position = WorldScaleOffset;
 	}
 
 
@@ -92,7 +99,7 @@ public class OptiDrawScript : MonoBehaviour {
                 }
                 else
                 {
-                    ApplyOptiTrackTransformToObject(rigidBodies[i], world_scale_offset);
+                    ApplyOptiTrackTransformToObject(rigidBodies[i], WorldScaleOffset);
                 }
             }
             //Associates the second RigidBody to the Camera
@@ -110,7 +117,7 @@ public class OptiDrawScript : MonoBehaviour {
                 }
                 else
                 {
-                    ApplyOptiTrackTransformToObject(rigidBodies[i], CameraOffset + world_scale_offset);
+                    ApplyOptiTrackTransformToObject(rigidBodies[i], CameraOffset + WorldScaleOffset);
                     //RiftCamController.SetYRotation(rigidBodies[i].RigidBodyGameObject.transform.eulerAngles.y);
                     //RiftCamController.SetOrientationOffset(rigidBodies[i].RigidBodyGameObject.transform.rotation);
                 }
@@ -130,7 +137,7 @@ public class OptiDrawScript : MonoBehaviour {
                 }
                 else
                 {
-                    ApplyOptiTrackTransformToObject(rigidBodies[i], new Vector3(0.0f, 2.0f, 0.0f) + world_scale_offset);
+                    ApplyOptiTrackTransformToObject(rigidBodies[i], new Vector3(0.0f, 2.0f, 0.0f) + WorldScaleOffset);
                 }
             }
             //Associates the rest RigidBodies
@@ -143,7 +150,7 @@ public class OptiDrawScript : MonoBehaviour {
 				}
 				else
                 {
-                    ApplyOptiTrackTransformToObject(rigidBodies[i], new Vector3(0.0f, 1.0f, 0.0f) + world_scale_offset);
+                    ApplyOptiTrackTransformToObject(rigidBodies[i], new Vector3(0.0f, 1.0f, 0.0f) + WorldScaleOffset);
                     Debug.DrawRay(rigidBodies[i].RigidBodyGameObject.transform.position, rigidBodies[i].RigidBodyGameObject.transform.right, Color.blue);
                     Debug.DrawRay(rigidBodies[i].RigidBodyGameObject.transform.position, rigidBodies[i].RigidBodyGameObject.transform.up, Color.green);
                     Debug.DrawRay(rigidBodies[i].RigidBodyGameObject.transform.position, rigidBodies[i].RigidBodyGameObject.transform.forward, Color.red);
