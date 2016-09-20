@@ -328,7 +328,7 @@ public class TrackerUI : MonoBehaviour
             left = Screen.width - 250 + 20;
 
             UseRecord = GUI.Toggle(new Rect(left, top, 100, 25), UseRecord, "Record");
-            Debug.Log("UseRecord = " + UseRecord);
+            //Debug.Log("UseRecord = " + UseRecord);
 
             // Unicast Settings
             /*

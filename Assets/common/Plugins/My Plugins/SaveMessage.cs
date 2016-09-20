@@ -20,7 +20,8 @@ public enum ControloMode
     WIP,
     // ReSharper disable once InconsistentNaming
     CWIP,
-    WalkGear
+    WalkGear,
+    ConstDist
 }
 
 public class SaveMessage
@@ -53,6 +54,7 @@ public class SaveMessage
     private string _headerWip;
     private string _headerWalkGear;
     private string _headerKeyboardMouse;
+    private string _headerConstDist;
 
     public int NumColunas   { get; private set; }
 
@@ -69,21 +71,21 @@ public class SaveMessage
     private bool _isInitiate;
     private bool _isRecording;
 
-    public bool IsRecording
-    {
-        get { return _isRecording; }
-        set
-        {
+    //public bool IsRecording
+    //{
+    //    get { return _isRecording; }
+    //    set
+    //    {
 
-            if (!value)
-            {
-                _isInitiate = false;
-                StopRecording();
-            }
+    //        if (!value)
+    //        {
+    //            _isInitiate = false;
+    //            StopRecording();
+    //        }
 
-            _isRecording = value;
-        }
-    }
+    //        _isRecording = value;
+    //    }
+    //}
 
 
     public SaveMessage() 
@@ -116,6 +118,7 @@ public class SaveMessage
         _headerWip           = GetWipHeader();
         _headerWalkGear      = GetWalkGearHeader();
         _headerKeyboardMouse = GetKeyboardMouseHeader();
+        _headerConstDist     = GetConstHeader();
         _header = GetHeader();
     }
 
@@ -147,11 +150,11 @@ public class SaveMessage
 
     public void RecordMessage(string message)
     {
-        if (!IsRecording)
-        {
-            StopRecording();
-            return;
-        }
+        //if (!IsRecording)
+        //{
+        //    StopRecording();
+        //    return;
+        //}
         CheckHeaders(message);
 
         if (!_isInitiate) SetUpFileAndDirectory(message);
@@ -192,6 +195,11 @@ public class SaveMessage
             _activeControloMode = ControloMode.KeyboardMouse;
             _isInitiate = false;
         }
+        else if (message == _headerConstDist && _activeControloMode != ControloMode.ConstDist)
+        {
+            _activeControloMode = ControloMode.KeyboardMouse;
+            _isInitiate = false;
+        }
 
 
         //if (message == _headerCwip || message == _headerWip || message == _headerWalkGear || message == _headerKeyboardMouse)
@@ -212,6 +220,9 @@ public class SaveMessage
                 return _headerCwip;
             case ControloMode.WalkGear:
                 return _headerWalkGear;
+            case ControloMode.ConstDist:
+                return _headerConstDist;
+                
             default:
                 throw new ArgumentOutOfRangeException();
         }
@@ -228,8 +239,8 @@ public class SaveMessage
             "Direito FootStates (WIP)" + Separador + "Esquerdo FootStates (WIP)" + Separador + "Direito FootTransitionEvents (WIP)" + Separador +
             "Esquerdo FootTransitionEvents (WIP)" + Separador + "N. Passos Total (WIP)" + Separador + "N. Passos Direito (WIP)" + Separador + 
             "N. Passos Esquerdo (WIP)" + Separador + "Altura" + Separador + "Threshold de Velocidade Directa" + Separador + 
-            "Threshold de Velocidade WIP" + Separador + "Threshold do Passo (WIP)" + Separador + "Nome Joint Vel. Real (Kinect)" + Separador + 
-            "Nome Joint Camera (Kinect)" + Separador + "Tempo" + Separador + "Aumento (WIP)" + Separador + "Id";
+            "Threshold de Velocidade WIP" + Separador + "Threshold do Passo (WIP)" + Separador + "Nome Joint Vel. Real" + Separador + 
+            "Nome Joint Camera" + Separador + "Tempo" + Separador + "Aumento (WIP)" + Separador + "Id";
     }
 
 
@@ -242,7 +253,7 @@ public class SaveMessage
             "Desvio Joelho Direito" + Separador + "Desvio Joelho Esquerdo" + Separador + "Direito FootStates (WIP)" + Separador + "Esquerdo FootStates (WIP)" + Separador +
             "Direito FootTransitionEvents (WIP)" + Separador + "Esquerdo FootTransitionEvents (WIP)" + Separador + "N. Passos Total (WIP)" + Separador + "N. Passos Direito (WIP)" + Separador +
             "N. Passos Esquerdo (WIP)" + Separador + "Altura" + Separador + "Threshold de Velocidade WIP" + Separador + "Threshold do Passo (WIP)" + Separador +
-            "Nome Joint Camera (Kinect)" + Separador + "Tempo" + Separador + "Aumento (WIP)" + Separador + "Id";
+            "Nome Joint Camera" + Separador + "Tempo" + Separador + "Aumento (WIP)" + Separador + "Id";
     }
 
     private string GetWalkGearHeader()
@@ -250,7 +261,7 @@ public class SaveMessage
         return
             "Registo" + Separador + "Tempo Absoluto (Segundos)" + Separador + "Metodo de Deslocamento Em Uso" + Separador + "Estado Actual " + Separador +
             "Vel. Real (Directa, Normal)" + Separador + "Vel. Real (Directa, Kalman)" + Separador + "Joint Vel. Real (Vector 2)" + Separador + "Joint Camera (Vector 3)" + Separador +
-            "Threshold de Velocidade Directa" + Separador + "Nome Joint Vel. Real (Kinect)" + Separador + "Nome Joint Camera (Kinect)" + Separador + "Tempo" + Separador +
+            "Threshold de Velocidade Directa" + Separador + "Nome Joint Vel. Real" + Separador + "Nome Joint Camera" + Separador + "Tempo" + Separador +
             "Id";
     }
 
@@ -258,7 +269,17 @@ public class SaveMessage
     {
         return "Registo" + Separador + "Tempo Absoluto (Segundos)" + Separador + "Metodo de Deslocamento Em Uso" + Separador + "Tempo";
     }
-    
+
+    private string GetConstHeader()
+    {
+        return
+            "Registo" + Separador + "Tempo Absoluto (Segundos)" + Separador + "Metodo de Deslocamento Em Uso" + Separador +
+            "Estado Actual " + Separador + "Vel. Real (Directa, Normal)" + Separador + "Vel. Real (Directa, Kalman)" + Separador +
+            "Sentido" + Separador + "Joint Vel. Real (Vector 2)" + Separador + "Joint Camera (Vector 3)" + Separador +
+            "Nome Joint Vel. Real" + Separador + "Nome Joint Camera" + Separador + "Tempo" + Separador +
+            "Aumento Constante" + Separador + "Id";
+    }
+
     private void SetUpHeader()
     {
         // _positionThreshold,  (_numSteps) 
@@ -322,7 +343,7 @@ public class SaveMessage
     {
         if (_useDefaultDocName)
         {
-            _currentDocName = "WVD_V9_" + DateTime.Now.ToString("yyyyMMddTHHmmss") ;
+            _currentDocName = "WVD_V10_" + DateTime.Now.ToString("yyyyMMddTHHmmss") ;
             _currentDocName = SolveDuplicateFileNames() + _format;
         }
         else
@@ -341,6 +362,8 @@ public class SaveMessage
                     break;
             }
             _currentDocName = temp + _format;
+
+            Debug.Log("New Walking Data File : " + _currentDocName);
         }
     }
 
