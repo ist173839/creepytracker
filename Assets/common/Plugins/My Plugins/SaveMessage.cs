@@ -197,7 +197,7 @@ public class SaveMessage
         }
         else if (message == _headerConstDist && _activeControloMode != ControloMode.ConstDist)
         {
-            _activeControloMode = ControloMode.KeyboardMouse;
+            _activeControloMode = ControloMode.ConstDist;
             _isInitiate = false;
         }
 
