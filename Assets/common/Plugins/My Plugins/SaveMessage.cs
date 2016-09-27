@@ -109,9 +109,9 @@ public class SaveMessage
         NumColunas = 0;
 
 
-        _activeControloMode  = ControloMode.CWIP;
-        _headerCwip          = GetCwipHeader();
-        _headerWip           = GetWipHeader();
+        //_activeControloMode  = ControloMode.CWIP;
+        //_headerCwip          = GetCwipHeader();
+        //_headerWip           = GetWipHeader();
     
         _header = GetHeader();
     }
@@ -149,7 +149,7 @@ public class SaveMessage
         //    StopRecording();
         //    return;
         //}
-        CheckHeaders(message);
+        //CheckHeaders(message);
 
         if (!_isInitiate) SetUpFileAndDirectory(message);
         //if (message != _startMessage  && !_isInitiate)
@@ -165,63 +165,21 @@ public class SaveMessage
             WriteStringInDoc(message, true);
         
     }
-
-    private void CheckHeaders(string message)
-    {
-        if (message == _headerCwip && _activeControloMode != ControloMode.CWIP)
-        {
-            _activeControloMode = ControloMode.CWIP;
-            _isInitiate = false;
-        }
-        else if (message == _headerWip && _activeControloMode != ControloMode.WIP)
-        {
-            _activeControloMode = ControloMode.WIP;
-            _isInitiate = false;
-        }
-  
-    }
-
+    
     private string GetHeader()
-    {
-        switch (_activeControloMode)
-        {
-            case ControloMode.WIP:
-                return _headerWip;
-            case ControloMode.CWIP:
-                return _headerCwip;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-    }
-
-    private string GetCwipHeader()
     {
         return
             "Registo" + Separador + "Tempo Absoluto (Segundos)" + Separador + "Metodo de Deslocamento Em Uso" + Separador + "Estado Actual " + Separador +
             "Vel. Real (Directa, Normal)" + Separador + "Vel. Real (Directa, Kalman)" + Separador + "Vel. Virtual (WIP, Normal)" + Separador + 
-            "Vel. Virtual (WIP, Kalman)" + Separador +"Vel. Virtual (WIP, Event, Normal)" + Separador + "Vel. Virtual (WIP, Event, Kalman)" + Separador +
+            "Vel. Virtual (WIP, Kalman)" + Separador + "Vel. Virtual (WIP, Event, Normal)" + Separador + "Vel. Virtual (WIP, Event, Kalman)" + Separador +
             "Vel. Virtual + Aumento (WIP)" + Separador + "Joint Vel. Real (Vector 2)" + Separador + "Joint Camera (Vector 3)" + Separador +
             "Joelho Direito (y)" + Separador + "Joelho Esquerdo (y)" + Separador + "Desvio Joelho Direito" + Separador + "Desvio Joelho Esquerdo" + Separador +
             "Direito FootStates (WIP)" + Separador + "Esquerdo FootStates (WIP)" + Separador + "Direito FootTransitionEvents (WIP)" + Separador +
-            "Esquerdo FootTransitionEvents (WIP)" + Separador + "N. Passos Total (WIP)" + Separador + "N. Passos Direito (WIP)" + Separador + 
-            "N. Passos Esquerdo (WIP)" + Separador + "Altura" + Separador + "Threshold de Velocidade Directa" + Separador + 
-            "Threshold de Velocidade WIP" + Separador + "Threshold do Passo (WIP)" + Separador + "Nome Joint Vel. Real" + Separador + 
-            "Nome Joint Camera" + Separador + "Tempo" + Separador + "Aumento (WIP)" + Separador + "Id";
+            "Esquerdo FootTransitionEvents (WIP)" + Separador + "N. Passos Total (WIP)" + Separador + "N. Passos Direito (WIP)" + Separador + "N. Passos Esquerdo (WIP)" + Separador +
+            "Altura" + Separador + "Threshold de Velocidade Directa" + Separador + "Threshold de Velocidade WIP" + Separador + "Threshold do Passo (WIP)" + Separador +
+            "Nome Joint Vel. Real" + Separador + "Nome Joint Camera" + Separador + "Tempo" + Separador + "Aumento (WIP)" + Separador + "Id" + Separador + "Nivel";
     }
-
-
-    private string GetWipHeader()
-    {
-        return
-           "Registo" + Separador + "Tempo Absoluto (Segundos)" + Separador + "Metodo de Deslocamento Em Uso" + Separador + "Estado Actual " + Separador +
-            "Vel. Virtual (WIP, Normal)" + Separador + "Vel. Virtual (WIP, Kalman)" + Separador + "Vel. Virtual (WIP, Event, Normal)" + Separador + "Vel. Virtual (WIP, Event, Kalman)" + Separador +
-            "Vel. Virtual + Aumento (WIP)" + Separador + "Joint Camera (Vector 3)" + Separador + "Joelho Direito (y)" + Separador + "Joelho Esquerdo (y)" + Separador +
-            "Desvio Joelho Direito" + Separador + "Desvio Joelho Esquerdo" + Separador + "Direito FootStates (WIP)" + Separador + "Esquerdo FootStates (WIP)" + Separador +
-            "Direito FootTransitionEvents (WIP)" + Separador + "Esquerdo FootTransitionEvents (WIP)" + Separador + "N. Passos Total (WIP)" + Separador + "N. Passos Direito (WIP)" + Separador +
-            "N. Passos Esquerdo (WIP)" + Separador + "Altura" + Separador + "Threshold de Velocidade WIP" + Separador + "Threshold do Passo (WIP)" + Separador +
-            "Nome Joint Camera" + Separador + "Tempo" + Separador + "Aumento (WIP)" + Separador + "Id";
-    }
-
+    
 
     private void SetUpHeader()
     {
@@ -286,7 +244,7 @@ public class SaveMessage
     {
         if (_useDefaultDocName)
         {
-            _currentDocName = "WVD_V10_" + DateTime.Now.ToString("yyyyMMddTHHmmss") ;
+            _currentDocName = "WVD_V10.5_" + DateTime.Now.ToString("yyyyMMddTHHmmss") ;
             _currentDocName = SolveDuplicateFileNames() + _format;
         }
         else
@@ -386,6 +344,76 @@ public class SaveMessage
  * 
  *
  *
+ *
+ * 
+
+    * 
+    * 
+    * 
+    *  private string GetHeader()
+    {
+        switch (_activeControloMode)
+        {
+            case ControloMode.WIP:
+                return _headerWip;
+            case ControloMode.CWIP:
+                return _headerCwip;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    private void CheckHeaders(string message)
+    {
+        if (message == _headerCwip && _activeControloMode != ControloMode.CWIP)
+        {
+            _activeControloMode = ControloMode.CWIP;
+            _isInitiate = false;
+        }
+        else if (message == _headerWip && _activeControloMode != ControloMode.WIP)
+        {
+            _activeControloMode = ControloMode.WIP;
+            _isInitiate = false;
+        }
+  
+    }
+
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+ *  private string GetWipHeader()
+    {
+        return
+           "Registo" + Separador + "Tempo Absoluto (Segundos)" + Separador + "Metodo de Deslocamento Em Uso" + Separador + "Estado Actual " + Separador +
+            "Vel. Virtual (WIP, Normal)" + Separador + "Vel. Virtual (WIP, Kalman)" + Separador + "Vel. Virtual (WIP, Event, Normal)" + Separador + "Vel. Virtual (WIP, Event, Kalman)" + Separador +
+            "Vel. Virtual + Aumento (WIP)" + Separador + "Joint Camera (Vector 3)" + Separador + "Joelho Direito (y)" + Separador + "Joelho Esquerdo (y)" + Separador +
+            "Desvio Joelho Direito" + Separador + "Desvio Joelho Esquerdo" + Separador + "Direito FootStates (WIP)" + Separador + "Esquerdo FootStates (WIP)" + Separador +
+            "Direito FootTransitionEvents (WIP)" + Separador + "Esquerdo FootTransitionEvents (WIP)" + Separador + "N. Passos Total (WIP)" + Separador + "N. Passos Direito (WIP)" + Separador +
+            "N. Passos Esquerdo (WIP)" + Separador + "Altura" + Separador + "Threshold de Velocidade WIP" + Separador + "Threshold do Passo (WIP)" + Separador +
+            "Nome Joint Camera" + Separador + "Tempo" + Separador + "Aumento (WIP)" + Separador + "Id";
+    }
+
+ * 
+ * 
+ * 
+ * 
+ * 
  *
  *
  

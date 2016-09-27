@@ -83,4 +83,9 @@ public class MyUdpListener : MonoBehaviour {
     {
         OnApplicationQuit();
     }
+    void OnDestroy()
+    {
+        _udpClient.Close();
+    }
 }
+
