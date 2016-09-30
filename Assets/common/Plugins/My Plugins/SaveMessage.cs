@@ -169,15 +169,17 @@ public class SaveMessage
     private string GetHeader()
     {
         return
-            "Registo" + Separador + "Tempo Absoluto (Segundos)" + Separador + "Metodo de Deslocamento Em Uso" + Separador + "Estado Actual " + Separador +
-            "Vel. Real (Directa, Normal)" + Separador + "Vel. Real (Directa, Kalman)" + Separador + "Vel. Virtual (WIP, Normal)" + Separador + 
-            "Vel. Virtual (WIP, Kalman)" + Separador + "Vel. Virtual (WIP, Event, Normal)" + Separador + "Vel. Virtual (WIP, Event, Kalman)" + Separador +
-            "Vel. Virtual + Aumento (WIP)" + Separador + "Joint Vel. Real (Vector 2)" + Separador + "Joint Camera (Vector 3)" + Separador +
-            "Joelho Direito (y)" + Separador + "Joelho Esquerdo (y)" + Separador + "Desvio Joelho Direito" + Separador + "Desvio Joelho Esquerdo" + Separador +
-            "Direito FootStates (WIP)" + Separador + "Esquerdo FootStates (WIP)" + Separador + "Direito FootTransitionEvents (WIP)" + Separador +
-            "Esquerdo FootTransitionEvents (WIP)" + Separador + "N. Passos Total (WIP)" + Separador + "N. Passos Direito (WIP)" + Separador + "N. Passos Esquerdo (WIP)" + Separador +
+           "Registo" + Separador + "Tempo Absoluto (Segundos)" + Separador + "Metodo de Deslocamento Em Uso" + Separador + "Estado Actual " + Separador +
+            "Vel. Real (Directa, Normal)" + Separador + "Vel. Real (Directa, Kalman)" + Separador + "Vel. Virtual in use (WIP)" + Separador +
+            "Vel. Virtual (WIP, Normal)" + Separador + "Vel. Virtual (WIP, Kalman)" + Separador + "Vel. Virtual (WIP, Event, Normal)" + Separador +
+            "Vel. Virtual (WIP, Event, Kalman)" + Separador + "Vel. Virtual + Aumento (WIP)" + Separador + "Joint Vel. Real (Vector 2)" + Separador +
+            "Joint Camera (Vector 3)" + Separador + "Joelho Direito (y)" + Separador + "Joelho Esquerdo (y)" + Separador + "Desvio Joelho Direito" + Separador +
+            "Desvio Joelho Esquerdo" + Separador + "Direito FootStates (WIP)" + Separador + "Esquerdo FootStates (WIP)" + Separador +
+            "Direito FootTransitionEvents (WIP)" + Separador + "Esquerdo FootTransitionEvents (WIP)" + Separador + "N. Passos Total (WIP)" + Separador + 
+            "N. Passos Direito (WIP)" + Separador + "N. Passos Esquerdo (WIP)" + Separador +  "Distancia Direct" + Separador + "Distancia Wip" + Separador + "Distancia do anterior" + Separador +
             "Altura" + Separador + "Threshold de Velocidade Directa" + Separador + "Threshold de Velocidade WIP" + Separador + "Threshold do Passo (WIP)" + Separador +
-            "Nome Joint Vel. Real" + Separador + "Nome Joint Camera" + Separador + "Tempo" + Separador + "Aumento (WIP)" + Separador + "Id" + Separador + "Nivel";
+            "Velocidade Inicial WIP" + Separador + "Nome Joint Vel. Real" + Separador + "Nome Joint Camera" + Separador + "Tempo" + Separador + "Aumento (WIP)" + Separador +
+            "Id" + Separador + "Nivel";
     }
     
 
@@ -244,7 +246,7 @@ public class SaveMessage
     {
         if (_useDefaultDocName)
         {
-            _currentDocName = "WVD_V10.5_" + DateTime.Now.ToString("yyyyMMddTHHmmss") ;
+            _currentDocName = "WVD_V11_" + DateTime.Now.ToString("yyyyMMddTHHmmss") ;
             _currentDocName = SolveDuplicateFileNames() + _format;
         }
         else
