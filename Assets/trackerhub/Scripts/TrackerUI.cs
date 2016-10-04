@@ -184,15 +184,7 @@ public class TrackerUI : MonoBehaviour
 					_userTracker.BroadCastCloudRequests(_continuous);
 				}
 				_continuous = GUI.Toggle(new Rect(left,top+20,90,20),_continuous,"Continuous");
-//<<<<<<< HEAD
-<<<<<<< HEAD
-//				if (GUI.Button (new Rect (left + 70, top, 60, 20), "Hide")) {
-//					_userTracker.HideAllClouds ();
-=======
-				//if (GUI.Button (new Rect (left + 70, top, 60, 20), "Hide")) {
-				//	_userTracker.HideAllClouds ();
->>>>>>> f8946a77821260b4a6d29cabf98db298832642f7
-//=======
+
                 bool oldh = _hideHumans;
                 _hideHumans = GUI.Toggle(new Rect(left + 90, top + 20, 90, 20), _hideHumans, "Hide humans");
                 if(oldh != _hideHumans)
@@ -201,11 +193,7 @@ public class TrackerUI : MonoBehaviour
                 }
                 if (GUI.Button (new Rect (left + 70, top, 60, 20), "Hide")) {
 					_userTracker.HideAllClouds ();
-<<<<<<< HEAD
-//>>>>>>> bf1eadd3c4ea85498953c29594317454bbeef5cb
-=======
-//>>>>>>> refs/remotes/origin/master
->>>>>>> f8946a77821260b4a6d29cabf98db298832642f7
+
 				}
 				if (GUI.Button (new Rect (left + 140, top, 60, 20), "Save")) {
 					_userTracker.Save ();

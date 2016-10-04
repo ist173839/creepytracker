@@ -48,17 +48,14 @@ public class UdpListener : MonoBehaviour {
     {
         while (_stringsToParse.Count > 0)
         {
-<<<<<<< HEAD
-=======
-
->>>>>>> f8946a77821260b4a6d29cabf98db298832642f7
             try
             {
                 byte[] toProcess = _stringsToParse.First();
-                if(toProcess != null)
+                if (toProcess != null)
                 {
                     // TMA: THe first char distinguishes between a BodyMessage and a CloudMessage
-                    if (Convert.ToChar(toProcess[0]) == 'B') {
+                    if (Convert.ToChar(toProcess[0]) == 'B')
+                    {
                         try
                         {
                             string stringToParse = Encoding.ASCII.GetString(toProcess);
@@ -71,7 +68,7 @@ public class UdpListener : MonoBehaviour {
                             Debug.Log(e.Message);
                         }
                     }
-                    else if(Convert.ToChar(toProcess[0]) == 'C')
+                    else if (Convert.ToChar(toProcess[0]) == 'C')
                     {
                         string stringToParse = Encoding.ASCII.GetString(toProcess);
                         string[] splitmsg = stringToParse.Split(MessageSeparators.L0);
@@ -81,11 +78,10 @@ public class UdpListener : MonoBehaviour {
                 }
                 _stringsToParse.RemoveAt(0);
             }
-            catch (Exception exc) { _stringsToParse.RemoveAt(0); }
-<<<<<<< HEAD
-
-=======
->>>>>>> f8946a77821260b4a6d29cabf98db298832642f7
+            catch (Exception exc)
+            {
+                _stringsToParse.RemoveAt(0);
+            }
         }
     }
 
