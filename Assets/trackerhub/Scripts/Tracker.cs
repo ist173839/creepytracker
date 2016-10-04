@@ -32,21 +32,23 @@ public class Tracker : MonoBehaviour
 	private Dictionary<string, Sensor> _sensors;
 
 	public Dictionary<string, Sensor> Sensors
-    {
-		get
-        {
+	{
+		get 
+		{
 			return _sensors;
 		}
 	}
-	private CalibrationProcess _calibrationStatus;
 
-	public CalibrationProcess CalibrationStatus {
-		get
-        {
-            return _calibrationStatus;
+	private CalibrationProcess _calibrationStatus;
+	public CalibrationProcess CalibrationStatus 
+{
+		get 
+		{
+			return _calibrationStatus;
 		}
-		set
-        {
+
+		set 
+		{
 			_calibrationStatus = value;
 		}
 	}
@@ -236,7 +238,7 @@ public class Tracker : MonoBehaviour
 			}
 		}
 	}
-
+    
     // < Change >
     public Dictionary<int, Human> GetHumans()
     {
@@ -651,6 +653,14 @@ public class Tracker : MonoBehaviour
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    public void setHumansVisibility(bool invisible)
+    {
+        foreach (Human h in _humans.Values)
+        {
+            h.gameObject.SetActive(!invisible);
+        }
+    }
+
     private void MergeHumans ()
 	{
 		List<SensorBody> aloneBodies = new List<SensorBody> ();
@@ -833,11 +843,10 @@ public class Tracker : MonoBehaviour
 	{
 		if (!Sensors.ContainsKey (cloud.KinectId)) {
 			Vector3 position = new Vector3 (Mathf.Ceil (Sensors.Count / 2.0f) * (Sensors.Count % 2 == 0 ? -1.0f : 1.0f), 1, 0);
-			
-			Sensors [cloud.KinectId] = new Sensor (cloud.KinectId, (GameObject)Instantiate (Resources.Load ("Prefabs/KinectSensorPrefab"), position, Quaternion.identity));
+            Sensors [cloud.KinectId] = new Sensor (cloud.KinectId, (GameObject)Instantiate (Resources.Load ("Prefabs/KinectSensorPrefab"), position, Quaternion.identity));
 		}
-		
-		Sensors [cloud.KinectId].UpdateCloud (cloud);
+
+        Sensors[cloud.KinectId].UpdateCloud (cloud);
 	}
 
 	internal void SetNewFrame (BodiesMessage bodies)
@@ -1173,9 +1182,9 @@ public class Tracker : MonoBehaviour
 		}
 		UdpClient udp = new UdpClient ();
 		string message = CloudMessage.createRequestMessage (2); 
-		byte[] data = Encoding.UTF8.GetBytes (message);
-		IPEndPoint remoteEndPoint = new IPEndPoint (IPAddress.Broadcast, TrackerProperties.Instance.ListenPort + 1);
-		udp.Send (data, data.Length, remoteEndPoint);
+        byte[] data = Encoding.UTF8.GetBytes(message);
+		IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Broadcast, TrackerProperties.Instance.ListenPort + 1);
+		udp.Send(data, data.Length, remoteEndPoint);
 	}
     
 	public void BroadCastCloudRequests (bool continuous)
