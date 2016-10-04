@@ -48,6 +48,10 @@ public class UdpListener : MonoBehaviour {
     {
         while (_stringsToParse.Count > 0)
         {
+<<<<<<< HEAD
+=======
+
+>>>>>>> f8946a77821260b4a6d29cabf98db298832642f7
             try
             {
                 byte[] toProcess = _stringsToParse.First();
@@ -78,7 +82,10 @@ public class UdpListener : MonoBehaviour {
                 _stringsToParse.RemoveAt(0);
             }
             catch (Exception exc) { _stringsToParse.RemoveAt(0); }
+<<<<<<< HEAD
 
+=======
+>>>>>>> f8946a77821260b4a6d29cabf98db298832642f7
         }
     }
 

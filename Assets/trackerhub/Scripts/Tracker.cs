@@ -41,19 +41,17 @@ public class Tracker : MonoBehaviour
 
 	private CalibrationProcess _calibrationStatus;
 	public CalibrationProcess CalibrationStatus 
-{
+    {   
 		get 
 		{
 			return _calibrationStatus;
 		}
-
 		set 
 		{
 			_calibrationStatus = value;
 		}
 	}
-
-
+    
 	private Dictionary<int, Human> _humans;
 
 	private List<Human> _deadHumans;
@@ -238,7 +236,12 @@ public class Tracker : MonoBehaviour
 			}
 		}
 	}
+<<<<<<< HEAD
     
+=======
+
+//<<<<<<< HEAD
+>>>>>>> f8946a77821260b4a6d29cabf98db298832642f7
     // < Change >
     public Dictionary<int, Human> GetHumans()
     {
@@ -847,6 +850,10 @@ public class Tracker : MonoBehaviour
 		}
 
         Sensors[cloud.KinectId].UpdateCloud (cloud);
+<<<<<<< HEAD
+=======
+
+>>>>>>> f8946a77821260b4a6d29cabf98db298832642f7
 	}
 
 	internal void SetNewFrame (BodiesMessage bodies)
@@ -1004,7 +1011,6 @@ public class Tracker : MonoBehaviour
         return _sensors[bestBody.sensorID].PointSensorToScene(CommonUtils.PointKinectToUnity(bestBody.skeleton.JointsPositions[joint]));
         
     }
-
 
 
 
@@ -1177,14 +1183,23 @@ public class Tracker : MonoBehaviour
 
     public void HideAllClouds ()
 	{
-		foreach (Sensor s in _sensors.Values) {
+		foreach (Sensor s in _sensors.Values)
+        {
 			s.lastCloud.hideFromView ();
 		}
 		UdpClient udp = new UdpClient ();
 		string message = CloudMessage.createRequestMessage (2); 
+<<<<<<< HEAD
         byte[] data = Encoding.UTF8.GetBytes(message);
 		IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Broadcast, TrackerProperties.Instance.ListenPort + 1);
 		udp.Send(data, data.Length, remoteEndPoint);
+=======
+
+		byte[] data = Encoding.UTF8.GetBytes(message);
+		IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Broadcast, TrackerProperties.Instance.ListenPort + 1);
+		udp.Send(data, data.Length, remoteEndPoint);
+
+>>>>>>> f8946a77821260b4a6d29cabf98db298832642f7
 	}
     
 	public void BroadCastCloudRequests (bool continuous)
