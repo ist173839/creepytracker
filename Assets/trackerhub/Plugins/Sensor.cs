@@ -102,8 +102,8 @@ public class Sensor
 
 	internal void UpdateCloud (CloudMessage cl)
 	{
-		lastCloud.setPoints (cl.Points, cl.id);
-		lastCloud.setToView ();
+		lastCloud.setPoints (cl.Points_highres, cl.Points_lowres, cl.id);
+        lastCloud.setToView ();
 	}
 
 	internal void UpdateBodies ()
