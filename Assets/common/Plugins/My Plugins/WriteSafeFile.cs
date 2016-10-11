@@ -12,8 +12,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-
-
 // ReSharper disable once CheckNamespace
 public static class MyMessaSepa
 {
@@ -31,6 +29,9 @@ public static class MyMessaSepa
 // ReSharper disable once CheckNamespace
 public class WriteSafeFile
 {
+    private StreamWriter _doc;
+
+    // ReSharper disable once MemberCanBePrivate.Global
     public enum VersaoDisponivel
     {
         Versao2,
@@ -43,21 +44,32 @@ public class WriteSafeFile
     private DateTime _tempoMensagemAnterior;
     private DateTime _inicio;
 
-    private StreamWriter Doc;
-
+    // ReSharper disable once MemberCanBePrivate.Global
     public string CurrentFolderDestino;
+    // ReSharper disable once MemberCanBePrivate.Global
     public string FolderDestino;
+    // ReSharper disable once MemberCanBePrivate.Global
     public string InfoCompl;
+    // ReSharper disable once MemberCanBePrivate.Global
     public string InfoExtra;
+    // ReSharper disable once FieldCanBeMadeReadOnly.Global
+    // ReSharper disable once MemberCanBePrivate.Global
     public string Directory;
+    // ReSharper disable once MemberCanBePrivate.Global
     public string DocName;
 
+    // ReSharper disable once FieldCanBeMadeReadOnly.Local
     private string _defaultFolderDestino;
+#pragma warning disable 414
     private string _caminhoCompleto;
+#pragma warning restore 414
+#pragma warning disable 169
     private string _defaultDocName;
+#pragma warning restore 169
     private string _currentDocName;
     private string _fileName;
     private string _target;
+    // ReSharper disable once FieldCanBeMadeReadOnly.Local
     private string _format;
 
     private int _specialTypeDocName;
@@ -76,15 +88,17 @@ public class WriteSafeFile
 
     public bool IsRecording
     {
-        get { return _isRecording; }
+        // ReSharper disable once MemberCanBePrivate.Global
+        get
+        {
+            return _isRecording;
+        }
         set
         {
             if (value == false) StopRecording("Turn Off");
             _isRecording = value;
         }
     }
-
-
 
     public WriteSafeFile()
     {
@@ -93,9 +107,7 @@ public class WriteSafeFile
         _useDefaultFolder  = true;
         _activo            = false;
         _first             = true;
-
         Directory = System.IO.Directory.GetCurrentDirectory();
-
         CurrentFolderDestino = _defaultFolderDestino = "Recordings";
         _format = ".txt";
         // _defaultDocName = "UTD_" + DateTime.Now.ToString("yyyyMMddTHHmmss") + ".txt"; // UserTrakerData
@@ -114,11 +126,11 @@ public class WriteSafeFile
         ResetMessage();
 #if !UNITY_ANDROID || UNITY_EDITOR
         
-        string infoFinal = "£" + DateTime.Now.ToString("yyyyMMddTHHmmss") + "£Fim£\n";
-        Doc = new StreamWriter(_target + _currentDocName, true);
-        if (InfoExtra != null) Doc.WriteLine(InfoExtra);
-        Doc.WriteLine(infoFinal);
-        Doc.Close();
+        var infoFinal = "£" + DateTime.Now.ToString("yyyyMMddTHHmmss") + "£Fim£\n";
+        _doc = new StreamWriter(_target + _currentDocName, true);
+        if (InfoExtra != null) _doc.WriteLine(InfoExtra);
+        _doc.WriteLine(infoFinal);
+        _doc.Close();
         File.SetAttributes(_target + _currentDocName, FileAttributes.ReadOnly);
 #endif
     }
@@ -133,16 +145,19 @@ public class WriteSafeFile
         //  NumColunas = 0;
     }
 
+    // ReSharper disable once UnusedMember.Global
     public string GetCurrentFileName()
     {
         return _fileName;
     }
 
+    // ReSharper disable once UnusedMember.Global
     public void AddExtraInfo(string extra)
     {
         InfoExtra += "£ExtraInfo: " + extra;
     }
 
+    // ReSharper disable once UnusedMember.Global
     public void SpecialFolderName(string newName)
     {
         CurrentFolderDestino = FolderDestino = newName;
@@ -151,6 +166,7 @@ public class WriteSafeFile
         _versaoActiva = VersaoDisponivel.NaoActivo;
     }
 
+    // ReSharper disable once UnusedMember.Global
     public void SpecialDocName(string newName)
     {
         DocName = newName;
@@ -160,13 +176,16 @@ public class WriteSafeFile
         _versaoActiva = VersaoDisponivel.NaoActivo;
     }
 
+    // ReSharper disable once UnusedMember.Global
     public void SpecialTypeDocName(int t)
     {
         _specialTypeDocName = t;      
     }
     
+    // ReSharper disable once UnusedMember.Global
     public void UseDefaultDocName()
     {
+        // ReSharper disable once InvertIf
         if (!_useDefaultDocName)
         {
             _useDefaultDocName = true;
@@ -175,8 +194,10 @@ public class WriteSafeFile
         }
     }
 
+    // ReSharper disable once UnusedMember.Global
     public void UseDefaultFolderName()
     {
+        // ReSharper disable once InvertIf
         if (!_useDefaultFolder)
         {
             _useDefaultFolder = true;
@@ -202,25 +223,19 @@ public class WriteSafeFile
         //Debug.Log("Pasta : " + _target);
         CheckFileSize();
         if (!_activo || _versaoActiva == VersaoDisponivel.NaoActivo) NovoRegisto(VersaoDisponivel.Versao2);
-
-
         //_caminhoCompleto = _target + _CurrentDocName;
-
-
-        Doc = new StreamWriter(_target + _currentDocName, true);
-        DateTime agora = DateTime.Now;
+        _doc = new StreamWriter(_target + _currentDocName, true);
+        var agora = DateTime.Now;
         if (_first)
         {
             _tempoMensagemAnterior = agora;
             _first = false;
         }
-
-        TimeSpan diff = agora - _inicio;// 
-        TimeSpan diffIntervalo = agora - _tempoMensagemAnterior;
-
-        string registo = "«" + _cont++ + "_" + diff.TotalSeconds + "_" + diffIntervalo.TotalSeconds + "_" + agora.ToString("yyyy-MM-dd-HH-mm-ss-fff") + "$"+ mensagemKinect;
-        Doc.WriteLine(registo);
-        Doc.Close(); // Todo Apenas um Doc.Close
+        var diff          = agora - _inicio;
+        var diffIntervalo = agora - _tempoMensagemAnterior;
+        var registo = "«" + _cont++ + "_" + diff.TotalSeconds + "_" + diffIntervalo.TotalSeconds + "_" + agora.ToString("yyyy-MM-dd-HH-mm-ss-fff") + "$"+ mensagemKinect;
+        _doc.WriteLine(registo);
+        _doc.Close(); // Todo Apenas um Doc.Close
 
         _tempoMensagemAnterior = agora;
         if (!IsRecording) StopRecording("Turn Off");
@@ -233,23 +248,18 @@ public class WriteSafeFile
         //Debug.Log("Pasta : " + _target);
         CheckFileSize();
         if (!_activo || _versaoActiva != VersaoDisponivel.Versao3) NovoRegisto(VersaoDisponivel.Versao3);
-
-
         //_caminhoCompleto = _target + _CurrentDocName;
-
-        Doc = new StreamWriter(_target + _currentDocName, true);
-        DateTime agora = DateTime.Now;
+        _doc = new StreamWriter(_target + _currentDocName, true);
+        var agora = DateTime.Now;
         if (_first)
         {
             _tempoMensagemAnterior = agora;
             _first = false;
         }
-
-        TimeSpan diff = agora - _inicio;// 
-        TimeSpan diffIntervalo = agora - _tempoMensagemAnterior;
-
+        var diff = agora - _inicio;// 
+        var diffIntervalo = agora - _tempoMensagemAnterior;
         //string registo = "«" + _cont++ + "_" + diff.TotalSeconds + "_" + diffIntervalo.TotalSeconds + "_" + agora.ToString("yyyy-MM-dd-HH-mm-ss-fff") + "$" + mensagemKinect + "&" + pos;
-        string registo = MyMessaSepa.InicioRegisto    + _cont++ + 
+        var registo = MyMessaSepa.InicioRegisto    + _cont++ + 
                          MyMessaSepa.SepaRegisto      + diff.TotalSeconds +
                          MyMessaSepa.SepaRegisto      + diffIntervalo.TotalSeconds +
                          MyMessaSepa.SepaRegisto      + agora.ToString("yyyy-MM-dd-HH-mm-ss-fff") + 
@@ -259,18 +269,8 @@ public class WriteSafeFile
                          MyMessaSepa.InicioOptitrack  +
                          MyMessaSepa.InicioMensagem   + mensagemKinect;
 
-
-        //string registo1 = "«" + _cont + //  "_" +
-        //                  "_" + diff.TotalSeconds +
-        //                  "_" + diffIntervalo.TotalSeconds +
-        //                  "_" + agora.ToString("yyyy-MM-dd-HH-mm-ss-fff") +
-        //                  "&" + Vector3ToString(pos) + "!" + QuaternionToString(ori) + "!" +
-        //                  "&" + "$" + mensagemKinect;
-
-
-
-        Doc.WriteLine(registo);
-        Doc.Close(); 
+        _doc.WriteLine(registo);
+        _doc.Close(); 
 
         _tempoMensagemAnterior = agora;
 #endif
@@ -296,10 +296,10 @@ public class WriteSafeFile
         if (!_activo) return;
         ResetMessage();
         var infoFinal = "£" + DateTime.Now.ToString("yyyyMMddTHHmmss") + "£Fim£\n"; 
-        Doc = new StreamWriter(_target + _currentDocName, true);
-        if (InfoExtra != null) Doc.WriteLine(InfoExtra);
-        Doc.WriteLine(infoFinal);
-        Doc.Close();
+        _doc = new StreamWriter(_target + _currentDocName, true);
+        if (InfoExtra != null) _doc.WriteLine(InfoExtra);
+        _doc.WriteLine(infoFinal);
+        _doc.Close();
         File.SetAttributes(_target + _currentDocName, FileAttributes.ReadOnly);
         
     }
@@ -309,9 +309,9 @@ public class WriteSafeFile
         if (!_activo) return;
         ResetMessage();
         var infoFinal = "£Mensagem_Final_" + mensagemFinal + "£"+ DateTime.Now.ToString("yyyyMMddTHHmmssff") + "£Fim£";
-        Doc = new StreamWriter(_target + _currentDocName, true);
-        Doc.WriteLine(infoFinal);
-        Doc.Close();
+        _doc = new StreamWriter(_target + _currentDocName, true);
+        _doc.WriteLine(infoFinal);
+        _doc.Close();
     }
 
     public string GetDocActivo()
@@ -325,16 +325,13 @@ public class WriteSafeFile
     {
     #if !UNITY_ANDROID || UNITY_EDITOR
         // _target = _directory + "\\" +_CurrentFolderDestino ;
-
         //  Para prevenir erros, não é uma situação esperada
         _versaoActiva = versao == VersaoDisponivel.NaoActivo ? VersaoDisponivel.Versao2 : versao;
-
         if (!System.IO.Directory.Exists(_target))
         {
             System.IO.Directory.CreateDirectory(_target);
             Debug.Log("Criar Nova Pasta : " + _target);
         }
-
         _activo = true;
         _inicio = DateTime.Now;
         string prefixoVersao;
@@ -342,7 +339,6 @@ public class WriteSafeFile
         {
             prefixoVersao = _versaoActiva == VersaoDisponivel.Versao3 ? "UTD_V3_" : "UTD_V2_";
             _fileName = prefixoVersao  + DateTime.Now.ToString("yyyyMMddTHHmmss");
-
             _currentDocName = _fileName;// + _format; // UserTrakerData (Versão 3)
             _currentDocName = SolveDuplicateFileNames();
             _currentDocName += _format;
@@ -364,31 +360,24 @@ public class WriteSafeFile
                     Debug.Log("ERRO: Valor invalido em _specialTypeDocName = " + _specialTypeDocName + "Nome default: " + temp);
                 break;
             }
-
-            
             _currentDocName = temp + _format;
         }
-
         SetInfoCompl();
         // £ usado para não interferir com a mensagemKinect £
-
         prefixoVersao = _versaoActiva == VersaoDisponivel.Versao3 ? "V3" : "V2";
-
         var info =
             "£Registo User Tracker Data;" + prefixoVersao + ";Tese de Mestrado de Francisco Henriques Venda, 73839;Inicio de Registo : " +
             _inicio.ToString("dd/MM/yyyy, HH:mm:ss") + ";Pasta Original : " + _target + ";Nome Ficheiro Original : " +
             _currentDocName + ";Info complementar : " + InfoCompl + ";£";
-        
         // File.OpenWrite(_target +  _CurrentDocName);
-        Doc = new StreamWriter(_target + _currentDocName, true);
-        Doc.WriteLine(info);
-        Doc.Close();
+        _doc = new StreamWriter(_target + _currentDocName, true);
+        _doc.WriteLine(info);
+        _doc.Close();
         Debug.Log("Criar Novo Ficheiro : " + _currentDocName);
         // Debug.Log("info : " + info);
     #endif
     }
-
-
+    
     private string SolveDuplicateFileNames()
     {
         var temp = _currentDocName;
@@ -403,7 +392,7 @@ public class WriteSafeFile
     
     private void SetInfoCompl()
     {
-    #if UNITY_EDITOR
+        #if UNITY_EDITOR
 
             if (InfoCompl == "NADA")
             {
@@ -413,8 +402,8 @@ public class WriteSafeFile
             {
                 InfoCompl += ", EDITOR";
             }
-    #endif
-    #if UNITY_ANDROID //&& !UNITY_EDITOR
+        #endif
+        #if UNITY_ANDROID //&& !UNITY_EDITOR
                    
             if (InfoCompl == "NADA")
             {
@@ -424,10 +413,10 @@ public class WriteSafeFile
             {
                 InfoCompl += ", Android (Gear Vr)";
             }
-    #endif
-    #if (UNITY_STANDALONE_WIN) // && !UNITY_EDITOR
-
-        if (InfoCompl == "NADA")
+        #endif
+        #if (UNITY_STANDALONE_WIN) // && !UNITY_EDITOR
+             
+            if (InfoCompl == "NADA")
             {
                 InfoCompl = "Windows)";
             }
@@ -435,8 +424,21 @@ public class WriteSafeFile
             {
                 InfoCompl += ", Windows";
             }
-    #endif
-
-    }
-
+        #endif 
+             
+    } 
 }
+    /*
+ 
+             
+        //string registo1 = "«" + _cont + //  "_" +
+        //                  "_" + diff.TotalSeconds +
+        //                  "_" + diffIntervalo.TotalSeconds +
+        //                  "_" + agora.ToString("yyyy-MM-dd-HH-mm-ss-fff") +
+        //                  "&" + Vector3ToString(pos) + "!" + QuaternionToString(ori) + "!" +
+        //                  "&" + "$" + mensagemKinect;
+
+
+
+     
+     */
