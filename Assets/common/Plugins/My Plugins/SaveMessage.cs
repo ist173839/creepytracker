@@ -25,10 +25,13 @@ public enum ControloMode
 public class SaveMessage
 {
     private StreamWriter _doc;
+#pragma warning disable 169
     private DateTime _inicio;
+#pragma warning restore 169
 
-    private ControloMode _activeControloMode;
+    //private ControloMode _activeControloMode;
 
+    // ReSharper disable once MemberCanBePrivate.Global
     public string Separador { get; private set; }
 
     private readonly string _defaultFolderDestino;
@@ -50,9 +53,7 @@ public class SaveMessage
     private string _header;
     private string _headerCwip;
     private string _headerWip;
-
-
-
+    
     public int NumColunas   { get; private set; }
 
     private static readonly int TamanhoMaximo = (int) Math.Pow(2, 30); // (2 ^ 30)
@@ -102,13 +103,11 @@ public class SaveMessage
         _recordingName= null;
         _caminhoCompleto = null;
         _specialTypeDocName = 0;
-
-
+        
         _target = _directory + "\\" + _currentFolderDestino + "\\";
         _cont = 0;
         NumColunas = 0;
-
-
+        
         //_activeControloMode  = ControloMode.CWIP;
         //_headerCwip          = GetCwipHeader();
         //_headerWip           = GetWipHeader();
@@ -184,22 +183,17 @@ public class SaveMessage
             "Id" + Separador + "Nivel"; ;
     }
     
-
     private void SetUpHeader()
     {
         // _positionThreshold,  (_numSteps) 
-
         var info = GetHeader(); // _header;//
-
         WriteStringInDoc(info, true);
     }
 
     private void SetUpHeader(string first)
     {
         // _positionThreshold,  (_numSteps) 
-
         var info = GetHeader(); // _header;//
-
         if (first == info) return;
         WriteStringInDoc(info, true);
     }
@@ -221,8 +215,7 @@ public class SaveMessage
         SetUpHeader(first);
         _isInitiate = true;
     }
-
-
+    
     private void WriteStringInDoc(string registo, bool isAppend)
     {
         _doc = new StreamWriter(_target + _currentDocName, isAppend);
@@ -291,12 +284,14 @@ public class SaveMessage
         _doc.Close();
     }
 
+    // ReSharper disable once UnusedMember.Global
     public string GetDocActivo()
     {
         if (_isInitiate) return _target + _currentDocName;
         return null;
     }
 
+    // ReSharper disable once UnusedMember.Global
     public void SetRecordingName(string recordName)
     {
         if (recordName.Equals(_recordingName)) return;
@@ -304,6 +299,7 @@ public class SaveMessage
         _isInitiate = false;
     }
 
+    // ReSharper disable once UnusedMember.Global
     public void SpecialFolderName(string newName)
     {
         _currentFolderDestino = _folderDestino = newName;
