@@ -134,8 +134,7 @@ public class SaveColicoes
     
     private string GetHeader()
     {
-        return "Registo" + Separador + "Name" + Separador + "Position Object" + Separador + "Position Player" + Separador + "State" + Separador + "Time";
-       
+        return "Registo" + Separador + "Name" + Separador + "Position Object" + Separador + "Position Player" + Separador + "State" + Separador + "Time";       
     }
     
     private void SetUpHeader()

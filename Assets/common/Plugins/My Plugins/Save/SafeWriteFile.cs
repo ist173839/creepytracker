@@ -356,7 +356,6 @@ public class SafeWriteFile
         else
         {
             string temp;
-            // Debug.Log("C " + temp + "\n  " + _target + temp + _format + "  Bool "+ File.Exists(_target + temp + _format));
             switch (_specialTypeDocName)
             {
                 case SpecialTypeDoc.SolveDuplicate:
@@ -439,17 +438,19 @@ public class SafeWriteFile
              
     } 
 }
-    /*
- 
-             
-        //string registo1 = "«" + _cont + //  "_" +
-        //                  "_" + diff.TotalSeconds +
-        //                  "_" + diffIntervalo.TotalSeconds +
-        //                  "_" + agora.ToString("yyyy-MM-dd-HH-mm-ss-fff") +
-        //                  "&" + Vector3ToString(pos) + "!" + QuaternionToString(ori) + "!" +
-        //                  "&" + "$" + mensagemKinect;
+
+// Debug.Log("C " + temp + "\n  " + _target + temp + _format + "  Bool "+ File.Exists(_target + temp + _format));
+/*
+
+
+    //string registo1 = "«" + _cont + //  "_" +
+    //                  "_" + diff.TotalSeconds +
+    //                  "_" + diffIntervalo.TotalSeconds +
+    //                  "_" + agora.ToString("yyyy-MM-dd-HH-mm-ss-fff") +
+    //                  "&" + Vector3ToString(pos) + "!" + QuaternionToString(ori) + "!" +
+    //                  "&" + "$" + mensagemKinect;
 
 
 
-     
-     */
+
+ */
