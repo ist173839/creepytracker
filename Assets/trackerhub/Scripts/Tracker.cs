@@ -58,7 +58,7 @@ public class Tracker : MonoBehaviour
 	private List<Human> _humansToKill;
 
 	private UdpBroadcast _udpBroadcast;
-    private WriteSafeFile _writeSafeFile;
+    private SafeWriteFile _safeWriteFile;
     private OptitrackManager _localOptitrackManager;
 
     // ReSharper disable once UnassignedField.Global
@@ -106,7 +106,7 @@ public class Tracker : MonoBehaviour
 		_calibrationStatus = CalibrationProcess.FindCenter;
 
 		_udpBroadcast  = new UdpBroadcast (TrackerProperties.Instance.BroadcastPort);
-        _writeSafeFile = new WriteSafeFile();
+        _safeWriteFile = new SafeWriteFile();
         _localOptitrackManager = gameObject.GetComponent<OptitrackManager>();
         
         _loadConfig();
@@ -635,18 +635,18 @@ public class Tracker : MonoBehaviour
         const string noneMessage = "0";
         if (strToSend == noneMessage)
         {
-            _writeSafeFile.StopRecording("Terminated Because No Messages");
-            // _writeSafeFile.StopRecording();
+            _safeWriteFile.StopRecording("Terminated Because No Messages");
+            // _safeWriteFile.StopRecording();
         }
         else
         {
             if (_localTrackerUi == null || _localTrackerUi.UseRecord)
             {
-                _writeSafeFile.IsRecording = true;
-                if (_localOptitrackManager.IsOn) _writeSafeFile.Recording(strToSend, _localOptitrackManager.GetPositionVector(), _localOptitrackManager.GetRotationQuaternion());
-                else _writeSafeFile.Recording(strToSend);
+                _safeWriteFile.IsRecording = true;
+                if (_localOptitrackManager.IsOn) _safeWriteFile.Recording(strToSend, _localOptitrackManager.GetPositionVector(), _localOptitrackManager.GetRotationQuaternion());
+                else _safeWriteFile.Recording(strToSend);
             }
-            else if (!_localTrackerUi.UseRecord) _writeSafeFile.IsRecording = false;
+            else if (!_localTrackerUi.UseRecord) _safeWriteFile.IsRecording = false;
         }
     }
 

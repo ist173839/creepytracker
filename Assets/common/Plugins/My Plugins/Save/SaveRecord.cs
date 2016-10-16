@@ -22,7 +22,7 @@ public enum ControloMode
   
 }
 
-public class SaveMessage
+public class SaveRecord
 {
     private StreamWriter _doc;
 #pragma warning disable 169
@@ -49,10 +49,12 @@ public class SaveMessage
     private string _fimCiclo;
     private string _docName;
     private string _target;
-
+    private string _sigla;
+    private string _versao;
     private string _header;
-    private string _headerCwip;
-    private string _headerWip;
+    
+    //private string _headerCwip;
+    //private string _headerWip;
     
     public int NumColunas   { get; private set; }
 
@@ -69,53 +71,35 @@ public class SaveMessage
     private bool _isInitiate;
     private bool _isRecording;
 
-    //public bool IsRecording
-    //{
-    //    get { return _isRecording; }
-    //    set
-    //    {
-
-    //        if (!value)
-    //        {
-    //            _isInitiate = false;
-    //            StopRecording();
-    //        }
-
-    //        _isRecording = value;
-    //    }
-    //}
-
-
-    public SaveMessage() 
+    public SaveRecord() 
     {
         _useDefaultDocName = true;
         _useDefaultFolder  = true;
         _isInitiate        = false;
 
         _directory = System.IO.Directory.GetCurrentDirectory();
-        _currentFolderDestino = _defaultFolderDestino = "Walking Data";
+        _currentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "Walking Data";
         _format    = ".csv";
         Separador = ";";
 
         _startMessage = "INICIO";
         _endMessage   = "FIM";
+        _sigla        = "WVD";
+        _versao       = "V11";
 
-        _recordingName= null;
+
+        _recordingName = null;
         _caminhoCompleto = null;
         _specialTypeDocName = 0;
         
         _target = _directory + "\\" + _currentFolderDestino + "\\";
         _cont = 0;
         NumColunas = 0;
-        
-        //_activeControloMode  = ControloMode.CWIP;
-        //_headerCwip          = GetCwipHeader();
-        //_headerWip           = GetWipHeader();
-    
+     
         _header = GetHeader();
     }
 
-    ~SaveMessage()
+    ~SaveRecord()
     {
         if (!_isInitiate) return;
         ResetRecord();
@@ -241,7 +225,7 @@ public class SaveMessage
     {
         if (_useDefaultDocName)
         {
-            _currentDocName = "WVD_V11_" + DateTime.Now.ToString("yyyyMMddTHHmmss") ;
+            _currentDocName = _sigla + "_" + _versao + "_" + DateTime.Now.ToString("yyyyMMddTHHmmss") ;
             _currentDocName = SolveDuplicateFileNames() + _format;
         }
         else
@@ -340,222 +324,6 @@ public class SaveMessage
 
 }
 
-/*
- * 
- *
- *
- *
- * 
-
-    * 
-    * 
-    * 
-    *  private string GetHeader()
-    {
-        switch (_activeControloMode)
-        {
-            case ControloMode.WIP:
-                return _headerWip;
-            case ControloMode.CWIP:
-                return _headerCwip;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-    }
-    * 
-    * 
-    * 
-    * 
-    * 
-    * 
-    * 
-    * 
-    * 
-    private void CheckHeaders(string message)
-    {
-        if (message == _headerCwip && _activeControloMode != ControloMode.CWIP)
-        {
-            _activeControloMode = ControloMode.CWIP;
-            _isInitiate = false;
-        }
-        else if (message == _headerWip && _activeControloMode != ControloMode.WIP)
-        {
-            _activeControloMode = ControloMode.WIP;
-            _isInitiate = false;
-        }
-  
-    }
-
-    * 
-    * 
-    * 
-    * 
-    * 
-    * 
-    * 
-    * 
-    * 
-    * 
-    * 
- *  private string GetWipHeader()
-    {
-        return
-           "Registo" + Separador + "Tempo Absoluto (Segundos)" + Separador + "Metodo de Deslocamento Em Uso" + Separador + "Estado Actual " + Separador +
-            "Vel. Virtual (WIP, Normal)" + Separador + "Vel. Virtual (WIP, Kalman)" + Separador + "Vel. Virtual (WIP, Event, Normal)" + Separador + "Vel. Virtual (WIP, Event, Kalman)" + Separador +
-            "Vel. Virtual + Aumento (WIP)" + Separador + "Joint Camera (Vector 3)" + Separador + "Joelho Direito (y)" + Separador + "Joelho Esquerdo (y)" + Separador +
-            "Desvio Joelho Direito" + Separador + "Desvio Joelho Esquerdo" + Separador + "Direito FootStates (WIP)" + Separador + "Esquerdo FootStates (WIP)" + Separador +
-            "Direito FootTransitionEvents (WIP)" + Separador + "Esquerdo FootTransitionEvents (WIP)" + Separador + "N. Passos Total (WIP)" + Separador + "N. Passos Direito (WIP)" + Separador +
-            "N. Passos Esquerdo (WIP)" + Separador + "Altura" + Separador + "Threshold de Velocidade WIP" + Separador + "Threshold do Passo (WIP)" + Separador +
-            "Nome Joint Camera" + Separador + "Tempo" + Separador + "Aumento (WIP)" + Separador + "Id";
-    }
-
- * 
- * 
- * 
- * 
- * 
- *
- *
- 
-    private string GetWalkGearHeader()
-    {
-        return
-            "Registo" + Separador + "Tempo Absoluto (Segundos)" + Separador + "Metodo de Deslocamento Em Uso" + Separador + "Estado Actual " + Separador +
-            "Vel. Real (Directa, Normal)" + Separador + "Vel. Real (Directa, Kalman)" + Separador + "Joint Vel. Real (Vector 2)" + Separador + "Joint Camera (Vector 3)" + Separador +
-            "Threshold de Velocidade Directa" + Separador + "Nome Joint Vel. Real" + Separador + "Nome Joint Camera" + Separador + "Tempo" + Separador +
-            "Id";
-    }
-
-    private string GetKeyboardMouseHeader()
-    {
-        return "Registo" + Separador + "Tempo Absoluto (Segundos)" + Separador + "Metodo de Deslocamento Em Uso" + Separador + "Tempo";
-    }
-
-    private string GetConstHeader()
-    {
-        return
-            "Registo" + Separador + "Tempo Absoluto (Segundos)" + Separador + "Metodo de Deslocamento Em Uso" + Separador +
-            "Estado Actual " + Separador + "Vel. Real (Directa, Normal)" + Separador + "Vel. Real (Directa, Kalman)" + Separador +
-            "Sentido" + Separador + "Joint Vel. Real (Vector 2)" + Separador + "Joint Camera (Vector 3)" + Separador +
-            "Nome Joint Vel. Real" + Separador + "Nome Joint Camera" + Separador + "Tempo" + Separador +
-            "Aumento Constante" + Separador + "Id";
-    }
- *
- *
- *
- *
- *
- *
- *
- *
- *
- * 
- *  
-    //private string _headerWalkGear;
-    //private string _headerKeyboardMouse;
-    //private string _headerConstDist;
- * 
-  case ControloMode.KeyboardMouse:
-                return _headerKeyboardMouse;
-            case ControloMode.WalkGear:
-                return _headerWalkGear;
-            case ControloMode.ConstDist:
-                return _headerConstDist;
- * 
-     _headerWalkGear      = GetWalkGearHeader();
-        _headerKeyboardMouse = GetKeyboardMouseHeader();
-        _headerConstDist     = GetConstHeader();
- * 
- private string GetHeader()
-    {
-        switch (_activeControloMode)
-        {
-            case ControloMode.WIP:
-                return _headerWip;
-            case ControloMode.CWIP:
-                return _headerCwip;
-            case ControloMode.KeyboardMouse:
-                return _headerKeyboardMouse;
-            case ControloMode.WalkGear:
-                return _headerWalkGear;
-            case ControloMode.ConstDist:
-                return _headerConstDist;
-                
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-    }
-
- 
-    // KeyboardMouse,
-    // WalkGear,
-    // ConstDist
-     
-     
-     
-     
-      private void CheckHeaders(string message)
-    {
-        if (message == _headerCwip && _activeControloMode != ControloMode.CWIP)
-        {
-            _activeControloMode = ControloMode.CWIP;
-            _isInitiate = false;
-        }
-        else if (message == _headerWip && _activeControloMode != ControloMode.WIP)
-        {
-            _activeControloMode = ControloMode.WIP;
-            _isInitiate = false;
-        }
-        else if (message == _headerWalkGear && _activeControloMode != ControloMode.WalkGear)
-        {
-            _activeControloMode = ControloMode.WalkGear;
-            _isInitiate = false;
-
-        }
-        else if (message == _headerKeyboardMouse && _activeControloMode != ControloMode.KeyboardMouse)
-        {
-            _activeControloMode = ControloMode.KeyboardMouse;
-            _isInitiate = false;
-        }
-        else if (message == _headerConstDist && _activeControloMode != ControloMode.ConstDist)
-        {
-            _activeControloMode = ControloMode.ConstDist;
-            _isInitiate = false;
-        }
-
-
-        //if (message == _headerCwip || message == _headerWip || message == _headerWalkGear || message == _headerKeyboardMouse)
-        //{
-        //    _isInitiate = false;
-        //}
-    }
-
-     
-           else if (message == _headerWalkGear && _activeControloMode != ControloMode.WalkGear)
-        {
-            _activeControloMode = ControloMode.WalkGear;
-            _isInitiate = false;
-
-        }
-        else if (message == _headerKeyboardMouse && _activeControloMode != ControloMode.KeyboardMouse)
-        {
-            _activeControloMode = ControloMode.KeyboardMouse;
-            _isInitiate = false;
-        }
-        else if (message == _headerConstDist && _activeControloMode != ControloMode.ConstDist)
-        {
-            _activeControloMode = ControloMode.ConstDist;
-            _isInitiate = false;
-        }
-
-
-        //if (message == _headerCwip || message == _headerWip || message == _headerWalkGear || message == _headerKeyboardMouse)
-        //{
-        //    _isInitiate = false;
-        //}
-     
-     
-     
-     
-     
-     */
+//_activeControloMode  = ControloMode.CWIP;
+//_headerCwip          = GetCwipHeader();
+//_headerWip           = GetWipHeader();

@@ -26,12 +26,20 @@ public static class MyMessaSepa
     public const string SepaCol = "+";
 
 }
+
+public enum SpecialTypeDoc
+{
+    SolveDuplicate,
+    Normal,
+}
+
 // ReSharper disable once CheckNamespace
-public class WriteSafeFile
+public class SafeWriteFile
 {
     private StreamWriter _doc;
 
     // ReSharper disable once MemberCanBePrivate.Global
+
     public enum VersaoDisponivel
     {
         Versao2,
@@ -40,6 +48,8 @@ public class WriteSafeFile
     }
 
     private VersaoDisponivel _versaoActiva;
+
+    private SpecialTypeDoc _specialTypeDocName;
 
     private DateTime _tempoMensagemAnterior;
     private DateTime _inicio;
@@ -72,7 +82,6 @@ public class WriteSafeFile
     // ReSharper disable once FieldCanBeMadeReadOnly.Local
     private string _format;
 
-    private int _specialTypeDocName;
     private int _cont;
 
     private static readonly int TamanhoMaximo = 2 * (int) Math.Pow(2,20); //2 * (2^20)
@@ -100,7 +109,7 @@ public class WriteSafeFile
         }
     }
 
-    public WriteSafeFile()
+    public SafeWriteFile()
     {
     #if !UNITY_ANDROID || UNITY_EDITOR
         _useDefaultDocName = true;
@@ -108,20 +117,21 @@ public class WriteSafeFile
         _activo            = false;
         _first             = true;
         Directory = System.IO.Directory.GetCurrentDirectory();
-        CurrentFolderDestino = _defaultFolderDestino = "Recordings";
+        CurrentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "Recordings";
         _format = ".txt";
         // _defaultDocName = "UTD_" + DateTime.Now.ToString("yyyyMMddTHHmmss") + ".txt"; // UserTrakerData
         InfoCompl = "NADA";
+     
         InfoExtra = null;
         _caminhoCompleto = null;
         _fileName = null;
-        _specialTypeDocName = 0;
+        _specialTypeDocName = SpecialTypeDoc.SolveDuplicate;
 	    _cont = 0;
         _versaoActiva = VersaoDisponivel.NaoActivo;
     #endif
     }
 
-    ~WriteSafeFile()
+    ~SafeWriteFile()
     {
         ResetMessage();
 #if !UNITY_ANDROID || UNITY_EDITOR
@@ -177,7 +187,7 @@ public class WriteSafeFile
     }
 
     // ReSharper disable once UnusedMember.Global
-    public void SpecialTypeDocName(int t)
+    public void SpecialTypeDocName(SpecialTypeDoc t)
     {
         _specialTypeDocName = t;      
     }
@@ -346,13 +356,12 @@ public class WriteSafeFile
         else
         {
             string temp;
-            // Debug.Log("C " + temp + "\n  " + _target + temp + _format + "  Bool "+ File.Exists(_target + temp + _format));
             switch (_specialTypeDocName)
             {
-                case 0:
+                case SpecialTypeDoc.SolveDuplicate:
                     temp = SolveDuplicateFileNames();
                     break;
-                case 1:
+                case SpecialTypeDoc.Normal:
                     temp = _currentDocName + "_" + DateTime.Now.ToString("yyyyMMddTHHmmss");
                 break;
                 default:
@@ -360,6 +369,7 @@ public class WriteSafeFile
                     Debug.Log("ERRO: Valor invalido em _specialTypeDocName = " + _specialTypeDocName + "Nome default: " + temp);
                 break;
             }
+            
             _currentDocName = temp + _format;
         }
         SetInfoCompl();
@@ -428,17 +438,19 @@ public class WriteSafeFile
              
     } 
 }
-    /*
- 
-             
-        //string registo1 = "«" + _cont + //  "_" +
-        //                  "_" + diff.TotalSeconds +
-        //                  "_" + diffIntervalo.TotalSeconds +
-        //                  "_" + agora.ToString("yyyy-MM-dd-HH-mm-ss-fff") +
-        //                  "&" + Vector3ToString(pos) + "!" + QuaternionToString(ori) + "!" +
-        //                  "&" + "$" + mensagemKinect;
+
+// Debug.Log("C " + temp + "\n  " + _target + temp + _format + "  Bool "+ File.Exists(_target + temp + _format));
+/*
+
+
+    //string registo1 = "«" + _cont + //  "_" +
+    //                  "_" + diff.TotalSeconds +
+    //                  "_" + diffIntervalo.TotalSeconds +
+    //                  "_" + agora.ToString("yyyy-MM-dd-HH-mm-ss-fff") +
+    //                  "&" + Vector3ToString(pos) + "!" + QuaternionToString(ori) + "!" +
+    //                  "&" + "$" + mensagemKinect;
 
 
 
-     
-     */
+
+ */
