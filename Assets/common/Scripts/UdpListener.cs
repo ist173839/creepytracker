@@ -6,51 +6,60 @@ using System.Net.Sockets;
 using System.Linq;
 using System.Text;
 
+// ReSharper disable once ClassNeverInstantiated.Global
+// ReSharper disable once CheckNamespace
 public class UdpListener : MonoBehaviour {
 
     private UdpClient _udpClient = null;
-    private IPEndPoint _anyIP;
+    private IPEndPoint _anyIp;
     private List<byte[]> _stringsToParse; // TMA: Store the bytes from the socket instead of converting to strings. Saves time.
+#pragma warning disable 169
     private byte[] _receivedBytes;
-    private int number = 0;
+#pragma warning restore 169
+    private int _number = 0;
 
-    void Start()
-    { }
+    // ReSharper disable once ArrangeTypeMemberModifiers
+    // ReSharper disable once UnusedMember.Local
+    void Start() { }
 
-    public void udpRestart()
+    public void UdpRestart()
     {
-        if (_udpClient != null)
-        {
-            _udpClient.Close();
-        }
+        if (_udpClient != null) _udpClient.Close();
 
         _stringsToParse = new List<byte[]>();
-        
-		_anyIP = new IPEndPoint(IPAddress.Any, TrackerProperties.Instance.ListenPort);
-        
-        _udpClient = new UdpClient(_anyIP);
-
+        _anyIp = new IPEndPoint(IPAddress.Any, TrackerProperties.Instance.ListenPort);
+        _udpClient = new UdpClient(_anyIp);
         _udpClient.BeginReceive(new AsyncCallback(this.ReceiveCallback), null);
-
-		Debug.Log("[UDPListener] Receiving in port: " + TrackerProperties.Instance.ListenPort);
+        Debug.Log("[UDPListener] Receiving in port: " + TrackerProperties.Instance.ListenPort);
     }
 
     public void ReceiveCallback(IAsyncResult ar)
     {
-        Byte[] receiveBytes = _udpClient.EndReceive(ar, ref _anyIP);
+        Byte[] receiveBytes = _udpClient.EndReceive(ar, ref _anyIp);
         
 		_stringsToParse.Add(receiveBytes);
 
         _udpClient.BeginReceive(new AsyncCallback(this.ReceiveCallback), null);
     }
 
+    private void PressToRestart()
+    {
+        if (!Input.GetKeyUp("r")) return;
+        UdpRestart();
+        Debug.Log("R");
+    }
+
+    // ReSharper disable once ArrangeTypeMemberModifiers
+    // ReSharper disable once UnusedMember.Local
     void FixedUpdate() // Update
     {
+        PressToRestart();
+
         while (_stringsToParse.Count > 0)
         {
             try
             {
-                byte[] toProcess = _stringsToParse.First();
+                var toProcess = _stringsToParse.First();
                 if (toProcess != null)
                 {
                     // TMA: THe first char distinguishes between a BodyMessage and a CloudMessage
@@ -90,6 +99,8 @@ public class UdpListener : MonoBehaviour {
         if (_udpClient != null) _udpClient.Close();
     }
 
+    // ReSharper disable once ArrangeTypeMemberModifiers
+    // ReSharper disable once UnusedMember.Local
     void OnQuit()
     {
         OnApplicationQuit();

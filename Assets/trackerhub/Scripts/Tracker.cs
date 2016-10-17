@@ -1165,7 +1165,7 @@ public class Tracker : MonoBehaviour
 
     public void ResetListening ()
 	{
-		gameObject.GetComponent<UdpListener> ().udpRestart ();
+		gameObject.GetComponent<UdpListener> ().UdpRestart ();
 	}
 
     public void Save ()

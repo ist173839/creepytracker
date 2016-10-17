@@ -104,13 +104,16 @@ public class MyUdpListener : MonoBehaviour
     // ReSharper disable once UnusedMember.Local
     void FixedUpdate()
     {
-        if (Input.GetKeyUp("r"))
-        {
-            UdpRestart();
-            Debug.Log("R");
-        }
+        PressToRestart();
 
         UpdateMessages();
+    }
+
+    private void PressToRestart()
+    {
+        if (!Input.GetKeyUp("r")) return;
+        UdpRestart();
+        Debug.Log("R");
     }
 
     private void UpdateMessages()
