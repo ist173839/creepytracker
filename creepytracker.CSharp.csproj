@@ -92,6 +92,7 @@
     <Compile Include="Assets\common\Scripts\DoNotify.cs" />
     <Compile Include="Assets\common\Scripts\GridOverlay.cs" />
     <Compile Include="Assets\common\Scripts\Logger.cs" />
+    <Compile Include="Assets\common\Scripts\My Scripts\Listener\MyUdpListener.cs" />
     <Compile Include="Assets\common\Scripts\My Scripts\Listener\MyUdpListenerColicoes.cs" />
     <Compile Include="Assets\common\Scripts\My Scripts\Listener\MyUdpListenerAvr.cs" />
     <Compile Include="Assets\common\Scripts\My Scripts\Listener\MyUdpListenerRecord.cs" />
