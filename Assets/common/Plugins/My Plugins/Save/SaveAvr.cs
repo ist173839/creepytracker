@@ -155,7 +155,14 @@ public class SaveAvr
         //SetUpHeader(first);
         _isInitiate = true;
     }
-    
+
+    private void SetUpHeader(string first)
+    {
+        
+        if (first.Contains("Registo")) return;
+        WriteStringInDoc(first, true);
+    }
+
     private void WriteStringInDoc(string registo, bool isAppend)
     {
         _doc = new StreamWriter(_target + _currentDocName, isAppend);
