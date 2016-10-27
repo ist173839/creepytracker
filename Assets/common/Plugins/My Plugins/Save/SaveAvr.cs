@@ -121,11 +121,14 @@ public class SaveAvr
 
     public void RecordMessage(string message)
     {
-       
-        if (!_isInitiate) SetUpFileAndDirectory(message);
-        //if (message != _startMessage  && !_isInitiate)
-        //{
-        //} else
+        if (message.Contains("Registo")) _isInitiate = false;
+
+
+        if (!_isInitiate) SetUpFileAndDirectory();
+        // if (!_isInitiate) SetUpFileAndDirectory(message);
+        // if (message != _startMessage  && !_isInitiate)
+        // {
+        // } else
         CheckFileSize();
         if (message == _endMessage)
         {
