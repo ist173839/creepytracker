@@ -116,8 +116,11 @@ public class SaveColicoes
 
     public void RecordMessage(string message)
     {
+        if (message.Contains("Registo")) _isInitiate = false;
 
-        if (!_isInitiate) SetUpFileAndDirectory(message);
+        if (!_isInitiate) SetUpFileAndDirectory();
+
+        //if (!_isInitiate) SetUpFileAndDirectory(message);
         //if (message != _startMessage  && !_isInitiate)
         //{
         //} else

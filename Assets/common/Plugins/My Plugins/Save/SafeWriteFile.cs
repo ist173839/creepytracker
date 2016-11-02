@@ -16,14 +16,14 @@ using System.Text;
 public static class MyMessaSepa
 {
     public const string InicioOptitrack = "&";
-    public const string InicioMensagem = "$";
-    public const string InicioRegisto = "«";
-    public const string SepaOptitrack = "!";
-    public const string SepaCabeRoda = ";";
-    public const string SepaRegisto = "_";
-    public const string CabeRoda = "£";
-    public const string SepaVec = "|";
-    public const string SepaCol = "+";
+    public const string InicioMensagem  = "$";
+    public const string InicioRegisto   = "«";
+    public const string SepaOptitrack   = "!";
+    public const string SepaCabeRoda    = ";";
+    public const string SepaRegisto     = "_";
+    public const string CabeRoda        = "£";
+    public const string SepaVec         = "|";
+    public const string SepaCol         = "+";
 
 }
 
