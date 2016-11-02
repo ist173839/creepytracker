@@ -84,7 +84,7 @@ public class SafeWriteFile
 
     private int _cont;
 
-    private static readonly int TamanhoMaximo = 2 * (int) Math.Pow(2,20); //2 * (2^20)
+    private static readonly int TamanhoMaximo = 2 * (int) Math.Pow(2, 20); //2 * (2^20)
 
     //  public bool DirectoryChange;
 

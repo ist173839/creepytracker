@@ -58,7 +58,7 @@ public class SaveRecord
     
     public int NumColunas   { get; private set; }
 
-    private static readonly int TamanhoMaximo = (int) Math.Pow(2, 30); // (2 ^ 30)
+    private static readonly int TamanhoMaximo = (int) Math.Pow(2, 20); // (2 ^ 30)
 
     private int _cont;
 
@@ -150,40 +150,6 @@ public class SaveRecord
         }
         else
             WriteStringInDoc(message, true);
-        
-    }
-    
-    private string GetHeader()
-    {
-        return
-            "Registo" + Separador + "Tempo Absoluto (Segundos)" + Separador + "Metodo de Deslocamento Em Uso" + Separador + "Estado Actual " + Separador +
-            "Vel. Real (Directa, Normal)" + Separador + "Vel. Real (Directa, Kalman)" + Separador + "Vel. Virtual in use (WIP)" + Separador +
-            "Vel. Virtual (WIP, Normal)" + Separador + "Vel. Virtual (WIP, Kalman)" + Separador +
-            "Vel. Virtual (WIP, Event, Normal)" + Separador + "Vel. Virtual (WIP, Event, Kalman)" + Separador +
-            "Vel. Virtual * Aumento (WIP)" + Separador + "Vel. Virtual * Aumento (WIP) * Delta" + Separador + "Delta" + Separador +
-            "Joint Vel. Real (Vector 2)" + Separador + "Joint Camera (Vector 3)" + Separador + "Joelho Direito (y)" + Separador + "Joelho Esquerdo (y)" + Separador +
-            "Desvio Joelho Direito" + Separador + "Desvio Joelho Esquerdo" + Separador + "Direito FootStates (WIP)" + Separador + "Esquerdo FootStates (WIP)" + Separador +
-            "Direito FootTransitionEvents (WIP)" + Separador + "Esquerdo FootTransitionEvents (WIP)" + Separador +
-            "N. Passos Total (WIP)" + Separador + "N. Passos Direito (WIP)" + Separador + "N. Passos Esquerdo (WIP)" + Separador +
-            "Distancia Direct" + Separador + "Distancia Wip" + Separador + "Distancia do anterior" + Separador +
-            "Altura" + Separador + "Threshold de Velocidade Directa" + Separador + "Threshold de Velocidade WIP" + Separador + "Threshold do Passo (WIP)" + Separador +
-            "Velocidade Inicial WIP" + Separador + "Nome Joint Vel. Real" + Separador + "Nome Joint Camera" + Separador + "Tempo" + Separador + "Aumento (WIP)" + Separador +
-            "Id" + Separador + "Nivel"; ;
-    }
-    
-    private void SetUpHeader()
-    {
-        // _positionThreshold,  (_numSteps) 
-        var info = GetHeader(); // _header;//
-        WriteStringInDoc(info, true);
-    }
-
-    private void SetUpHeader(string first)
-    {
-        // _positionThreshold,  (_numSteps) 
-        var info = GetHeader(); // _header;//
-        if (first == info) return;
-        WriteStringInDoc(info, true);
     }
 
     private void SetUpFileAndDirectory()
@@ -191,19 +157,10 @@ public class SaveRecord
         // _target = _directory + "\\" +_CurrentFolderDestino ;
         SetUpDirectory();
         SetFileName();
-        SetUpHeader();
+        //SetUpHeader();
         _isInitiate = true;
     }
 
-    private void SetUpFileAndDirectory(string first)
-    {
-        // _target = _directory + "\\" +_CurrentFolderDestino ;
-        SetUpDirectory();
-        SetFileName();
-        SetUpHeader(first);
-        _isInitiate = true;
-    }
-    
     private void WriteStringInDoc(string registo, bool isAppend)
     {
         _doc = new StreamWriter(_target + _currentDocName, isAppend);
@@ -218,7 +175,7 @@ public class SaveRecord
         if (!File.Exists(_target + _currentDocName)) return;
         File.SetAttributes(_target + _currentDocName, FileAttributes.ReadOnly);
     }
-  
+
     private void SetUpDirectory()
     {
         if (!System.IO.Directory.Exists(_target))
@@ -326,6 +283,47 @@ public class SaveRecord
         _currentFolderDestino = _defaultFolderDestino;
     }
 
+    private string GetHeader()
+    {
+        return
+            "Registo" + Separador + "Tempo Absoluto (Segundos)" + Separador + "Metodo de Deslocamento Em Uso" + Separador + "Estado Actual " + Separador +
+            "Vel. Real (Directa, Normal)" + Separador + "Vel. Real (Directa, Kalman)" + Separador + "Vel. Virtual in use (WIP)" + Separador +
+            "Vel. Virtual (WIP, Normal)" + Separador + "Vel. Virtual (WIP, Kalman)" + Separador +
+            "Vel. Virtual (WIP, Event, Normal)" + Separador + "Vel. Virtual (WIP, Event, Kalman)" + Separador +
+            "Vel. Virtual * Aumento (WIP)" + Separador + "Vel. Virtual * Aumento (WIP) * Delta" + Separador + "Delta" + Separador +
+            "Joint Vel. Real (Vector 2)" + Separador + "Joint Camera (Vector 3)" + Separador + "Joelho Direito (y)" + Separador + "Joelho Esquerdo (y)" + Separador +
+            "Desvio Joelho Direito" + Separador + "Desvio Joelho Esquerdo" + Separador + "Direito FootStates (WIP)" + Separador + "Esquerdo FootStates (WIP)" + Separador +
+            "Direito FootTransitionEvents (WIP)" + Separador + "Esquerdo FootTransitionEvents (WIP)" + Separador +
+            "N. Passos Total (WIP)" + Separador + "N. Passos Direito (WIP)" + Separador + "N. Passos Esquerdo (WIP)" + Separador +
+            "Distancia Direct" + Separador + "Distancia Wip" + Separador + "Distancia do anterior" + Separador +
+            "Altura" + Separador + "Threshold de Velocidade Directa" + Separador + "Threshold de Velocidade WIP" + Separador + "Threshold do Passo (WIP)" + Separador +
+            "Velocidade Inicial WIP" + Separador + "Nome Joint Vel. Real" + Separador + "Nome Joint Camera" + Separador + "Tempo" + Separador + "Aumento (WIP)" + Separador +
+            "Id" + Separador + "Nivel"; ;
+    }
+
+    private void SetUpHeader()
+    {
+        // _positionThreshold,  (_numSteps) 
+        var info = GetHeader(); // _header;//
+        WriteStringInDoc(info, true);
+    }
+
+    private void SetUpHeader(string first)
+    {
+        // _positionThreshold,  (_numSteps) 
+        var info = GetHeader(); // _header;//
+        if (first == info) return;
+        WriteStringInDoc(info, true);
+    }
+
+    private void SetUpFileAndDirectory(string first)
+    {
+        // _target = _directory + "\\" +_CurrentFolderDestino ;
+        SetUpDirectory();
+        SetFileName();
+        SetUpHeader(first);
+        _isInitiate = true;
+    }
 }
 
 //_activeControloMode  = ControloMode.CWIP;

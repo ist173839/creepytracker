@@ -43,11 +43,11 @@ public class SaveColicoes
     private string _sigla;
     private string _versao;
 
-    private string _header;
+    // private string _header;
       
     public int NumColunas   { get; private set; }
 
-    private static readonly int TamanhoMaximo = (int) Math.Pow(2, 30); // (2 ^ 30)
+    private static readonly int TamanhoMaximo = (int) Math.Pow(2, 20); // (2 ^ 30)
 
     private int _cont;
 
@@ -85,7 +85,7 @@ public class SaveColicoes
         _cont = 0;
         NumColunas = 0;
 
-        _header = GetHeader();
+        // _header = GetHeader();
     }
 
     ~SaveColicoes()
@@ -134,43 +134,16 @@ public class SaveColicoes
             WriteStringInDoc(message, true);
         
     }
-    
-    private string GetHeader()
-    {
-        return "Registo" + Separador + "Name" + Separador + "Position Object" + Separador + "Position Player" + Separador + "State" + Separador + "Time";       
-    }
-    
-    private void SetUpHeader()
-    {
-        var info = GetHeader();
-        WriteStringInDoc(info, true);
-    }
-
-    private void SetUpHeader(string first)
-    {
-        var info = GetHeader(); 
-        if (first == info) return;
-        WriteStringInDoc(info, true);
-    }
 
     private void SetUpFileAndDirectory()
     {
         // _target = _directory + "\\" +_CurrentFolderDestino ;
         SetUpDirectory();
         SetFileName();
-        SetUpHeader();
+        // SetUpHeader();
         _isInitiate = true;
     }
 
-    private void SetUpFileAndDirectory(string first)
-    {
-
-        SetUpDirectory();
-        SetFileName();
-        SetUpHeader(first);
-        _isInitiate = true;
-    }
-    
     private void WriteStringInDoc(string registo, bool isAppend)
     {
         _doc = new StreamWriter(_target + _currentDocName, isAppend);
@@ -185,7 +158,7 @@ public class SaveColicoes
         if (!File.Exists(_target + _currentDocName)) return;
         File.SetAttributes(_target + _currentDocName, FileAttributes.ReadOnly);
     }
-  
+
     private void SetUpDirectory()
     {
         if (!System.IO.Directory.Exists(_target))
@@ -240,6 +213,7 @@ public class SaveColicoes
     }
 
     // ReSharper disable once UnusedMember.Global
+
     public string GetDocActivo()
     {
         if (_isInitiate) return _target + _currentDocName;
@@ -247,6 +221,7 @@ public class SaveColicoes
     }
 
     // ReSharper disable once UnusedMember.Global
+
     public void SetRecordingName(string recordName)
     {
         if (recordName.Equals(_recordingName)) return;
@@ -255,6 +230,7 @@ public class SaveColicoes
     }
 
     // ReSharper disable once UnusedMember.Global
+
     public void SpecialFolderName(string newName)
     {
         _currentFolderDestino = _folderDestino = newName;
@@ -291,6 +267,33 @@ public class SaveColicoes
         _useDefaultFolder = true;
         _isInitiate = false;
         _currentFolderDestino = _defaultFolderDestino;
+    }
+
+    private void SetUpFileAndDirectory(string first)
+    {
+
+        SetUpDirectory();
+        SetFileName();
+        SetUpHeader(first);
+        _isInitiate = true;
+    }
+
+    private void SetUpHeader()
+    {
+        var info = GetHeader();
+        WriteStringInDoc(info, true);
+    }
+
+    private void SetUpHeader(string first)
+    {
+        var info = GetHeader(); 
+        if (first == info) return;
+        WriteStringInDoc(info, true);
+    }
+
+    private string GetHeader()
+    {
+        return "Registo" + Separador + "Name" + Separador + "Position Object" + Separador + "Position Player" + Separador + "State" + Separador + "Time";       
     }
 }
 // _target = _directory + "\\" +_CurrentFolderDestino ;

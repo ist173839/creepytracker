@@ -48,7 +48,7 @@ public class SaveAvr
 
     public int NumColunas   { get; private set; }
 
-    private static readonly int TamanhoMaximo = (int) Math.Pow(2, 30); // (2 ^ 30)
+    private static readonly int TamanhoMaximo = (int) Math.Pow(2, 20); // (2 ^ 30)
 
     private int _cont;
 
