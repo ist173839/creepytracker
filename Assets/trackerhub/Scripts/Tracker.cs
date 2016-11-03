@@ -643,8 +643,9 @@ public class Tracker : MonoBehaviour
             if (_localTrackerUi == null || _localTrackerUi.UseRecord)
             {
                 _safeWriteFile.IsRecording = true;
-                if (_localOptitrackManager.IsOn) _safeWriteFile.Recording(strToSend, _localOptitrackManager.GetPositionVector(), _localOptitrackManager.GetRotationQuaternion());
-                else _safeWriteFile.Recording(strToSend);
+                //if (_localOptitrackManager.IsOn) _safeWriteFile.Recording(strToSend, _localOptitrackManager.GetPositionVector(), _localOptitrackManager.GetRotationQuaternion());
+                //else
+                    _safeWriteFile.Recording(strToSend);
             }
             else if (!_localTrackerUi.UseRecord) _safeWriteFile.IsRecording = false;
         }
