@@ -312,7 +312,7 @@ public class CreateAndControlVirtualWorld
 
         foreach (var worldIndicator in worldIndicatorList)
         {
-            var indicator = new Indicator(worldIndicator.Position, worldIndicator.Scale, worldIndicator.Rotation, worldIndicator.Type, _parent.position, _indicadores.transform, _indicadorCounter++, worldIndicator.Representation, worldIndicator.Raio, IndicatorsDangerMode, IndicatorsOutlineMode, worldIndicator.DirectionLimit);
+            var indicator = new Indicator(worldIndicator.Position, worldIndicator.Scale, worldIndicator.Rotation, worldIndicator.Type, _parent.position, _indicadores.transform, _indicadorCounter++, worldIndicator.Representation, worldIndicator.Raio, worldIndicator.DirectionLimit);
             IndicatorsList.Add(indicator); //   
             if (worldIndicator.Type == IndicatorType.Obstacle)
             {
@@ -351,7 +351,7 @@ public class CreateAndControlVirtualWorld
         
         foreach (var worldIndicator in virtualWorldIndicators)
         {
-            var indicator = new Indicator(worldIndicator.Position, worldIndicator.Scale, worldIndicator.Rotation, worldIndicator.Type, _parent.position, _indicadores.transform, _indicadorCounter++, worldIndicator.Representation, worldIndicator.Raio, IndicatorsDangerMode, IndicatorsOutlineMode, worldIndicator.DirectionLimit);
+            var indicator = new Indicator(worldIndicator.Position, worldIndicator.Scale, worldIndicator.Rotation, worldIndicator.Type, _parent.position, _indicadores.transform, _indicadorCounter++, worldIndicator.Representation, worldIndicator.Raio, worldIndicator.DirectionLimit);
             IndicatorsList.Add(indicator);
             if (worldIndicator.Type == IndicatorType.Obstacle)
             {

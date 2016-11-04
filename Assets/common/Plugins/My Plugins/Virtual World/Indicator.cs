@@ -79,7 +79,7 @@ public class Indicator
 
     private readonly Quaternion _rotation;
 
-    public Indicator(Vector3 position, Vector3 scale, Quaternion rotation, IndicatorType type, Vector3 positionCenter, Transform parent, int id, RepresentationMode representation, float raio, DangerMode indicatorDangerMode, OutlineMode indicatorOutlineMode, Direction? direction = null)
+    public Indicator(Vector3 position, Vector3 scale, Quaternion rotation, IndicatorType type, Vector3 positionCenter, Transform parent, int id, RepresentationMode representation, float raio, Direction? direction = null)
     {
         Name = "Indicator " + type + " " + id;
         Mode = IndicatorMode.Normal;
@@ -98,10 +98,7 @@ public class Indicator
         PositionCenter = positionCenter;
 
         _representation = representation;
-
-        IndicatorDangerMode  = indicatorDangerMode;
-        IndicatorOutlineMode = indicatorOutlineMode;
-
+        
         _rotation = rotation;
         _parent = parent;
         _scale = scale;
@@ -131,9 +128,7 @@ public class Indicator
 
         IsEmbate = false;
     }
-
-
-
+    
     public void EnableMesh(bool enabled)
     {
         ObjectIndicator.GetComponent<MeshRenderer>().enabled = enabled;
