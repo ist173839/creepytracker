@@ -45,12 +45,12 @@ public class SafeWriteFile
 
     private SpecialTypeDoc _specialTypeDocName;
 
+    public string CurrentFolderDestino;
     public string FolderDestino;
-    public string DocName;
+    public string Directory;
     public string InfoCompl;
     public string InfoExtra;
-    public string CurrentFolderDestino;
-    public string Directory;
+    public string DocName;
 
     private string _defaultFolderDestino;
     private string _caminhoCompleto;
@@ -68,8 +68,8 @@ public class SafeWriteFile
 
     //  public bool DirectoryChange;
 
-    private bool _useDefaultFolder;
     private bool _useDefaultDocName;
+    private bool _useDefaultFolder;
     private bool _activo;
     private bool _first;
 
@@ -94,30 +94,34 @@ public class SafeWriteFile
     public SafeWriteFile()
     {
 #if !UNITY_ANDROID || UNITY_EDITOR
+
+        _specialTypeDocName = SpecialTypeDoc.SolveDuplicate;
+
         _useDefaultDocName = true;
-        _useDefaultFolder = true;
-        _activo = false;
-        _first = true;
+        _useDefaultFolder  = true;
+        _activo            = false;
+        _first             = true;
 
         Directory = System.IO.Directory.GetCurrentDirectory();
 
         CurrentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "Recordings";
-        _format = ".txt";
-        // _defaultDocName = "UTD_" + DateTime.Now.ToString("yyyyMMddTHHmmss") + ".txt"; // UserTrakerData
+
         InfoCompl = "NADA";
-        InfoExtra = null;
-        _caminhoCompleto = null;
-        _fileName = null;
 
-        _specialTypeDocName = SpecialTypeDoc.SolveDuplicate;
-
-       // _specialTypeDocName = 0;
-        _cont = 0;
-
+        _format = ".txt";
         _versao = "V4";
-        _sigla = "UTD";
+        _sigla  = "UTD";
 
-        //_versaoActiva = VersaoDisponivel.NaoActivo;
+        InfoExtra = null;
+
+        _caminhoCompleto = null;
+        _fileName        = null;
+
+        _cont = 0;
+        
+        // _defaultDocName = "UTD_" + DateTime.Now.ToString("yyyyMMddTHHmmss") + ".txt"; // UserTrakerData
+        // _specialTypeDocName = 0;
+        // _versaoActiva = VersaoDisponivel.NaoActivo;
 #endif
     }
 
@@ -241,16 +245,15 @@ public class SafeWriteFile
 #endif
     }
 
-    public void Recording(string mensagem, Vector3 pos, Quaternion ori)
+    public void Recording(string mensagem, Vector3 pos, bool useCentre)
     {
 #if !UNITY_ANDROID  || UNITY_EDITOR
         _target = Directory + "\\" + CurrentFolderDestino + "\\";
         //MyDebug.Log("Pasta : " + _target);
         CheckFileSize();
         //if (!_activo || _versaoActiva != VersaoDisponivel.Versao3) NovoRegisto(VersaoDisponivel.Versao3);
-
-
         //_caminhoCompleto = _target + _CurrentDocName;
+        if (!_activo) NovoRegisto();
 
         _doc = new StreamWriter(_target + _currentDocName, true);
         var agora = DateTime.Now;
@@ -271,18 +274,10 @@ public class SafeWriteFile
             MyMessaSepa.SepaRegisto + diffIntervalo.TotalSeconds +
             MyMessaSepa.SepaRegisto + agora.ToString("yyyy-MM-dd-HH-mm-ss-fff") +
             MyMessaSepa.InicioOptitrack + 
-                StringHelper.Vector3ToStringV1(pos)  + MyMessaSepa.SepaOptitrack + 
-                StringHelper.QuaternionToString(ori) + MyMessaSepa.SepaOptitrack +
+                StringHelper.Vector3ToStringV1(pos)  + MyMessaSepa.SepaOptitrack +
+                useCentre.ToString()                 + MyMessaSepa.SepaOptitrack +
             MyMessaSepa.InicioOptitrack +
             MyMessaSepa.InicioMensagem + mensagem;
-
-        //string registo1 = "«" + _cont + //  "_" +
-        //                  "_" + diff.TotalSeconds +
-        //                  "_" + diffIntervalo.TotalSeconds +
-        //                  "_" + agora.ToString("yyyy-MM-dd-HH-mm-ss-fff") +
-        //                  "&" + Vector3ToStringV1(pos) + "!" + QuaternionToString(ori) + "!" +
-        //                  "&" + "$" + mensagem;
-
 
         _doc.WriteLine(registo);
         _doc.Close();
@@ -387,9 +382,10 @@ public class SafeWriteFile
 
     private string GetHeader(string prefixoVersao)
     {
-        return "£Registo User Tracker Data;" + prefixoVersao + ";Tese de Mestrado de Francisco Henriques Venda, 73839;Inicio de Registo : " +
-               _inicio.ToString("dd/MM/yyyy, HH:mm:ss") + ";Pasta Original : " + _target + ";Nome Ficheiro Original : " +
-               _currentDocName + ";Info complementar : " + InfoCompl + ";£";
+        return
+            "£Registo User Tracker Data;" + prefixoVersao + ";Tese de Mestrado de Francisco Henriques Venda, 73839;Inicio de Registo : " +
+            _inicio.ToString("dd/MM/yyyy, HH:mm:ss") + ";Pasta Original : " + _target + ";Nome Ficheiro Original : " +
+            _currentDocName + ";Info complementar : " + InfoCompl + ";£";
     }
 
     private string SolveDuplicateFileNames()
@@ -424,6 +420,13 @@ public class SafeWriteFile
 
 
 /*
+ //string registo1 = "«" + _cont + //  "_" +
+        //                  "_" + diff.TotalSeconds +
+        //                  "_" + diffIntervalo.TotalSeconds +
+        //                  "_" + agora.ToString("yyyy-MM-dd-HH-mm-ss-fff") +
+        //                  "&" + Vector3ToStringV1(pos) + "!" + QuaternionToString(ori) + "!" +
+        //                  "&" + "$" + mensagem;
+
 
  
  //public enum VersaoDisponivel

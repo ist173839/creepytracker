@@ -168,26 +168,27 @@ public class Sensor
 
 	internal void CalibrationStep1 ()
 	{
-		center1 = CommonUtils.PointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [TrackerProperties.Instance.CenterJoint]);
-		up1 = CommonUtils.PointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [TrackerProperties.Instance.UpJointB]) - CommonUtils.PointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [TrackerProperties.Instance.UpJointA]);
+		center1 = CommonUtils.PointKinectToUnity (lastBodiesMessage.Bodies[0].JointsPositions [TrackerProperties.Instance.CenterJoint]);
+		up1     = CommonUtils.PointKinectToUnity (lastBodiesMessage.Bodies[0].JointsPositions [TrackerProperties.Instance.UpJointB]) - CommonUtils.PointKinectToUnity (lastBodiesMessage.Bodies[0].JointsPositions [TrackerProperties.Instance.UpJointA]);
 
-		_floorValues.Add (CommonUtils.PointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [Windows.Kinect.JointType.FootLeft]));
-		_floorValues.Add (CommonUtils.PointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [Windows.Kinect.JointType.FootRight]));
+		_floorValues.Add (CommonUtils.PointKinectToUnity (lastBodiesMessage.Bodies[0].JointsPositions [Windows.Kinect.JointType.FootLeft]));
+		_floorValues.Add (CommonUtils.PointKinectToUnity (lastBodiesMessage.Bodies[0].JointsPositions [Windows.Kinect.JointType.FootRight]));
 	}
 
 	internal void CalibrationStep2 ()
 	{
-		center2 = CommonUtils.PointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [TrackerProperties.Instance.CenterJoint]);
-		up2 = CommonUtils.PointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [TrackerProperties.Instance.UpJointB]) - CommonUtils.PointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [TrackerProperties.Instance.UpJointA]);
+		center2 = CommonUtils.PointKinectToUnity(lastBodiesMessage.Bodies[0].JointsPositions[TrackerProperties.Instance.CenterJoint]);
+		up2     = CommonUtils.PointKinectToUnity(lastBodiesMessage.Bodies[0].JointsPositions[TrackerProperties.Instance.UpJointB]) - CommonUtils.PointKinectToUnity (lastBodiesMessage.Bodies[0].JointsPositions [TrackerProperties.Instance.UpJointA]);
 
-		_floorValues.Add (CommonUtils.PointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [Windows.Kinect.JointType.FootLeft]));
-		_floorValues.Add (CommonUtils.PointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [Windows.Kinect.JointType.FootRight]));
+		_floorValues.Add (CommonUtils.PointKinectToUnity (lastBodiesMessage.Bodies[0].JointsPositions[Windows.Kinect.JointType.FootLeft]));
+		_floorValues.Add (CommonUtils.PointKinectToUnity (lastBodiesMessage.Bodies[0].JointsPositions[Windows.Kinect.JointType.FootRight]));
 
 		// Begin calibration calculations
 
-		Vector3 up = (up1 + up2) / 2.0f;
-		Vector3 forward = center2 - center1;
-		Vector3 right = Vector3.Cross (up, forward);
+		var up = (up1 + up2) / 2.0f;
+		var forward = center2 - center1;
+		var right = Vector3.Cross (up, forward);
+
 		forward = Vector3.Cross (right, up);
 
 		Debug.Log (up);
@@ -197,7 +198,7 @@ public class Sensor
 
 	internal void CalibrationStep3 ()
 	{
-		Vector3 p = CommonUtils.PointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [Windows.Kinect.JointType.Head]);
+		var p = CommonUtils.PointKinectToUnity (lastBodiesMessage.Bodies [0].JointsPositions [Windows.Kinect.JointType.Head]);
 		if (_bestFitPlanePoints.Count == 0 || p != _bestFitPlanePoints [_bestFitPlanePoints.Count - 1]) {
 			_bestFitPlanePoints.Add (p);
 
@@ -209,16 +210,17 @@ public class Sensor
 
 	internal void CalibrationStep4 ()
 	{
-		Vector3 normal = ComputeBestFitNormal (_bestFitPlanePoints.ToArray (), _bestFitPlanePoints.Count);//new Vector3 (nx, ny, nz).normalized;
-		if (normal.y < 0)
+		var normal = ComputeBestFitNormal (_bestFitPlanePoints.ToArray (), _bestFitPlanePoints.Count); // new Vector3 (nx, ny, nz).normalized;
+
+        if (normal.y < 0)
 			normal = -normal;
 
 		Debug.Log (normal);
 
 		// Begin calibration calculations
 
-		Vector3 forward = center2 - center1;
-		Vector3 right = Vector3.Cross (normal, forward);
+		var forward = center2 - center1;
+		var right = Vector3.Cross (normal, forward);
 		forward = Vector3.Cross (right, normal);
 
 		DoCalibCalcs (normal, forward, right);
@@ -229,6 +231,7 @@ public class Sensor
 	}
 
 	// Thanks Sara :)
+    // ReSharper disable once MemberCanBeMadeStatic.Local
 	private Vector3 ComputeBestFitNormal (Vector3[] v, int n)
 	{
 
@@ -264,18 +267,18 @@ public class Sensor
 		SensorGameObject.transform.position = Vector3.zero;
 		SensorGameObject.transform.rotation = Quaternion.identity;
 
-		GameObject centerGO = new GameObject ();
-		centerGO.transform.parent = SensorGameObject.transform;
-		centerGO.transform.rotation = Quaternion.LookRotation (forward, up);
-		centerGO.transform.position = center1;
+		var centerGo = new GameObject ();
+		centerGo.transform.parent = SensorGameObject.transform;
+		centerGo.transform.rotation = Quaternion.LookRotation (forward, up);
+		centerGo.transform.position = center1;
 
-		centerGO.transform.parent = null;
-		SensorGameObject.transform.parent = centerGO.transform;
-		centerGO.transform.position = Vector3.zero;
-		centerGO.transform.rotation = Quaternion.identity;
+		centerGo.transform.parent = null;
+		SensorGameObject.transform.parent = centerGo.transform;
+		centerGo.transform.position = Vector3.zero;
+		centerGo.transform.rotation = Quaternion.identity;
 
 		SensorGameObject.transform.parent = null;
-		GameObject.Destroy (centerGO);
+		GameObject.Destroy (centerGo);
 
 		Vector3 minv = new Vector3 ();
 		float min = float.PositiveInfinity;

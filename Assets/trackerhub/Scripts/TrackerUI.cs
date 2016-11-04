@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
+// ReSharper disable once CheckNamespace
+// ReSharper disable once ArrangeTypeModifiers
 enum MenuAction
 {
 	Settings,
@@ -58,8 +60,12 @@ public class TrackerUI : MonoBehaviour
     private bool _hideHumans;
 
 
-    public bool UseRecord { get; set;}
+    public bool UseRecord    { get; set;}
+    //public bool SetUpCenter    { get; set;}
+    //public bool UseOptiTrack { get; set;}
 
+    // ReSharper disable once ArrangeTypeMemberModifiers
+    // ReSharper disable once UnusedMember.Local
 	void Start ()
 	{
 		_userTracker = gameObject.GetComponent<Tracker> ();
@@ -76,35 +82,41 @@ public class TrackerUI : MonoBehaviour
 
 		packetsPerSec = 1000 / TrackerProperties.Instance.SendInterval;
 
-	    UseRecord = false;
-
+	    UseRecord    = false;
+	    //UseOptiTrack = false;
+	    //SetUpCenter = false;
 	}
 
+    // ReSharper disable once ArrangeTypeMemberModifiers
+    // ReSharper disable once UnusedMember.Local
 	void Update ()
 	{
 		if (_userTracker.CalibrationStatus == CalibrationProcess.CalcNormal)
 			_userTracker.CalibrationStep3 ();
 	}
 
+    // ReSharper disable once UnusedMember.Local
+    // ReSharper disable once InconsistentNaming
+    // ReSharper disable once ArrangeTypeMemberModifiers
 	void OnGUI ()
 	{
 		int top = 5;
 		int left = 20;
 
-		displayMenuButton (MenuAction.Sensors, sensorTextureOn, sensorTextureOff, new Rect (left, top, iconSize, iconSize));
+		DisplayMenuButton (MenuAction.Sensors, sensorTextureOn, sensorTextureOff, new Rect (left, top, iconSize, iconSize));
 		GUI.Label (new Rect (left + iconSize, top + iconSize - 20, 10, 25), "" + _userTracker.Sensors.Count);
 		left += iconSize + iconSize / 2;
         
 		//displayMenuButton(MenuAction.Devices, deviceTex_on, deviceTex_off, new Rect(left, top, iconSize, iconSize));
 		//left += iconSize + iconSize / 2;
-		displayMenuButton (MenuAction.Settings, settingsTextureOn, settingsTextureOff, new Rect (left, top, iconSize, iconSize));
+		DisplayMenuButton (MenuAction.Settings, settingsTextureOn, settingsTextureOff, new Rect (left, top, iconSize, iconSize));
 
 		left += iconSize + iconSize / 2;
 
-		displayMenuButton (MenuAction.Clouds, cloudTextureOn, cloudTextureOff, new Rect (left, top, iconSize, iconSize));
+		DisplayMenuButton (MenuAction.Clouds, cloudTextureOn, cloudTextureOff, new Rect (left, top, iconSize, iconSize));
 
 		left = Screen.width - iconSize - 10;
-		displayMenuButton (MenuAction.NetworkSettings, networkTextureOn, networkTextureOff, new Rect (left, top, iconSize, iconSize));
+		DisplayMenuButton (MenuAction.NetworkSettings, networkTextureOn, networkTextureOff, new Rect (left, top, iconSize, iconSize));
 
 		if (_menuAction == MenuAction.Sensors) {
 			top = iconSize + iconSize / 2;
@@ -113,24 +125,30 @@ public class TrackerUI : MonoBehaviour
 			GUI.Box (new Rect (left - 10, top - 10, 200, _userTracker.Sensors.Count == 0 ? 45 : (35 * _userTracker.Sensors.Count + 35 + 5)), "");
 
 
-			if (_userTracker.Sensors.Count > 0) {
+			if (_userTracker.Sensors.Count > 0)
+            {
 				GUI.Label (new Rect (left, top, 200, 25), "Sensors:", _titleStyle);
 				top += 35;
 
-				foreach (string sid in _userTracker.Sensors.Keys) {
-					if (GUI.Button (new Rect (left, top, 20, 20), _userTracker.Sensors [sid].Active ? checkTexture : uncheckTexture, GUIStyle.none)) {
+				foreach (var sid in _userTracker.Sensors.Keys)
+                {
+					if (GUI.Button (new Rect (left, top, 20, 20), _userTracker.Sensors [sid].Active ? checkTexture : uncheckTexture, GUIStyle.none))
+                    {
 						_userTracker.Sensors [sid].Active = !_userTracker.Sensors [sid].Active;
 					}
 					GUI.Label (new Rect (left + 40, top, 100, 25), sid);
 
 					top += 35;
 				}
-			} else {
+			}
+            else
+            {
 				GUI.Label (new Rect (left, top, 1000, 40), "No connected sensors.");
 			}
 		}
 
-		if (_menuAction == MenuAction.Settings) {
+		if (_menuAction == MenuAction.Settings)
+        {
 			top = iconSize + iconSize / 2;
 			left = iconSize + 50;
 
@@ -140,28 +158,39 @@ public class TrackerUI : MonoBehaviour
 			GUI.Label (new Rect (left, top, 500, 35), "Calibration: ", _titleStyle);
 			top += 40;
 
-			if (_userTracker.CalibrationStatus == CalibrationProcess.FindCenter) {  
-				if (GUI.Button (new Rect (left, top, 150, 35), "(1/2) Find Center")) {
-					if (_userTracker.CalibrationStep1 ()) {
-						_userTracker.CalibrationStatus = CalibrationProcess.FindForward;
-					}
-				}
-			} else if (_userTracker.CalibrationStatus == CalibrationProcess.FindForward) {
-				if (GUI.Button (new Rect (left, top, 150, 35), "(2/2) Find Forward")) {
-					_userTracker.CalibrationStatus = CalibrationProcess.FindCenter;
-					_userTracker.CalibrationStep2 ();
-					_menuAction = MenuAction.None;
-				}
-			} else if (_userTracker.CalibrationStatus == CalibrationProcess.GetPlane) {
-				if (GUI.Button (new Rect (left, top, 150, 35), "(3/4) Get Points")) {
-					_userTracker.CalibrationStatus = CalibrationProcess.CalcNormal;
-				}
-			} else if (_userTracker.CalibrationStatus == CalibrationProcess.CalcNormal) {
-				if (GUI.Button (new Rect (left, top, 150, 35), "(4/4) Apply Calibration")) {
-					_userTracker.CalibrationStatus = CalibrationProcess.FindCenter;
-					_userTracker.CalibrationStep4 ();
-					_menuAction = MenuAction.None;
-				}
+			switch (_userTracker.CalibrationStatus)
+			{
+			    case CalibrationProcess.FindCenter:
+			        if (GUI.Button (new Rect (left, top, 150, 35), "(1/2) Find Center"))
+			        {
+			            if (_userTracker.CalibrationStep1 ())
+			            {
+			                _userTracker.CalibrationStatus = CalibrationProcess.FindForward;
+			            }
+			        }
+			        break;
+			    case CalibrationProcess.FindForward:
+			        if (GUI.Button (new Rect (left, top, 150, 35), "(2/2) Find Forward"))
+			        {
+			            _userTracker.CalibrationStatus = CalibrationProcess.FindCenter;
+			            _userTracker.CalibrationStep2 ();
+			            _menuAction = MenuAction.None;
+			        }
+			        break;
+			    case CalibrationProcess.GetPlane:
+			        if (GUI.Button (new Rect (left, top, 150, 35), "(3/4) Get Points"))
+			        {
+			            _userTracker.CalibrationStatus = CalibrationProcess.CalcNormal;
+			        }
+			        break;
+			    case CalibrationProcess.CalcNormal:
+			        if (GUI.Button (new Rect (left, top, 150, 35), "(4/4) Apply Calibration"))
+			        {
+			            _userTracker.CalibrationStatus = CalibrationProcess.FindCenter;
+			            _userTracker.CalibrationStep4 ();
+			            _menuAction = MenuAction.None;
+			        }
+			        break;
 			}
 
 			top += 60;
@@ -177,7 +206,7 @@ public class TrackerUI : MonoBehaviour
 			
 			GUI.Box (new Rect (left - 10, top - 10, 225, _userTracker.Sensors.Count == 0 ? 45 : (30 * 4 + 80 + 5)), "");
 			
-			float t = Time.deltaTime;
+			var t = Time.deltaTime;
 			if (_userTracker.Sensors.Count > 0) {
 
 				if (GUI.Button (new Rect (left, top, 60, 20), "Request")) {
@@ -185,11 +214,11 @@ public class TrackerUI : MonoBehaviour
 				}
 				_continuous = GUI.Toggle(new Rect(left,top+20,90,20),_continuous,"Continuous");
 
-                bool oldh = _hideHumans;
+                var oldh = _hideHumans;
                 _hideHumans = GUI.Toggle(new Rect(left + 90, top + 20, 90, 20), _hideHumans, "Hide humans");
                 if(oldh != _hideHumans)
                 {
-                    _userTracker.setHumansVisibility(_hideHumans);
+                    _userTracker.SetHumansVisibility(_hideHumans);
                 }
                 if (GUI.Button (new Rect (left + 70, top, 60, 20), "Hide")) {
 					_userTracker.HideAllClouds ();
@@ -205,16 +234,16 @@ public class TrackerUI : MonoBehaviour
 				if (GUI.Button (new Rect (left + 155, top + 2, 25, 25), nextTexture)) {
 					_currentCloudSensor = (_currentCloudSensor + 1) % _userTracker.Sensors.Count;
 				}
-				string sid = keyList [_currentCloudSensor];
-				GameObject s = _userTracker.Sensors [sid].SensorGameObject;
-				Vector3 rotation = s.transform.rotation.eulerAngles;
-				Vector3 position = s.transform.position;
-				string rx = rotation.x.ToString ();
-				string ry = rotation.y.ToString ();
-				string rz = rotation.z.ToString ();
-				string px = position.x.ToString ();
-				string py = position.y.ToString ();
-				string pz = position.z.ToString ();
+				var sid = keyList [_currentCloudSensor];
+				var s = _userTracker.Sensors [sid].SensorGameObject;
+				var rotation = s.transform.rotation.eulerAngles;
+				var position = s.transform.position;
+				var rx = rotation.x.ToString ();
+				var ry = rotation.y.ToString ();
+				var rz = rotation.z.ToString ();
+				var px = position.x.ToString ();
+				var py = position.y.ToString ();
+				var pz = position.z.ToString ();
 
 				top += 30;
 				GUI.Label (new Rect (left + 2, top, 100, 40), "Rotation");
@@ -318,7 +347,7 @@ public class TrackerUI : MonoBehaviour
 				_userTracker.ResetBroadcast ();
 				_userTracker.Save ();
 
-				DoNotify n = gameObject.GetComponent<DoNotify> ();
+				var n = gameObject.GetComponent<DoNotify> ();
 				n.notifySend (NotificationLevel.INFO, "Udp Broadcast", "Sending to port " + TrackerProperties.Instance.BroadcastPort, 2000);
 			}
 
@@ -338,7 +367,12 @@ public class TrackerUI : MonoBehaviour
             top += 35;
             left = Screen.width - 250 + 20;
 
-            UseRecord = GUI.Toggle(new Rect(left, top, 100, 25), UseRecord, "Record");
+            UseRecord    = GUI.Toggle(new Rect(left, top, 100, 25), UseRecord, "Record");
+            //top += 20;
+            //SetUpCenter  = GUI.Toggle(new Rect(left, top, 100, 25), SetUpCenter, "Use Center");
+            //top += 20;
+           // UseOptiTrack = GUI.Toggle(new Rect(left, top, 100, 25), UseOptiTrack, "Use Opti");
+
             //Debug.Log("UseRecord = " + UseRecord);
 
             // Unicast Settings
@@ -380,7 +414,7 @@ public class TrackerUI : MonoBehaviour
 
         }
 
-		if (Input.GetMouseButtonDown (0)) {
+        if (Input.GetMouseButtonDown (0)) {
 			RaycastHit hit;
 			Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 			if (Physics.Raycast (ray, out hit)) {
@@ -396,12 +430,10 @@ public class TrackerUI : MonoBehaviour
 		}
 	}
 
-	void displayMenuButton (MenuAction button, Texture texon, Texture texoff, Rect rect)
+    // ReSharper disable once ArrangeTypeMemberModifiers
+	void DisplayMenuButton (MenuAction button, Texture texon, Texture texoff, Rect rect)
 	{
 		if (GUI.Button (rect, _menuAction == button ? texon : texoff, GUIStyle.none))
-		if (_menuAction == button)
-			_menuAction = MenuAction.None;
-		else
-			_menuAction = button;
+		    _menuAction = _menuAction == button ? MenuAction.None : button;
 	}
 }

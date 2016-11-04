@@ -102,6 +102,7 @@
     <Compile Include="Assets\Common\Scripts\DoNotify.cs" />
     <Compile Include="Assets\Common\Scripts\GridOverlay.cs" />
     <Compile Include="Assets\Common\Scripts\Logger.cs" />
+    <Compile Include="Assets\Common\Scripts\My Scripts\HandleCenter.cs" />
     <Compile Include="Assets\Common\Scripts\My Scripts\Listener\MyUdpListener.cs" />
     <Compile Include="Assets\Common\Scripts\My Scripts\OptiTrack\OptitrackManager.cs" />
     <Compile Include="Assets\Common\Scripts\My Scripts\Z_Outros\MyKnees.cs" />
@@ -114,14 +115,14 @@
     <Compile Include="Assets\Common\Scripts\My Scripts\Z_Outros\OptiTrack\OptiObjects.cs" />
     <Compile Include="Assets\Common\Scripts\PointCloudSimple.cs" />
     <Compile Include="Assets\Common\Scripts\UdpListener.cs" />
-    <Compile Include="Assets\trackerhub\Plugins\Human.cs" />
-    <Compile Include="Assets\trackerhub\Plugins\Sensor.cs" />
-    <Compile Include="Assets\trackerhub\Plugins\SensorBody.cs" />
-    <Compile Include="Assets\trackerhub\Scripts\HumanSkeleton.cs" />
-    <Compile Include="Assets\trackerhub\Scripts\RPCServer.cs" />
-    <Compile Include="Assets\trackerhub\Scripts\Tracker.cs" />
-    <Compile Include="Assets\trackerhub\Scripts\TrackerProperties.cs" />
-    <Compile Include="Assets\trackerhub\Scripts\TrackerUI.cs" />
+    <Compile Include="Assets\Trackerhub\Plugins\Human.cs" />
+    <Compile Include="Assets\Trackerhub\Plugins\Sensor.cs" />
+    <Compile Include="Assets\Trackerhub\Plugins\SensorBody.cs" />
+    <Compile Include="Assets\Trackerhub\Scripts\HumanSkeleton.cs" />
+    <Compile Include="Assets\Trackerhub\Scripts\RPCServer.cs" />
+    <Compile Include="Assets\Trackerhub\Scripts\Tracker.cs" />
+    <Compile Include="Assets\Trackerhub\Scripts\TrackerProperties.cs" />
+    <Compile Include="Assets\Trackerhub\Scripts\TrackerUI.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Common\Models\Shaders\Skybox-Procedural.shader" />

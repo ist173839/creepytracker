@@ -24,6 +24,14 @@ public enum OtherKnee
     Close
 }
 
+public struct KneesInfo
+{
+    public int IdHuman;
+    public string IdBody;
+    public Vector3 Pos;
+    public bool Track;
+}
+
 [RequireComponent(typeof(Tracker))]
 public class MyKnees : MonoBehaviour {
 
@@ -95,17 +103,17 @@ public class MyKnees : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate ()
 	{
-        if (_localTracker.SendKnees)
-        {
-            MyKneesFixedUpdate();
-        }
+ //       if (_localTracker.SendKnees)
+ //       {
+ //           MyKneesFixedUpdate();
+ //       }
 	   
 	}
 
     private void MyKneesFixedUpdate()
     {
-        var rightKneesInfo = _localTracker.RightKneesInfo;
-        var leftKneesInfo  = _localTracker.LeftKneesInfo;
+        //var rightKneesInfo = _localTracker.RightKneesInfo;
+        //var leftKneesInfo  = _localTracker.LeftKneesInfo;
        // var countHuman     = _localTracker.CountHuman;
 
         var idList = _localTracker.IdList;
@@ -133,11 +141,11 @@ public class MyKnees : MonoBehaviour {
 
         DestroyAllHumans(idList);
 
-        if (_isShowAll) UpdateAllTheKnees(rightKneesInfo, leftKneesInfo);
+        //if (_isShowAll) UpdateAllTheKnees(rightKneesInfo, leftKneesInfo);
 
-        UpdateAllTheMeanKnees(rightKneesInfo, leftKneesInfo);
+        //UpdateAllTheMeanKnees(rightKneesInfo, leftKneesInfo);
 
-        UpdateAllTheCloseKnees(rightKneesInfo, leftKneesInfo);
+        //UpdateAllTheCloseKnees(rightKneesInfo, leftKneesInfo);
     }
 
     private void DestroyAllHumans(List<string> idList)
@@ -183,23 +191,23 @@ public class MyKnees : MonoBehaviour {
         
     }
 
-    private void UpdateAllTheCloseKnees(Dictionary<string, KneesInfo> rightKneesInfo, Dictionary<string, KneesInfo> leftKneesInfo)
-    {
-        UpdateKnees(rightKneesInfo, _idList, Side.Right, OtherKnee.Close);
-        UpdateKnees(leftKneesInfo, _idList, Side.Left, OtherKnee.Close);
-    }
+    //private void UpdateAllTheCloseKnees(Dictionary<string, KneesInfo> rightKneesInfo, Dictionary<string, KneesInfo> leftKneesInfo)
+    //{
+    //    UpdateKnees(rightKneesInfo, _idList, Side.Right, OtherKnee.Close);
+    //    UpdateKnees(leftKneesInfo, _idList, Side.Left, OtherKnee.Close);
+    //}
 
-    private void UpdateAllTheMeanKnees(Dictionary<string, KneesInfo> rightKneesInfo, Dictionary<string, KneesInfo> leftKneesInfo)
-    {
-        UpdateKnees(rightKneesInfo, _idList, Side.Right, OtherKnee.Mean);
-        UpdateKnees(leftKneesInfo, _idList, Side.Left, OtherKnee.Mean);
-    }
+    //private void UpdateAllTheMeanKnees(Dictionary<string, KneesInfo> rightKneesInfo, Dictionary<string, KneesInfo> leftKneesInfo)
+    //{
+    //    UpdateKnees(rightKneesInfo, _idList, Side.Right, OtherKnee.Mean);
+    //    UpdateKnees(leftKneesInfo, _idList, Side.Left, OtherKnee.Mean);
+    //}
 
-    private void UpdateAllTheKnees(Dictionary<string, KneesInfo> rightKneesInfo, Dictionary<string, KneesInfo> leftKneesInfo)
-    {
-        UpdateKnees(rightKneesInfo, Side.Right);
-        UpdateKnees(leftKneesInfo, Side.Left);
-    }
+    //private void UpdateAllTheKnees(Dictionary<string, KneesInfo> rightKneesInfo, Dictionary<string, KneesInfo> leftKneesInfo)
+    //{
+    //    UpdateKnees(rightKneesInfo, Side.Right);
+    //    UpdateKnees(leftKneesInfo, Side.Left);
+    //}
 
     private void CreateAllTheKnees(string id, GameObject human)
     {

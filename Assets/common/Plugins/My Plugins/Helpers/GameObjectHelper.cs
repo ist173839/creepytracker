@@ -111,8 +111,8 @@ public static class GameObjectHelper
     {
         var primitiveGameObject = GameObject.CreatePrimitive(primitiveType);
 
-        primitiveGameObject.GetComponent<MeshRenderer>().enabled = isRender;
-        primitiveGameObject.GetComponent<Collider>().enabled     = isCollider;
+        primitiveGameObject.GetComponent<MeshRenderer>().enabled    = isRender;
+        primitiveGameObject.GetComponent<Collider>().enabled        = isCollider;
         primitiveGameObject.GetComponent<Renderer>().material.color = color;
 
         primitiveGameObject.transform.position = position;
