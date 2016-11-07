@@ -21,7 +21,9 @@ public class HandleCenter : MonoBehaviour
 
     private bool _setUpCentro;
 
+#pragma warning disable 169
     private int _indicadorCounter;
+#pragma warning restore 169
     private int _port;
 
     private Vector3 _centro;
@@ -40,17 +42,12 @@ public class HandleCenter : MonoBehaviour
 
         _centroGameObject = GameObjectHelper.MyCreatePrimitiveObject(PrimitiveType.Sphere, "Centro", Vector3.zero, transform, false);
         _centroGameObject.transform.localScale = new Vector3(1.0f, 0.1f, 1.0f);
-
-
-        IndicatorsList = new List<Indicator>();
-
-
-        _indicadores = new GameObject { name = "Indicators" };
-        _indicadores.transform.position = transform.position;
-        _indicadores.transform.parent = transform;
-
-
-
+        
+        //IndicatorsList = new List<Indicator>();
+        //_indicadores = new GameObject { name = "Indicators" };
+        //_indicadores.transform.position = transform.position;
+        //_indicadores.transform.parent = transform;
+        
     }
 	
 	// Update is called once per frame
