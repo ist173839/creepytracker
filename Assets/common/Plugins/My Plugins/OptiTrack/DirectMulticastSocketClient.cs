@@ -9,18 +9,19 @@ using System.Net.Sockets;
 using System.Text;
 using UnityEngine;
 
+// ReSharper disable once CheckNamespace
 namespace OptitrackManagement
 {
     public class Marker
     {
-        public int ID = -1;
-        public Vector3 pos;
+        public int Id = -1;
+        public Vector3 Pos;
     }
 
     public class OtherMarker {
-        public int ID = -1;
-        public Vector3 pos;
-        public GameObject markerGameObject = null;
+        public int Id = -1;
+        public Vector3 Pos;
+        public GameObject MarkerGameObject = null;
     }
 
     public class RigidBody
@@ -259,10 +260,10 @@ namespace OptitrackManagement
                 Buffer.BlockCopy(b, offset, iData, 0, 4); offset += 4;
                 int nOtherMarkers = iData[0];
                 _streemData.NOtherMarkers = iData[0];
-                _strFrameLog += String.Format("Unidentified Marker Count : {0}\n", iData[0]);
+                _strFrameLog += string.Format("Unidentified Marker Count : {0}\n", iData[0]);
                 for (int j = 0; j < nOtherMarkers; j++)
                 {
-                    _streemData.OtherMarkers[j].ID = j;
+                    _streemData.OtherMarkers[j].Id = j;
                     ReadOtherMarket(b, ref offset, _streemData.OtherMarkers[j]);
                 }
 
@@ -273,12 +274,12 @@ namespace OptitrackManagement
                 //RigidBody rb = new RigidBody();
                 Buffer.BlockCopy(b, offset, iData, 0, 4); offset += 4;
                 _streemData.NRigidBodies = iData[0];
-                _strFrameLog += String.Format("Rigid Bodies : {0}\n", iData[0]);
+                _strFrameLog += string.Format("Rigid Bodies : {0}\n", iData[0]);
                 
                 if(DEBUG)
                     Debug.Log(_strFrameLog);   
                 
-                for (int i = 0; i < _streemData.NRigidBodies; i++)
+                for (var i = 0; i < _streemData.NRigidBodies; i++)
                 {
                     ReadRigidBody(b, ref offset, _streemData.RigidBody[i]);
                     //_streemData._rigidBody[0];
@@ -297,11 +298,11 @@ namespace OptitrackManagement
 
         private static void ReadOtherMarket(Byte[] b, ref int offset, OtherMarker marker) 
         {
-            float[] pos = new float[3];
+            var pos = new float[3];
             Buffer.BlockCopy(b, offset, pos, 0, 4 * 3); offset += 4 * 3;
-            marker.pos.x = pos[0];
-            marker.pos.y = pos[1];
-            marker.pos.z = pos[2];
+            marker.Pos.x = pos[0];
+            marker.Pos.y = pos[1];
+            marker.Pos.z = pos[2];
             //Debug.Log("marker ID: " + marker.ID + " is in: " + pos[0] + " " + pos[1] + " " + pos[2]);
         }
 
@@ -310,9 +311,9 @@ namespace OptitrackManagement
         {
             try
             {
-                String debugString = String.Empty;
-                int[] iData = new int[100];
-                float[] fData = new float[100];
+                var debugString = string.Empty;
+                var iData = new int[100];
+                var fData = new float[100];
 
                 // RB ID
                 Buffer.BlockCopy(b, offset, iData, 0, 4); offset += 4;

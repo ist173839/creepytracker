@@ -22,6 +22,12 @@ public enum ControloMode
   
 }
 
+//public enum SpecialTypeDoc
+//{
+//    SolveDuplicate,
+//    Normal,
+//}
+
 public class SaveRecord
 {
     private StreamWriter _doc;
@@ -35,7 +41,9 @@ public class SaveRecord
     public string Separador { get; private set; }
 
     private readonly string _defaultFolderDestino;
+#pragma warning disable 414
     private readonly string _startMessage;
+#pragma warning restore 414
     private readonly string _endMessage;
     private readonly string _directory;
     private readonly string _format;
@@ -52,6 +60,7 @@ public class SaveRecord
     private string _sigla;
     private string _versao;
     private string _header;
+    private string _saveHeader;
     
     //private string _headerCwip;
     //private string _headerWip;
@@ -62,20 +71,22 @@ public class SaveRecord
 
     private int _cont;
 
-    private int _specialTypeDocName;
+    private SpecialTypeDoc _specialTypeDocName;
 
     //  public bool DirectoryChange;
 
     private bool _useDefaultDocName;
     private bool _useDefaultFolder;
-    private bool _isInitiate;
     private bool _isRecording;
+    private bool _isInitiate;
+    private bool _oversize;
 
     public SaveRecord() 
     {
         _useDefaultDocName = true;
         _useDefaultFolder  = true;
         _isInitiate        = false;
+        _oversize          = false;
 
         _directory = System.IO.Directory.GetCurrentDirectory();
         _currentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "Walking Data";
@@ -88,28 +99,31 @@ public class SaveRecord
         _versao       = "V11";
 
 
-        _recordingName = null;
+        _recordingName   = null;
         _caminhoCompleto = null;
-        _specialTypeDocName = 0;
+        _specialTypeDocName = SpecialTypeDoc.SolveDuplicate;
         
         _target = _directory + "\\" + _currentFolderDestino + "\\";
         _cont = 0;
         NumColunas = 0;
      
         _header = GetHeader();
+        _saveHeader = null;
+
     }
 
     ~SaveRecord()
     {
         if (!_isInitiate) return;
         ResetRecord();
-        if (File.Exists(_target + _currentDocName)) File.SetAttributes(_target + _currentDocName, FileAttributes.ReadOnly);
-        
+        if (File.Exists(_target + _currentDocName))
+            File.SetAttributes(_target + _currentDocName, FileAttributes.ReadOnly);        
     }
 
     private void ResetRecord()
     {
         _recordingName = null;
+
         _isInitiate = false;
         _cont = 0;
         NumColunas = 0;
@@ -121,6 +135,7 @@ public class SaveRecord
         if (!File.Exists(_target + _currentDocName)) return;
         var info = new FileInfo(_target + _currentDocName);
         if (info.Length < TamanhoMaximo) return;
+        _oversize = true;
         Debug.Log("New File, Current Size = " + info.Length + " ( MAX = " + TamanhoMaximo + " )");
         StopRecording();
     }
@@ -134,7 +149,11 @@ public class SaveRecord
         //}
         //CheckHeaders(message);
 
-        if (message.Contains("Registo")) _isInitiate = false;
+        if (message.Contains("Registo"))
+        {
+            _saveHeader = message;
+            _isInitiate = false;
+        }
         if (!_isInitiate) SetUpFileAndDirectory();
 
         //if (!_isInitiate) SetUpFileAndDirectory(message);
@@ -157,6 +176,11 @@ public class SaveRecord
         // _target = _directory + "\\" +_CurrentFolderDestino ;
         SetUpDirectory();
         SetFileName();
+        if (_oversize)
+        {
+            SetUpSaveHeader();
+            _oversize = false;
+        }
         //SetUpHeader();
         _isInitiate = true;
     }
@@ -194,10 +218,10 @@ public class SaveRecord
             string temp;
             switch (_specialTypeDocName)
             {
-                case 0:
+                case SpecialTypeDoc.SolveDuplicate:
                     temp = SolveDuplicateFileNames();
                     break;
-                case 1:
+                case SpecialTypeDoc.Normal:
                     temp = _currentDocName + "_" + DateTime.Now.ToString("yyyyMMddTHHmmss");
                     break;
                 default:
@@ -263,11 +287,12 @@ public class SaveRecord
         //#endif
     }
 
-    public void SpecialTypeDocName(int t)
+    public void SpecialTypeDocName(SpecialTypeDoc t)
     {
         _specialTypeDocName = t;
     }
 
+    // ReSharper disable once UnusedMember.Global
     public void UseDefaultDocName()
     {
         if (_useDefaultDocName) return;
@@ -275,6 +300,7 @@ public class SaveRecord
         _isInitiate = false;
     }
 
+    // ReSharper disable once UnusedMember.Global
     public void UseDefaultFolderName()
     {
         if (_useDefaultFolder) return;
@@ -286,26 +312,29 @@ public class SaveRecord
     private string GetHeader()
     {
         return
-            "Registo" + Separador + "Tempo Absoluto (Segundos)" + Separador + "Metodo de Deslocamento Em Uso" + Separador + "Estado Actual " + Separador +
-            "Vel. Real (Directa, Normal)" + Separador + "Vel. Real (Directa, Kalman)" + Separador + "Vel. Virtual in use (WIP)" + Separador +
-            "Vel. Virtual (WIP, Normal)" + Separador + "Vel. Virtual (WIP, Kalman)" + Separador +
-            "Vel. Virtual (WIP, Event, Normal)" + Separador + "Vel. Virtual (WIP, Event, Kalman)" + Separador +
-            "Vel. Virtual * Aumento (WIP)" + Separador + "Vel. Virtual * Aumento (WIP) * Delta" + Separador + "Delta" + Separador +
-            "Joint Vel. Real (Vector 2)" + Separador + "Joint Camera (Vector 3)" + Separador + "Joelho Direito (y)" + Separador + "Joelho Esquerdo (y)" + Separador +
-            "Desvio Joelho Direito" + Separador + "Desvio Joelho Esquerdo" + Separador + "Direito FootStates (WIP)" + Separador + "Esquerdo FootStates (WIP)" + Separador +
-            "Direito FootTransitionEvents (WIP)" + Separador + "Esquerdo FootTransitionEvents (WIP)" + Separador +
-            "N. Passos Total (WIP)" + Separador + "N. Passos Direito (WIP)" + Separador + "N. Passos Esquerdo (WIP)" + Separador +
-            "Distancia Direct" + Separador + "Distancia Wip" + Separador + "Distancia do anterior" + Separador +
-            "Altura" + Separador + "Threshold de Velocidade Directa" + Separador + "Threshold de Velocidade WIP" + Separador + "Threshold do Passo (WIP)" + Separador +
-            "Velocidade Inicial WIP" + Separador + "Nome Joint Vel. Real" + Separador + "Nome Joint Camera" + Separador + "Tempo" + Separador + "Aumento (WIP)" + Separador +
-            "Id" + Separador + "Nivel"; ;
+            "Registo" + Separador + "Tempo Absoluto (Segundos)" + Separador + "Metodo de Deslocamento Em Uso" + Separador + "Estado Actual" + Separador + "Vel. Real (Directa, Normal)" + Separador + "Vel. Real (Directa, Kalman)" + Separador +
+            "Vel. Virtual in use (WIP)" + Separador + "Vel. Virtual (WIP, Normal)" + Separador + "Vel. Virtual (WIP, Kalman)" + Separador + "Vel. Virtual (WIP, Event, Normal)" + Separador + "Vel. Virtual (WIP, Event, Kalman)" + Separador +
+            "Vel. Virtual * Aumento (WIP)" + Separador + "Vel. Virtual * Aumento (WIP) * Delta" + Separador + "Delta" + Separador + "Joint Vel. Real (Vector 2)" + Separador + "Joint Camera (Vector 3)" + Separador + "Joelho Direito (y)" + Separador +
+            "Joelho Esquerdo (y)" + Separador + "Desvio Joelho Direito" + Separador + "Desvio Joelho Esquerdo" + Separador + "Direito FootStates (WIP)" + Separador + "Esquerdo FootStates (WIP)" + Separador + "Direito FootTransitionEvents (WIP)" + Separador +
+            "Esquerdo FootTransitionEvents (WIP)" + Separador + "N. Passos Total (WIP)" + Separador + "N. Passos Direito (WIP)" + Separador + "N. Passos Esquerdo (WIP)" + Separador + "Distancia Direct" + Separador + "Distancia Wip" + Separador +
+            "Distancia do anterior" + Separador + "Altura" + Separador + "Threshold de Velocidade Directa" + Separador + "Threshold de Velocidade WIP" + Separador + "Threshold do Passo (WIP)" + Separador + "Velocidade Inicial WIP" + Separador +
+            "Nome Joint Vel. Real" + Separador + "Nome Joint Camera" + Separador + "Tempo" + Separador + "Aumento (WIP)" + Separador + "Id" + Separador + "Nivel" + Separador + "WIP Mode" + Separador + "Vel. Real (Directa, Kalman, Base)" + Separador +
+            "Begin Stop Active";
     }
 
+    // ReSharper disable once UnusedMember.Local
     private void SetUpHeader()
     {
         // _positionThreshold,  (_numSteps) 
         var info = GetHeader(); // _header;//
         WriteStringInDoc(info, true);
+    }
+
+    private void SetUpSaveHeader()
+    {
+        // _positionThreshold,  (_numSteps) 
+        // var info = GetHeader(); // _header;//
+        WriteStringInDoc(_saveHeader, true);
     }
 
     private void SetUpHeader(string first)
@@ -316,6 +345,7 @@ public class SaveRecord
         WriteStringInDoc(info, true);
     }
 
+    // ReSharper disable once UnusedMember.Local
     private void SetUpFileAndDirectory(string first)
     {
         // _target = _directory + "\\" +_CurrentFolderDestino ;
@@ -325,7 +355,36 @@ public class SaveRecord
         _isInitiate = true;
     }
 }
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/*
 
-//_activeControloMode  = ControloMode.CWIP;
-//_headerCwip          = GetCwipHeader();
-//_headerWip           = GetWipHeader();
+
+  private string GetHeader()
+{
+    return
+        "Registo" + Separador + "Tempo Absoluto (Segundos)" + Separador + "Metodo de Deslocamento Em Uso" + Separador + "Estado Actual " + Separador +
+        "Vel. Real (Directa, Normal)" + Separador + "Vel. Real (Directa, Kalman)" + Separador + "Vel. Virtual in use (WIP)" + Separador +
+        "Vel. Virtual (WIP, Normal)" + Separador + "Vel. Virtual (WIP, Kalman)" + Separador +
+        "Vel. Virtual (WIP, Event, Normal)" + Separador + "Vel. Virtual (WIP, Event, Kalman)" + Separador +
+        "Vel. Virtual * Aumento (WIP)" + Separador + "Vel. Virtual * Aumento (WIP) * Delta" + Separador + "Delta" + Separador +
+        "Joint Vel. Real (Vector 2)" + Separador + "Joint Camera (Vector 3)" + Separador + "Joelho Direito (y)" + Separador + "Joelho Esquerdo (y)" + Separador +
+        "Desvio Joelho Direito" + Separador + "Desvio Joelho Esquerdo" + Separador + "Direito FootStates (WIP)" + Separador + "Esquerdo FootStates (WIP)" + Separador +
+        "Direito FootTransitionEvents (WIP)" + Separador + "Esquerdo FootTransitionEvents (WIP)" + Separador +
+        "N. Passos Total (WIP)" + Separador + "N. Passos Direito (WIP)" + Separador + "N. Passos Esquerdo (WIP)" + Separador +
+        "Distancia Direct" + Separador + "Distancia Wip" + Separador + "Distancia do anterior" + Separador +
+        "Altura" + Separador + "Threshold de Velocidade Directa" + Separador + "Threshold de Velocidade WIP" + Separador + "Threshold do Passo (WIP)" + Separador +
+        "Velocidade Inicial WIP" + Separador + "Nome Joint Vel. Real" + Separador + "Nome Joint Camera" + Separador + "Tempo" + Separador + "Aumento (WIP)" + Separador +
+        "Id" + Separador + "Nivel"; ;
+}
+
+
+
+
+
+
+    // _activeControloMode  = ControloMode.CWIP;
+    // _headerCwip          = GetCwipHeader();
+    // _headerWip           = GetWipHeader();
+
+
+ */

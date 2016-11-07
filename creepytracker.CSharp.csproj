@@ -87,6 +87,7 @@
     <Compile Include="Assets\Common\Plugins\My Plugins\Helpers\Math\QuaternionToEuler.cs" />
     <Compile Include="Assets\Common\Plugins\My Plugins\Helpers\Math\RandomHelper.cs" />
     <Compile Include="Assets\Common\Plugins\My Plugins\Helpers\StringHelper.cs" />
+    <Compile Include="Assets\Common\Plugins\My Plugins\OptiTrack\CenterServer.cs" />
     <Compile Include="Assets\Common\Plugins\My Plugins\OptiTrack\DirectMulticastSocketClient.cs" />
     <Compile Include="Assets\Common\Plugins\My Plugins\Save\SafeWriteFile.cs" />
     <Compile Include="Assets\Common\Plugins\My Plugins\Save\SaveAvr.cs" />

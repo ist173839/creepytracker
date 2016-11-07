@@ -45,23 +45,25 @@ public class TrackerUI : MonoBehaviour
 
 	private Tracker _userTracker;
 
+    private HandleCenter _localHandleCenter;
+
 	private GUIStyle _titleStyle;
 
 	private int _currentCloudSensor;
+    private int _packetsPerSec;
 
-	public float _rotStep = 2f;
-	public float _transStep = 0.02f;
+    public float _rotStep = 2f;
+    public float _transStep = 0.02f;
 
-	private int packetsPerSec;
 
-	private string newUnicastAddress;
+    private string newUnicastAddress;
 	private string newUnicastPort;
+
 	private bool _continuous;
     private bool _hideHumans;
 
-
     public bool UseRecord    { get; set;}
-    //public bool SetUpCenter    { get; set;}
+    //public bool SetUpCenter { get; set;}
     //public bool UseOptiTrack { get; set;}
 
     // ReSharper disable once ArrangeTypeMemberModifiers
@@ -69,18 +71,26 @@ public class TrackerUI : MonoBehaviour
 	void Start ()
 	{
 		_userTracker = gameObject.GetComponent<Tracker> ();
-		_menuAction = MenuAction.None;
+
+        _localHandleCenter = gameObject.GetComponent<HandleCenter> ();
+
+        _menuAction = MenuAction.None;
 		_currentCloudSensor = 0;
-		_titleStyle = new GUIStyle ();
-		_titleStyle.fontStyle = FontStyle.Bold;
-		_titleStyle.normal.textColor = Color.white;
-		_continuous = false;
+	    _titleStyle = new GUIStyle
+	    {
+	        fontStyle = FontStyle.Bold,
+	        normal    =
+	        {
+	            textColor = Color.white
+	        }
+	    };
+	    _continuous = false;
         _hideHumans = false;
 
 		newUnicastAddress = "";
 		newUnicastPort = "";
 
-		packetsPerSec = 1000 / TrackerProperties.Instance.SendInterval;
+		_packetsPerSec = 1000 / TrackerProperties.Instance.SendInterval;
 
 	    UseRecord    = false;
 	    //UseOptiTrack = false;
@@ -355,23 +365,28 @@ public class TrackerUI : MonoBehaviour
 			left = Screen.width - 250 + 20;
 			GUI.Label (new Rect (left, top, 150, 25), "Packets / sec:");
 			left += 100;
-			packetsPerSec = int.Parse (GUI.TextField (new Rect (left, top, 50, 20), "" + packetsPerSec));
+			_packetsPerSec = int.Parse (GUI.TextField (new Rect (left, top, 50, 20), "" + _packetsPerSec));
 			left += 55;
 			if (GUI.Button (new Rect (left, top, 50, 25), "Reset")) {
-				TrackerProperties.Instance.SendInterval = 1000 / packetsPerSec;
+				TrackerProperties.Instance.SendInterval = 1000 / _packetsPerSec;
 				_userTracker.Save ();
 
 				DoNotify n = gameObject.GetComponent<DoNotify> ();
-				n.notifySend (NotificationLevel.INFO, "Udp Broadcast", "Sending " + packetsPerSec + " packets / sec", 2000);
+				n.notifySend (NotificationLevel.INFO, "Udp Broadcast", "Sending " + _packetsPerSec + " packets / sec", 2000);
 			}
             top += 35;
             left = Screen.width - 250 + 20;
 
             UseRecord    = GUI.Toggle(new Rect(left, top, 100, 25), UseRecord, "Record");
-            //top += 20;
+            top += 20;
+            
+            if (GUI.Button(new Rect(left, top, 100, 25), "Use Center"))
+            {
+                _localHandleCenter.SetCenterOptiTrackButton();
+            }
             //SetUpCenter  = GUI.Toggle(new Rect(left, top, 100, 25), SetUpCenter, "Use Center");
             //top += 20;
-           // UseOptiTrack = GUI.Toggle(new Rect(left, top, 100, 25), UseOptiTrack, "Use Opti");
+            // UseOptiTrack = GUI.Toggle(new Rect(left, top, 100, 25), UseOptiTrack, "Use Opti");
 
             //Debug.Log("UseRecord = " + UseRecord);
 

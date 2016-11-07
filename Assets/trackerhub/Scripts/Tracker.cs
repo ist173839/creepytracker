@@ -187,7 +187,7 @@ public class Tracker : MonoBehaviour
 					child.gameObject.GetComponent<Renderer> ().enabled = (ShowHumanBodies == -1);
 			}
 
-			foreach (SensorBody b in h.bodies) {
+			foreach (var b in h.bodies) {
 				b.gameObject.GetComponent<Renderer> ().enabled = (ShowHumanBodies == h.ID);
 			}
 		}

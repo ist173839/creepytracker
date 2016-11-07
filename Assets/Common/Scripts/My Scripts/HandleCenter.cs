@@ -57,26 +57,48 @@ public class HandleCenter : MonoBehaviour
     // ReSharper disable once UnusedMember.Local
     // ReSharper disable once ArrangeTypeMemberModifiers
 	void Update ()
-    {
+	{
+	    SetCenterOptiTrack();
+	}
 
+    private void SetCenterOptiTrack()
+    {
         if (Input.GetKeyDown(KeyCode.F))
         {
             if (_localOptitrackManager != null)
             {
                 _setUpCentro = true;
-                _centroGameObject.transform.position = _centro = MathHelper.DeslocamentoHorizontal(_localOptitrackManager.GetUnityPositionVector());
+                _centroGameObject.transform.position =
+                    _centro = MathHelper.DeslocamentoHorizontal(_localOptitrackManager.GetUnityPositionVector());
             }
         }
         _centroGameObject.GetComponent<MeshRenderer>().enabled = _setUpCentro; // && _localTrackerUi.SetUpCenter;
         if (_setUpCentro)
         {
-            var mensagem = "CenterPos" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(_centro) + MessageSeparators.L2;
+            var mensagem = "CenterPos" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(_centro) +
+                           MessageSeparators.L2;
 
             _udpBroadcast.Send(mensagem);
         }
     }
+    public void SetCenterOptiTrackButton()
+    {
+        if (_localOptitrackManager != null)
+        {
+            _setUpCentro = true;
+            _centroGameObject.transform.position =
+                _centro = MathHelper.DeslocamentoHorizontal(_localOptitrackManager.GetUnityPositionVector());
+        }
+       
+        _centroGameObject.GetComponent<MeshRenderer>().enabled = _setUpCentro; // && _localTrackerUi.SetUpCenter;
+        if (_setUpCentro)
+        {
+            var mensagem = "CenterPos" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(_centro) +
+                           MessageSeparators.L2;
 
-    
+            _udpBroadcast.Send(mensagem);
+        }
+    }
 
 }
 
