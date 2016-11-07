@@ -96,7 +96,7 @@ public class SaveRecord
         _startMessage = "INICIO";
         _endMessage   = "FIM";
         _sigla        = "WVD";
-        _versao       = "V11";
+        _versao       = "V11.5";
 
 
         _recordingName   = null;
