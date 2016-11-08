@@ -12,7 +12,6 @@ using UnityEngine;
 using UnityStandardAssets.Utility;
 using Object = UnityEngine.Object;
 
-
 // ReSharper disable once CheckNamespace
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public enum VersaoTeste
@@ -44,7 +43,6 @@ public enum WipMode
     Event,
     EventKalman,
 }
-
 
 public enum IndicatorMode
 {

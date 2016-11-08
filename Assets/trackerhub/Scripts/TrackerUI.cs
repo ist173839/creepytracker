@@ -62,13 +62,15 @@ public class TrackerUI : MonoBehaviour
 	private bool _continuous;
     private bool _hideHumans;
 
-    public bool UseRecord    { get; set;}
+    public bool UseRecord     { get; set; }
+    public bool ShowIndicator { get; set; }
+
     //public bool SetUpCenter { get; set;}
     //public bool UseOptiTrack { get; set;}
 
     // ReSharper disable once ArrangeTypeMemberModifiers
     // ReSharper disable once UnusedMember.Local
-	void Start ()
+    void Start ()
 	{
 		_userTracker = gameObject.GetComponent<Tracker> ();
 
@@ -92,7 +94,8 @@ public class TrackerUI : MonoBehaviour
 
 		_packetsPerSec = 1000 / TrackerProperties.Instance.SendInterval;
 
-	    UseRecord    = false;
+	    UseRecord     = false;
+	    ShowIndicator = false;
 	    //UseOptiTrack = false;
 	    //SetUpCenter = false;
 	}
@@ -378,12 +381,24 @@ public class TrackerUI : MonoBehaviour
             left = Screen.width - 250 + 20;
 
             UseRecord    = GUI.Toggle(new Rect(left, top, 100, 25), UseRecord, "Record");
-            top += 20;
+
+            ShowIndicator = GUI.Toggle(new Rect(left + 120, top, 100, 25), ShowIndicator, "Show Indicators");
+            _localHandleCenter.ShowIndicator = ShowIndicator;
             
-            if (GUI.Button(new Rect(left, top, 100, 25), "Use Center"))
+            top += 30;
+            
+            if (GUI.Button(new Rect(left, top, 100, 25), "Set Center"))
             {
                 _localHandleCenter.SetCenterOptiTrackButton();
             }
+
+            if (GUI.Button(new Rect(left + 120, top, 100, 25), "Set Forward"))
+            {
+                _localHandleCenter.SetForwardPointOptiTrackButton();
+            }
+
+
+
             //SetUpCenter  = GUI.Toggle(new Rect(left, top, 100, 25), SetUpCenter, "Use Center");
             //top += 20;
             // UseOptiTrack = GUI.Toggle(new Rect(left, top, 100, 25), UseOptiTrack, "Use Opti");

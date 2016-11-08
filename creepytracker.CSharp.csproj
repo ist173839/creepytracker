@@ -13,13 +13,11 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile>
-    </CompilerResponseFile>
+    <CompilerResponseFile></CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.4.2f2</UnityVersion>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace></RootNamespace>
     <LangVersion Condition=" '$(VisualStudioVersion)' != '10.0' ">4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -87,16 +85,16 @@
     <Compile Include="Assets\Common\Plugins\My Plugins\Helpers\Math\QuaternionToEuler.cs" />
     <Compile Include="Assets\Common\Plugins\My Plugins\Helpers\Math\RandomHelper.cs" />
     <Compile Include="Assets\Common\Plugins\My Plugins\Helpers\StringHelper.cs" />
-    <Compile Include="Assets\Common\Plugins\My Plugins\Z_Outros\CenterServer.cs" />
     <Compile Include="Assets\Common\Plugins\My Plugins\OptiTrack\DirectMulticastSocketClient.cs" />
     <Compile Include="Assets\Common\Plugins\My Plugins\Save\SafeWriteFile.cs" />
     <Compile Include="Assets\Common\Plugins\My Plugins\Save\SaveAvr.cs" />
     <Compile Include="Assets\Common\Plugins\My Plugins\Save\SaveColicoes.cs" />
     <Compile Include="Assets\Common\Plugins\My Plugins\Save\SaveRecord.cs" />
     <Compile Include="Assets\Common\Plugins\My Plugins\Static\ObterStringValues.cs" />
-    <Compile Include="Assets\Common\Plugins\My Plugins\Z_Outros\CreateAndControlVirtualWorld.cs" />
     <Compile Include="Assets\Common\Plugins\My Plugins\Virtual World\Indicator.cs" />
     <Compile Include="Assets\Common\Plugins\My Plugins\Virtual World\IndicatorSetUp.cs" />
+    <Compile Include="Assets\Common\Plugins\My Plugins\Z_Outros\CenterServer.cs" />
+    <Compile Include="Assets\Common\Plugins\My Plugins\Z_Outros\CreateAndControlVirtualWorld.cs" />
     <Compile Include="Assets\Common\Plugins\My Plugins\Z_Outros\ReadMatrix.cs" />
     <Compile Include="Assets\Common\Plugins\My Plugins\Z_Outros\WriteMatrix.cs" />
     <Compile Include="Assets\Common\Plugins\UdpBroadcast.cs" />
@@ -129,6 +127,8 @@
   <ItemGroup>
     <None Include="Assets\Common\Models\Shaders\Skybox-Procedural.shader" />
     <None Include="Assets\Common\Shaders\Grid.shader" />
+    <None Include="Assets\Common\Shaders\MyShaders\Outlined-Silhouette Only.shader" />
+    <None Include="Assets\Common\Shaders\MyShaders\Silhouetted Diffuse.shader" />
     <None Include="Assets\Shaders\GS Billboard.shader" />
     <None Include="Assets\Shaders\VertexColor.shader" />
     <None Include="Assets\Standard Assets\CrossPlatformInput\CrossPlatformInputGuidelines.txt" />
