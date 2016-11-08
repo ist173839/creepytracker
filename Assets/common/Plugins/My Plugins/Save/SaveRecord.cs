@@ -96,7 +96,7 @@ public class SaveRecord
         _startMessage = "INICIO";
         _endMessage   = "FIM";
         _sigla        = "WVD";
-        _versao       = "V11.5";
+        _versao       = "V11.7";
 
 
         _recordingName   = null;
@@ -312,14 +312,14 @@ public class SaveRecord
     private string GetHeader()
     {
         return
-            "Registo" + Separador + "Tempo Absoluto (Segundos)" + Separador + "Metodo de Deslocamento Em Uso" + Separador + "Estado Actual" + Separador + "Vel. Real (Directa, Normal)" + Separador + "Vel. Real (Directa, Kalman)" + Separador +
+           "Registo" + Separador + "Tempo Absoluto (Segundos)" + Separador + "Metodo de Deslocamento Em Uso" + Separador + "Estado Actual" + Separador + "Vel. Real (Directa, Normal)" + Separador + "Vel. Real (Directa, Kalman)" + Separador +
             "Vel. Virtual in use (WIP)" + Separador + "Vel. Virtual (WIP, Normal)" + Separador + "Vel. Virtual (WIP, Kalman)" + Separador + "Vel. Virtual (WIP, Event, Normal)" + Separador + "Vel. Virtual (WIP, Event, Kalman)" + Separador +
             "Vel. Virtual * Aumento (WIP)" + Separador + "Vel. Virtual * Aumento (WIP) * Delta" + Separador + "Delta" + Separador + "Joint Vel. Real (Vector 2)" + Separador + "Joint Camera (Vector 3)" + Separador + "Joelho Direito (y)" + Separador +
             "Joelho Esquerdo (y)" + Separador + "Desvio Joelho Direito" + Separador + "Desvio Joelho Esquerdo" + Separador + "Direito FootStates (WIP)" + Separador + "Esquerdo FootStates (WIP)" + Separador + "Direito FootTransitionEvents (WIP)" + Separador +
             "Esquerdo FootTransitionEvents (WIP)" + Separador + "N. Passos Total (WIP)" + Separador + "N. Passos Direito (WIP)" + Separador + "N. Passos Esquerdo (WIP)" + Separador + "Distancia Direct" + Separador + "Distancia Wip" + Separador +
             "Distancia do anterior" + Separador + "Altura" + Separador + "Threshold de Velocidade Directa" + Separador + "Threshold de Velocidade WIP" + Separador + "Threshold do Passo (WIP)" + Separador + "Velocidade Inicial WIP" + Separador +
             "Nome Joint Vel. Real" + Separador + "Nome Joint Camera" + Separador + "Tempo" + Separador + "Aumento (WIP)" + Separador + "Id" + Separador + "Nivel" + Separador + "WIP Mode" + Separador + "Vel. Real (Directa, Kalman, Base)" + Separador +
-            "Begin Stop Active";
+            "Begin Stop Active" + Separador + "Direito FootStates (WIP, Int)" + Separador + "Esquerdo FootStates (WIP, Int)" + Separador + "Direito FootTransitionEvents (WIP, Int)" + Separador + "Esquerdo FootTransitionEvents (WIP, Int)";
     }
 
     // ReSharper disable once UnusedMember.Local
