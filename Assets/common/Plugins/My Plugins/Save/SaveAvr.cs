@@ -45,7 +45,7 @@ public class SaveAvr
     private string _fimCiclo;
     private string _docName;
     private string _target;
-
+    private string _saveHeader;
     public int NumColunas   { get; private set; }
 
     private static readonly int TamanhoMaximo = (int) Math.Pow(2, 20); // (2 ^ 30)
@@ -60,12 +60,14 @@ public class SaveAvr
     private bool _useDefaultFolder;
     private bool _isInitiate;
     private bool _isRecording;
+    private bool _oversize;
 
     public SaveAvr() 
     {
         _useDefaultDocName = true;
         _useDefaultFolder  = true;
         _isInitiate        = false;
+        _oversize          = false;
 
         _directory = System.IO.Directory.GetCurrentDirectory();
         _currentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "AVR Data";
@@ -78,8 +80,10 @@ public class SaveAvr
         _startMessage = "INICIO";
         _endMessage   = "FIM";
 
-        _recordingName      = null;
-        _caminhoCompleto    = null;
+        _recordingName   = null;
+        _caminhoCompleto = null;
+        _saveHeader      = null;
+
         _specialTypeDocName = 0;
         
         _target = _directory + "\\" + _currentFolderDestino + "\\";
@@ -89,7 +93,6 @@ public class SaveAvr
         //_activeControloMode  = ControloMode.CWIP;
         //_headerCwip          = GetCwipHeader();
         //_headerWip           = GetWipHeader();
-    
         //_header = GetHeader();
     }
 
@@ -105,6 +108,7 @@ public class SaveAvr
     {
         _recordingName = null;
         _isInitiate = false;
+
         _cont = 0;
         NumColunas = 0;
     }
@@ -115,15 +119,19 @@ public class SaveAvr
         if (!File.Exists(_target + _currentDocName)) return;
         var info = new FileInfo(_target + _currentDocName);
         if (info.Length < TamanhoMaximo) return;
+        _oversize = true;
         Debug.Log("New File, Current Size = " + info.Length + " ( MAX = " + TamanhoMaximo + " )");
         StopRecording();
     }
 
     public void RecordMessage(string message)
     {
-        if (message.Contains("Registo")) _isInitiate = false;
-
-
+        if (message.Contains("Registo"))
+        {
+            _isInitiate = false;
+            _saveHeader = message;
+        }
+        
         if (!_isInitiate) SetUpFileAndDirectory();
         // if (!_isInitiate) SetUpFileAndDirectory(message);
         // if (message != _startMessage  && !_isInitiate)
@@ -140,16 +148,21 @@ public class SaveAvr
         
     }
     
-
     private void SetUpFileAndDirectory()
     {
         // _target = _directory + "\\" +_CurrentFolderDestino ;
+        _cont = 0;
         SetUpDirectory();
         SetFileName();
-        //SetUpHeader();
+        if (_oversize)
+        {
+            SetUpHeader();
+            _oversize = false;
+        }
         _isInitiate = true;
     }
 
+    // ReSharper disable once UnusedMember.Local
     private void SetUpFileAndDirectory(string first)
     {
         // _target = _directory + "\\" +_CurrentFolderDestino ;
@@ -158,10 +171,16 @@ public class SaveAvr
         //SetUpHeader(first);
         _isInitiate = true;
     }
+    private void SetUpHeader()
+    {
+        // if (first.Contains("Registo")) return;
+        WriteStringInDoc(_saveHeader, true);
+    }
 
+
+    // ReSharper disable once UnusedMember.Local
     private void SetUpHeader(string first)
     {
-        
         if (first.Contains("Registo")) return;
         WriteStringInDoc(first, true);
     }
@@ -273,6 +292,7 @@ public class SaveAvr
         _specialTypeDocName = t;
     }
 
+    // ReSharper disable once UnusedMember.Global
     public void UseDefaultDocName()
     {
         if (_useDefaultDocName) return;
@@ -280,6 +300,7 @@ public class SaveAvr
         _isInitiate = false;
     }
 
+    // ReSharper disable once UnusedMember.Global
     public void UseDefaultFolderName()
     {
         if (_useDefaultFolder) return;

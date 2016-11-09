@@ -42,9 +42,10 @@ public class SaveColicoes
     private string _target;
     private string _sigla;
     private string _versao;
+    private string _saveHeader;
 
     // private string _header;
-      
+
     public int NumColunas   { get; private set; }
 
     private static readonly int TamanhoMaximo = (int) Math.Pow(2, 20); // (2 ^ 30)
@@ -59,12 +60,15 @@ public class SaveColicoes
     private bool _useDefaultFolder;
     private bool _isInitiate;
     private bool _isRecording;
+    private bool _oversize;
+
 
     public SaveColicoes() 
     {
         _useDefaultDocName = true;
         _useDefaultFolder  = true;
         _isInitiate        = false;
+        _oversize          = false;
 
         _directory = System.IO.Directory.GetCurrentDirectory();
         _currentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "Collisions Data";
@@ -85,6 +89,8 @@ public class SaveColicoes
         _cont = 0;
         NumColunas = 0;
 
+        _saveHeader = null;
+
         // _header = GetHeader();
     }
 
@@ -92,8 +98,7 @@ public class SaveColicoes
     {
         if (!_isInitiate) return;
         ResetRecord();
-        if (File.Exists(_target + _currentDocName)) File.SetAttributes(_target + _currentDocName, FileAttributes.ReadOnly);
-        
+        if (File.Exists(_target + _currentDocName)) File.SetAttributes(_target + _currentDocName, FileAttributes.ReadOnly);    
     }
 
     private void ResetRecord()
@@ -110,13 +115,18 @@ public class SaveColicoes
         if (!File.Exists(_target + _currentDocName)) return;
         var info = new FileInfo(_target + _currentDocName);
         if (info.Length < TamanhoMaximo) return;
+        _oversize = true;
         Debug.Log("New File, Current Size = " + info.Length + " ( MAX = " + TamanhoMaximo + " )");
         StopRecording();
     }
 
     public void RecordMessage(string message)
     {
-        if (message.Contains("Registo")) _isInitiate = false;
+        if (message.Contains("Registo"))
+        {
+            _isInitiate = false;
+            _saveHeader = message;
+        }
 
         if (!_isInitiate) SetUpFileAndDirectory();
 
@@ -138,9 +148,16 @@ public class SaveColicoes
     private void SetUpFileAndDirectory()
     {
         // _target = _directory + "\\" +_CurrentFolderDestino ;
+        _cont = 0;
         SetUpDirectory();
         SetFileName();
-        // SetUpHeader();
+        if (_oversize)
+        {
+            SetUpHeader();
+            _oversize = false;
+        }
+
+        
         _isInitiate = true;
     }
 
@@ -280,8 +297,8 @@ public class SaveColicoes
 
     private void SetUpHeader()
     {
-        var info = GetHeader();
-        WriteStringInDoc(info, true);
+        //var info = GetHeader();
+        WriteStringInDoc(_saveHeader, true);
     }
 
     private void SetUpHeader(string first)

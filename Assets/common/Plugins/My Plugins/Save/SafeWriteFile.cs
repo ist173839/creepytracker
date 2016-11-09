@@ -56,11 +56,13 @@ public class SafeWriteFile
     private string _caminhoCompleto;
     private string _defaultDocName;
     private string _currentDocName;
+    private string _saveHeader;
     private string _fileName;
     private string _target;
     private string _format;
     private string _versao;
     private string _sigla;
+
 
     private int _cont;
 
@@ -70,10 +72,10 @@ public class SafeWriteFile
 
     private bool _useDefaultDocName;
     private bool _useDefaultFolder;
+    private bool _isRecording;
+    private bool _oversize;
     private bool _activo;
     private bool _first;
-
-    private bool _isRecording;
 
     public bool IsRecording
     {
@@ -89,8 +91,7 @@ public class SafeWriteFile
             _isRecording = value;
         }
     }
-
-
+    
     public SafeWriteFile()
     {
 #if !UNITY_ANDROID || UNITY_EDITOR
@@ -101,6 +102,7 @@ public class SafeWriteFile
         _useDefaultFolder  = true;
         _activo            = false;
         _first             = true;
+        _oversize          = false;
 
         Directory = System.IO.Directory.GetCurrentDirectory();
 
@@ -116,6 +118,7 @@ public class SafeWriteFile
 
         _caminhoCompleto = null;
         _fileName        = null;
+        _saveHeader      = null;
 
         _cont = 0;
         
@@ -154,16 +157,19 @@ public class SafeWriteFile
         //  NumColunas = 0;
     }
 
+    // ReSharper disable once UnusedMember.Global
     public string GetCurrentFileName()
     {
         return _fileName;
     }
 
+    // ReSharper disable once UnusedMember.Global
     public void AddExtraInfo(string extra)
     {
         InfoExtra += "£ExtraInfo: " + extra;
     }
 
+    // ReSharper disable once UnusedMember.Global
     public void SpecialFolderName(string newName)
     {
         CurrentFolderDestino = FolderDestino = newName;
@@ -172,6 +178,7 @@ public class SafeWriteFile
         //_versaoActiva = VersaoDisponivel.NaoActivo;
     }
 
+    // ReSharper disable once UnusedMember.Global
     public void SpecialDocName(string newName)
     {
         DocName = newName;
@@ -181,11 +188,13 @@ public class SafeWriteFile
         //_versaoActiva = VersaoDisponivel.NaoActivo;
     }
 
+    // ReSharper disable once UnusedMember.Global
     public void SpecialTypeDocName(SpecialTypeDoc t)
     {
         _specialTypeDocName = t;
     }
 
+    // ReSharper disable once UnusedMember.Global
     public void UseDefaultDocName()
     {
         if (!_useDefaultDocName)
@@ -196,6 +205,7 @@ public class SafeWriteFile
         }
     }
 
+    // ReSharper disable once UnusedMember.Global
     public void UseDefaultFolderName()
     {
         if (!_useDefaultFolder)
@@ -213,6 +223,7 @@ public class SafeWriteFile
         if (!File.Exists(_target + _currentDocName)) return;
         var info = new FileInfo(_target + _currentDocName);
         if (info.Length < TamanhoMaximo) return;
+        _oversize = true;
         MyDebug.Log("New File, Current Size = " + info.Length + " ( MAX = " + TamanhoMaximo + " )");
         StopRecording("MAX_SIZE");
     }
@@ -309,6 +320,7 @@ public class SafeWriteFile
         _doc.Close();
     }
 
+    // ReSharper disable once UnusedMember.Global
     public string GetDocActivo()
     {
         if (_activo)

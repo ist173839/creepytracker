@@ -153,6 +153,7 @@ public class SaveRecord
         {
             _saveHeader = message;
             _isInitiate = false;
+            //_cont = 0;
         }
         if (!_isInitiate) SetUpFileAndDirectory();
 
@@ -174,6 +175,7 @@ public class SaveRecord
     private void SetUpFileAndDirectory()
     {
         // _target = _directory + "\\" +_CurrentFolderDestino ;
+        _cont = 0;
         SetUpDirectory();
         SetFileName();
         if (_oversize)
