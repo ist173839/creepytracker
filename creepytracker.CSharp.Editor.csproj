@@ -110,14 +110,14 @@
     <Compile Include="Assets\Editor\CrossPlatformInput\CrossPlatformInputInitialize.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Common\Models\Shaders\Skybox-Procedural.shader" />
-    <None Include="Assets\Common\Shaders\Grid.shader" />
-    <None Include="Assets\Common\Shaders\MyShaders\Outlined-Silhouette Only.shader" />
-    <None Include="Assets\Common\Shaders\MyShaders\Silhouetted Diffuse.shader" />
     <None Include="Assets\Shaders\GS Billboard.shader" />
     <None Include="Assets\Shaders\VertexColor.shader" />
     <None Include="Assets\Standard Assets\CrossPlatformInput\CrossPlatformInputGuidelines.txt" />
     <None Include="Assets\Standard Assets\Fonts\OpenSans\License!.txt" />
+    <None Include="Assets\common\Models\Shaders\Skybox-Procedural.shader" />
+    <None Include="Assets\common\Shaders\Grid.shader" />
+    <None Include="Assets\common\Shaders\MyShaders\Outlined-Silhouette Only.shader" />
+    <None Include="Assets\common\Shaders\MyShaders\Silhouetted Diffuse.shader" />
     <None Include="Assets\configSettings.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
