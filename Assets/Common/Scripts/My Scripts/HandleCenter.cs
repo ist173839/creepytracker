@@ -202,6 +202,8 @@ public class HandleCenter : MonoBehaviour
 
         IndicatorsList = null;
         ObstacleList   = null;
+
+        IndicatorsList = new List<GameObject>();
     }
 
     private void SetRender(bool render)
