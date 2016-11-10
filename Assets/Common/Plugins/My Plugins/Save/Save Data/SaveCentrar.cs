@@ -13,7 +13,7 @@ using System.Text;
 using UnityEngine;
 
 // ReSharper disable once CheckNamespace
-public class SaveColicoes
+public class SaveCentrar
 {
     private StreamWriter _doc;
 #pragma warning disable 169
@@ -52,7 +52,7 @@ public class SaveColicoes
 
     private int _cont;
 
-    private int _specialTypeDocName;
+    private SpecialTypeDoc _specialTypeDocName;
 
     //  public bool DirectoryChange;
 
@@ -63,7 +63,7 @@ public class SaveColicoes
     private bool _oversize;
 
 
-    public SaveColicoes() 
+    public SaveCentrar() 
     {
         _useDefaultDocName = true;
         _useDefaultFolder  = true;
@@ -71,19 +71,19 @@ public class SaveColicoes
         _oversize          = false;
 
         _directory = System.IO.Directory.GetCurrentDirectory();
-        _currentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "Collisions Data";
-        _format   = ".csv";
+        _currentFolderDestino = _defaultFolderDestino = "Used Files" + "\\" + "Center Data";
+        _format   = ".txt";
         Separador = ";";
 
         _startMessage = "INICIO";
         _endMessage   = "FIM";
 
-        _sigla = "COD";
+        _sigla = "CD";
         _versao = "V1";
 
         _recordingName = null;
         _caminhoCompleto = null;
-        _specialTypeDocName = 0;
+        _specialTypeDocName = SpecialTypeDoc.SolveDuplicate;
         
         _target = _directory + "\\" + _currentFolderDestino + "\\";
         _cont = 0;
@@ -94,7 +94,7 @@ public class SaveColicoes
         // _header = GetHeader();
     }
 
-    ~SaveColicoes()
+    ~SaveCentrar()
     {
         if (!_isInitiate) return;
         ResetRecord();
@@ -143,6 +143,11 @@ public class SaveColicoes
         else
             WriteStringInDoc(message, true);
         
+    }
+
+    private string GetHeader()
+    {
+        return "Registo" + Separador;       
     }
 
     private void SetUpFileAndDirectory()
@@ -194,10 +199,10 @@ public class SaveColicoes
             string temp;
             switch (_specialTypeDocName)
             {
-                case 0:
+                case SpecialTypeDoc.SolveDuplicate:
                     temp = SolveDuplicateFileNames();
                     break;
-                case 1:
+                case SpecialTypeDoc.Normal:
                     temp = _currentDocName + "_" + DateTime.Now.ToString("yyyyMMddTHHmmss");
                     break;
                 default:
@@ -231,6 +236,7 @@ public class SaveColicoes
 
     // ReSharper disable once UnusedMember.Global
 
+
     public string GetDocActivo()
     {
         if (_isInitiate) return _target + _currentDocName;
@@ -256,6 +262,8 @@ public class SaveColicoes
         _target = _directory + "\\" + _currentFolderDestino + "\\";
     }
 
+    // ReSharper disable once UnusedMember.Global
+
     public void SpecialDocName(string newName)
     {
         //#if !UNITY_ANDROID
@@ -266,10 +274,14 @@ public class SaveColicoes
         //#endif
     }
 
-    public void SpecialTypeDocName(int t)
+    // ReSharper disable once UnusedMember.Global
+
+    public void SpecialTypeDocName(SpecialTypeDoc t)
     {
         _specialTypeDocName = t;
     }
+
+    // ReSharper disable once UnusedMember.Global
 
     public void UseDefaultDocName()
     {
@@ -278,6 +290,8 @@ public class SaveColicoes
         _isInitiate = false;
     }
 
+    // ReSharper disable once UnusedMember.Global
+
     public void UseDefaultFolderName()
     {
         if (_useDefaultFolder) return;
@@ -285,6 +299,8 @@ public class SaveColicoes
         _isInitiate = false;
         _currentFolderDestino = _defaultFolderDestino;
     }
+
+    // ReSharper disable once UnusedMember.Local
 
     private void SetUpFileAndDirectory(string first)
     {
@@ -306,11 +322,6 @@ public class SaveColicoes
         var info = GetHeader(); 
         if (first == info) return;
         WriteStringInDoc(info, true);
-    }
-
-    private string GetHeader()
-    {
-        return "Registo" + Separador + "Name" + Separador + "Position Object" + Separador + "Position Player" + Separador + "State" + Separador + "Time";       
     }
 }
 // _target = _directory + "\\" +_CurrentFolderDestino ;
