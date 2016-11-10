@@ -112,24 +112,24 @@ public class HandleCenter : MonoBehaviour
 
     private void SetCenterOptiTrack()
     {
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            if (_localOptitrackManager != null)
-            {
-                _reset = true;
-                _setUpCentro = true;
-                _centroGameObject.transform.position =
-                    _centro = MathHelper.DeslocamentoHorizontal(_localOptitrackManager.GetUnityPositionVector());
-            }
-        }
-        _centroGameObject.GetComponent<MeshRenderer>().enabled = _setUpCentro; // && _localTrackerUi.SetUpCenter;
-        if (_setUpCentro)
-        {
-            var mensagem = "CenterPos" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(_centro) +
-                           MessageSeparators.L2;
+        //if (Input.GetKeyDown(KeyCode.F))
+        //{
+        //    if (_localOptitrackManager != null)
+        //    {
+        //        _reset = true;
+        //        _setUpCentro = true;
+        //        _centroGameObject.transform.position =
+        //            _centro = MathHelper.DeslocamentoHorizontal(_localOptitrackManager.GetUnityPositionVector());
+        //    }
+        //}
+        //_centroGameObject.GetComponent<MeshRenderer>().enabled = _setUpCentro; // && _localTrackerUi.SetUpCenter;
+        //if (_setUpCentro)
+        //{
+        //    var mensagem = "CenterPos" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(_centro) +
+        //                   MessageSeparators.L2;
 
-            _udpBroadcast.Send(mensagem);
-        }
+        //    _udpBroadcast.Send(mensagem);
+        //}
     }
 
     public void SetCenterOptiTrackButton()

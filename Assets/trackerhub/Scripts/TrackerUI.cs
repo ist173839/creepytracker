@@ -382,20 +382,20 @@ public class TrackerUI : MonoBehaviour
 
             UseRecord    = GUI.Toggle(new Rect(left, top, 100, 25), UseRecord, "Record");
 
-            ShowIndicator = GUI.Toggle(new Rect(left + 120, top, 100, 25), ShowIndicator, "Show Indicators");
-            _localHandleCenter.ShowIndicator = ShowIndicator;
+            //ShowIndicator = GUI.Toggle(new Rect(left + 120, top, 100, 25), ShowIndicator, "Show Indicators");
+            //_localHandleCenter.ShowIndicator = ShowIndicator;
             
-            top += 30;
+            //top += 30;
             
-            if (GUI.Button(new Rect(left, top, 100, 25), "Set Center"))
-            {
-                _localHandleCenter.SetCenterOptiTrackButton();
-            }
+            //if (GUI.Button(new Rect(left, top, 100, 25), "Set Center"))
+            //{
+            //    _localHandleCenter.SetCenterOptiTrackButton();
+            //}
 
-            if (GUI.Button(new Rect(left + 120, top, 100, 25), "Set Forward"))
-            {
-                _localHandleCenter.SetForwardPointOptiTrackButton();
-            }
+            //if (GUI.Button(new Rect(left + 120, top, 100, 25), "Set Forward"))
+            //{
+            //    _localHandleCenter.SetForwardPointOptiTrackButton();
+            //}
 
 
 
