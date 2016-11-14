@@ -13,7 +13,7 @@ using System.Text;
 using UnityEngine;
 
 // ReSharper disable once CheckNamespace
-public class SaveCenter
+public class SaveAvr
 {
     private StreamWriter _doc;
 #pragma warning disable 169
@@ -23,13 +23,18 @@ public class SaveCenter
     //private ControloMode _activeControloMode;
 
     // ReSharper disable once MemberCanBePrivate.Global
+    // ReSharper disable once UnusedAutoPropertyAccessor.Global
     public string Separador { get; private set; }
 
     private readonly string _defaultFolderDestino;
+#pragma warning disable 414
     private readonly string _startMessage;
+#pragma warning restore 414
     private readonly string _endMessage;
     private readonly string _directory;
     private readonly string _format;
+    private readonly string _versao;
+    private readonly string _sigla;
 
     private string _currentFolderDestino;
     private string _caminhoCompleto;
@@ -37,32 +42,27 @@ public class SaveCenter
     private string _currentDocName;
     private string _recordingName;
     private string _folderDestino;
-    private string _saveHeader;
     private string _fimCiclo;
     private string _docName;
     private string _target;
-    private string _versao;
-    private string _sigla;
-
-    // private string _header;
-
+    private string _saveHeader;
     public int NumColunas   { get; private set; }
 
     private static readonly int TamanhoMaximo = (int) Math.Pow(2, 20); // (2 ^ 30)
 
     private int _cont;
 
-    private SpecialTypeDoc _specialTypeDocName;
+    private int _specialTypeDocName;
 
     //  public bool DirectoryChange;
 
     private bool _useDefaultDocName;
     private bool _useDefaultFolder;
-    private bool _isRecording;
     private bool _isInitiate;
+    private bool _isRecording;
     private bool _oversize;
-    
-    public SaveCenter() 
+
+    public SaveAvr() 
     {
         _useDefaultDocName = true;
         _useDefaultFolder  = true;
@@ -70,40 +70,45 @@ public class SaveCenter
         _oversize          = false;
 
         _directory = System.IO.Directory.GetCurrentDirectory();
-        _currentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "Center Data";
-        _format   = ".txt";
+        _currentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "AVR Data";
         Separador = ";";
+
+        _format = ".csv";
+        _sigla  = "AVRD";
+        _versao = "V1";
 
         _startMessage = "INICIO";
         _endMessage   = "FIM";
 
-        _sigla = "CD";
-        _versao = "V1";
-
-        _recordingName = null;
+        _recordingName   = null;
         _caminhoCompleto = null;
-        _specialTypeDocName = SpecialTypeDoc.SolveDuplicate;
+        _saveHeader      = null;
+
+        _specialTypeDocName = 0;
         
         _target = _directory + "\\" + _currentFolderDestino + "\\";
         _cont = 0;
         NumColunas = 0;
-
-        _saveHeader = null;
-
-        // _header = GetHeader();
+        
+        //_activeControloMode  = ControloMode.CWIP;
+        //_headerCwip          = GetCwipHeader();
+        //_headerWip           = GetWipHeader();
+        //_header = GetHeader();
     }
 
-    ~SaveCenter()
+    ~SaveAvr()
     {
         if (!_isInitiate) return;
         ResetRecord();
-        if (File.Exists(_target + _currentDocName)) File.SetAttributes(_target + _currentDocName, FileAttributes.ReadOnly);    
+        if (File.Exists(_target + _currentDocName)) File.SetAttributes(_target + _currentDocName, FileAttributes.ReadOnly);
+        
     }
 
     private void ResetRecord()
     {
         _recordingName = null;
         _isInitiate = false;
+
         _cont = 0;
         NumColunas = 0;
     }
@@ -121,13 +126,17 @@ public class SaveCenter
 
     public void RecordMessage(string message)
     {
-       
+        if (message.Contains("Registo"))
+        {
+            _isInitiate = false;
+            _saveHeader = message;
+        }
+        
         if (!_isInitiate) SetUpFileAndDirectory();
-
-        //if (!_isInitiate) SetUpFileAndDirectory(message);
-        //if (message != _startMessage  && !_isInitiate)
-        //{
-        //} else
+        // if (!_isInitiate) SetUpFileAndDirectory(message);
+        // if (message != _startMessage  && !_isInitiate)
+        // {
+        // } else
         CheckFileSize();
         if (message == _endMessage)
         {
@@ -138,12 +147,7 @@ public class SaveCenter
             WriteStringInDoc(message, true);
         
     }
-
-    private string GetHeader()
-    {
-        return "Registo" + Separador;       
-    }
-
+    
     private void SetUpFileAndDirectory()
     {
         // _target = _directory + "\\" +_CurrentFolderDestino ;
@@ -155,9 +159,30 @@ public class SaveCenter
             SetUpHeader();
             _oversize = false;
         }
-
-        
         _isInitiate = true;
+    }
+
+    // ReSharper disable once UnusedMember.Local
+    private void SetUpFileAndDirectory(string first)
+    {
+        // _target = _directory + "\\" +_CurrentFolderDestino ;
+        SetUpDirectory();
+        SetFileName();
+        //SetUpHeader(first);
+        _isInitiate = true;
+    }
+    private void SetUpHeader()
+    {
+        // if (first.Contains("Registo")) return;
+        WriteStringInDoc(_saveHeader, true);
+    }
+
+
+    // ReSharper disable once UnusedMember.Local
+    private void SetUpHeader(string first)
+    {
+        if (first.Contains("Registo")) return;
+        WriteStringInDoc(first, true);
     }
 
     private void WriteStringInDoc(string registo, bool isAppend)
@@ -174,7 +199,7 @@ public class SaveCenter
         if (!File.Exists(_target + _currentDocName)) return;
         File.SetAttributes(_target + _currentDocName, FileAttributes.ReadOnly);
     }
-
+  
     private void SetUpDirectory()
     {
         if (!System.IO.Directory.Exists(_target))
@@ -193,10 +218,10 @@ public class SaveCenter
             string temp;
             switch (_specialTypeDocName)
             {
-                case SpecialTypeDoc.SolveDuplicate:
+                case 0:
                     temp = SolveDuplicateFileNames();
                     break;
-                case SpecialTypeDoc.Normal:
+                case 1:
                     temp = _currentDocName + "_" + DateTime.Now.ToString("yyyyMMddTHHmmss");
                     break;
                 default:
@@ -205,7 +230,7 @@ public class SaveCenter
             }
             _currentDocName = temp + _format;
 
-            Debug.Log("New Colision Data File : " + _currentDocName);
+            Debug.Log("New Walking Data File : " + _currentDocName);
         }
     }
 
@@ -229,8 +254,6 @@ public class SaveCenter
     }
 
     // ReSharper disable once UnusedMember.Global
-
-
     public string GetDocActivo()
     {
         if (_isInitiate) return _target + _currentDocName;
@@ -238,7 +261,6 @@ public class SaveCenter
     }
 
     // ReSharper disable once UnusedMember.Global
-
     public void SetRecordingName(string recordName)
     {
         if (recordName.Equals(_recordingName)) return;
@@ -247,7 +269,6 @@ public class SaveCenter
     }
 
     // ReSharper disable once UnusedMember.Global
-
     public void SpecialFolderName(string newName)
     {
         _currentFolderDestino = _folderDestino = newName;
@@ -255,8 +276,6 @@ public class SaveCenter
         _isInitiate = false;
         _target = _directory + "\\" + _currentFolderDestino + "\\";
     }
-
-    // ReSharper disable once UnusedMember.Global
 
     public void SpecialDocName(string newName)
     {
@@ -268,15 +287,12 @@ public class SaveCenter
         //#endif
     }
 
-    // ReSharper disable once UnusedMember.Global
-
-    public void SpecialTypeDocName(SpecialTypeDoc t)
+    public void SpecialTypeDocName(int t)
     {
         _specialTypeDocName = t;
     }
 
     // ReSharper disable once UnusedMember.Global
-
     public void UseDefaultDocName()
     {
         if (_useDefaultDocName) return;
@@ -285,7 +301,6 @@ public class SaveCenter
     }
 
     // ReSharper disable once UnusedMember.Global
-
     public void UseDefaultFolderName()
     {
         if (_useDefaultFolder) return;
@@ -294,31 +309,8 @@ public class SaveCenter
         _currentFolderDestino = _defaultFolderDestino;
     }
 
-    // ReSharper disable once UnusedMember.Local
-
-    private void SetUpFileAndDirectory(string first)
-    {
-
-        SetUpDirectory();
-        SetFileName();
-        SetUpHeader(first);
-        _isInitiate = true;
-    }
-
-    private void SetUpHeader()
-    {
-        //var info = GetHeader();
-        WriteStringInDoc(_saveHeader, true);
-    }
-
-    private void SetUpHeader(string first)
-    {
-        var info = GetHeader(); 
-        if (first == info) return;
-        WriteStringInDoc(info, true);
-    }
 }
-// _target = _directory + "\\" +_CurrentFolderDestino ;
+
 
 //if (!IsRecording)
 //{
@@ -326,3 +318,25 @@ public class SaveCenter
 //    return;
 //}
 //CheckHeaders(message);
+
+
+//private string GetHeader()
+//{
+//    return
+//       null;
+//}
+
+//private void SetUpHeader()
+//{
+//    var info = GetHeader();
+//    WriteStringInDoc(info, true);
+//}
+
+//private void SetUpHeader(string first)
+//{
+//    var info = GetHeader(); 
+//    if (first == info) return;
+//    WriteStringInDoc(info, true);
+//}
+
+//private string _header;

@@ -26,6 +26,7 @@ using System.Text;
 //    public const string SepaCol         = "+";
 //}
 
+
 // ReSharper disable once CheckNamespace
 public enum SpecialTypeDoc
 {
@@ -61,7 +62,8 @@ public class SafeWriteFile
     private string _format;
     private string _versao;
     private string _sigla;
-    
+
+
     private int _cont;
 
     private static readonly int TamanhoMaximo = 2 * (int) Math.Pow(2, 20); //2 * (2^20)

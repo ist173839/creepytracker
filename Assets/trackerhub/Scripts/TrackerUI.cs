@@ -16,8 +16,6 @@ enum MenuAction
 	None
 }
 
-// ReSharper disable once InconsistentNaming
-// ReSharper disable once ClassNeverInstantiated.Global
 public class TrackerUI : MonoBehaviour
 {
 
@@ -67,8 +65,8 @@ public class TrackerUI : MonoBehaviour
     public bool UseRecord     { get; set; }
     public bool ShowIndicator { get; set; }
 
-    public bool SetUpCenter { get; set; }
-    public bool UseOptiTrack { get; set; }
+    //public bool SetUpCenter { get; set;}
+    //public bool UseOptiTrack { get; set;}
 
     // ReSharper disable once ArrangeTypeMemberModifiers
     // ReSharper disable once UnusedMember.Local
@@ -386,21 +384,24 @@ public class TrackerUI : MonoBehaviour
 
             //ShowIndicator = GUI.Toggle(new Rect(left + 120, top, 100, 25), ShowIndicator, "Show Indicators");
             //_localHandleCenter.ShowIndicator = ShowIndicator;
-
-            top += 30;
-
-            if (GUI.Button(new Rect(left, top, 100, 25), "Set Center"))
-            {
-                _localHandleCenter.SetCenterOptiTrackButton();
-            }
+            
+            //top += 30;
+            
+            //if (GUI.Button(new Rect(left, top, 100, 25), "Set Center"))
+            //{
+            //    _localHandleCenter.SetCenterOptiTrackButton();
+            //}
 
             //if (GUI.Button(new Rect(left + 120, top, 100, 25), "Set Forward"))
             //{
             //    _localHandleCenter.SetForwardPointOptiTrackButton();
             //}
-            //SetUpCenter = GUI.Toggle(new Rect(left, top, 100, 25), SetUpCenter, "Use Center");
-            top += 20;
-            UseOptiTrack = GUI.Toggle(new Rect(left, top, 100, 25), UseOptiTrack, "Use Opti");
+
+
+
+            //SetUpCenter  = GUI.Toggle(new Rect(left, top, 100, 25), SetUpCenter, "Use Center");
+            //top += 20;
+            // UseOptiTrack = GUI.Toggle(new Rect(left, top, 100, 25), UseOptiTrack, "Use Opti");
 
             //Debug.Log("UseRecord = " + UseRecord);
 

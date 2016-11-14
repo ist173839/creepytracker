@@ -13,7 +13,7 @@ using System.Text;
 using UnityEngine;
 
 // ReSharper disable once CheckNamespace
-public class SaveAvr
+public class SaveColicoes
 {
     private StreamWriter _doc;
 #pragma warning disable 169
@@ -23,18 +23,13 @@ public class SaveAvr
     //private ControloMode _activeControloMode;
 
     // ReSharper disable once MemberCanBePrivate.Global
-    // ReSharper disable once UnusedAutoPropertyAccessor.Global
     public string Separador { get; private set; }
 
     private readonly string _defaultFolderDestino;
-#pragma warning disable 414
     private readonly string _startMessage;
-#pragma warning restore 414
     private readonly string _endMessage;
     private readonly string _directory;
     private readonly string _format;
-    private readonly string _versao;
-    private readonly string _sigla;
 
     private string _currentFolderDestino;
     private string _caminhoCompleto;
@@ -42,10 +37,14 @@ public class SaveAvr
     private string _currentDocName;
     private string _recordingName;
     private string _folderDestino;
-    private string _saveHeader;
     private string _fimCiclo;
     private string _docName;
     private string _target;
+    private string _sigla;
+    private string _versao;
+    private string _saveHeader;
+
+    // private string _header;
 
     public int NumColunas   { get; private set; }
 
@@ -53,17 +52,18 @@ public class SaveAvr
 
     private int _cont;
 
-    private int _specialTypeDocName;
+    private SpecialTypeDoc _specialTypeDocName;
 
     //  public bool DirectoryChange;
 
     private bool _useDefaultDocName;
     private bool _useDefaultFolder;
-    private bool _isRecording;
     private bool _isInitiate;
+    private bool _isRecording;
     private bool _oversize;
 
-    public SaveAvr() 
+
+    public SaveColicoes() 
     {
         _useDefaultDocName = true;
         _useDefaultFolder  = true;
@@ -71,45 +71,40 @@ public class SaveAvr
         _oversize          = false;
 
         _directory = System.IO.Directory.GetCurrentDirectory();
-        _currentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "AVR Data";
+        _currentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "Collisions Data";
+        _format   = ".csv";
         Separador = ";";
-
-        _format = ".csv";
-        _sigla  = "AVRD";
-        _versao = "V1";
 
         _startMessage = "INICIO";
         _endMessage   = "FIM";
 
-        _recordingName   = null;
-        _caminhoCompleto = null;
-        _saveHeader      = null;
+        _sigla = "COD";
+        _versao = "V1";
 
-        _specialTypeDocName = 0;
+        _recordingName = null;
+        _caminhoCompleto = null;
+        _specialTypeDocName = SpecialTypeDoc.SolveDuplicate;
         
         _target = _directory + "\\" + _currentFolderDestino + "\\";
         _cont = 0;
         NumColunas = 0;
-        
-        //_activeControloMode  = ControloMode.CWIP;
-        //_headerCwip          = GetCwipHeader();
-        //_headerWip           = GetWipHeader();
-        //_header = GetHeader();
+
+        _saveHeader = null;
+
+        // _header = GetHeader();
     }
 
-    ~SaveAvr()
+    ~SaveColicoes()
     {
         if (!_isInitiate) return;
         ResetRecord();
-        if (File.Exists(_target + _currentDocName)) File.SetAttributes(_target + _currentDocName, FileAttributes.ReadOnly);
-        
+        if (File.Exists(_target + _currentDocName)) File.SetAttributes(_target + _currentDocName, FileAttributes.ReadOnly);    
     }
 
     private void ResetRecord()
     {
         _recordingName = null;
         _isInitiate = false;
-
         _cont = 0;
         NumColunas = 0;
     }
@@ -132,12 +127,13 @@ public class SaveAvr
             _isInitiate = false;
             _saveHeader = message;
         }
-        
+
         if (!_isInitiate) SetUpFileAndDirectory();
-        // if (!_isInitiate) SetUpFileAndDirectory(message);
-        // if (message != _startMessage  && !_isInitiate)
-        // {
-        // } else
+
+        //if (!_isInitiate) SetUpFileAndDirectory(message);
+        //if (message != _startMessage  && !_isInitiate)
+        //{
+        //} else
         CheckFileSize();
         if (message == _endMessage)
         {
@@ -148,7 +144,7 @@ public class SaveAvr
             WriteStringInDoc(message, true);
         
     }
-    
+
     private void SetUpFileAndDirectory()
     {
         // _target = _directory + "\\" +_CurrentFolderDestino ;
@@ -160,30 +156,9 @@ public class SaveAvr
             SetUpHeader();
             _oversize = false;
         }
+
+        
         _isInitiate = true;
-    }
-
-    // ReSharper disable once UnusedMember.Local
-    private void SetUpFileAndDirectory(string first)
-    {
-        // _target = _directory + "\\" +_CurrentFolderDestino ;
-        SetUpDirectory();
-        SetFileName();
-        //SetUpHeader(first);
-        _isInitiate = true;
-    }
-    private void SetUpHeader()
-    {
-        // if (first.Contains("Registo")) return;
-        WriteStringInDoc(_saveHeader, true);
-    }
-
-
-    // ReSharper disable once UnusedMember.Local
-    private void SetUpHeader(string first)
-    {
-        if (first.Contains("Registo")) return;
-        WriteStringInDoc(first, true);
     }
 
     private void WriteStringInDoc(string registo, bool isAppend)
@@ -200,7 +175,7 @@ public class SaveAvr
         if (!File.Exists(_target + _currentDocName)) return;
         File.SetAttributes(_target + _currentDocName, FileAttributes.ReadOnly);
     }
-  
+
     private void SetUpDirectory()
     {
         if (!System.IO.Directory.Exists(_target))
@@ -219,10 +194,10 @@ public class SaveAvr
             string temp;
             switch (_specialTypeDocName)
             {
-                case 0:
+                case SpecialTypeDoc.SolveDuplicate:
                     temp = SolveDuplicateFileNames();
                     break;
-                case 1:
+                case SpecialTypeDoc.Normal:
                     temp = _currentDocName + "_" + DateTime.Now.ToString("yyyyMMddTHHmmss");
                     break;
                 default:
@@ -231,7 +206,7 @@ public class SaveAvr
             }
             _currentDocName = temp + _format;
 
-            Debug.Log("New Walking Data File : " + _currentDocName);
+            Debug.Log("New Colision Data File : " + _currentDocName);
         }
     }
 
@@ -255,6 +230,7 @@ public class SaveAvr
     }
 
     // ReSharper disable once UnusedMember.Global
+
     public string GetDocActivo()
     {
         if (_isInitiate) return _target + _currentDocName;
@@ -262,6 +238,7 @@ public class SaveAvr
     }
 
     // ReSharper disable once UnusedMember.Global
+
     public void SetRecordingName(string recordName)
     {
         if (recordName.Equals(_recordingName)) return;
@@ -270,6 +247,7 @@ public class SaveAvr
     }
 
     // ReSharper disable once UnusedMember.Global
+
     public void SpecialFolderName(string newName)
     {
         _currentFolderDestino = _folderDestino = newName;
@@ -288,7 +266,8 @@ public class SaveAvr
         //#endif
     }
 
-    public void SpecialTypeDocName(int t)
+    // ReSharper disable once UnusedMember.Global
+    public void SpecialTypeDocName(SpecialTypeDoc t)
     {
         _specialTypeDocName = t;
     }
@@ -310,8 +289,34 @@ public class SaveAvr
         _currentFolderDestino = _defaultFolderDestino;
     }
 
-}
+    // ReSharper disable once UnusedMember.Local
+    private void SetUpFileAndDirectory(string first)
+    {
+        SetUpDirectory();
+        SetFileName();
+        SetUpHeader(first);
+        _isInitiate = true;
+    }
 
+    private void SetUpHeader()
+    {
+        //var info = GetHeader();
+        WriteStringInDoc(_saveHeader, true);
+    }
+
+    private void SetUpHeader(string first)
+    {
+        var info = GetHeader(); 
+        if (first == info) return;
+        WriteStringInDoc(info, true);
+    }
+
+    private string GetHeader()
+    {
+        return "Registo" + Separador + "Name" + Separador + "Position Object" + Separador + "Position Player" + Separador + "State" + Separador + "Time";       
+    }
+}
+// _target = _directory + "\\" +_CurrentFolderDestino ;
 
 //if (!IsRecording)
 //{
@@ -319,25 +324,3 @@ public class SaveAvr
 //    return;
 //}
 //CheckHeaders(message);
-
-
-//private string GetHeader()
-//{
-//    return
-//       null;
-//}
-
-//private void SetUpHeader()
-//{
-//    var info = GetHeader();
-//    WriteStringInDoc(info, true);
-//}
-
-//private void SetUpHeader(string first)
-//{
-//    var info = GetHeader(); 
-//    if (first == info) return;
-//    WriteStringInDoc(info, true);
-//}
-
-//private string _header;

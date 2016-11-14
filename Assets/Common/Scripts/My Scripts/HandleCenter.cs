@@ -2,15 +2,14 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using Object = UnityEngine.Object;
+
 
 // ReSharper disable once ClassNeverInstantiated.Global
 // ReSharper disable once UnusedMember.Global
 // ReSharper disable once CheckNamespace
 public class HandleCenter : MonoBehaviour
 {
-    // ReSharper disable once MemberCanBePrivate.Global
     public enum Side
     {
         Right,
@@ -19,37 +18,30 @@ public class HandleCenter : MonoBehaviour
         Behind,
     }
 
-    // ReSharper disable once MemberCanBePrivate.Global
+
     public List<GameObject> IndicatorsList;
-    // ReSharper disable once MemberCanBePrivate.Global
     public List<GameObject> ObstacleList;
 
     private OptitrackManager _localOptitrackManager;
 
     private UdpBroadcast _udpBroadcast;
-    
+
     private TrackerUI _localTrackerUi;
-
-    private Tracker _localTracker;
-
-    private SaveCenter _saveCenter;
 
   //  private Transform _parent;
 
-    private GameObject _forwardGameObject;
-    private GameObject _centroGameObject;
     private GameObject _indicadores;
+
     private GameObject _helpers;
 
-    // ReSharper disable once MemberCanBePrivate.Global
-    // ReSharper disable once UnassignedField.Global
+    private GameObject _centroGameObject;
+    private GameObject _forwardGameObject;
+
     public bool ShowIndicator;
 
-    private bool _setUpForward;
     private bool _setUpCentro;
+    private bool _setUpForward;
     private bool _reset;
-
-    public int Index;
 
 #pragma warning disable 169
     private int _indicadorCounter;
@@ -60,12 +52,7 @@ public class HandleCenter : MonoBehaviour
 
     private Vector3 _forwardPoint;
     private Vector3 _forward;
-
-
-    private Vector3? _centro;
-
-
-    private string _path;
+    private Vector3 _centro;
 
     // Use this for initialization
     // ReSharper disable once UnusedMember.Local
@@ -78,12 +65,10 @@ public class HandleCenter : MonoBehaviour
         _localOptitrackManager = gameObject.GetComponent<OptitrackManager>();
         _localTrackerUi        = gameObject.GetComponent<TrackerUI>();
 
-        _localTracker = gameObject.GetComponent<Tracker>();
-
-        _saveCenter = new SaveCenter();
 
         IndicatorsList = new List<GameObject>();
         ObstacleList   = new List<GameObject>();
+
 
         _helpers = new GameObject { name = "Helpers" };
         _helpers.transform.position = transform.position;
@@ -92,7 +77,8 @@ public class HandleCenter : MonoBehaviour
         _indicadores = new GameObject { name = "Indicators" };
         _indicadores.transform.position = transform.position;
         _indicadores.transform.parent   = _helpers.transform;
-        
+
+
         _centroGameObject  = GameObjectHelper.MyCreatePrimitiveObject(PrimitiveType.Sphere, "Centro", Vector3.zero, _helpers.transform, false);
         _centroGameObject.GetComponent<MeshRenderer>().material.color = Color.black;
         _centroGameObject.transform.localScale = new Vector3(0.50f, 0.1f, 0.50f);
@@ -105,126 +91,69 @@ public class HandleCenter : MonoBehaviour
 
         // ShowIndicator = false;
         _countId = 0;
-
-        _path = System.IO.Directory.GetCurrentDirectory() +  "Saved Files" + "\\" + "Center Data";
-
-        if (!System.IO.Directory.Exists(_path)) System.IO.Directory.CreateDirectory(_path);
-         
-        _centro = new Vector3?();
-        Index = 0;
     }
 	
 	// Update is called once per frame
-    // ReSharper disable once ArrangeTypeMemberModifiers
     // ReSharper disable once UnusedMember.Local
-    void Update ()
+    // ReSharper disable once ArrangeTypeMemberModifiers
+	void Update ()
 	{
-
-
-        if (_setUpCentro && _setUpForward && _reset && _centro.HasValue)
+	    SetCenterOptiTrack();
+	    if (_setUpCentro && _setUpForward && _reset)
 	    {
-	        _forward = _forwardPoint - _centro.Value;
+	        _forward = _forwardPoint - _centro;
             _reset = false;
-            Debug.DrawLine(_centro.Value, _centro.Value + _forward * 2.0f, Color.white);
+            Debug.DrawLine(_centro, _centro + _forward * 2.0f, Color.white);
         }
+
 	    SetRender(ShowIndicator);
+
 	}
-    
+
+    private void SetCenterOptiTrack()
+    {
+        //if (Input.GetKeyDown(KeyCode.F))
+        //{
+        //    if (_localOptitrackManager != null)
+        //    {
+        //        _reset = true;
+        //        _setUpCentro = true;
+        //        _centroGameObject.transform.position =
+        //            _centro = MathHelper.DeslocamentoHorizontal(_localOptitrackManager.GetUnityPositionVector());
+        //    }
+        //}
+        //_centroGameObject.GetComponent<MeshRenderer>().enabled = _setUpCentro; // && _localTrackerUi.SetUpCenter;
+        //if (_setUpCentro)
+        //{
+        //    var mensagem = "CenterPos" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(_centro) +
+        //                   MessageSeparators.L2;
+
+        //    _udpBroadcast.Send(mensagem);
+        //}
+    }
+
     public void SetCenterOptiTrackButton()
     {
         if (_localOptitrackManager != null)
         {
             _reset = true;
             _setUpCentro = true;
-            _centro = MathHelper.DeslocamentoHorizontal(_localOptitrackManager.GetUnityPositionVector());
+            _centroGameObject.transform.position =
+                _centro = MathHelper.DeslocamentoHorizontal(_localOptitrackManager.GetUnityPositionVector());
+            SetIndicators(_centro);
 
-            _centroGameObject.transform.position = _centro.Value;
-
-            SetIndicators(_centro.Value);
-            
         }
-
+       
         _centroGameObject.GetComponent<MeshRenderer>().enabled = _setUpCentro; // && _localTrackerUi.SetUpCenter;
-
-        if (_setUpCentro && _centro.HasValue)
+        if (_setUpCentro)
         {
-
-            var center = "CenterPos" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(_centro.Value);
-
-            var humans = _localTracker.GetHumans();
-
-            var mensaHumans = ""; 
-
-            foreach (var h in humans)
-            {
-                var position = _centro - h.Value.Position;
-
-                mensaHumans +=  MessageSeparators.L2;
-                mensaHumans += "Id" + MessageSeparators.SET + h.Value.ID;
-                mensaHumans += MessageSeparators.L2;
-                mensaHumans += "Desvio" + MessageSeparators.SET + position;
-            }
-
-            var mensagem = center + mensaHumans; // + MessageSeparators.L2;
-            
-            _saveCenter.RecordMessage(center);
+            var mensagem = "CenterPos" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(_centro) +
+                           MessageSeparators.L2;
 
             _udpBroadcast.Send(mensagem);
         }
     }
-
-    public void SetSaveFilesButton()
-    {
-        var info = new DirectoryInfo(_path);
-        var fileInfo = info.GetFiles();
-
-        var length = fileInfo.Length;
-        if (length == 0)
-        {
-            Index = 0;
-            _centro = null;
-        }
-        else if (length >= Index)
-        {
-            Index = length - 1;
-        }
-        
-        var file = fileInfo[length];
-        //foreach (var file in fileInfo)
-        {
-           var fs =  file.Open(FileMode.Open);
-            using (var bs = new BufferedStream(fs))
-            using (var sr = new StreamReader(bs))
-            {
-                //var l = 0;
-                string line;
-                while ((line = sr.ReadLine()) != null)
-                {
-                    _centro = GetCenterFromFile(line);
-                    // MyDebug.Log("Print : " + l++ + ",  " + line);
-                    // allText += line;
-                }
-            }
-        }
-    }
-
-    private static Vector3? GetCenterFromFile(string line)
-    {
-        var l = "";
-        if (line.Contains("/"))
-        {
-            var lines = line.Split(MessageSeparators.L2);
-            foreach (var ls in lines) if (ls.Contains("CenterPos")) l = ls;
-        }
-        else l = line;
-
-        var lineText = l.Split(MessageSeparators.SET);
-        if (lineText[0] == "CenterPos") return CommonUtils.ConvertRpcStringToVector3(lineText[1]);
-
-        return null;
-    }
-
-
+    
     public void SetForwardPointOptiTrackButton()
     {
         if (_localOptitrackManager != null)
@@ -287,8 +216,10 @@ public class HandleCenter : MonoBehaviour
         foreach (var obstacle in ObstacleList)
             for (var i = 0; i < obstacle.transform.childCount; i++)
                 obstacle.transform.GetChild(i).GetComponent<MeshRenderer>().enabled = render;
+
     }
-    
+
+
     private static GameObject CreateLimit(Transform parent, Vector3 center, Side side, int id)
     {
         Quaternion rotation;
@@ -366,49 +297,11 @@ public class HandleCenter : MonoBehaviour
 }
 
 /*
- *
- *
- *
-     var l2 = (string) MessageSeparators.L2;
- 
-        // Vector3 StringToVector3([NotNull] string text, char separador)
-        // return  // float.Parse( a.Replace(",", "."));
-        
-         line = sr.ReadLine()) != null)
-            {
-                iLine++;
-                // Debug.Log("kr = " + line.Split(';')[16] + ", kl = " + line.Split(';')[17]);
-                 char[] del = { ';' };
-                if (!line.Contains("Registo"))
-                {
-                  
-       
 
-    SetCenterOptiTrack();
-
-
-   private void SetCenterOptiTrack()
-    {
-        //if (Input.GetKeyDown(KeyCode.F))
-        //{
-        //    if (_localOptitrackManager != null)
-        //    {
-        //        _reset = true;
-        //        _setUpCentro = true;
-        //        _centroGameObject.transform.position =
-        //            _centro = MathHelper.DeslocamentoHorizontal(_localOptitrackManager.GetUnityPositionVector());
-        //    }
-        //}
-        //_centroGameObject.GetComponent<MeshRenderer>().enabled = _setUpCentro; // && _localTrackerUi.SetUpCenter;
-        //if (_setUpCentro)
-        //{
-        //    var mensagem = "CenterPos" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(_centro) +
-        //                   MessageSeparators.L2;
-
-        //    _udpBroadcast.Send(mensagem);
-        //}
-    }
-
+ * 
+ * 
+ * 
+ * 
  * 
  
     Position = new Vector3(-0.8f, -1.7f,  0.9f),

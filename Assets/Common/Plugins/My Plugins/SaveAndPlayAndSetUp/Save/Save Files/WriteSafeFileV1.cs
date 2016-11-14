@@ -12,9 +12,11 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
+
+
 // ReSharper disable once CheckNamespace
 // ReSharper disable once ClassNeverInstantiated.Global
-public class SafeCenter
+public class WriteSafeFileV1
 {
     // ReSharper disable once MemberCanBePrivate.Global
     public enum VersaoDisponivel
@@ -31,20 +33,20 @@ public class SafeCenter
 
     private StreamWriter Doc;
 
-    public string CurrentFolderDestino;
     public string FolderDestino;
-    public string InfoExtra;
-    public string InfoCompl;
-    public string Directory;
     public string DocName;
+    public string InfoCompl;
+    public string InfoExtra;
+    public string CurrentFolderDestino;
+    public string Directory;
 
     private string _defaultFolderDestino;
-    private string _caminhoCompleto;
     private string _defaultDocName;
     private string _currentDocName;
     private string _fileName;
     private string _target;
     private string _format;
+    private string _caminhoCompleto;
 
     private int _cont;
     private int _specialTypeDocName;
@@ -58,7 +60,7 @@ public class SafeCenter
     private bool _activo;
     private bool _first;
 
-    public SafeCenter()
+    public WriteSafeFileV1()
     {
 #if !UNITY_ANDROID || UNITY_EDITOR
         _useDefaultDocName = true;
@@ -81,7 +83,7 @@ public class SafeCenter
 #endif
     }
 
-    ~SafeCenter()
+    ~WriteSafeFileV1()
     {
         ResetMessage();
 #if !UNITY_ANDROID || UNITY_EDITOR
