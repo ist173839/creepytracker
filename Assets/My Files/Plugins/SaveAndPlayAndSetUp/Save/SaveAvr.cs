@@ -13,7 +13,7 @@ using System.Text;
 using UnityEngine;
 
 // ReSharper disable once CheckNamespace
-public class SaveColicoes
+public class SaveAvr
 {
     private StreamWriter _doc;
 #pragma warning disable 169
@@ -23,13 +23,18 @@ public class SaveColicoes
     //private ControloMode _activeControloMode;
 
     // ReSharper disable once MemberCanBePrivate.Global
+    // ReSharper disable once UnusedAutoPropertyAccessor.Global
     public string Separador { get; private set; }
 
     private readonly string _defaultFolderDestino;
+#pragma warning disable 414
     private readonly string _startMessage;
+#pragma warning restore 414
     private readonly string _endMessage;
     private readonly string _directory;
     private readonly string _format;
+    private readonly string _versao;
+    private readonly string _sigla;
 
     private string _currentFolderDestino;
     private string _caminhoCompleto;
@@ -37,14 +42,10 @@ public class SaveColicoes
     private string _currentDocName;
     private string _recordingName;
     private string _folderDestino;
+    private string _saveHeader;
     private string _fimCiclo;
     private string _docName;
     private string _target;
-    private string _sigla;
-    private string _versao;
-    private string _saveHeader;
-
-    // private string _header;
 
     public int NumColunas   { get; private set; }
 
@@ -52,18 +53,17 @@ public class SaveColicoes
 
     private int _cont;
 
-    private SpecialTypeDoc _specialTypeDocName;
+    private int _specialTypeDocName;
 
     //  public bool DirectoryChange;
 
     private bool _useDefaultDocName;
     private bool _useDefaultFolder;
-    private bool _isInitiate;
     private bool _isRecording;
+    private bool _isInitiate;
     private bool _oversize;
 
-
-    public SaveColicoes() 
+    public SaveAvr() 
     {
         _useDefaultDocName = true;
         _useDefaultFolder  = true;
@@ -71,40 +71,45 @@ public class SaveColicoes
         _oversize          = false;
 
         _directory = System.IO.Directory.GetCurrentDirectory();
-        _currentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "Collisions Data";
-        _format   = ".csv";
+        _currentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "AVR Data";
         Separador = ";";
+
+        _format = ".csv";
+        _sigla  = "AVRD";
+        _versao = "V1";
 
         _startMessage = "INICIO";
         _endMessage   = "FIM";
 
-        _sigla = "COD";
-        _versao = "V1";
-
-        _recordingName = null;
+        _recordingName   = null;
         _caminhoCompleto = null;
-        _specialTypeDocName = SpecialTypeDoc.SolveDuplicate;
+        _saveHeader      = null;
+
+        _specialTypeDocName = 0;
         
         _target = _directory + "\\" + _currentFolderDestino + "\\";
         _cont = 0;
         NumColunas = 0;
-
-        _saveHeader = null;
-
-        // _header = GetHeader();
+        
+        //_activeControloMode  = ControloMode.CWIP;
+        //_headerCwip          = GetCwipHeader();
+        //_headerWip           = GetWipHeader();
+        //_header = GetHeader();
     }
 
-    ~SaveColicoes()
+    ~SaveAvr()
     {
         if (!_isInitiate) return;
         ResetRecord();
-        if (File.Exists(_target + _currentDocName)) File.SetAttributes(_target + _currentDocName, FileAttributes.ReadOnly);    
+        if (File.Exists(_target + _currentDocName)) File.SetAttributes(_target + _currentDocName, FileAttributes.ReadOnly);
+        
     }
 
     private void ResetRecord()
     {
         _recordingName = null;
         _isInitiate = false;
+
         _cont = 0;
         NumColunas = 0;
     }
@@ -127,13 +132,12 @@ public class SaveColicoes
             _isInitiate = false;
             _saveHeader = message;
         }
-
+        
         if (!_isInitiate) SetUpFileAndDirectory();
-
-        //if (!_isInitiate) SetUpFileAndDirectory(message);
-        //if (message != _startMessage  && !_isInitiate)
-        //{
-        //} else
+        // if (!_isInitiate) SetUpFileAndDirectory(message);
+        // if (message != _startMessage  && !_isInitiate)
+        // {
+        // } else
         CheckFileSize();
         if (message == _endMessage)
         {
@@ -144,7 +148,7 @@ public class SaveColicoes
             WriteStringInDoc(message, true);
         
     }
-
+    
     private void SetUpFileAndDirectory()
     {
         // _target = _directory + "\\" +_CurrentFolderDestino ;
@@ -156,9 +160,30 @@ public class SaveColicoes
             SetUpHeader();
             _oversize = false;
         }
-
-        
         _isInitiate = true;
+    }
+
+    // ReSharper disable once UnusedMember.Local
+    private void SetUpFileAndDirectory(string first)
+    {
+        // _target = _directory + "\\" +_CurrentFolderDestino ;
+        SetUpDirectory();
+        SetFileName();
+        //SetUpHeader(first);
+        _isInitiate = true;
+    }
+    private void SetUpHeader()
+    {
+        // if (first.Contains("Registo")) return;
+        WriteStringInDoc(_saveHeader, true);
+    }
+
+
+    // ReSharper disable once UnusedMember.Local
+    private void SetUpHeader(string first)
+    {
+        if (first.Contains("Registo")) return;
+        WriteStringInDoc(first, true);
     }
 
     private void WriteStringInDoc(string registo, bool isAppend)
@@ -175,7 +200,7 @@ public class SaveColicoes
         if (!File.Exists(_target + _currentDocName)) return;
         File.SetAttributes(_target + _currentDocName, FileAttributes.ReadOnly);
     }
-
+  
     private void SetUpDirectory()
     {
         if (!System.IO.Directory.Exists(_target))
@@ -194,10 +219,10 @@ public class SaveColicoes
             string temp;
             switch (_specialTypeDocName)
             {
-                case SpecialTypeDoc.SolveDuplicate:
+                case 0:
                     temp = SolveDuplicateFileNames();
                     break;
-                case SpecialTypeDoc.Normal:
+                case 1:
                     temp = _currentDocName + "_" + DateTime.Now.ToString("yyyyMMddTHHmmss");
                     break;
                 default:
@@ -206,7 +231,7 @@ public class SaveColicoes
             }
             _currentDocName = temp + _format;
 
-            Debug.Log("New Colision Data File : " + _currentDocName);
+            Debug.Log("New Walking Data File : " + _currentDocName);
         }
     }
 
@@ -230,7 +255,6 @@ public class SaveColicoes
     }
 
     // ReSharper disable once UnusedMember.Global
-
     public string GetDocActivo()
     {
         if (_isInitiate) return _target + _currentDocName;
@@ -238,7 +262,6 @@ public class SaveColicoes
     }
 
     // ReSharper disable once UnusedMember.Global
-
     public void SetRecordingName(string recordName)
     {
         if (recordName.Equals(_recordingName)) return;
@@ -247,7 +270,6 @@ public class SaveColicoes
     }
 
     // ReSharper disable once UnusedMember.Global
-
     public void SpecialFolderName(string newName)
     {
         _currentFolderDestino = _folderDestino = newName;
@@ -266,8 +288,7 @@ public class SaveColicoes
         //#endif
     }
 
-    // ReSharper disable once UnusedMember.Global
-    public void SpecialTypeDocName(SpecialTypeDoc t)
+    public void SpecialTypeDocName(int t)
     {
         _specialTypeDocName = t;
     }
@@ -289,34 +310,8 @@ public class SaveColicoes
         _currentFolderDestino = _defaultFolderDestino;
     }
 
-    // ReSharper disable once UnusedMember.Local
-    private void SetUpFileAndDirectory(string first)
-    {
-        SetUpDirectory();
-        SetFileName();
-        SetUpHeader(first);
-        _isInitiate = true;
-    }
-
-    private void SetUpHeader()
-    {
-        //var info = GetHeader();
-        WriteStringInDoc(_saveHeader, true);
-    }
-
-    private void SetUpHeader(string first)
-    {
-        var info = GetHeader(); 
-        if (first == info) return;
-        WriteStringInDoc(info, true);
-    }
-
-    private string GetHeader()
-    {
-        return "Registo" + Separador + "Name" + Separador + "Position Object" + Separador + "Position Player" + Separador + "State" + Separador + "Time";       
-    }
 }
-// _target = _directory + "\\" +_CurrentFolderDestino ;
+
 
 //if (!IsRecording)
 //{
@@ -324,3 +319,25 @@ public class SaveColicoes
 //    return;
 //}
 //CheckHeaders(message);
+
+
+//private string GetHeader()
+//{
+//    return
+//       null;
+//}
+
+//private void SetUpHeader()
+//{
+//    var info = GetHeader();
+//    WriteStringInDoc(info, true);
+//}
+
+//private void SetUpHeader(string first)
+//{
+//    var info = GetHeader(); 
+//    if (first == info) return;
+//    WriteStringInDoc(info, true);
+//}
+
+//private string _header;

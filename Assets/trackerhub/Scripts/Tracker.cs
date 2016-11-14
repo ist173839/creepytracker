@@ -39,7 +39,8 @@ public class Tracker : MonoBehaviour
 
 	public string[] UnicastClients
     {
-		get {
+		get
+        {
 			return _udpBroadcast.UnicastClients;
 		}
 	}
@@ -70,8 +71,7 @@ public class Tracker : MonoBehaviour
 
         _localOptitrackManager = gameObject.GetComponent<OptitrackManager>();
 	    _localTrackerUi = gameObject.GetComponent<TrackerUI>();
-
-
+        
 	    _loadConfig();
 	    _loadSavedSensors();
 
@@ -79,8 +79,7 @@ public class Tracker : MonoBehaviour
 	    IdIntList      = new List<int>();
 
 	    CountHuman = 0;
-       
-	}
+    }
 
     // ReSharper disable once UnusedMember.Local
     // ReSharper disable once ArrangeTypeMemberModifiers
