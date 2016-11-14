@@ -88,11 +88,14 @@
     <Compile Include="Assets\Common\Plugins\My Plugins\Helpers\Math\RandomHelper.cs" />
     <Compile Include="Assets\Common\Plugins\My Plugins\Helpers\StringHelper.cs" />
     <Compile Include="Assets\Common\Plugins\My Plugins\OptiTrack\DirectMulticastSocketClient.cs" />
-    <Compile Include="Assets\Common\Plugins\My Plugins\Save\Save Files\SafeWriteFile.cs" />
-    <Compile Include="Assets\Common\Plugins\My Plugins\Save\Save Files\SaveAvr.cs" />
-    <Compile Include="Assets\Common\Plugins\My Plugins\Save\Save Data\SaveCentrar.cs" />
-    <Compile Include="Assets\Common\Plugins\My Plugins\Save\Save Files\SaveColicoes.cs" />
-    <Compile Include="Assets\Common\Plugins\My Plugins\Save\Save Files\SaveRecord.cs" />
+    <Compile Include="Assets\Common\Plugins\My Plugins\SaveAndPlayAndSetUp\Play\EmulateSaveData.cs" />
+    <Compile Include="Assets\Common\Plugins\My Plugins\SaveAndPlayAndSetUp\Save\Save Data\SaveCentrar.cs" />
+    <Compile Include="Assets\Common\Plugins\My Plugins\SaveAndPlayAndSetUp\Save\Save Files\SafeWriteFile.cs" />
+    <Compile Include="Assets\Common\Plugins\My Plugins\SaveAndPlayAndSetUp\Save\Save Files\SaveAvr.cs" />
+    <Compile Include="Assets\Common\Plugins\My Plugins\SaveAndPlayAndSetUp\Save\Save Files\SaveColicoes.cs" />
+    <Compile Include="Assets\Common\Plugins\My Plugins\SaveAndPlayAndSetUp\Save\Save Files\SaveRecord.cs" />
+    <Compile Include="Assets\Common\Plugins\My Plugins\SaveAndPlayAndSetUp\Save\Save Files\WriteSafeFileV1.cs" />
+    <Compile Include="Assets\Common\Plugins\My Plugins\SaveAndPlayAndSetUp\Set Up\EmulateSaveDataSetUp.cs" />
     <Compile Include="Assets\Common\Plugins\My Plugins\Static\ObterStringValues.cs" />
     <Compile Include="Assets\Common\Plugins\My Plugins\Virtual World\Indicator.cs" />
     <Compile Include="Assets\Common\Plugins\My Plugins\Virtual World\IndicatorSetUp.cs" />
@@ -138,6 +141,5 @@
     <None Include="Assets\Standard Assets\Fonts\OpenSans\License!.txt" />
     <None Include="Assets\configSettings.txt" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>
