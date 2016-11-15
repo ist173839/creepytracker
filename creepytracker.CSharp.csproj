@@ -88,16 +88,16 @@
     <Compile Include="Assets\My Files\Plugins\Helpers\Math\RandomHelper.cs" />
     <Compile Include="Assets\My Files\Plugins\Helpers\StringHelper.cs" />
     <Compile Include="Assets\My Files\Plugins\OptiTrack\DirectMulticastSocketClient.cs" />
-    <Compile Include="Assets\My Files\Plugins\SaveAndPlayAndSetUp\Play\EmulateSaveData.cs" />
-    <Compile Include="Assets\My Files\Plugins\SaveAndPlayAndSetUp\Save\SafeWriteFile.cs" />
-    <Compile Include="Assets\My Files\Plugins\SaveAndPlayAndSetUp\Save\SaveAvr.cs" />
-    <Compile Include="Assets\My Files\Plugins\SaveAndPlayAndSetUp\Save\SaveCenter.cs" />
-    <Compile Include="Assets\My Files\Plugins\SaveAndPlayAndSetUp\Save\SaveColicoes.cs" />
-    <Compile Include="Assets\My Files\Plugins\SaveAndPlayAndSetUp\Save\SaveRecord.cs" />
-    <Compile Include="Assets\My Files\Plugins\SaveAndPlayAndSetUp\Set Up\EmulateSaveDataSetUp.cs" />
-    <Compile Include="Assets\My Files\Plugins\Static\ObterStringValues.cs" />
-    <Compile Include="Assets\My Files\Plugins\Virtual World\Indicator.cs" />
-    <Compile Include="Assets\My Files\Plugins\Virtual World\IndicatorSetUp.cs" />
+    <Compile Include="Assets\My Files\Plugins\Z_Outros\Play\EmulateSaveData.cs" />
+    <Compile Include="Assets\My Files\Plugins\Save\SafeWriteFile.cs" />
+    <Compile Include="Assets\My Files\Plugins\Save\SaveAvr.cs" />
+    <Compile Include="Assets\My Files\Plugins\Save\SaveCenter.cs" />
+    <Compile Include="Assets\My Files\Plugins\Save\SaveColicoes.cs" />
+    <Compile Include="Assets\My Files\Plugins\Save\SaveRecord.cs" />
+    <Compile Include="Assets\My Files\Plugins\Z_Outros\Set Up\EmulateSaveDataSetUp.cs" />
+    <Compile Include="Assets\My Files\Plugins\Helpers\ObterStringValues.cs" />
+    <Compile Include="Assets\My Files\Plugins\Z_Outros\Virtual World\Indicator.cs" />
+    <Compile Include="Assets\My Files\Plugins\Z_Outros\Virtual World\IndicatorSetUp.cs" />
     <Compile Include="Assets\My Files\Plugins\Z_Outros\CenterServer.cs" />
     <Compile Include="Assets\My Files\Plugins\Z_Outros\CreateAndControlVirtualWorld.cs" />
     <Compile Include="Assets\My Files\Plugins\Z_Outros\ReadMatrix.cs" />
@@ -110,7 +110,7 @@
     <Compile Include="Assets\Common\Scripts\Logger.cs" />
     <Compile Include="Assets\Common\Scripts\PointCloudSimple.cs" />
     <Compile Include="Assets\Common\Scripts\UdpListener.cs" />
-    <Compile Include="Assets\My Files\Scripts\HandleCenter.cs" />
+    <Compile Include="Assets\My Files\Scripts\Center\HandleCenter.cs" />
     <Compile Include="Assets\My Files\Scripts\Listener\MyUdpListener.cs" />
     <Compile Include="Assets\My Files\Scripts\OptiTrack\OptitrackManager.cs" />
     <Compile Include="Assets\My Files\Scripts\Z_Outros\MyKnees.cs" />
@@ -141,5 +141,6 @@
     <None Include="Assets\Standard Assets\Fonts\OpenSans\License!.txt" />
     <None Include="Assets\configSettings.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>

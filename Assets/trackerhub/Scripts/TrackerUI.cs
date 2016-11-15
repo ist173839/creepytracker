@@ -20,7 +20,6 @@ enum MenuAction
 // ReSharper disable once ClassNeverInstantiated.Global
 public class TrackerUI : MonoBehaviour
 {
-
 	public Texture checkTexture;
 	public Texture uncheckTexture;
 
@@ -40,8 +39,10 @@ public class TrackerUI : MonoBehaviour
 	public Texture cloudTextureOff;
 
 	public Texture nextTexture;
-	[Range (20, 100)]
-	public int iconSize;
+
+    // ReSharper disable once MemberCanBePrivate.Global
+    // ReSharper disable once UnassignedField.Global
+    [Range (20, 100)] public int IconSize;
 
 	private MenuAction _menuAction;
 
@@ -56,10 +57,9 @@ public class TrackerUI : MonoBehaviour
 
     public float _rotStep = 2f;
     public float _transStep = 0.02f;
-
-
-    private string newUnicastAddress;
-	private string newUnicastPort;
+    
+    private string _newUnicastAddress;
+	private string _newUnicastPort;
 
 	private bool _continuous;
     private bool _hideHumans;
@@ -91,8 +91,8 @@ public class TrackerUI : MonoBehaviour
 	    _continuous = false;
         _hideHumans = false;
 
-		newUnicastAddress = "";
-		newUnicastPort = "";
+		_newUnicastAddress = "";
+		_newUnicastPort = "";
 
 		_packetsPerSec = 1000 / TrackerProperties.Instance.SendInterval;
 
@@ -118,23 +118,23 @@ public class TrackerUI : MonoBehaviour
 		int top = 5;
 		int left = 20;
 
-		DisplayMenuButton (MenuAction.Sensors, sensorTextureOn, sensorTextureOff, new Rect (left, top, iconSize, iconSize));
-		GUI.Label (new Rect (left + iconSize, top + iconSize - 20, 10, 25), "" + _userTracker.Sensors.Count);
-		left += iconSize + iconSize / 2;
+		DisplayMenuButton (MenuAction.Sensors, sensorTextureOn, sensorTextureOff, new Rect (left, top, IconSize, IconSize));
+		GUI.Label (new Rect (left + IconSize, top + IconSize - 20, 10, 25), "" + _userTracker.Sensors.Count);
+		left += IconSize + IconSize / 2;
         
 		//displayMenuButton(MenuAction.Devices, deviceTex_on, deviceTex_off, new Rect(left, top, iconSize, iconSize));
 		//left += iconSize + iconSize / 2;
-		DisplayMenuButton (MenuAction.Settings, settingsTextureOn, settingsTextureOff, new Rect (left, top, iconSize, iconSize));
+		DisplayMenuButton (MenuAction.Settings, settingsTextureOn, settingsTextureOff, new Rect (left, top, IconSize, IconSize));
 
-		left += iconSize + iconSize / 2;
+		left += IconSize + IconSize / 2;
 
-		DisplayMenuButton (MenuAction.Clouds, cloudTextureOn, cloudTextureOff, new Rect (left, top, iconSize, iconSize));
+		DisplayMenuButton (MenuAction.Clouds, cloudTextureOn, cloudTextureOff, new Rect (left, top, IconSize, IconSize));
 
-		left = Screen.width - iconSize - 10;
-		DisplayMenuButton (MenuAction.NetworkSettings, networkTextureOn, networkTextureOff, new Rect (left, top, iconSize, iconSize));
+		left = Screen.width - IconSize - 10;
+		DisplayMenuButton (MenuAction.NetworkSettings, networkTextureOn, networkTextureOff, new Rect (left, top, IconSize, IconSize));
 
 		if (_menuAction == MenuAction.Sensors) {
-			top = iconSize + iconSize / 2;
+			top = IconSize + IconSize / 2;
 			left = 20;
 
 			GUI.Box (new Rect (left - 10, top - 10, 200, _userTracker.Sensors.Count == 0 ? 45 : (35 * _userTracker.Sensors.Count + 35 + 5)), "");
@@ -164,8 +164,8 @@ public class TrackerUI : MonoBehaviour
 
 		if (_menuAction == MenuAction.Settings)
         {
-			top = iconSize + iconSize / 2;
-			left = iconSize + 50;
+			top = IconSize + IconSize / 2;
+			left = IconSize + 50;
 
 			GUI.Box (new Rect (left, top - 10, 200, 140), "");
 			left += 10;
@@ -216,8 +216,8 @@ public class TrackerUI : MonoBehaviour
 		}
 
 		if (_menuAction == MenuAction.Clouds) {
-			top = iconSize + iconSize / 2;
-			left = 20 + 3 * iconSize;
+			top = IconSize + IconSize / 2;
+			left = 20 + 3 * IconSize;
 			
 			GUI.Box (new Rect (left - 10, top - 10, 225, _userTracker.Sensors.Count == 0 ? 45 : (30 * 4 + 80 + 5)), "");
 			
@@ -328,7 +328,7 @@ public class TrackerUI : MonoBehaviour
 
 		if (_menuAction == MenuAction.NetworkSettings)
         {
-			top = iconSize + iconSize / 2;
+			top = IconSize + IconSize / 2;
 			left = Screen.width - 250;
 
 			GUI.Box (new Rect (left, top - 10, 240, 150), "");
@@ -384,8 +384,8 @@ public class TrackerUI : MonoBehaviour
 
             UseRecord    = GUI.Toggle(new Rect(left, top, 100, 25), UseRecord, "Record");
 
-            //ShowIndicator = GUI.Toggle(new Rect(left + 120, top, 100, 25), ShowIndicator, "Show Indicators");
-            //_localHandleCenter.ShowIndicator = ShowIndicator;
+            ShowIndicator = GUI.Toggle(new Rect(left + 120, top, 100, 25), ShowIndicator, "Show Indicators");
+            _localHandleCenter.ShowIndicator = ShowIndicator;
 
             top += 30;
 
@@ -394,12 +394,12 @@ public class TrackerUI : MonoBehaviour
                 _localHandleCenter.SetCenterOptiTrackButton();
             }
 
-            //if (GUI.Button(new Rect(left + 120, top, 100, 25), "Set Forward"))
-            //{
-            //    _localHandleCenter.SetForwardPointOptiTrackButton();
-            //}
+            if (GUI.Button(new Rect(left + 120, top, 100, 25), "Set Forward"))
+            {
+                _localHandleCenter.SetForwardPointOptiTrackButton();
+            }
             //SetUpCenter = GUI.Toggle(new Rect(left, top, 100, 25), SetUpCenter, "Use Center");
-            top += 20;
+            top += 35;
             UseOptiTrack = GUI.Toggle(new Rect(left, top, 100, 25), UseOptiTrack, "Use Opti");
 
             //Debug.Log("UseRecord = " + UseRecord);

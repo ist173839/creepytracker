@@ -22,13 +22,14 @@ public class OptitrackManager : MonoBehaviour
     private const string MyName = "OptiTrack";
 
     // ReSharper disable once MemberCanBePrivate.Global
-    public bool IsEmulate { get; set; }
+    // public bool IsEmulate { get; set; }
     // ReSharper disable once UnusedAutoPropertyAccessor.Global
     // ReSharper disable once MemberCanBePrivate.Global
     public bool IsOn      { get; private set; }
+    public bool IsOptiOn  { get; private set; }
 
     // ReSharper disable once UnassignedField.Global
-    public bool UseMatrix;
+    //public bool UseMatrix;
 
     private bool _deinitValue = false;
 
@@ -46,10 +47,12 @@ public class OptitrackManager : MonoBehaviour
 
     void Start()
     {
+        _localTrackerUi = gameObject.GetComponent<TrackerUI>();
+
         Debug.Log(MyName + ": I am alive");
         OptitrackManagement.DirectMulticastSocketClient.Start();
         _optiTrackMarker = null;
-        IsEmulate = false;
+        // IsEmulate = false;
         /////////////////////////////////////
 
         _forwardGo = new GameObject { name = "Forward" };
@@ -62,8 +65,8 @@ public class OptitrackManager : MonoBehaviour
         _cylinder.transform.parent = _forwardGo.transform;
 
         _forward = Vector3.forward;
-
-        _localTrackerUi = gameObject.GetComponent<TrackerUI>();
+        
+        IsOptiOn = false;
     }
 
     // Update is called once per frame
@@ -76,8 +79,7 @@ public class OptitrackManager : MonoBehaviour
         //    _optiTrackMarker.GetComponent<MeshRenderer>().enabled = _localTrackerUi.UseOptiTrack;
         //    if (!_localTrackerUi.UseOptiTrack) return;
         //}
-
-        if (!IsEmulate)
+        // if (!IsEmulate)
         {
             OptitrackManagement.DirectMulticastSocketClient.Update();
             //_netClient.Step();
@@ -86,13 +88,14 @@ public class OptitrackManager : MonoBehaviour
             {
                 var networkData = OptitrackManagement.DirectMulticastSocketClient.GetStreemData();
 
-                _positionVector = networkData.RigidBody[0].Pos; // * 2.0f;
-
-
+                _positionVector = networkData.RigidBody[0].Pos;
+                IsOptiOn = true;
                 SetUpOptiTrackMarker();
             }
             else
             {
+                IsOptiOn = false;
+
                 if (_optiTrackMarker != null)
                 {
                     //  Destroy(_optiTrackMarker);
@@ -113,10 +116,10 @@ public class OptitrackManager : MonoBehaviour
 
             OtherMarker[] markers = OptitrackManagement.DirectMulticastSocketClient.GetStreemData().OtherMarkers;
         }
-        else
-        {
-            //todo fazer qualquer coisa ou apagar else
-        }
+        //else
+        //{
+        //    //todo fazer qualquer coisa ou apagar else
+        //}
     }
 
     private void UpdateForwardObject(Vector3 forward, Vector3 position, Quaternion rotation)

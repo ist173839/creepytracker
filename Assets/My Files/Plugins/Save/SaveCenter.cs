@@ -139,24 +139,12 @@ public class SaveCenter
         
     }
 
-    private string GetHeader()
-    {
-        return "Registo" + Separador;       
-    }
-
-    private void SetUpFileAndDirectory()
+   private void SetUpFileAndDirectory()
     {
         // _target = _directory + "\\" +_CurrentFolderDestino ;
         _cont = 0;
         SetUpDirectory();
         SetFileName();
-        if (_oversize)
-        {
-            SetUpHeader();
-            _oversize = false;
-        }
-
-        
         _isInitiate = true;
     }
 
@@ -167,7 +155,7 @@ public class SaveCenter
         _doc.Close();
     }
 
-    private void StopRecording()
+    public void StopRecording()
     {
         if (!_isInitiate) return;
         ResetRecord();
@@ -301,23 +289,70 @@ public class SaveCenter
 
         SetUpDirectory();
         SetFileName();
-        SetUpHeader(first);
+        //SetUpHeader(first);
         _isInitiate = true;
     }
+}
+/*
+ * 
+if (_oversize)
+        {
+            SetUpHeader();
+            _oversize = false;
+        }
 
-    private void SetUpHeader()
+ * 
+ * 
+private void SetUpHeader()
     {
         //var info = GetHeader();
         WriteStringInDoc(_saveHeader, true);
     }
-
-    private void SetUpHeader(string first)
-    {
-        var info = GetHeader(); 
-        if (first == info) return;
-        WriteStringInDoc(info, true);
-    }
+  private void SetUpHeader(string first)
+{
+    var info = GetHeader(); 
+    if (first == info) return;
+    WriteStringInDoc(info, true);
 }
+    
+
+
+
+public void RecordOneMessage(string message)
+{
+
+    // if (!_isInitiate)
+    SetUpFileAndDirectory();
+
+    //if (!_isInitiate) SetUpFileAndDirectory(message);
+    //if (message != _startMessage  && !_isInitiate)
+    //{
+    //} else
+    // CheckFileSize();
+    if (message == _endMessage)
+    //{
+    //    StopRecording();
+    //    Console.WriteLine(_endMessage);
+    //}
+    //else
+    WriteStringInDoc(message, true);
+    StopRecording();
+}
+
+
+
+private string GetHeader()
+{
+    return "Registo" + Separador;       
+}
+
+
+
+
+ */
+
+
+
 // _target = _directory + "\\" +_CurrentFolderDestino ;
 
 //if (!IsRecording)

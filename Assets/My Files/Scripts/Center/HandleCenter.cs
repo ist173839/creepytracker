@@ -38,11 +38,10 @@ public class HandleCenter : MonoBehaviour
 
     private GameObject _forwardGameObject;
     private GameObject _centroGameObject;
+
     private GameObject _indicadores;
     private GameObject _helpers;
-
-    // ReSharper disable once MemberCanBePrivate.Global
-    // ReSharper disable once UnassignedField.Global
+    
     public bool ShowIndicator;
 
     private bool _setUpForward;
@@ -50,20 +49,18 @@ public class HandleCenter : MonoBehaviour
     private bool _reset;
 
     public int Index;
-
-#pragma warning disable 169
+    
     private int _indicadorCounter;
-#pragma warning restore 169
+    private int _countId;
     private int _port;
 
-    private int _countId;
-
-    private Vector3 _forwardPoint;
     private Vector3 _forward;
 
-
+    private Vector3? _forwardPoint;
     private Vector3? _centro;
 
+    private string _mens;
+    private string _mensagem;
 
     private string _path;
 
@@ -112,6 +109,9 @@ public class HandleCenter : MonoBehaviour
          
         _centro = new Vector3?();
         Index = 0;
+
+        _mens = "";
+        _mensagem = "";
     }
 	
 	// Update is called once per frame
@@ -120,57 +120,91 @@ public class HandleCenter : MonoBehaviour
     void Update ()
 	{
 
-
-        if (_setUpCentro && _setUpForward && _reset && _centro.HasValue)
-	    {
-	        _forward = _forwardPoint - _centro.Value;
+        if (_setUpCentro && _centro.HasValue && _setUpForward  && _forwardPoint.HasValue && _reset)
+        {
+	        _forward = _forwardPoint.Value - _centro.Value;
             _reset = false;
             Debug.DrawLine(_centro.Value, _centro.Value + _forward * 2.0f, Color.white);
+
         }
-	    SetRender(ShowIndicator);
-	}
-    
+
+        SetRender(ShowIndicator);
+        
+	    if (_setUpForward && _forwardPoint.HasValue)
+	    {
+           _indicadores.transform.rotation = Quaternion.LookRotation(_forward);
+        }
+
+        SendMensagem();
+    }
+
+    private void SendMensagem()
+    {
+        var mensagem = "";
+        var mens = "";
+
+        if (_setUpCentro && _centro.HasValue)
+        {
+            var center = "CenterPos" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(_centro.Value);
+            var humans = _localTracker.GetHumans();
+            var mensaHumans = "";
+            foreach (var h in humans)
+            {
+                var position = _centro.Value - h.Value.Position;
+
+                mensaHumans += MessageSeparators.L2;
+                mensaHumans += "Id"     + MessageSeparators.SET + h.Value.ID;
+                mensaHumans += MessageSeparators.L4; // "Desvio" + MessageSeparators.SET +
+                mensaHumans += CommonUtils.convertVectorToStringRPC(position);
+            }
+
+            mensagem = center + mensaHumans;
+            mens = center;
+            _saveCenter.RecordMessage(center);
+        }
+
+
+        if (_setUpCentro && _centro.HasValue && _setUpForward && _forwardPoint.HasValue)
+        {
+            mensagem += MessageSeparators.L2;
+            mens     += MessageSeparators.L2;
+            // _saveCenter.RecordMessage("" + MessageSeparators.L2);
+        }
+
+        if (_setUpForward && _forwardPoint.HasValue)
+        {
+            var forward = "ForwardPos" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(_forwardPoint.Value);
+            mensagem += forward;
+            mens += forward;
+            _saveCenter.RecordMessage(forward);
+        }
+
+        if (_mens != mens)
+        {
+            _saveCenter.RecordMessage(mens);
+            _mens = mens;
+        }
+
+        _udpBroadcast.Send(mensagem);
+        
+        if (_setUpCentro && _centro.HasValue && _setUpForward && _forwardPoint.HasValue)
+        {
+            _saveCenter.StopRecording();
+        }
+    }
+
     public void SetCenterOptiTrackButton()
     {
         if (_localOptitrackManager != null)
         {
-            _reset = true;
+            _reset       = true;
             _setUpCentro = true;
             _centro = MathHelper.DeslocamentoHorizontal(_localOptitrackManager.GetUnityPositionVector());
-
             _centroGameObject.transform.position = _centro.Value;
-
             SetIndicators(_centro.Value);
-            
         }
 
         _centroGameObject.GetComponent<MeshRenderer>().enabled = _setUpCentro; // && _localTrackerUi.SetUpCenter;
-
-        if (_setUpCentro && _centro.HasValue)
-        {
-
-            var center = "CenterPos" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(_centro.Value);
-
-            var humans = _localTracker.GetHumans();
-
-            var mensaHumans = ""; 
-
-            foreach (var h in humans)
-            {
-                var position = _centro - h.Value.Position;
-
-                mensaHumans +=  MessageSeparators.L2;
-                mensaHumans += "Id" + MessageSeparators.SET + h.Value.ID;
-                mensaHumans += MessageSeparators.L2;
-                mensaHumans += "Desvio" + MessageSeparators.SET + position;
-            }
-
-            var mensagem = center + mensaHumans; // + MessageSeparators.L2;
-            
-            _saveCenter.RecordMessage(center);
-
-            _udpBroadcast.Send(mensagem);
-        }
     }
 
     public void SetSaveFilesButton()
@@ -223,26 +257,18 @@ public class HandleCenter : MonoBehaviour
 
         return null;
     }
-
-
+    
     public void SetForwardPointOptiTrackButton()
     {
         if (_localOptitrackManager != null)
         {
             _reset = true;
             _setUpForward = true;
-            _forwardGameObject.transform.position =
-                _forwardPoint = MathHelper.DeslocamentoHorizontal(_localOptitrackManager.GetUnityPositionVector());
+            _forwardPoint = MathHelper.DeslocamentoHorizontal(_localOptitrackManager.GetUnityPositionVector());
+            _forwardGameObject.transform.position = _forwardPoint.Value;
         }
 
-        _forwardGameObject.GetComponent<MeshRenderer>().enabled = _setUpForward; // && _localTrackerUi.SetUpCenter;
-        //if (_setUpForward)
-        //{
-        //    var mensagem = "CenterPos" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(_centro) +
-        //                   MessageSeparators.L2;
-
-        //    _udpBroadcast.Send(mensagem);
-        //}
+        _forwardGameObject.GetComponent<MeshRenderer>().enabled = _setUpForward; 
     }
 
     private void SetIndicators(Vector3 center)
@@ -262,7 +288,10 @@ public class HandleCenter : MonoBehaviour
 
         ObstacleList.Add(obstacle1);
         ObstacleList.Add(obstacle2);
-        
+
+      //  _indicadores.transform.rotation.
+
+
     }
 
     private void DestroyAll()
@@ -287,8 +316,9 @@ public class HandleCenter : MonoBehaviour
         foreach (var obstacle in ObstacleList)
             for (var i = 0; i < obstacle.transform.childCount; i++)
                 obstacle.transform.GetChild(i).GetComponent<MeshRenderer>().enabled = render;
+
     }
-    
+
     private static GameObject CreateLimit(Transform parent, Vector3 center, Side side, int id)
     {
         Quaternion rotation;
@@ -330,8 +360,7 @@ public class HandleCenter : MonoBehaviour
 
         return GameObjectHelper.MyCreatePrimitiveObject(PrimitiveType.Plane, indicatorName, parent, newPos, scale, rotation, transparentMaterial, color, false);
     }
-
-
+    
     private static GameObject CreateObstacles(Transform parent, Vector3 center, Vector3 position, int id)
     {
         var newPos = center + position;
@@ -353,21 +382,33 @@ public class HandleCenter : MonoBehaviour
         var color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
 
         var objectIndicator = GameObjectHelper.MyCreateObject(chairGameObject, indicatorName, parent, newPos, scale, rotation, transparentMaterial, color, false);
-        //var outline         = GameObjectHelper.MyCreateObject(Object.Instantiate(objectIndicator), indicatorName + " Outline", objectIndicator.transform, newPos, scale, rotation, outlineMaterial);
-
-        //outline.GetComponent<MeshRenderer>().enabled = false;
-        
+      
         return objectIndicator;
 
     }
-
-
-
 }
 
 /*
- *
- *
+
+ * 
+ * 
+ * 
+   //var outline         = GameObjectHelper.MyCreateObject(Object.Instantiate(objectIndicator), indicatorName + " Outline", objectIndicator.transform, newPos, scale, rotation, outlineMaterial);
+
+        //outline.GetComponent<MeshRenderer>().enabled = false;
+
+
+ * 
+ * 
+ * 
+// && _localTrackerUi.SetUpCenter;
+        //if (_setUpForward)
+        //{
+        //    var mensagem = "CenterPos" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(_centro) +
+        //                   MessageSeparators.L2;
+
+        //    _udpBroadcast.Send(mensagem);
+        //}
  *
      var l2 = (string) MessageSeparators.L2;
  

@@ -9,8 +9,6 @@ using Object = UnityEngine.Object;
 // ReSharper disable once CheckNamespace
 public class CenterServer
 {
-
-
     private OptitrackManager _localOptitrackManager;
     private UdpBroadcast _udpBroadcast;
 
