@@ -130,9 +130,9 @@ public static class StringHelper
         if (text == null) throw new ArgumentNullException("text");
         return new Vector3
         {
-            x = (float)Convert.ToDouble(text.Split(separador)[0], new NumberFormatInfo() { NumberDecimalSeparator = "," }),
-            y = (float)Convert.ToDouble(text.Split(separador)[1], new NumberFormatInfo() { NumberDecimalSeparator = "," }),
-            z = (float)Convert.ToDouble(text.Split(separador)[2], new NumberFormatInfo() { NumberDecimalSeparator = "," })
+            x = (float) Convert.ToDouble(text.Split(separador)[0], new NumberFormatInfo() { NumberDecimalSeparator = "," }),
+            y = (float) Convert.ToDouble(text.Split(separador)[1], new NumberFormatInfo() { NumberDecimalSeparator = "," }),
+            z = (float) Convert.ToDouble(text.Split(separador)[2], new NumberFormatInfo() { NumberDecimalSeparator = "," })
         };
     }
 

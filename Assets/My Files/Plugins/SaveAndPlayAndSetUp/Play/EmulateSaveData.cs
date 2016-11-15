@@ -30,7 +30,7 @@ public class EmulateSaveData
     // ReSharper disable once CollectionNeverQueried.Local
     private List<long> _indexes;
 
-   private WriteSafeFileV1 _wsf;
+   private SafeCenter _wsf;
     
     private DateTime _relogio;
 
@@ -70,7 +70,7 @@ public class EmulateSaveData
 
     private void StandardSetUp(string fileToEmulateName)
     {
-        _wsf      = new WriteSafeFileV1();
+        _wsf        = new SafeCenter();
         _listAccoes = new List<AccaoData>();
 
         IsDebug = IsCompleteParcial = _isSetUp = false;
