@@ -160,6 +160,15 @@ public class OptitrackManager : MonoBehaviour
         }
     }
 
+    public void RenderMarker(bool render)
+    {
+        if (_optiTrackMarker != null)
+        {
+            _optiTrackMarker.GetComponent<MeshRenderer>().enabled = render;
+        }
+    }
+
+
     private static GameObject MyCreateSphere(string name, Vector3 position, float scale = 0.1f)
     {
         var gameObjectSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);

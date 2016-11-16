@@ -10,6 +10,7 @@ using Object = UnityEngine.Object;
 public class CenterServer
 {
     private OptitrackManager _localOptitrackManager;
+
     private UdpBroadcast _udpBroadcast;
 
     private TrackerUI _localTrackerUi;
@@ -25,19 +26,15 @@ public class CenterServer
     private int _port;
 
     private Vector3 _centro;
-
-
-
+    
     public CenterServer()
     {
         _port = 53839;
         _udpBroadcast = new UdpBroadcast(_port);
-
-
+        
         //_localOptitrackManager = gameObject.GetComponent<OptitrackManager>();
     }
-
-
+    
     public void SetCenterOptiTrack()
     {
             if (_localOptitrackManager != null)

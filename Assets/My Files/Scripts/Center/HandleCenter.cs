@@ -41,13 +41,20 @@ public class HandleCenter : MonoBehaviour
 
     private GameObject _indicadores;
     private GameObject _helpers;
-    
+
+    public bool IsSaveFilePossible;
     public bool ShowIndicator;
+    public bool Force;
+    public bool UseOpti;
+    public bool Send;
 
     private bool _setUpForward;
-    private bool _setUpCentro;
-    private bool _reset;
+    private bool _saveForward;
 
+    private bool _setUpCentro;
+    private bool _saveCentro;
+    private bool _reset;
+    
     public int Index;
     
     private int _indicadorCounter;
@@ -59,11 +66,10 @@ public class HandleCenter : MonoBehaviour
     private Vector3? _forwardPoint;
     private Vector3? _centro;
 
-    private string _mens;
     private string _mensagem;
-
+    private string _mens;
     private string _path;
-
+    
     // Use this for initialization
     // ReSharper disable once UnusedMember.Local
     // ReSharper disable once ArrangeTypeMemberModifiers
@@ -98,20 +104,26 @@ public class HandleCenter : MonoBehaviour
         _forwardGameObject.GetComponent<MeshRenderer>().material.color = Color.white;
         _forwardGameObject.transform.localScale = new Vector3(0.50f, 0.1f, 0.50f);
 
-        _reset = false;
 
         // ShowIndicator = false;
         _countId = 0;
-
-        _path = System.IO.Directory.GetCurrentDirectory() +  "Saved Files" + "\\" + "Center Data";
+      
+        _path = System.IO.Directory.GetCurrentDirectory() + "\\" + "Files To Use" + "\\" + "Center Data";
 
         if (!System.IO.Directory.Exists(_path)) System.IO.Directory.CreateDirectory(_path);
-         
+
         _centro = new Vector3?();
         Index = 0;
 
         _mens = "";
         _mensagem = "";
+
+        _saveForward = false;
+        _saveCentro  = false;
+        _reset       = false;
+        Force        = false;
+        Send         = true;
+        UseOpti      = true;
     }
 	
 	// Update is called once per frame
@@ -119,13 +131,12 @@ public class HandleCenter : MonoBehaviour
     // ReSharper disable once UnusedMember.Local
     void Update ()
 	{
-
-        if (_setUpCentro && _centro.HasValue && _setUpForward  && _forwardPoint.HasValue && _reset)
+       
+	    if (_setUpCentro && _centro.HasValue && _setUpForward  && _forwardPoint.HasValue && _reset)
         {
 	        _forward = _forwardPoint.Value - _centro.Value;
             _reset = false;
             Debug.DrawLine(_centro.Value, _centro.Value + _forward * 2.0f, Color.white);
-
         }
 
         SetRender(ShowIndicator);
@@ -135,13 +146,41 @@ public class HandleCenter : MonoBehaviour
            _indicadores.transform.rotation = Quaternion.LookRotation(_forward);
         }
 
+	    SaveMensagem();
         SendMensagem();
+
+        _localOptitrackManager.RenderMarker(UseOpti);
+        _centroGameObject.GetComponent<MeshRenderer>().enabled  = _setUpCentro;
+        _forwardGameObject.GetComponent<MeshRenderer>().enabled = _setUpForward;
+    }
+
+    private void SaveMensagem()
+    {
+        if (_setUpCentro && _centro.HasValue && !_saveCentro)
+        {
+            var center = "CenterPos" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(_centro.Value);
+            _saveCenter.RecordMessage(center);
+            _saveCentro = true;
+        }
+
+        if (_setUpForward && _forwardPoint.HasValue && !_saveForward)
+        {
+            var forward = "ForwardPos" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(_forwardPoint.Value);
+            _saveCenter.RecordMessage(forward);
+            _saveForward = true;
+        }
+
+        if (_setUpCentro && _centro.HasValue && _setUpForward && _forwardPoint.HasValue)
+        {
+            _saveCenter.StopRecording();
+        }
+
     }
 
     private void SendMensagem()
     {
         var mensagem = "";
-        var mens = "";
+       // var mens = "";
 
         if (_setUpCentro && _centro.HasValue)
         {
@@ -159,15 +198,15 @@ public class HandleCenter : MonoBehaviour
             }
 
             mensagem = center + mensaHumans;
-            mens = center;
-            _saveCenter.RecordMessage(center);
+            // mens = center;
+            // _saveCenter.RecordMessage(center);
         }
 
 
         if (_setUpCentro && _centro.HasValue && _setUpForward && _forwardPoint.HasValue)
         {
             mensagem += MessageSeparators.L2;
-            mens     += MessageSeparators.L2;
+            // mens     += MessageSeparators.L2;
             // _saveCenter.RecordMessage("" + MessageSeparators.L2);
         }
 
@@ -175,36 +214,43 @@ public class HandleCenter : MonoBehaviour
         {
             var forward = "ForwardPos" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(_forwardPoint.Value);
             mensagem += forward;
-            mens += forward;
-            _saveCenter.RecordMessage(forward);
+            // mens += forward;
+            // _saveCenter.RecordMessage(forward);
         }
-
-        if (_mens != mens)
-        {
-            _saveCenter.RecordMessage(mens);
-            _mens = mens;
-        }
-
-        _udpBroadcast.Send(mensagem);
         
-        if (_setUpCentro && _centro.HasValue && _setUpForward && _forwardPoint.HasValue)
-        {
-            _saveCenter.StopRecording();
-        }
+        mensagem += MessageSeparators.L2 + "Force" + MessageSeparators.SET + Force;
+        
+        //_mensagem = mensagem;
+
+        if (Send) _udpBroadcast.Send(mensagem);
     }
 
     public void SetCenterOptiTrackButton()
     {
-        if (_localOptitrackManager != null)
-        {
-            _reset       = true;
-            _setUpCentro = true;
-            _centro = MathHelper.DeslocamentoHorizontal(_localOptitrackManager.GetUnityPositionVector());
-            _centroGameObject.transform.position = _centro.Value;
-            SetIndicators(_centro.Value);
-        }
+        if (_localOptitrackManager != null && UseOpti) SetUpNewCenter(_localOptitrackManager.GetUnityPositionVector());
+        // _centroGameObject.GetComponent<MeshRenderer>().enabled = _setUpCentro; // && _localTrackerUi.SetUpCenter;
+    }
 
-        _centroGameObject.GetComponent<MeshRenderer>().enabled = _setUpCentro; // && _localTrackerUi.SetUpCenter;
+    private void SetUpNewCenter(Vector3 newCenter)
+    {
+        _reset = true;
+        _setUpCentro = true;
+        _centro = MathHelper.DeslocamentoHorizontal(newCenter);
+        _centroGameObject.transform.position = _centro.Value;
+        SetIndicators(_centro.Value);
+    }
+
+    public void SetForwardPointOptiTrackButton()
+    {
+        if (_localOptitrackManager != null && UseOpti) SetUpNewForward(_localOptitrackManager.GetUnityPositionVector());
+    }
+
+    private void SetUpNewForward(Vector3 newForward)
+    {
+        _reset = true;
+        _setUpForward = true;
+        _forwardPoint = MathHelper.DeslocamentoHorizontal(newForward);
+        _forwardGameObject.transform.position = _forwardPoint.Value;
     }
 
     public void SetSaveFilesButton()
@@ -213,62 +259,37 @@ public class HandleCenter : MonoBehaviour
         var fileInfo = info.GetFiles();
 
         var length = fileInfo.Length;
-        if (length == 0)
-        {
-            Index = 0;
-            _centro = null;
-        }
-        else if (length >= Index)
-        {
-            Index = length - 1;
-        }
-        
-        var file = fileInfo[length];
+        if (length == 0) return;
+
+        var file = fileInfo[0];
         //foreach (var file in fileInfo)
         {
-           var fs =  file.Open(FileMode.Open);
+            var fs =  file.Open(FileMode.Open);
             using (var bs = new BufferedStream(fs))
             using (var sr = new StreamReader(bs))
             {
-                //var l = 0;
                 string line;
+                int l = 0;
                 while ((line = sr.ReadLine()) != null)
                 {
-                    _centro = GetCenterFromFile(line);
-                    // MyDebug.Log("Print : " + l++ + ",  " + line);
-                    // allText += line;
+                    var lineText = line.Split(MessageSeparators.SET);
+                    switch (lineText[0])
+                    {
+                        case "CenterPos":
+                            //  _centro       = CommonUtils.ConvertRpcStringToVector3(lineText[1]);
+                            SetUpNewCenter(CommonUtils.ConvertRpcStringToVector3(lineText[1]));
+                            MyDebug.Log("CenterPos = " + _centro);
+                        break;
+                        case "ForwardPos":
+                            //_forwardPoint = CommonUtils.ConvertRpcStringToVector3(lineText[1]);
+                            SetUpNewForward(CommonUtils.ConvertRpcStringToVector3(lineText[1]));
+                            break;
+                        default:
+                        break;
+                    } //  MyDebug.Log("Print : " + l++ + ",  " + line);
                 }
             }
         }
-    }
-
-    private static Vector3? GetCenterFromFile(string line)
-    {
-        var l = "";
-        if (line.Contains("/"))
-        {
-            var lines = line.Split(MessageSeparators.L2);
-            foreach (var ls in lines) if (ls.Contains("CenterPos")) l = ls;
-        }
-        else l = line;
-
-        var lineText = l.Split(MessageSeparators.SET);
-        if (lineText[0] == "CenterPos") return CommonUtils.ConvertRpcStringToVector3(lineText[1]);
-
-        return null;
-    }
-    
-    public void SetForwardPointOptiTrackButton()
-    {
-        if (_localOptitrackManager != null)
-        {
-            _reset = true;
-            _setUpForward = true;
-            _forwardPoint = MathHelper.DeslocamentoHorizontal(_localOptitrackManager.GetUnityPositionVector());
-            _forwardGameObject.transform.position = _forwardPoint.Value;
-        }
-
-        _forwardGameObject.GetComponent<MeshRenderer>().enabled = _setUpForward; 
     }
 
     private void SetIndicators(Vector3 center)
@@ -289,11 +310,21 @@ public class HandleCenter : MonoBehaviour
         ObstacleList.Add(obstacle1);
         ObstacleList.Add(obstacle2);
 
-      //  _indicadores.transform.rotation.
-
-
     }
 
+    public void Reset()
+    {
+        DestroyAll();
+        
+        _centroGameObject.GetComponent<MeshRenderer>().enabled  = false;
+        _forwardGameObject.GetComponent<MeshRenderer>().enabled = false;
+        
+        _reset = true;
+        _setUpForward =  _setUpCentro = false;
+        _forwardPoint = null;
+        _centro       = null;
+    }
+    
     private void DestroyAll()
     {
         if (IndicatorsList.Count == 0) return;
@@ -304,6 +335,7 @@ public class HandleCenter : MonoBehaviour
         ObstacleList   = null;
 
         IndicatorsList = new List<GameObject>();
+        ObstacleList   = new List<GameObject>();
     }
 
     private void SetRender(bool render)
@@ -386,12 +418,142 @@ public class HandleCenter : MonoBehaviour
         return objectIndicator;
 
     }
+
 }
 
-/*
+/*  
+ *  
+ *  
+   //CheckIfFileToUse();
+        
+    
+        //{
+        //    Index = 0;
+        //    //_centro = null;
+        //    //_forwardPoint = null;
+        //}
+        //else if (length >= Index)
+        //{
+        //    Index = length - 1;
+        //}
+        
+
+
+
+ *  
+ *  
+     private static Vector3? GetCenterFromFile(string line)
+    {
+        var l = "";
+        if (line.Contains("/"))
+        {
+            var lines = line.Split(MessageSeparators.L2);
+            foreach (var ls in lines) if (ls.Contains("CenterPos")) l = ls;
+        }
+        else l = line;
+
+        var lineText = l.Split(MessageSeparators.SET);
+        if (lineText[0] == "CenterPos") return CommonUtils.ConvertRpcStringToVector3(lineText[1]);
+
+        return null;
+    }
+                    // _centro = GetCenterFromFile(line);
+   // allText += line; 
+    private bool CheckIfFileToUse()
+    {
+        var info = new DirectoryInfo(_path);
+        var fileInfo = info.GetFiles();
+
+        var length = fileInfo.Length;
+        return IsSaveFilePossible = length != 0;
+    }
+
+
 
  * 
- * 
+ *  
+ *  
+        //if (_mens != mens)
+        //{
+        //    _saveCenter.RecordMessage(mens);
+        //    _mens = mens;
+        //    //if (_setUpCentro && _centro.HasValue && _setUpForward && _forwardPoint.HasValue)
+        //    //{
+        //    //    _saveCenter.StopRecording();
+        //    //}
+        //}
+
+
+    // Files To Use
+    // _path = System.IO.Directory.GetCurrentDirectory() + "\\" +  "Saved Files" + "\\" + "Center Data";
+
+    
+    //  _indicadores.transform.rotation.
+
+
+    private void SendMensagem()
+    {
+        var mensagem = "";
+        var mens = "";
+
+        if (_setUpCentro && _centro.HasValue)
+        {
+            var center = "CenterPos" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(_centro.Value);
+            var humans = _localTracker.GetHumans();
+            var mensaHumans = "";
+            foreach (var h in humans)
+            {
+                var position = _centro.Value - h.Value.Position;
+
+                mensaHumans += MessageSeparators.L2;
+                mensaHumans += "Id"     + MessageSeparators.SET + h.Value.ID;
+                mensaHumans += MessageSeparators.L4; // "Desvio" + MessageSeparators.SET +
+                mensaHumans += CommonUtils.convertVectorToStringRPC(position);
+            }
+
+            mensagem = center + mensaHumans;
+            mens = center;
+            _saveCenter.RecordMessage(center);
+        }
+
+
+        if (_setUpCentro && _centro.HasValue && _setUpForward && _forwardPoint.HasValue)
+        {
+            mensagem += MessageSeparators.L2;
+            mens     += MessageSeparators.L2;
+            // _saveCenter.RecordMessage("" + MessageSeparators.L2);
+        }
+
+        if (_setUpForward && _forwardPoint.HasValue)
+        {
+            var forward = "ForwardPos" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(_forwardPoint.Value);
+            mensagem += forward;
+            mens += forward;
+           // _saveCenter.RecordMessage(forward);
+        }
+
+        if (_mens != mens)
+        {
+            _saveCenter.RecordMessage(mens);
+            _mens = mens;
+            if (_setUpCentro && _centro.HasValue && _setUpForward && _forwardPoint.HasValue)
+            {
+                _saveCenter.StopRecording();
+            }
+        }
+
+        _udpBroadcast.Send(mensagem);
+
+        
+    }
+
+        //if (_setUpCentro && _centro.HasValue && _setUpForward && _forwardPoint.HasValue)
+        //{
+        //    //mensagem += MessageSeparators.L2;
+        //    //mens += MessageSeparators.L2;
+        //    // _saveCenter.RecordMessage("" + MessageSeparators.L2);
+        //}
+
  * 
    //var outline         = GameObjectHelper.MyCreateObject(Object.Instantiate(objectIndicator), indicatorName + " Outline", objectIndicator.transform, newPos, scale, rotation, outlineMaterial);
 

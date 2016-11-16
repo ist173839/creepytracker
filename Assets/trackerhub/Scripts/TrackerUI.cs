@@ -32,24 +32,21 @@ public class TrackerUI : MonoBehaviour
 	public Texture networkTextureOn;
 	public Texture networkTextureOff;
 
-	public Texture aboutOn;
-	public Texture aboutOff;
+	public Texture AboutOn;
+	public Texture AboutOff;
 
-	public Texture cloudTextureOn;
-	public Texture cloudTextureOff;
+	public Texture CloudTextureOn;
+	public Texture CloudTextureOff;
 
-	public Texture nextTexture;
+	public Texture NextTexture;
 
     // ReSharper disable once MemberCanBePrivate.Global
-    // ReSharper disable once UnassignedField.Global
     [Range (20, 100)] public int IconSize;
 
 	private MenuAction _menuAction;
 
 	private Tracker _userTracker;
-
-    private HandleCenter _localHandleCenter;
-
+    
 	private GUIStyle _titleStyle;
 
 	private int _currentCloudSensor;
@@ -64,12 +61,23 @@ public class TrackerUI : MonoBehaviour
 	private bool _continuous;
     private bool _hideHumans;
 
-    public bool UseRecord     { get; set; }
+
+    ////////////////////////////////////////////////////////////////
+
+    private HandleCenter _localHandleCenter;
+
     public bool ShowIndicator { get; set; }
+    public bool UseOptiTrack  { get; set; }
+    public bool SetUpCenter   { get; set; }
+    public bool UseRecord     { get; set; }
+    public bool Force         { get; set; }
+    public bool Send          { get; set; }
 
-    public bool SetUpCenter { get; set; }
-    public bool UseOptiTrack { get; set; }
+    ////////////////////////////////////////////////////////////////
 
+    // public bool UseSaveFile  { get; set; }
+    // public bool UseSaveFile  { get; set; }
+    
     // ReSharper disable once ArrangeTypeMemberModifiers
     // ReSharper disable once UnusedMember.Local
     void Start ()
@@ -96,10 +104,17 @@ public class TrackerUI : MonoBehaviour
 
 		_packetsPerSec = 1000 / TrackerProperties.Instance.SendInterval;
 
-	    UseRecord     = false;
+	    IconSize = 60;
+
+        UseRecord     = false;
 	    ShowIndicator = false;
-	    //UseOptiTrack = false;
-	    //SetUpCenter = false;
+
+	    Force = _localHandleCenter.Force;
+	    Send  = _localHandleCenter.Send;
+        UseOptiTrack = _localHandleCenter.UseOpti;
+
+	    // UseOptiTrack = false;
+	    // SetUpCenter = false;
 	}
 
     // ReSharper disable once ArrangeTypeMemberModifiers
@@ -115,8 +130,8 @@ public class TrackerUI : MonoBehaviour
     // ReSharper disable once ArrangeTypeMemberModifiers
 	void OnGUI ()
 	{
-		int top = 5;
-		int left = 20;
+		var top = 5;
+		var left = 20;
 
 		DisplayMenuButton (MenuAction.Sensors, sensorTextureOn, sensorTextureOff, new Rect (left, top, IconSize, IconSize));
 		GUI.Label (new Rect (left + IconSize, top + IconSize - 20, 10, 25), "" + _userTracker.Sensors.Count);
@@ -128,7 +143,7 @@ public class TrackerUI : MonoBehaviour
 
 		left += IconSize + IconSize / 2;
 
-		DisplayMenuButton (MenuAction.Clouds, cloudTextureOn, cloudTextureOff, new Rect (left, top, IconSize, IconSize));
+		DisplayMenuButton (MenuAction.Clouds, CloudTextureOn, CloudTextureOff, new Rect (left, top, IconSize, IconSize));
 
 		left = Screen.width - IconSize - 10;
 		DisplayMenuButton (MenuAction.NetworkSettings, networkTextureOn, networkTextureOff, new Rect (left, top, IconSize, IconSize));
@@ -246,7 +261,7 @@ public class TrackerUI : MonoBehaviour
 
 				List<string> keyList = new List<string> (_userTracker.Sensors.Keys);
 				GUI.Label (new Rect (left, top, 1000, 40), keyList [_currentCloudSensor]);
-				if (GUI.Button (new Rect (left + 155, top + 2, 25, 25), nextTexture)) {
+				if (GUI.Button (new Rect (left + 155, top + 2, 25, 25), NextTexture)) {
 					_currentCloudSensor = (_currentCloudSensor + 1) % _userTracker.Sensors.Count;
 				}
 				var sid = keyList [_currentCloudSensor];
@@ -398,11 +413,34 @@ public class TrackerUI : MonoBehaviour
             {
                 _localHandleCenter.SetForwardPointOptiTrackButton();
             }
-            //SetUpCenter = GUI.Toggle(new Rect(left, top, 100, 25), SetUpCenter, "Use Center");
+           
             top += 35;
-            UseOptiTrack = GUI.Toggle(new Rect(left, top, 100, 25), UseOptiTrack, "Use Opti");
 
-            //Debug.Log("UseRecord = " + UseRecord);
+            if (GUI.Button(new Rect(left, top, 100, 25), "Active File"))
+            {
+
+                _localHandleCenter.SetSaveFilesButton();
+            }
+
+            if (GUI.Button(new Rect(left + 120, top, 100, 25), "Reset"))
+            {
+                _localHandleCenter.Reset();
+            }
+
+            top += 35;
+
+            Force = _localHandleCenter.Force;
+            Force = GUI.Toggle(new Rect(left, top, 100, 25), Force, "Force Center");
+            _localHandleCenter.Force = Force;
+
+            Send = _localHandleCenter.Send;
+            Send = GUI.Toggle(new Rect(left + 120, top, 100, 25), Send, "Send");
+            _localHandleCenter.Send = Send;
+
+            top += 35;
+            UseOptiTrack = _localHandleCenter.UseOpti;
+            UseOptiTrack = GUI.Toggle(new Rect(left, top, 100, 25), UseOptiTrack, "Use Opti");
+            _localHandleCenter.UseOpti = UseOptiTrack;
 
             // Unicast Settings
             /*
@@ -443,19 +481,23 @@ public class TrackerUI : MonoBehaviour
 
         }
 
-        if (Input.GetMouseButtonDown (0)) {
+        if (Input.GetMouseButtonDown (0))
+        {
 			RaycastHit hit;
 			Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
-			if (Physics.Raycast (ray, out hit)) {
-				if (hit.collider != null) {
-					if (hit.collider.gameObject.name.Contains ("Human")) {
+			if (Physics.Raycast (ray, out hit))
+            {
+				if (hit.collider != null)
+                {
+					if (hit.collider.gameObject.name.Contains ("Human"))
+                    {
 						_userTracker.ShowHumanBodies = int.Parse (hit.collider.gameObject.name.Remove (0, "Human ".Length));
-					} else
-						_userTracker.ShowHumanBodies = -1;
-				} else
-					_userTracker.ShowHumanBodies = -1;
-			} else
-				_userTracker.ShowHumanBodies = -1;
+					}
+                    else _userTracker.ShowHumanBodies = -1;
+				}
+                else _userTracker.ShowHumanBodies = -1;
+			}
+            else _userTracker.ShowHumanBodies = -1;
 		}
 	}
 
@@ -466,3 +508,12 @@ public class TrackerUI : MonoBehaviour
 		    _menuAction = _menuAction == button ? MenuAction.None : button;
 	}
 }
+    /*   
+
+        // SetUpCenter = GUI.Toggle(new Rect(left, top, 100, 25), SetUpCenter, "Use Center");
+        Force = _localHandleCenter.Force;
+        Send  = _localHandleCenter.Send;    
+
+        // UseOptiTrack = GUI.Toggle(new Rect(left, top, 100, 25), UseOptiTrack, "Use Opti");
+        // Debug.Log("UseRecord = " + UseRecord);   
+    */
