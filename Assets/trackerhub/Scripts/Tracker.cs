@@ -97,7 +97,7 @@ public class Tracker : MonoBehaviour
 
 		MergeHumans();
 
-		var deadHumansToRemove = _deadHumans.Where(h => DateTime.Now > h.timeOfDeath.AddMilliseconds(1000)).ToList();
+		var deadHumansToRemove = _deadHumans.Where(h => DateTime.Now > h.timeOfDeath.AddMilliseconds(0)).ToList();
 
 	    //foreach (var h in _deadHumans)
         //{
@@ -268,21 +268,50 @@ public class Tracker : MonoBehaviour
 					bool alone = true;
 
 					foreach (KeyValuePair<int, Human> h in _humans)
-                    {
+					{
+					    SensorBody bodyToRemove = null;
 						foreach (SensorBody humanBody in h.Value.bodies)
                         {
 							if (sensorBody.Value.sensorID == humanBody.sensorID && sensorBody.Value.ID == humanBody.ID)
                             {
-								humanBody.LocalPosition = sensorBody.Value.LocalPosition;
-								humanBody.lastUpdated = sensorBody.Value.lastUpdated;
-								humanBody.updated = sensorBody.Value.updated;
+                                //************* NEW DM STUFF *******************
+                                // check body distance from other human bodies
+                                int nFarBodies = 0;
+                                foreach (SensorBody b in h.Value.bodies)
+                                {
+                                    if (CalcHorizontalDistance(b.WorldPosition, humanBody.WorldPosition) >
+                                        TrackerProperties.Instance.MergeDistance)
+                                    {
+                                        nFarBodies++;
+                                    }
+                                }
+                                if (h.Value.bodies.Count > 1 && nFarBodies == (h.Value.bodies.Count - 1))
+                                {
+                                    bodyToRemove = humanBody;
+                                    alone = false;
+                                    break;
+                                }
+                                else
+                                //************* END DM STUFF *******************
+                                {
 
-								alone = false;
-								break;
-							}
+                                    humanBody.LocalPosition = sensorBody.Value.LocalPosition;
+                                    humanBody.lastUpdated = sensorBody.Value.lastUpdated;
+                                    humanBody.updated = sensorBody.Value.updated;
+
+                                    alone = false;
+                                    break;
+                                }
+                            }
 						}
-
-						if (!alone)
+                        //************* NEW DM STUFF *******************
+					    if (bodyToRemove != null)
+					    {
+					        h.Value.bodies.Remove(bodyToRemove);
+					        break;
+					    }
+                        //************* END DM STUFF *******************
+                        if (!alone)
 							break;
 					}
 
@@ -330,7 +359,22 @@ public class Tracker : MonoBehaviour
 			// try to fit in existing humans
 			foreach (KeyValuePair<int, Human> h in _humans)
             {
-				if (CalcHorizontalDistance (b.WorldPosition, h.Value.Position) < TrackerProperties.Instance.MergeDistance)
+                //************* NEW DM STUFF *******************
+                // if the human has a body from the same sensor it cannot have another
+                bool canHaveThisBody = true;
+                foreach (SensorBody humanBody in h.Value.bodies)
+                {
+                    if (humanBody.sensorID == b.sensorID)
+                    {
+                        canHaveThisBody = false;
+                        break;
+                    }
+                }
+                if (!canHaveThisBody)
+                    continue;
+                //************* END DM STUFF *******************
+
+                if (CalcHorizontalDistance (b.WorldPosition, h.Value.Position) < TrackerProperties.Instance.MergeDistance)
                 {
 					h.Value.Position = (h.Value.Position * (float)h.Value.bodies.Count + b.WorldPosition) / (float)(h.Value.bodies.Count + 1);
 					h.Value.bodies.Add (b);
@@ -384,7 +428,29 @@ public class Tracker : MonoBehaviour
                 {
 					if (CalcHorizontalDistance (h1.Value.Position, h2.Value.Position) < TrackerProperties.Instance.MergeDistance)
                     {
-						var position = (h1.Value.Position * (float) h1.Value.bodies.Count + h2.Value.Position * (float)h2.Value.bodies.Count) / (float)(h1.Value.bodies.Count + h2.Value.bodies.Count);
+                        //************* NEW DM STUFF *******************
+                        // if a human has body from a sensor, the other cannot have a body from the same sensor
+                        bool commonSensor = false;
+                        foreach (SensorBody h1body in h1.Value.bodies)
+                        {
+                            foreach (SensorBody h2body in h2.Value.bodies)
+                            {
+                                if (h1body.sensorID == h2body.sensorID)
+                                {
+                                    commonSensor = true;
+                                    break;
+                                }
+                            }
+                            if(commonSensor)
+                                break;
+                        }
+                        if (commonSensor)
+                        {
+                            continue;
+                        }
+                        //************* END DM STUFF *******************
+
+                        var position = (h1.Value.Position * (float) h1.Value.bodies.Count + h2.Value.Position * (float)h2.Value.bodies.Count) / (float)(h1.Value.bodies.Count + h2.Value.bodies.Count);
 
 						if (h1.Value.ID < h2.Value.ID) {
 							h1.Value.Position = position;

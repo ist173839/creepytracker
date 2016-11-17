@@ -67,6 +67,7 @@ public class TrackerUI : MonoBehaviour
     private HandleCenter _localHandleCenter;
 
     public bool ShowIndicator { get; set; }
+    public bool ShowOptiTrack { get; set; }
     public bool UseOptiTrack  { get; set; }
     public bool SetUpCenter   { get; set; }
     public bool UseRecord     { get; set; }
@@ -111,7 +112,7 @@ public class TrackerUI : MonoBehaviour
 
 	    Force = _localHandleCenter.Force;
 	    Send  = _localHandleCenter.Send;
-        UseOptiTrack = _localHandleCenter.UseOpti;
+        ShowOptiTrack = _localHandleCenter.ShowOpti;
 
 	    // UseOptiTrack = false;
 	    // SetUpCenter = false;
@@ -438,9 +439,19 @@ public class TrackerUI : MonoBehaviour
             _localHandleCenter.Send = Send;
 
             top += 35;
+            ShowOptiTrack = _localHandleCenter.ShowOpti;
+            ShowOptiTrack = GUI.Toggle(new Rect(left, top, 100, 25), ShowOptiTrack, "Show Opti");
+            _localHandleCenter.ShowOpti = ShowOptiTrack;
+            
             UseOptiTrack = _localHandleCenter.UseOpti;
-            UseOptiTrack = GUI.Toggle(new Rect(left, top, 100, 25), UseOptiTrack, "Use Opti");
+            UseOptiTrack = GUI.Toggle(new Rect(left + 120, top, 100, 25), UseOptiTrack, "Use Opti");
             _localHandleCenter.UseOpti = UseOptiTrack;
+
+            //top += 35;
+            //GUI.Label(new Rect(left, top, 150, 25), "User Id:");
+            //TrackerProperties.Instance.BroadcastPort = int.Parse(GUI.TextField(new Rect(left + 120, top, 50, 20), "" + TrackerProperties.Instance.BroadcastPort));
+
+
 
             // Unicast Settings
             /*
@@ -514,6 +525,6 @@ public class TrackerUI : MonoBehaviour
         Force = _localHandleCenter.Force;
         Send  = _localHandleCenter.Send;    
 
-        // UseOptiTrack = GUI.Toggle(new Rect(left, top, 100, 25), UseOptiTrack, "Use Opti");
+        // UseOptiTrack = GUI.Toggle(new Rect(left, top, 100, 25), ShowOptiTrack, "Use Opti");
         // Debug.Log("UseRecord = " + UseRecord);   
     */

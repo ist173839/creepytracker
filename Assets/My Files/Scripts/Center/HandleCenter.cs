@@ -45,6 +45,7 @@ public class HandleCenter : MonoBehaviour
     public bool IsSaveFilePossible;
     public bool ShowIndicator;
     public bool Force;
+    public bool ShowOpti;
     public bool UseOpti;
     public bool Send;
 
@@ -123,7 +124,7 @@ public class HandleCenter : MonoBehaviour
         _reset       = false;
         Force        = false;
         Send         = true;
-        UseOpti      = true;
+        ShowOpti      = true;
     }
 	
 	// Update is called once per frame
@@ -149,7 +150,7 @@ public class HandleCenter : MonoBehaviour
 	    SaveMensagem();
         SendMensagem();
 
-        _localOptitrackManager.RenderMarker(UseOpti);
+        _localOptitrackManager.RenderMarker(ShowOpti);
         _centroGameObject.GetComponent<MeshRenderer>().enabled  = _setUpCentro;
         _forwardGameObject.GetComponent<MeshRenderer>().enabled = _setUpForward;
     }
@@ -227,7 +228,7 @@ public class HandleCenter : MonoBehaviour
 
     public void SetCenterOptiTrackButton()
     {
-        if (_localOptitrackManager != null && UseOpti) SetUpNewCenter(_localOptitrackManager.GetUnityPositionVector());
+        if (_localOptitrackManager != null && ShowOpti) SetUpNewCenter(_localOptitrackManager.GetUnityPositionVector());
         // _centroGameObject.GetComponent<MeshRenderer>().enabled = _setUpCentro; // && _localTrackerUi.SetUpCenter;
     }
 
@@ -242,7 +243,7 @@ public class HandleCenter : MonoBehaviour
 
     public void SetForwardPointOptiTrackButton()
     {
-        if (_localOptitrackManager != null && UseOpti) SetUpNewForward(_localOptitrackManager.GetUnityPositionVector());
+        if (_localOptitrackManager != null && ShowOpti) SetUpNewForward(_localOptitrackManager.GetUnityPositionVector());
     }
 
     private void SetUpNewForward(Vector3 newForward)
