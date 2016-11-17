@@ -110,7 +110,7 @@
     <Compile Include="Assets\Common\Scripts\Logger.cs" />
     <Compile Include="Assets\Common\Scripts\PointCloudSimple.cs" />
     <Compile Include="Assets\Common\Scripts\UdpListener.cs" />
-    <Compile Include="Assets\My Files\Scripts\Center\HandleCenter.cs" />
+    <Compile Include="Assets\My Files\Scripts\Center\HandleVirtualWorld.cs" />
     <Compile Include="Assets\My Files\Scripts\Listener\MyUdpListener.cs" />
     <Compile Include="Assets\My Files\Scripts\OptiTrack\OptitrackManager.cs" />
     <Compile Include="Assets\My Files\Scripts\Z_Outros\MyKnees.cs" />

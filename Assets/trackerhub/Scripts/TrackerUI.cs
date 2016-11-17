@@ -52,6 +52,9 @@ public class TrackerUI : MonoBehaviour
 	private int _currentCloudSensor;
     private int _packetsPerSec;
 
+
+    public int IdToCheck;
+
     public float _rotStep = 2f;
     public float _transStep = 0.02f;
     
@@ -64,10 +67,11 @@ public class TrackerUI : MonoBehaviour
 
     ////////////////////////////////////////////////////////////////
 
-    private HandleCenter _localHandleCenter;
+    private HandleVirtualWorld _localHandleVirtualWorld;
 
     public bool ShowIndicator { get; set; }
-    public bool ShowOptiTrack { get; set; }
+   // public bool ShowOptiTrack { get; set; }
+    public bool ShowMarker { get; set; }
     public bool UseOptiTrack  { get; set; }
     public bool SetUpCenter   { get; set; }
     public bool UseRecord     { get; set; }
@@ -85,7 +89,7 @@ public class TrackerUI : MonoBehaviour
 	{
 		_userTracker = gameObject.GetComponent<Tracker> ();
 
-        _localHandleCenter = gameObject.GetComponent<HandleCenter> ();
+        _localHandleVirtualWorld = gameObject.GetComponent<HandleVirtualWorld> ();
 
         _menuAction = MenuAction.None;
 		_currentCloudSensor = 0;
@@ -110,19 +114,26 @@ public class TrackerUI : MonoBehaviour
         UseRecord     = false;
 	    ShowIndicator = false;
 
-	    Force = _localHandleCenter.Force;
-	    Send  = _localHandleCenter.Send;
-        ShowOptiTrack = _localHandleCenter.ShowOpti;
-
-	    // UseOptiTrack = false;
-	    // SetUpCenter = false;
-	}
+	    Force = _localHandleVirtualWorld.Force;
+	    Send  = _localHandleVirtualWorld.Send;
+       // ShowOptiTrack = _localHandleVirtualWorld.ShowOpti;
+        ShowMarker = _localHandleVirtualWorld.ShowMarker;
+        
+        // UseOptiTrack = false;
+        // SetUpCenter = false;
+    }
 
     // ReSharper disable once ArrangeTypeMemberModifiers
     // ReSharper disable once UnusedMember.Local
 	void Update ()
 	{
-		if (_userTracker.CalibrationStatus == CalibrationProcess.CalcNormal)
+
+        //todo Resolver Erro IdIntList
+        if (_userTracker.IdIntList.Count > 0)
+	        if (!_userTracker.IdIntList.Contains(IdToCheck))
+	            IdToCheck = _userTracker.IdIntList[0];
+
+	    if (_userTracker.CalibrationStatus == CalibrationProcess.CalcNormal)
 			_userTracker.CalibrationStep3 ();
 	}
 
@@ -400,56 +411,79 @@ public class TrackerUI : MonoBehaviour
 
             UseRecord    = GUI.Toggle(new Rect(left, top, 100, 25), UseRecord, "Record");
 
-            ShowIndicator = GUI.Toggle(new Rect(left + 120, top, 100, 25), ShowIndicator, "Show Indicators");
-            _localHandleCenter.ShowIndicator = ShowIndicator;
+
+            UseOptiTrack = _localHandleVirtualWorld.UseOpti;
+            UseOptiTrack = GUI.Toggle(new Rect(left + 120, top, 100, 25), UseOptiTrack, "Use Opti");
+            _localHandleVirtualWorld.UseOpti = UseOptiTrack; // = useOptiTrack;
 
             top += 30;
 
+            ShowMarker = _localHandleVirtualWorld.ShowMarker;
+            ShowMarker = GUI.Toggle(new Rect(left, top, 100, 25), ShowMarker, "Show Marker");
+            _localHandleVirtualWorld.ShowMarker = ShowMarker;
+            
+            Send = _localHandleVirtualWorld.Send;
+            Send = GUI.Toggle(new Rect(left + 120, top, 100, 25), Send, "Send");
+            _localHandleVirtualWorld.Send = Send;
+            
+            if (_localHandleVirtualWorld.CanShowIndicators || _localHandleVirtualWorld.CanForce)
+            {
+                top += 30;
+                var moreLeft = 0.0f;
+                if (_localHandleVirtualWorld.CanForce && Send)
+                {
+                    Force = _localHandleVirtualWorld.Force;
+                    Force = GUI.Toggle(new Rect(left, top, 100, 25), Force, "Force Center");
+                    _localHandleVirtualWorld.Force = Force;
+                    moreLeft = 120;
+                }
+
+                if (_localHandleVirtualWorld.CanShowIndicators)
+                {
+                    ShowIndicator = GUI.Toggle(new Rect(left + moreLeft, top, 100, 25), ShowIndicator, "Show Indicators");
+                    _localHandleVirtualWorld.ShowIndicator = ShowIndicator;
+                }
+            }
+
+            if (!UseOptiTrack)
+            {
+                top += 30;
+                if (_userTracker.IdIntList.Count > 0)
+                {
+                    GUI.Label(new Rect(left, top, 150, 25), "User Id:");
+                    if (!_userTracker.IdIntList.Contains(IdToCheck))
+                    {
+                        IdToCheck = _userTracker.IdIntList[0];
+                    }
+                    IdToCheck = int.Parse(GUI.TextField(new Rect(left + 120, top, 50, 20), "" + IdToCheck));
+                }
+            }
+            top += 35;
+
             if (GUI.Button(new Rect(left, top, 100, 25), "Set Center"))
             {
-                _localHandleCenter.SetCenterOptiTrackButton();
+                _localHandleVirtualWorld.SetCenterButton();
             }
 
             if (GUI.Button(new Rect(left + 120, top, 100, 25), "Set Forward"))
             {
-                _localHandleCenter.SetForwardPointOptiTrackButton();
+                _localHandleVirtualWorld.SetForwardPointButton();
             }
-           
+
             top += 35;
 
             if (GUI.Button(new Rect(left, top, 100, 25), "Active File"))
             {
 
-                _localHandleCenter.SetSaveFilesButton();
+                _localHandleVirtualWorld.SetSaveFilesButton();
             }
 
             if (GUI.Button(new Rect(left + 120, top, 100, 25), "Reset"))
             {
-                _localHandleCenter.Reset();
+                _localHandleVirtualWorld.Reset();
             }
 
-            top += 35;
 
-            Force = _localHandleCenter.Force;
-            Force = GUI.Toggle(new Rect(left, top, 100, 25), Force, "Force Center");
-            _localHandleCenter.Force = Force;
-
-            Send = _localHandleCenter.Send;
-            Send = GUI.Toggle(new Rect(left + 120, top, 100, 25), Send, "Send");
-            _localHandleCenter.Send = Send;
-
-            top += 35;
-            ShowOptiTrack = _localHandleCenter.ShowOpti;
-            ShowOptiTrack = GUI.Toggle(new Rect(left, top, 100, 25), ShowOptiTrack, "Show Opti");
-            _localHandleCenter.ShowOpti = ShowOptiTrack;
-            
-            UseOptiTrack = _localHandleCenter.UseOpti;
-            UseOptiTrack = GUI.Toggle(new Rect(left + 120, top, 100, 25), UseOptiTrack, "Use Opti");
-            _localHandleCenter.UseOpti = UseOptiTrack;
-
-            //top += 35;
-            //GUI.Label(new Rect(left, top, 150, 25), "User Id:");
-            //TrackerProperties.Instance.BroadcastPort = int.Parse(GUI.TextField(new Rect(left + 120, top, 50, 20), "" + TrackerProperties.Instance.BroadcastPort));
 
 
 
@@ -519,12 +553,71 @@ public class TrackerUI : MonoBehaviour
 		    _menuAction = _menuAction == button ? MenuAction.None : button;
 	}
 }
-    /*   
 
-        // SetUpCenter = GUI.Toggle(new Rect(left, top, 100, 25), SetUpCenter, "Use Center");
-        Force = _localHandleCenter.Force;
-        Send  = _localHandleCenter.Send;    
+/*    
+ *    
+ *    
+ *    
+ *    
+            UseOptiTrack = _localHandleVirtualWorld.UseOpti;
 
-        // UseOptiTrack = GUI.Toggle(new Rect(left, top, 100, 25), ShowOptiTrack, "Use Opti");
-        // Debug.Log("UseRecord = " + UseRecord);   
-    */
+            // var useOptiTrack = UseOptiTrack;
+            UseOptiTrack = GUI.Toggle(new Rect(left + 120, top, 100, 25), UseOptiTrack, "Use Opti");
+            //if (!UseOptiTrack)
+            //{
+            //    ShowIndicator = false;
+            //    _localHandleVirtualWorld.ShowOpti = ShowOptiTrack;
+            //}
+
+            _localHandleVirtualWorld.UseOpti = UseOptiTrack; // = useOptiTrack;
+            
+ *    
+ *    
+ *    
+ top += 35;
+
+                ShowMarker = _localHandleVirtualWorld.ShowMarker;
+                ShowMarker = GUI.Toggle(new Rect(left, top, 100, 25), ShowMarker, "Show Marker");
+                _localHandleVirtualWorld.ShowMarker = ShowMarker;
+
+
+                top += 35;
+
+                if (GUI.Button(new Rect(left, top, 100, 25), "Set Center"))
+                {
+                    _localHandleVirtualWorld.SetCenterButton();
+                }
+
+                if (GUI.Button(new Rect(left + 120, top, 100, 25), "Set Forward"))
+                {
+                    _localHandleVirtualWorld.SetForwardPointButton();
+                }
+
+                top += 35;
+
+                if (GUI.Button(new Rect(left, top, 100, 25), "Active File"))
+                {
+
+                    _localHandleVirtualWorld.SetSaveFilesButton();
+                }
+
+                if (GUI.Button(new Rect(left + 120, top, 100, 25), "Reset"))
+                {
+                    _localHandleVirtualWorld.Reset();
+                }
+
+ *    
+ *    _localHandleVirtualWorld.ShowMarker = false; 
+   
+                ShowOptiTrack = _localHandleVirtualWorld.ShowOpti;
+                ShowOptiTrack = GUI.Toggle(new Rect(left, top, 100, 25), ShowOptiTrack, "Show Marker");
+                _localHandleVirtualWorld.ShowOpti = ShowOptiTrack;
+
+
+    // SetUpCenter = GUI.Toggle(new Rect(left, top, 100, 25), SetUpCenter, "Use Center");
+    Force = _localHandleCenter.Force;
+    Send  = _localHandleCenter.Send;    
+
+    // UseOptiTrack = GUI.Toggle(new Rect(left, top, 100, 25), ShowOptiTrack, "Use Opti");
+    // Debug.Log("UseRecord = " + UseRecord);   
+*/

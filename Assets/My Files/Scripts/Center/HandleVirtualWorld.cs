@@ -8,7 +8,7 @@ using Object = UnityEngine.Object;
 // ReSharper disable once ClassNeverInstantiated.Global
 // ReSharper disable once UnusedMember.Global
 // ReSharper disable once CheckNamespace
-public class HandleCenter : MonoBehaviour
+public class HandleVirtualWorld : MonoBehaviour
 {
     // ReSharper disable once MemberCanBePrivate.Global
     public enum Side
@@ -41,13 +41,18 @@ public class HandleCenter : MonoBehaviour
 
     private GameObject _indicadores;
     private GameObject _helpers;
+    private GameObject _marker;
 
     public bool IsSaveFilePossible;
     public bool ShowIndicator;
     public bool Force;
-    public bool ShowOpti;
+   // public bool ShowOpti;
+    public bool ShowMarker;
+
     public bool UseOpti;
     public bool Send;
+    public bool CanShowIndicators;
+    public bool CanForce;
 
     private bool _setUpForward;
     private bool _saveForward;
@@ -97,6 +102,10 @@ public class HandleCenter : MonoBehaviour
         _indicadores.transform.position = transform.position;
         _indicadores.transform.parent   = _helpers.transform;
         
+        _marker = GameObjectHelper.MyCreatePrimitiveObject(PrimitiveType.Sphere, "Marker", Vector3.zero, _helpers.transform, false);
+        _marker.GetComponent<MeshRenderer>().material.color = Color.green;
+        _marker.transform.localScale = new Vector3(0.50f, 0.50f, 0.50f);
+
         _centroGameObject  = GameObjectHelper.MyCreatePrimitiveObject(PrimitiveType.Sphere, "Centro", Vector3.zero, _helpers.transform, false);
         _centroGameObject.GetComponent<MeshRenderer>().material.color = Color.black;
         _centroGameObject.transform.localScale = new Vector3(0.50f, 0.1f, 0.50f);
@@ -124,7 +133,11 @@ public class HandleCenter : MonoBehaviour
         _reset       = false;
         Force        = false;
         Send         = true;
-        ShowOpti      = true;
+      //  ShowOpti     = true;
+        UseOpti      = false;
+        ShowMarker    = true;
+        CanShowIndicators = false;
+        CanForce = false;
     }
 	
 	// Update is called once per frame
@@ -132,6 +145,15 @@ public class HandleCenter : MonoBehaviour
     // ReSharper disable once UnusedMember.Local
     void Update ()
 	{
+
+	    if (_setUpCentro)
+	    {
+	        CanForce = true;
+            if (_setUpForward)
+	        {
+	            CanShowIndicators = true;
+	        }
+	    }
        
 	    if (_setUpCentro && _centro.HasValue && _setUpForward  && _forwardPoint.HasValue && _reset)
         {
@@ -149,10 +171,21 @@ public class HandleCenter : MonoBehaviour
 
 	    SaveMensagem();
         SendMensagem();
+        
 
-        _localOptitrackManager.RenderMarker(ShowOpti);
+        _localOptitrackManager.RenderMarker(UseOpti && ShowMarker);
+        _marker.GetComponent<MeshRenderer>().enabled = !UseOpti && ShowMarker;
+        
         _centroGameObject.GetComponent<MeshRenderer>().enabled  = _setUpCentro;
         _forwardGameObject.GetComponent<MeshRenderer>().enabled = _setUpForward;
+
+	    if (!UseOpti)
+	    {
+            var pos = MathHelper.DeslocamentoHorizontal( _localTracker.GetHuman(_localTrackerUi.IdToCheck).gameObject.transform.position, 0.5f);
+	        _marker.transform.position = pos;
+	    }
+
+
     }
 
     private void SaveMensagem()
@@ -226,9 +259,24 @@ public class HandleCenter : MonoBehaviour
         if (Send) _udpBroadcast.Send(mensagem);
     }
 
-    public void SetCenterOptiTrackButton()
+    public void SetCenterButton()
     {
-        if (_localOptitrackManager != null && ShowOpti) SetUpNewCenter(_localOptitrackManager.GetUnityPositionVector());
+        if (UseOpti)
+        {
+            if (_localOptitrackManager != null) SetUpNewCenter(_localOptitrackManager.GetUnityPositionVector());
+        }
+        else
+        {
+           // var human = _localTracker.GetHuman(_localTrackerUi.IdToCheck);
+            var pos = MathHelper.DeslocamentoHorizontal(_marker.transform.position, 0.0f);
+            SetUpNewCenter(pos);
+
+
+        }
+
+
+
+        //  if (_localOptitrackManager != null ) SetUpNewCenter(_localOptitrackManager.GetUnityPositionVector());
         // _centroGameObject.GetComponent<MeshRenderer>().enabled = _setUpCentro; // && _localTrackerUi.SetUpCenter;
     }
 
@@ -241,9 +289,24 @@ public class HandleCenter : MonoBehaviour
         SetIndicators(_centro.Value);
     }
 
-    public void SetForwardPointOptiTrackButton()
+    public void SetForwardPointButton()
     {
-        if (_localOptitrackManager != null && ShowOpti) SetUpNewForward(_localOptitrackManager.GetUnityPositionVector());
+        if (UseOpti)
+        {
+            if (_localOptitrackManager != null)
+            {
+                SetUpNewForward(_localOptitrackManager.GetUnityPositionVector());
+            }
+        }
+        else
+        {
+            // var human = _localTracker.GetHuman(_localTrackerUi.IdToCheck);
+            var pos = MathHelper.DeslocamentoHorizontal(_marker.transform.position, 0.0f);
+            SetUpNewForward(pos);
+
+
+        }
+
     }
 
     private void SetUpNewForward(Vector3 newForward)
@@ -369,11 +432,11 @@ public class HandleCenter : MonoBehaviour
                 break;
             case Side.Front:
                 rotation = Quaternion.Euler(0.00f,  90.00f, -90.00f);
-                position = new Vector3(0.0f, 0.0f, 1.2f);
+                position = new Vector3(0.0f, 0.0f, 1.5f);
                 break;
             case Side.Behind:
                 rotation = Quaternion.Euler(0.00f, -90.00f, -90.00f);
-                position = new Vector3(0.0f, 0.0f, -1.8f);
+                position = new Vector3(0.0f, 0.0f, -1.5f);
                 break;
             default:
                 throw new ArgumentOutOfRangeException("side", side, null);

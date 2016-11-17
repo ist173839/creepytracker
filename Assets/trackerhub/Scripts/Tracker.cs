@@ -86,7 +86,8 @@ public class Tracker : MonoBehaviour
     void FixedUpdate ()
 	{
         IdList         = new List<string>();
-        IdIntList      = new List<int>();
+       // IdIntList      = new List<int>();
+       var  idIntList      = new List<int>();
 
 	    if (Input.GetKeyDown (KeyCode.C)) ColorHumans = !ColorHumans;
 
@@ -126,7 +127,7 @@ public class Tracker : MonoBehaviour
         foreach (var h in _humans.Values)
         {
             IdList.Add(h.ID.ToString()); // "SpecialHuman " +
-            IdIntList.Add(h.ID);
+            idIntList.Add(h.ID);
              
             // udpate Human Skeleton
             h.UpdateSkeleton ();
@@ -190,6 +191,8 @@ public class Tracker : MonoBehaviour
 				b.gameObject.GetComponent<Renderer> ().enabled = (ShowHumanBodies == h.ID);
 			}
 		}
+	    IdIntList = idIntList;
+
 	}
     
     public Dictionary<int, Human> GetHumans()
