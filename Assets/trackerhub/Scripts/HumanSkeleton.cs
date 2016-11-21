@@ -64,9 +64,7 @@ public class HumanSkeleton : MonoBehaviour
 
     private string HandLeftState;
     private string HandRightState;
-
-
-
+    
 
     void Start ()
 	{

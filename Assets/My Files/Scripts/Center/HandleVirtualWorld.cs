@@ -181,11 +181,14 @@ public class HandleVirtualWorld : MonoBehaviour
 
 	    if (!UseOpti)
 	    {
-            var pos = MathHelper.DeslocamentoHorizontal( _localTracker.GetHuman(_localTrackerUi.IdToCheck).gameObject.transform.position, 0.5f);
-	        _marker.transform.position = pos;
+	        var idToCheck  = _localTrackerUi.IdToCheck;
+	        var humanCheck = _localTracker.GetHuman(idToCheck);
+	        if (humanCheck != null)
+	        {
+                var pos = MathHelper.DeslocamentoHorizontal(humanCheck.gameObject.transform.position, 0.5f);
+                _marker.transform.position = pos;
+            }
 	    }
-
-
     }
 
     private void SaveMensagem()
@@ -221,19 +224,23 @@ public class HandleVirtualWorld : MonoBehaviour
             var center = "CenterPos" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(_centro.Value);
             var humans = _localTracker.GetHumans();
             var mensaHumans = "";
-            foreach (var h in humans)
+            if (humans != null)
             {
-                var position = _centro.Value - h.Value.Position;
+                foreach (var h in humans)
+                {
+                    var position = _centro.Value - h.Value.Position;
 
-                mensaHumans += MessageSeparators.L2;
-                mensaHumans += "Id"     + MessageSeparators.SET + h.Value.ID;
-                mensaHumans += MessageSeparators.L4; // "Desvio" + MessageSeparators.SET +
-                mensaHumans += CommonUtils.convertVectorToStringRPC(position);
+                    mensaHumans += MessageSeparators.L2;
+                    mensaHumans += "Id" + MessageSeparators.SET + h.Value.ID;
+                    mensaHumans += MessageSeparators.L4; // "Desvio" + MessageSeparators.SET +
+                    mensaHumans += CommonUtils.convertVectorToStringRPC(position);
+                }
+
+                mensagem = center + mensaHumans;
+                // mens = center;
+                // _saveCenter.RecordMessage(center);
             }
 
-            mensagem = center + mensaHumans;
-            // mens = center;
-            // _saveCenter.RecordMessage(center);
         }
 
 

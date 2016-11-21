@@ -22,22 +22,32 @@ public class Tracker : MonoBehaviour
 {
     public Dictionary<string, Sensor> Sensors { get; private set; }
 
-    public CalibrationProcess CalibrationStatus { get; set; }
-
     private Dictionary<int, Human> _humans;
 
-	private List<Human> _deadHumans;
-	private List<Human> _humansToKill;
+    public List<int>    IdIntList;
+    public List<string> IdList;
 
-	private UdpBroadcast _udpBroadcast;
+    private List<Human> _deadHumans;
+    private List<Human> _humansToKill;
+    
+    public CalibrationProcess CalibrationStatus { get; set; }
+
+    private UdpBroadcast _udpBroadcast;
+
     private SafeWriteFile _safeWriteFile;
+
     private OptitrackManager _localOptitrackManager;
 
     // ReSharper disable once UnassignedField.Global
     // ReSharper disable once MemberCanBePrivate.Global
     public Material WhiteMaterial;
 
-	public string[] UnicastClients
+    private TrackerUI _localTrackerUi;
+
+    private GameObject _centroGameObject;
+
+
+    public string[] UnicastClients
     {
 		get
         {
@@ -45,16 +55,29 @@ public class Tracker : MonoBehaviour
 		}
 	}
 
-    public List<int>    IdIntList;
-    public List<string> IdList;
-
-    private TrackerUI _localTrackerUi;
 
     public int ShowHumanBodies = -1;
     public int CountHuman;
 
     public bool ColorHumans;
     public bool colorHumans;
+
+    private bool _setUpCentro;
+
+
+    public Vector3 Centro;
+
+    public bool SendKnees;
+    //public List<KneesInfo> RightKneesInfo;
+    //public List<KneesInfo> LeftKneesInfo;
+
+    public Dictionary<string, KneesInfo> RightKneesInfo;
+    public Dictionary<string, KneesInfo> LeftKneesInfo;
+
+    private Dictionary<string, KneesInfo> _allKneesInfo;
+    private Vector3? _lastRigthKneePosition;
+    private Vector3? _lastLeftKneePosition;
+
 
     // ReSharper disable once UnusedMember.Local
     // ReSharper disable once ArrangeTypeMemberModifiers
@@ -79,6 +102,12 @@ public class Tracker : MonoBehaviour
 	    IdIntList      = new List<int>();
 
 	    CountHuman = 0;
+
+
+        RightKneesInfo = new Dictionary<string, KneesInfo>();
+        LeftKneesInfo  = new Dictionary<string, KneesInfo>();
+
+
     }
 
     // ReSharper disable once UnusedMember.Local
@@ -135,9 +164,10 @@ public class Tracker : MonoBehaviour
             // get PDU
             try
             {
-                strToSend += MessageSeparators.L1 + h.GetPdu(); 
+                strToSend += MessageSeparators.L1 + h.GetPdu();
+                //GetKnees(h);
                 // strToSend += SetCentro();
-			}
+            }
 			catch (Exception e)
             {
                 Debug.Log(e.Message + "\n" + e.StackTrace + "\n");
@@ -202,9 +232,10 @@ public class Tracker : MonoBehaviour
 
     public Human GetHuman(int id)
     {
-        return _humans[id];
+        return _humans.ContainsKey(id) ? _humans[id] : null;
     }
 
+    // ReSharper disable once UnusedMember.Local
     private static Vector3 GetLastPosition(Human human, Side thisSide, Vector3? lastPosition)
     {
         // ReSharper disable once MergeConditionalExpression
@@ -355,16 +386,16 @@ public class Tracker : MonoBehaviour
 		}
 
 		// new bodies
-		foreach (SensorBody b in aloneBodies)
+		foreach (var b in aloneBodies)
         {
-			bool hasHuman = false;
+			var hasHuman = false;
 
 			// try to fit in existing humans
 			foreach (KeyValuePair<int, Human> h in _humans)
             {
                 //************* NEW DM STUFF *******************
                 // if the human has a body from the same sensor it cannot have another
-                bool canHaveThisBody = true;
+                var canHaveThisBody = true;
                 foreach (SensorBody humanBody in h.Value.bodies)
                 {
                     if (humanBody.sensorID == b.sensorID)
@@ -796,20 +827,22 @@ public class Tracker : MonoBehaviour
 			TrackerProperties.Instance.SendInterval = int.Parse (aux);
 		}
 
-		/*aux = ConfigProperties.load (filePath, "tracker.filtergain");
-		if (aux != "") {
-			KalmanFilterFloat.Gain = float.Parse (aux);
-		}*/
+		/*
+            aux = ConfigProperties.load (filePath, "tracker.filtergain");
+		    if (aux != "") {
+			    KalmanFilterFloat.Gain = float.Parse (aux);
+		    }
+        */
 	}
 
     private void _loadSavedSensors ()
 	{
-		foreach (String line in ConfigProperties.loadKinects(Application.dataPath + "/" + TrackerProperties.Instance.ConfigFilename)) {
-			string[] values = line.Split (';');
+		foreach (var line in ConfigProperties.loadKinects(Application.dataPath + "/" + TrackerProperties.Instance.ConfigFilename)) {
+			var values = line.Split (';');
 
-			string id = values [0];
+			var id = values [0];
 
-			Vector3 position = new Vector3 (
+			var position = new Vector3 (
 				                   float.Parse (values [1].Replace (',', '.')),
 				                   float.Parse (values [2].Replace (',', '.')),
 				                   float.Parse (values [3].Replace (',', '.')));
@@ -862,6 +895,87 @@ public class Tracker : MonoBehaviour
 		IPEndPoint remoteEndPoint = new IPEndPoint (IPAddress.Broadcast, TrackerProperties.Instance.ListenPort + 1);
 		udp.Send (data, data.Length, remoteEndPoint);
 	}
+
+
+    private string GetKnees(Human h)
+    {
+        // CommonUtils.convertVectorToStringRPC
+        // if (!_humans.ContainsKey(h1)) return null;
+
+        if (h == null || !_humans.ContainsValue(h)) return null;
+
+        // Human h = _humans[h1];
+        // SensorBody bestBody = h.bodies[0];
+        var mensagem = "";
+        mensagem += MessageSeparators.L4;
+
+        //SaveTheKnees(h);
+
+        var meanKneeRight = GetMeanList(RightKneesInfo);
+        var meanKneeLeft  = GetMeanList(LeftKneesInfo);
+
+        var stringMeanKneeRight = meanKneeRight == null ? "null" : CommonUtils.convertVectorToStringRPC(meanKneeRight.Value);
+        var stringMeanKneeLeft  = meanKneeLeft  == null ? "null" : CommonUtils.convertVectorToStringRPC(meanKneeLeft.Value);
+
+        mensagem +=
+            "MeanKneeRight" + MessageSeparators.SET + stringMeanKneeRight +
+            MessageSeparators.L2 +
+            "MeanKneeLeft" + MessageSeparators.SET + stringMeanKneeLeft;
+
+        var meanTrackKneeRight = GetMeanTrackList(RightKneesInfo);
+        var meanTrackKneeLeft = GetMeanTrackList(LeftKneesInfo);
+
+        var stringMeanTrackKneeRight = meanTrackKneeRight == null ? "null" : CommonUtils.convertVectorToStringRPC(meanTrackKneeRight.Value);
+        var stringMeanTrackKneeLeft = meanTrackKneeLeft == null ? "null" : CommonUtils.convertVectorToStringRPC(meanTrackKneeLeft.Value);
+
+        mensagem +=
+            MessageSeparators.L2 +
+            "MeanTrackKneeRight" + MessageSeparators.SET + stringMeanTrackKneeRight +
+            MessageSeparators.L2 +
+            "MeanTrackKneeLeft" + MessageSeparators.SET + stringMeanTrackKneeLeft;
+
+
+        return mensagem;
+    }
+
+
+
+    private static Vector3? GetMeanList(Dictionary<string, KneesInfo> meanList)
+    {
+        if (meanList.Count == 0)
+        {
+            Debug.Log("meanList.Count == 0");
+            return null;
+        }
+
+        var meanResult = meanList.Aggregate(Vector3.zero, (current, pair) => current + pair.Value.Pos);
+        meanResult /= meanList.Count;
+        return meanResult;
+    }
+
+    private static Vector3? GetMeanTrackList(Dictionary<string, KneesInfo> meanList)
+    {
+        if (meanList.Count == 0)
+        {
+            Debug.Log("meanList.Count == 0");
+            return null;
+        }
+
+        var meanResult = Vector3.zero;
+        var trackCount = 0;
+        foreach (var info in meanList)
+        {
+            if (!info.Value.Track) continue;
+            trackCount++;
+            meanResult = meanResult + info.Value.Pos;
+        }
+
+        if (trackCount == 0) return GetMeanList(meanList);
+
+        meanResult /= trackCount;
+        return meanResult;
+    }
+
 
     // ReSharper disable once ArrangeTypeMemberModifiers
     // ReSharper disable once UnusedMember.Local
@@ -923,7 +1037,7 @@ public class Tracker : MonoBehaviour
  * 
  * 
  * 
-  //_setUpCentro = false;
+        //_setUpCentro = false;
         //_centroGameObject = GameObjectHelper.MyCreatePrimitiveObject(PrimitiveType.Sphere, "Centro", Vector3.zero, transform, false);
         // _centroGameObject.transform.localScale = new Vector3(1.0f, 0.1f, 1.0f); 
  * 
@@ -946,12 +1060,7 @@ public class Tracker : MonoBehaviour
      
         return mensagem;
     }
-
-
-
-
-
-
+    
     /////////////////////////////////////////////////////////////////////////////////
  //, _localOptitrackManager.PositionVector
         //////////////////////////////////////////////////////////////////////////////
@@ -1008,8 +1117,8 @@ public class Tracker : MonoBehaviour
 //}
  * 
  * 
- *  private string GetKnees(Human h)
-    {
+
+private string GetKnees(Human h) {
         
         // CommonUtils.convertVectorToStringRPC
         // if (!_humans.ContainsKey(h1)) return null;
@@ -1288,12 +1397,7 @@ public class Tracker : MonoBehaviour
 
         return res;
     }
- * 
- * 
- * 
- * 
- * 
- * 
+ *  
      //private void SaveTheKnees(Human h)
     //{
     //    //var kneeRightList = new List<Vector3>();
@@ -1377,12 +1481,76 @@ public class Tracker : MonoBehaviour
     //        //kneeRightList.Add(kneeRight.Value);
     //        //kneeLeftList.Add(kneeLeft.Value);
     //    }
-    //}
+    //}  
      
-     
-     
-     
-     
+    
+     private string GetKnees(Human h) {
+        
+        // CommonUtils.convertVectorToStringRPC
+        // if (!_humans.ContainsKey(h1)) return null;
+
+        if(h == null || !_humans.ContainsValue(h)) return null;
+
+        // Human h = _humans[h1];
+        // SensorBody bestBody = h.bodies[0];
+        var mensagem = "";
+        mensagem += MessageSeparators.L4;
+
+        //SaveTheKnees(h);
+
+        var meanKneeRight = GetMeanList(RightKneesInfo);
+        var meanKneeLeft  = GetMeanList(LeftKneesInfo);
+
+        var stringMeanKneeRight = meanKneeRight == null ? "null" : CommonUtils.convertVectorToStringRPC(meanKneeRight.Value);
+        var stringMeanKneeLeft  = meanKneeLeft  == null ? "null" : CommonUtils.convertVectorToStringRPC(meanKneeLeft.Value);
+
+        mensagem +=
+            "MeanKneeRight" + MessageSeparators.SET + stringMeanKneeRight +
+            MessageSeparators.L2 +
+            "MeanKneeLeft"  + MessageSeparators.SET + stringMeanKneeLeft;
+
+        var meanTrackKneeRight = GetMeanTrackList(RightKneesInfo);
+        var meanTrackKneeLeft  = GetMeanTrackList(LeftKneesInfo);
+
+        var stringMeanTrackKneeRight = meanTrackKneeRight == null ? "null" : CommonUtils.convertVectorToStringRPC(meanTrackKneeRight.Value);
+        var stringMeanTrackKneeLeft  = meanTrackKneeLeft  == null ? "null" : CommonUtils.convertVectorToStringRPC(meanTrackKneeLeft.Value);
+        
+        mensagem += 
+            MessageSeparators.L2 +
+            "MeanTrackKneeRight" + MessageSeparators.SET + stringMeanTrackKneeRight +
+            MessageSeparators.L2 +
+            "MeanTrackKneeLeft"  + MessageSeparators.SET + stringMeanTrackKneeLeft;
+        
+        
+        var closeKneeRight = CloseKnee(RightKneesInfo, h, Side.Right, false, _lastRigthKneePosition);
+        var closeKneeLeft  = CloseKnee(LeftKneesInfo,  h, Side.Left,  false, _lastLeftKneePosition);
+
+        var stringCloseKneeRight = closeKneeRight == null ? "null" : CommonUtils.convertVectorToStringRPC(closeKneeRight.Value);
+        var stringCloseKneeLeft  = closeKneeLeft  == null ? "null" : CommonUtils.convertVectorToStringRPC(closeKneeLeft.Value);
+
+        mensagem +=
+            MessageSeparators.L2 +
+            "CloseKneeRight" + MessageSeparators.SET + stringCloseKneeRight +
+            MessageSeparators.L2 +
+            "CloseKneeLeft"  + MessageSeparators.SET + stringCloseKneeLeft;
+
+
+        var closeTrackKneeRight = CloseKnee(RightKneesInfo, h, Side.Right, true, _lastRigthKneePosition);
+        var closeTrackKneeLeft  = CloseKnee(LeftKneesInfo,  h, Side.Left,  true, _lastLeftKneePosition);
+
+
+        var stringCloseTrackKneeRight = closeTrackKneeRight == null ? "null" : CommonUtils.convertVectorToStringRPC(closeTrackKneeRight.Value);
+        var stringCloseTrackKneeLeft  = closeTrackKneeLeft  == null ? "null" : CommonUtils.convertVectorToStringRPC(closeTrackKneeLeft.Value);
+
+        mensagem +=
+            MessageSeparators.L2 +
+            "CloseTrackKneeRight" + MessageSeparators.SET + stringCloseTrackKneeRight +
+            MessageSeparators.L2 +
+            "CloseTrackKneeLeft"  + MessageSeparators.SET + stringCloseTrackKneeLeft;
+        
+        //  GetLastPosition(Tracker localTracker, Side thisSide, string idHuman, );
+        return mensagem;
+    }
      
      
      
