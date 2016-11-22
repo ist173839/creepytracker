@@ -34,8 +34,6 @@ public class HandleVirtualWorld : MonoBehaviour
 
     private SaveCenter _saveCenter;
 
-  //  private Transform _parent;
-
     private GameObject _forwardGameObject;
     private GameObject _centroGameObject;
 
@@ -44,19 +42,18 @@ public class HandleVirtualWorld : MonoBehaviour
     private GameObject _marker;
 
     public bool IsSaveFilePossible;
-    public bool ShowIndicator;
-    public bool Force;
-   // public bool ShowOpti;
-    public bool ShowMarker;
-
-    public bool UseOpti;
-    public bool Send;
     public bool CanShowIndicators;
+    public bool CanUseSaveFile;
+    public bool ShowIndicator;
+    public bool ShowMarker;
     public bool CanForce;
-
+    public bool UseOpti;
+    public bool Force;
+    public bool Send;
+    
     private bool _setUpForward;
     private bool _saveForward;
-
+    private bool _saveMessage;
     private bool _setUpCentro;
     private bool _saveCentro;
     private bool _reset;
@@ -135,9 +132,18 @@ public class HandleVirtualWorld : MonoBehaviour
         Send         = true;
       //  ShowOpti     = true;
         UseOpti      = false;
-        ShowMarker    = true;
+        ShowMarker   = true;
         CanShowIndicators = false;
         CanForce = false;
+        
+        var info = new DirectoryInfo(_path);
+        var fileInfo = info.GetFiles();
+        var length = fileInfo.Length;
+        _localTrackerUi.UseSaveFile = CanUseSaveFile = length != 0;
+
+        _saveMessage = true;
+
+
     }
 	
 	// Update is called once per frame
@@ -145,8 +151,18 @@ public class HandleVirtualWorld : MonoBehaviour
     // ReSharper disable once UnusedMember.Local
     void Update ()
 	{
+	    var length = -1;
+	    if (!CanUseSaveFile)
+	    {
+            var info = new DirectoryInfo(_path);
+            var fileInfo = info.GetFiles();
+            length = fileInfo.Length;
+            CanUseSaveFile = length != 0;
+            //    MyDebug.Log(">>> Length = " + length + ", CanUseSaveFile = " + CanUseSaveFile);
+        }
+       
 
-	    if (_setUpCentro)
+        if (_setUpCentro)
 	    {
 	        CanForce = true;
             if (_setUpForward)
@@ -154,7 +170,7 @@ public class HandleVirtualWorld : MonoBehaviour
 	            CanShowIndicators = true;
 	        }
 	    }
-       
+        
 	    if (_setUpCentro && _centro.HasValue && _setUpForward  && _forwardPoint.HasValue && _reset)
         {
 	        _forward = _forwardPoint.Value - _centro.Value;
@@ -189,6 +205,8 @@ public class HandleVirtualWorld : MonoBehaviour
                 _marker.transform.position = pos;
             }
 	    }
+
+      //  MyDebug.Log("Length = " + length + ", CanUseSaveFile = " + CanUseSaveFile);
     }
 
     private void SaveMensagem()
@@ -240,7 +258,6 @@ public class HandleVirtualWorld : MonoBehaviour
                 // mens = center;
                 // _saveCenter.RecordMessage(center);
             }
-
         }
 
 
@@ -264,6 +281,8 @@ public class HandleVirtualWorld : MonoBehaviour
         //_mensagem = mensagem;
 
         if (Send) _udpBroadcast.Send(mensagem);
+
+
     }
 
     public void SetCenterButton()
@@ -277,12 +296,11 @@ public class HandleVirtualWorld : MonoBehaviour
            // var human = _localTracker.GetHuman(_localTrackerUi.IdToCheck);
             var pos = MathHelper.DeslocamentoHorizontal(_marker.transform.position, 0.0f);
             SetUpNewCenter(pos);
-
-
+            
         }
 
-
-
+        _saveMessage = true;
+ 
         //  if (_localOptitrackManager != null ) SetUpNewCenter(_localOptitrackManager.GetUnityPositionVector());
         // _centroGameObject.GetComponent<MeshRenderer>().enabled = _setUpCentro; // && _localTrackerUi.SetUpCenter;
     }
@@ -294,6 +312,8 @@ public class HandleVirtualWorld : MonoBehaviour
         _centro = MathHelper.DeslocamentoHorizontal(newCenter);
         _centroGameObject.transform.position = _centro.Value;
         SetIndicators(_centro.Value);
+
+
     }
 
     public void SetForwardPointButton()
@@ -310,10 +330,9 @@ public class HandleVirtualWorld : MonoBehaviour
             // var human = _localTracker.GetHuman(_localTrackerUi.IdToCheck);
             var pos = MathHelper.DeslocamentoHorizontal(_marker.transform.position, 0.0f);
             SetUpNewForward(pos);
-
-
         }
 
+        _saveMessage = true;
     }
 
     private void SetUpNewForward(Vector3 newForward)
@@ -328,8 +347,9 @@ public class HandleVirtualWorld : MonoBehaviour
     {
         var info = new DirectoryInfo(_path);
         var fileInfo = info.GetFiles();
-
         var length = fileInfo.Length;
+        CanUseSaveFile = length != 0;
+        
         if (length == 0) return;
 
         var file = fileInfo[0];
@@ -340,7 +360,7 @@ public class HandleVirtualWorld : MonoBehaviour
             using (var sr = new StreamReader(bs))
             {
                 string line;
-                int l = 0;
+               // int l = 0;
                 while ((line = sr.ReadLine()) != null)
                 {
                     var lineText = line.Split(MessageSeparators.SET);
@@ -349,7 +369,7 @@ public class HandleVirtualWorld : MonoBehaviour
                         case "CenterPos":
                             //  _centro       = CommonUtils.ConvertRpcStringToVector3(lineText[1]);
                             SetUpNewCenter(CommonUtils.ConvertRpcStringToVector3(lineText[1]));
-                            MyDebug.Log("CenterPos = " + _centro);
+                            // MyDebug.Log("CenterPos = " + _centro);
                         break;
                         case "ForwardPos":
                             //_forwardPoint = CommonUtils.ConvertRpcStringToVector3(lineText[1]);
@@ -361,6 +381,7 @@ public class HandleVirtualWorld : MonoBehaviour
                 }
             }
         }
+        _saveMessage = false; 
     }
 
     private void SetIndicators(Vector3 center)
@@ -383,7 +404,7 @@ public class HandleVirtualWorld : MonoBehaviour
 
     }
 
-    public void Reset()
+    public void ResetWorld()
     {
         DestroyAll();
         
@@ -491,364 +512,3 @@ public class HandleVirtualWorld : MonoBehaviour
     }
 
 }
-
-/*  
- *  
- *  
-   //CheckIfFileToUse();
-        
-    
-        //{
-        //    Index = 0;
-        //    //_centro = null;
-        //    //_forwardPoint = null;
-        //}
-        //else if (length >= Index)
-        //{
-        //    Index = length - 1;
-        //}
-        
-
-
-
- *  
- *  
-     private static Vector3? GetCenterFromFile(string line)
-    {
-        var l = "";
-        if (line.Contains("/"))
-        {
-            var lines = line.Split(MessageSeparators.L2);
-            foreach (var ls in lines) if (ls.Contains("CenterPos")) l = ls;
-        }
-        else l = line;
-
-        var lineText = l.Split(MessageSeparators.SET);
-        if (lineText[0] == "CenterPos") return CommonUtils.ConvertRpcStringToVector3(lineText[1]);
-
-        return null;
-    }
-                    // _centro = GetCenterFromFile(line);
-   // allText += line; 
-    private bool CheckIfFileToUse()
-    {
-        var info = new DirectoryInfo(_path);
-        var fileInfo = info.GetFiles();
-
-        var length = fileInfo.Length;
-        return IsSaveFilePossible = length != 0;
-    }
-
-
-
- * 
- *  
- *  
-        //if (_mens != mens)
-        //{
-        //    _saveCenter.RecordMessage(mens);
-        //    _mens = mens;
-        //    //if (_setUpCentro && _centro.HasValue && _setUpForward && _forwardPoint.HasValue)
-        //    //{
-        //    //    _saveCenter.StopRecording();
-        //    //}
-        //}
-
-
-    // Files To Use
-    // _path = System.IO.Directory.GetCurrentDirectory() + "\\" +  "Saved Files" + "\\" + "Center Data";
-
-    
-    //  _indicadores.transform.rotation.
-
-
-    private void SendMensagem()
-    {
-        var mensagem = "";
-        var mens = "";
-
-        if (_setUpCentro && _centro.HasValue)
-        {
-            var center = "CenterPos" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(_centro.Value);
-            var humans = _localTracker.GetHumans();
-            var mensaHumans = "";
-            foreach (var h in humans)
-            {
-                var position = _centro.Value - h.Value.Position;
-
-                mensaHumans += MessageSeparators.L2;
-                mensaHumans += "Id"     + MessageSeparators.SET + h.Value.ID;
-                mensaHumans += MessageSeparators.L4; // "Desvio" + MessageSeparators.SET +
-                mensaHumans += CommonUtils.convertVectorToStringRPC(position);
-            }
-
-            mensagem = center + mensaHumans;
-            mens = center;
-            _saveCenter.RecordMessage(center);
-        }
-
-
-        if (_setUpCentro && _centro.HasValue && _setUpForward && _forwardPoint.HasValue)
-        {
-            mensagem += MessageSeparators.L2;
-            mens     += MessageSeparators.L2;
-            // _saveCenter.RecordMessage("" + MessageSeparators.L2);
-        }
-
-        if (_setUpForward && _forwardPoint.HasValue)
-        {
-            var forward = "ForwardPos" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(_forwardPoint.Value);
-            mensagem += forward;
-            mens += forward;
-           // _saveCenter.RecordMessage(forward);
-        }
-
-        if (_mens != mens)
-        {
-            _saveCenter.RecordMessage(mens);
-            _mens = mens;
-            if (_setUpCentro && _centro.HasValue && _setUpForward && _forwardPoint.HasValue)
-            {
-                _saveCenter.StopRecording();
-            }
-        }
-
-        _udpBroadcast.Send(mensagem);
-
-        
-    }
-
-        //if (_setUpCentro && _centro.HasValue && _setUpForward && _forwardPoint.HasValue)
-        //{
-        //    //mensagem += MessageSeparators.L2;
-        //    //mens += MessageSeparators.L2;
-        //    // _saveCenter.RecordMessage("" + MessageSeparators.L2);
-        //}
-
- * 
-   //var outline         = GameObjectHelper.MyCreateObject(Object.Instantiate(objectIndicator), indicatorName + " Outline", objectIndicator.transform, newPos, scale, rotation, outlineMaterial);
-
-        //outline.GetComponent<MeshRenderer>().enabled = false;
-
-
- * 
- * 
- * 
-// && _localTrackerUi.SetUpCenter;
-        //if (_setUpForward)
-        //{
-        //    var mensagem = "CenterPos" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(_centro) +
-        //                   MessageSeparators.L2;
-
-        //    _udpBroadcast.Send(mensagem);
-        //}
- *
-     var l2 = (string) MessageSeparators.L2;
- 
-        // Vector3 StringToVector3([NotNull] string text, char separador)
-        // return  // float.Parse( a.Replace(",", "."));
-        
-         line = sr.ReadLine()) != null)
-            {
-                iLine++;
-                // Debug.Log("kr = " + line.Split(';')[16] + ", kl = " + line.Split(';')[17]);
-                 char[] del = { ';' };
-                if (!line.Contains("Registo"))
-                {
-                  
-       
-
-    SetCenterOptiTrack();
-
-
-   private void SetCenterOptiTrack()
-    {
-        //if (Input.GetKeyDown(KeyCode.F))
-        //{
-        //    if (_localOptitrackManager != null)
-        //    {
-        //        _reset = true;
-        //        _setUpCentro = true;
-        //        _centroGameObject.transform.position =
-        //            _centro = MathHelper.DeslocamentoHorizontal(_localOptitrackManager.GetUnityPositionVector());
-        //    }
-        //}
-        //_centroGameObject.GetComponent<MeshRenderer>().enabled = _setUpCentro; // && _localTrackerUi.SetUpCenter;
-        //if (_setUpCentro)
-        //{
-        //    var mensagem = "CenterPos" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(_centro) +
-        //                   MessageSeparators.L2;
-
-        //    _udpBroadcast.Send(mensagem);
-        //}
-    }
-
- * 
- 
-    Position = new Vector3(-0.8f, -1.7f,  0.9f),
-    Position = new Vector3(-0.9f, -1.7f, -0.9f),
-
- * 
- * 
- * 
- *  private void CreateObstacles()
-    {
-        var newPos = PositionCenter + Position;
-        var transparentMaterial = (Material) Object.Instantiate(Resources.Load("Materials/Mt_Transparent"));
-
-        var outlineMaterial     = (Material) Object.Instantiate(Resources.Load("Materials/Mt_Outline"));
-        //var outlineScale = MathHelper.AddValueToVector(_scale, 0.1f);
-        var outlineScale = new Vector3(1.0f, 1.0f, 1.0f);
-
-        switch (_representation)
-        {
-            case RepresentationMode.Sphere:
-                //ObjectIndicator        = GameObjectHelper.MyCreatePrimitiveObject(PrimitiveType.Sphere, Name,              _parent,                   newPos, _scale,       _rotation, transparentMaterial);
-                ObjectIndicator        = GameObjectHelper.MyCreatePrimitiveObjectMesh(PrimitiveType.Sphere, Name,              _parent,                   newPos, _scale,       _rotation, transparentMaterial);
-                ObjectIndicatorOutline = GameObjectHelper.MyCreatePrimitiveObjectMesh(PrimitiveType.Sphere, Name + " Outline", ObjectIndicator.transform, newPos, _scale, _rotation, outlineMaterial);
-
-                // CreateObstaclePrimitiveSphere();
-                // CreateObstaclePrimitiveSphereOutline();
-                break;
-            case RepresentationMode.Cube:
-
-                ObjectIndicator        = GameObjectHelper.MyCreatePrimitiveObject(PrimitiveType.Cube, Name,              _parent,                   newPos, _scale,       _rotation, transparentMaterial);
-                ObjectIndicatorOutline = GameObjectHelper.MyCreatePrimitiveObject(PrimitiveType.Cube, Name + " Outline", ObjectIndicator.transform, newPos, _scale, _rotation, outlineMaterial);
-
-
-                // CreateObstaclePrimitiveCube();
-                // CreateObstaclePrimitiveCubeOutline();
-                break;
-            case RepresentationMode.ObjectChair:
-
-                var chairGameObject = Object.Instantiate(Resources.Load("Prefabs/chair", typeof(GameObject))) as GameObject;
-                chairGameObject = GameObjectHelper.ResizeMesh(chairGameObject, 0.015f, true);
-
-                ObjectIndicator        = GameObjectHelper.MyCreateObject(chairGameObject, Name,              _parent,                   newPos, _scale,       _rotation, transparentMaterial);
-                ObjectIndicatorOutline = GameObjectHelper.MyCreateObject(Object.Instantiate(ObjectIndicator), Name + " Outline", ObjectIndicator.transform, newPos, _scale, _rotation, outlineMaterial);
-                //ObjectIndicatorOutline.transform.localScale = Vector3.one;
-                // CreateObstaclePrimitiveObject();
-                // CreateObstaclePrimitiveObjectOutline();
-                break;
-            case RepresentationMode.ObjectSinal:
-                var sinalGameObject = Object.Instantiate(Resources.Load("Prefabs/ObjSinal", typeof(GameObject))) as GameObject;
-                sinalGameObject = GameObjectHelper.ResizeMesh(sinalGameObject, 0.25f, true);
-
-                ObjectIndicator = GameObjectHelper.MyCreateObject(sinalGameObject, Name, _parent, newPos, _scale, _rotation, transparentMaterial);
-                ObjectIndicatorOutline = GameObjectHelper.MyCreateObject(Object.Instantiate(ObjectIndicator), Name + " Outline", ObjectIndicator.transform, newPos, _scale, _rotation, outlineMaterial);
-                //ObjectIndicatorOutline.transform.localScale = Vector3.one;
-
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-
-        EnableMesh(false);
-    }
-    
- * 
- * 
- * new WorldIndicator
-            {
-                // Right  Rotation = Quaternion.Euler(0.0f, 0.0f, 90.0f)
-                Position = new Vector3(1.5f, 0.0f, 0.0f), Scale = new Vector3(0.5f, 1.0f, 0.5f), Rotation = Quaternion.Euler(0.0f, 0.0f, 90.0f), 
-                Type = IndicatorType.Limit, Material = MaterialType.Transparent, Raio = 0.5f, DirectionLimit = Direction.Right, DistToCenter = 1.5f
-            },
-            new WorldIndicator
-            {
-                // Left  Rotation = Quaternion.Euler(0.0f, 0.0f, -90.0f)
-                Position = new Vector3(-1.5f, 0.0f, 0.0f), Scale = new Vector3(0.5f, 1.0f, 0.5f), Rotation = Quaternion.Euler(0.0f, 0.0f, -90.0f), 
-                Type = IndicatorType.Limit, Material = MaterialType.Transparent, Raio = 0.5f, DirectionLimit = Direction.Left, DistToCenter = -1.5f
-            },
-            new WorldIndicator
-            {
-                // Front  Rotation = Quaternion.Euler(0.0f, 90.0f, -90.0f)
-                Position = new Vector3(0.0f, 0.0f, 1.2f), Scale = new Vector3(0.5f, 1.0f, 0.5f), Rotation = Quaternion.Euler(0.0f, 90.0f, -90.0f), 
-                Type = IndicatorType.Limit, Material = MaterialType.Transparent, Raio = 0.5f, DirectionLimit = Direction.Front, DistToCenter = 1.2f
-            },
-            new WorldIndicator
-            {
-                 // Behind Rotation = Quaternion.Euler(0.0f, -90.0f, -90.0f)
-                Position = new Vector3(0.0f, 0.0f, -1.8f), Scale = new Vector3(0.5f, 1.0f, 0.5f), Rotation = Quaternion.Euler(0.0f, -90.0f, -90.0f),
-                Type = IndicatorType.Limit, Material = MaterialType.Transparent, Raio = 0.5f, DirectionLimit = Direction.Behind, DistToCenter = -1.8f
-            }
- * 
-     
-     */
-
-/*
- * 
- * 
- * 
- * private void CreateWolrd(VirtualWorld virtualWorld)
-    {
-        //if (worldIndicatorList == null) worldIndicatorList = IndicatorSetUp.GetVirtualWorldIndicators();
-        var worldIndicatorList = IndicatorSetUp.GetVirtualWorldIndicators(virtualWorld);
-
-        IndicatorsList = new List<Indicator>();
-    
-
-        if (_indicadores.transform.childCount != 0) KillAllChilds(_indicadores);
-      
-        foreach (var worldIndicator in worldIndicatorList)
-        {
-            var indicator = new Indicator(worldIndicator.Position, worldIndicator.Scale, worldIndicator.Rotation, worldIndicator.Type,  _centro, _indicadores.transform, _indicadorCounter++, worldIndicator.Representation, worldIndicator.Raio, worldIndicator.DirectionLimit);
-            IndicatorsList.Add(indicator); 
-        }
-    }
-
-    private static void KillAllChilds(GameObject gameObject)
-    {
-        for (var i = 0; i < gameObject.transform.childCount; i++)
-        {
-            Destroy(gameObject.transform.GetChild(i).gameObject);
-        }
-    }
- * 
- * 
- * 
- * 
- * 
- * 
-    "CenterPos" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(Centro) + MessageSeparators.L2 +
-     "Use"      + MessageSeparators.SET + _setUpCentro.ToString();
-
-private void CreateWolrd(VirtualWorld virtualWorld)
-{
-    //if (worldIndicatorList == null) worldIndicatorList = IndicatorSetUp.GetVirtualWorldIndicators();
-    var worldIndicatorList = IndicatorSetUp.GetVirtualWorldIndicators(virtualWorld);
-
-    // if (IndicatorsList == null)
-    IndicatorsList = new List<Indicator>();
-    // if (IndicatorsInfo == null)
-    _indicatorsInfo = new Dictionary<string, IndicatorInfoToSave>();
-
-    if (_indicadores.transform.childCount != 0) KillAllChilds(_indicadores);
-    _indicadorCounter = 0;
-    ObstacleCounter = 0;
-    LimitCounter = 0;
-
-    foreach (var worldIndicator in worldIndicatorList)
-    {
-        var indicator = new Indicator(worldIndicator.Position, worldIndicator.Scale, worldIndicator.Rotation, worldIndicator.Type, _parent.position, _indicadores.transform, _indicadorCounter++, worldIndicator.Representation, worldIndicator.Raio, IndicatorsDangerMode, IndicatorsOutlineMode, worldIndicator.DirectionLimit);
-        IndicatorsList.Add(indicator); //   
-        if (worldIndicator.Type == IndicatorType.Obstacle)
-        {
-            ObstacleCounter++;
-            ObstaclesNames.Add(indicator.Name);
-        }
-        if (worldIndicator.Type == IndicatorType.Limit) LimitCounter++;
-
-        IndicatorsNames.Add(indicator.Name);
-        _indicatorsInfo.Add(indicator.Name, new IndicatorInfoToSave
-        {
-            Name = indicator.Name,
-            Dist = null,
-            State = null,
-            IsEmbate = false,
-            numEmbate = 0,
-        });
-    }
-}
-
- */
