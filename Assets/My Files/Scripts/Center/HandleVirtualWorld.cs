@@ -1,4 +1,9 @@
-﻿using System;
+﻿/*************************************************************************************************
+    Dissertação - Mestrado em Engenharia Informática e de Computadores
+    Francisco Henriques Venda, nº 73839
+    Original
+*************************************************************************************************/
+using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
