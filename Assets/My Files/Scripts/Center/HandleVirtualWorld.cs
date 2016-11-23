@@ -216,6 +216,8 @@ public class HandleVirtualWorld : MonoBehaviour
 
     private void SaveMensagem()
     {
+        if (!_saveMessage) return;
+
         if (_setUpCentro && _centro.HasValue && !_saveCentro)
         {
             var center = "CenterPos" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(_centro.Value);

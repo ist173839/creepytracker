@@ -105,26 +105,27 @@ public class TrackerUI : MonoBehaviour
         _hideHumans = false;
 
 		_newUnicastAddress = "";
-		_newUnicastPort = "";
+		_newUnicastPort    = "";
 
 		_packetsPerSec = 1000 / TrackerProperties.Instance.SendInterval;
 
-	    IconSize = 60;
+        ////////////////////////////////////////////////////////////////////
 
+	    IconSize = 60;
+        
         UseRecord     = false;
 	    ShowIndicator = false;
 
-	    Force = _localHandleVirtualWorld.Force;
-	    Send  = _localHandleVirtualWorld.Send;
-       // ShowOptiTrack = _localHandleVirtualWorld.ShowOpti;
-        ShowMarker = _localHandleVirtualWorld.ShowMarker;
-        
-	  
+	    ShowMarker = _localHandleVirtualWorld.ShowMarker;
+	    Force      = _localHandleVirtualWorld.Force;
+	    Send       = _localHandleVirtualWorld.Send;
+
+        ////////////////////////////////////////////////////////////////////
     }
 
     // ReSharper disable once ArrangeTypeMemberModifiers
     // ReSharper disable once UnusedMember.Local
-	void Update ()
+    void Update ()
 	{   
         // if (!_localHandleVirtualWorld.CanUseSaveFile) _localHandleVirtualWorld.ShowMarker = false;
 
@@ -417,10 +418,8 @@ public class TrackerUI : MonoBehaviour
 			}
             top += 35;
             left = Screen.width - 250 + 20;
-
             UseRecord    = GUI.Toggle(new Rect(left, top, 100, 25), UseRecord, "Record");
             
-            // MyDebug.Log("UseSaveFile = " + UseSaveFile);
             if (UseSaveFile)
             {
                 if (_localHandleVirtualWorld.CanShowIndicators)
@@ -433,8 +432,23 @@ public class TrackerUI : MonoBehaviour
                     _localHandleVirtualWorld.SetSaveFilesButton();
                 }
 
-                top += 35;
+                if (_localHandleVirtualWorld.CanShowIndicators || (_localHandleVirtualWorld.CanForce && Send))
+                {
+                    top += 30;
+                    
+                    Send = _localHandleVirtualWorld.Send;
+                    Send = GUI.Toggle(new Rect(left, top, 100, 25), Send, "Send");
+                    _localHandleVirtualWorld.Send = Send;
+                    
+                    if (_localHandleVirtualWorld.CanForce && Send)
+                    {
+                        Force = _localHandleVirtualWorld.Force;
+                        Force = GUI.Toggle(new Rect(left + 120, top, 100, 25), Force, "Force Center");
+                        _localHandleVirtualWorld.Force = Force;
+                    }
+                }
 
+                top += 30;
                 if (GUI.Button(new Rect(left, top, 120, 25), "Set Up Safe File"))
                 {
                     UseSaveFile = false;
@@ -490,7 +504,6 @@ public class TrackerUI : MonoBehaviour
                 }
 
                 top += 30;
-
                 if (GUI.Button(new Rect(left, top, 100, 25), "Set Center"))
                 {
                     _localHandleVirtualWorld.SetCenterButton();
@@ -502,7 +515,6 @@ public class TrackerUI : MonoBehaviour
                 }
 
                 top += 30;
-
                 if (GUI.Button(new Rect(left, top, 100, 25), "Active File"))
                 {
 
