@@ -238,26 +238,26 @@ public class HumanSkeleton : MonoBehaviour
                 else
                 {
 					leftShoulderKalman.Value = tracker.GetJointPosition (ID, JointType.ShoulderLeft, leftShoulderKalman.Value);
-					leftElbowKalman.Value = tracker.GetJointPosition (ID, JointType.ElbowLeft, leftElbowKalman.Value);
-					leftWristKalman.Value = tracker.GetJointPosition (ID, JointType.WristLeft, leftWristKalman.Value);
-					leftHandKalman.Value = tracker.GetJointPosition (ID, JointType.HandLeft, leftHandKalman.Value);
-					leftThumbKalman.Value = tracker.GetJointPosition (ID, JointType.ThumbLeft, leftThumbKalman.Value);
-					leftHandTipKalman.Value = tracker.GetJointPosition (ID, JointType.HandTipLeft, leftHandTipKalman.Value);
-					leftHipKalman.Value = tracker.GetJointPosition (ID, JointType.HipLeft, leftHipKalman.Value);
-					leftKneeKalman.Value = tracker.GetJointPosition (ID, JointType.KneeLeft, leftKneeKalman.Value);
-					leftAnkleKalman.Value = tracker.GetJointPosition (ID, JointType.AnkleLeft, leftAnkleKalman.Value);
-					leftFootKalman.Value = tracker.GetJointPosition (ID, JointType.FootLeft, leftFootKalman.Value);
+					leftElbowKalman.Value    = tracker.GetJointPosition (ID, JointType.ElbowLeft,    leftElbowKalman.Value);
+					leftWristKalman.Value    = tracker.GetJointPosition (ID, JointType.WristLeft,    leftWristKalman.Value);
+					leftHandKalman.Value     = tracker.GetJointPosition (ID, JointType.HandLeft,     leftHandKalman.Value);
+					leftThumbKalman.Value    = tracker.GetJointPosition (ID, JointType.ThumbLeft,    leftThumbKalman.Value);
+					leftHandTipKalman.Value  = tracker.GetJointPosition (ID, JointType.HandTipLeft,  leftHandTipKalman.Value);
+					leftHipKalman.Value      = tracker.GetJointPosition (ID, JointType.HipLeft,      leftHipKalman.Value);
+					leftKneeKalman.Value     = tracker.GetJointPosition (ID, JointType.KneeLeft,     leftKneeKalman.Value);
+					leftAnkleKalman.Value    = tracker.GetJointPosition (ID, JointType.AnkleLeft,    leftAnkleKalman.Value);
+					leftFootKalman.Value     = tracker.GetJointPosition (ID, JointType.FootLeft,     leftFootKalman.Value);
 
 					rightShoulderKalman.Value = tracker.GetJointPosition (ID, JointType.ShoulderRight, rightShoulderKalman.Value);
-					rightElbowKalman.Value = tracker.GetJointPosition (ID, JointType.ElbowRight, rightElbowKalman.Value);
-					rightWristKalman.Value = tracker.GetJointPosition (ID, JointType.WristRight, rightWristKalman.Value);
-					rightHandKalman.Value = tracker.GetJointPosition (ID, JointType.HandRight, rightHandKalman.Value);
-					rightThumbKalman.Value = tracker.GetJointPosition (ID, JointType.ThumbRight, rightThumbKalman.Value);
-					rightHandTipKalman.Value = tracker.GetJointPosition (ID, JointType.HandTipRight, rightHandTipKalman.Value);
-					rightHipKalman.Value = tracker.GetJointPosition (ID, JointType.HipRight, rightHipKalman.Value);
-					rightKneeKalman.Value = tracker.GetJointPosition (ID, JointType.KneeRight, rightKneeKalman.Value);
-					rightAnkleKalman.Value = tracker.GetJointPosition (ID, JointType.AnkleRight, rightAnkleKalman.Value);
-					rightFootKalman.Value = tracker.GetJointPosition (ID, JointType.FootRight, rightFootKalman.Value);
+					rightElbowKalman.Value    = tracker.GetJointPosition (ID, JointType.ElbowRight,    rightElbowKalman.Value);
+					rightWristKalman.Value    = tracker.GetJointPosition (ID, JointType.WristRight,    rightWristKalman.Value);
+					rightHandKalman.Value     = tracker.GetJointPosition (ID, JointType.HandRight,     rightHandKalman.Value);
+					rightThumbKalman.Value    = tracker.GetJointPosition (ID, JointType.ThumbRight,    rightThumbKalman.Value);
+					rightHandTipKalman.Value  = tracker.GetJointPosition (ID, JointType.HandTipRight,  rightHandTipKalman.Value);
+					rightHipKalman.Value      = tracker.GetJointPosition (ID, JointType.HipRight,      rightHipKalman.Value);
+					rightKneeKalman.Value     = tracker.GetJointPosition (ID, JointType.KneeRight,     rightKneeKalman.Value);
+					rightAnkleKalman.Value    = tracker.GetJointPosition (ID, JointType.AnkleRight,    rightAnkleKalman.Value);
+					rightFootKalman.Value     = tracker.GetJointPosition (ID, JointType.FootRight,     rightFootKalman.Value);
 				}
 
 				head.transform.position          = headKalman.Value;

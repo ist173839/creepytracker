@@ -120,9 +120,9 @@ public class Tracker : MonoBehaviour
     // ReSharper disable once ArrangeTypeMemberModifiers
     void FixedUpdate ()
 	{
-        IdList         = new List<string>();
-       // IdIntList      = new List<int>();
-       var  idIntList      = new List<int>();
+	    //IdIntList      = new List<int>();
+	    IdList = new List<string>();
+	    var  idIntList = new List<int>();
 
 	    if (Input.GetKeyDown (KeyCode.C)) ColorHumans = !ColorHumans;
 
@@ -133,7 +133,7 @@ public class Tracker : MonoBehaviour
 
 		MergeHumans();
 
-		var deadHumansToRemove = _deadHumans.Where(h => DateTime.Now > h.timeOfDeath.AddMilliseconds(0)).ToList();
+		var deadHumansToRemove = _deadHumans.Where(h => DateTime.Now > h.TimeOfDeath.AddMilliseconds(0)).ToList();
 
 	    //foreach (var h in _deadHumans)
         //{
@@ -200,8 +200,8 @@ public class Tracker : MonoBehaviour
 
 		foreach (var h in _humans.Values)
         {
-			if (h.seenBySensor != null && colorHumans)
-				CommonUtils.ChangeGameObjectMaterial (h.gameObject, Sensors [h.seenBySensor].Material);
+			if (h.SeenBySensor != null && colorHumans)
+				CommonUtils.ChangeGameObjectMaterial (h.gameObject, Sensors [h.SeenBySensor].Material);
 			else if (!ColorHumans)
 				CommonUtils.ChangeGameObjectMaterial (h.gameObject, WhiteMaterial);
 		}
@@ -381,7 +381,7 @@ public class Tracker : MonoBehaviour
 			}
 
 			if (h.Value.bodies.Count == 0) {
-				h.Value.timeOfDeath = DateTime.Now;
+				h.Value.TimeOfDeath = DateTime.Now;
 				_deadHumans.Add (h.Value);
 			} else {
 				h.Value.Position = position;
@@ -662,14 +662,14 @@ public class Tracker : MonoBehaviour
 				bestBody = b;
 			}
 
-			if (b.sensorID == h.seenBySensor) {
+			if (b.sensorID == h.SeenBySensor) {
 				lastSensorConfidence = bConfidence;
 				lastSensorBody = b;
 			}
 		}
 
-		if (lastSensorBody == null || (bestBody.sensorID != h.seenBySensor && confidence > (lastSensorConfidence + 1)))
-			h.seenBySensor = bestBody.sensorID;
+		if (lastSensorBody == null || (bestBody.sensorID != h.SeenBySensor && confidence > (lastSensorConfidence + 1)))
+			h.SeenBySensor = bestBody.sensorID;
 		else
 			bestBody = lastSensorBody;
 
@@ -694,15 +694,15 @@ public class Tracker : MonoBehaviour
                     bestBody = b; 
                 }
                     
-                if (b.sensorID == h.seenBySensor)
+                if (b.sensorID == h.SeenBySensor)
                 {
                     lastSensorConfidence = bConfidence;
                     lastSensorBody = b;
                 }
             }
             
-        if (lastSensorBody == null || (bestBody.sensorID != h.seenBySensor && confidence > (lastSensorConfidence + 1)))
-            h.seenBySensor = bestBody.sensorID;
+        if (lastSensorBody == null || (bestBody.sensorID != h.SeenBySensor && confidence > (lastSensorConfidence + 1)))
+            h.SeenBySensor = bestBody.sensorID;
         else
             bestBody = lastSensorBody;
 
@@ -728,15 +728,15 @@ public class Tracker : MonoBehaviour
                 bestBody = b;
             }
 
-            if (b.sensorID == h.seenBySensor)
+            if (b.sensorID == h.SeenBySensor)
             {
                 lastSensorConfidence = bConfidence;
                 lastSensorBody = b;
             }
         }
 
-        if (lastSensorBody == null || (bestBody.sensorID != h.seenBySensor && confidence > (lastSensorConfidence + 1)))
-            h.seenBySensor = bestBody.sensorID;
+        if (lastSensorBody == null || (bestBody.sensorID != h.SeenBySensor && confidence > (lastSensorConfidence + 1)))
+            h.SeenBySensor = bestBody.sensorID;
         else
             bestBody = lastSensorBody;
 

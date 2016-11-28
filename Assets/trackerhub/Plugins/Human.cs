@@ -8,8 +8,9 @@ public class Human
     public int ID;
     public List<SensorBody> bodies;
     public GameObject gameObject;
-    public DateTime timeOfDeath;
-    public string seenBySensor;
+    public DateTime TimeOfDeath;
+    public string SeenBySensor;
+
     private HumanSkeleton skeleton;
     public HumanSkeleton Skeleton
     {
@@ -55,6 +56,6 @@ public class Human
 
     internal string GetPdu()
     {
-        return "Sensor" + MessageSeparators.SET + seenBySensor + MessageSeparators.L2 + Skeleton.GetPdu();
+        return "Sensor" + MessageSeparators.SET + SeenBySensor + MessageSeparators.L2 + Skeleton.GetPdu();
     }
 }
