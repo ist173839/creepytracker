@@ -49,27 +49,41 @@ public class SaveRecord
     private readonly string _format;
 
     private string _currentFolderDestino;
+#pragma warning disable 414
     private string _caminhoCompleto;
+#pragma warning restore 414
+#pragma warning disable 169
     private string _defaultDocName;
+#pragma warning restore 169
     private string _currentDocName;
     private string _recordingName;
+    // ReSharper disable once NotAccessedField.Local
     private string _folderDestino;
     private string _saveHeader;
+#pragma warning disable 169
     private string _fimCiclo;
+#pragma warning restore 169
     private string _docName;
     private string _target;
+    // ReSharper disable once FieldCanBeMadeReadOnly.Local
     private string _versao;
+    // ReSharper disable once NotAccessedField.Local
     private string _header;
+    // ReSharper disable once FieldCanBeMadeReadOnly.Local
     private string _sigla;
 
     //private string _headerCwip;
     //private string _headerWip;
     
+    // ReSharper disable once UnusedAutoPropertyAccessor.Global
+    // ReSharper disable once MemberCanBePrivate.Global
     public int NumColunas   { get; private set; }
 
     private static readonly int TamanhoMaximo = (int) Math.Pow(2, 20); // (2 ^ 30)
 
+#pragma warning disable 414
     private int _cont;
+#pragma warning restore 414
 
     private SpecialTypeDoc _specialTypeDocName;
 
@@ -77,7 +91,9 @@ public class SaveRecord
 
     private bool _useDefaultDocName;
     private bool _useDefaultFolder;
+#pragma warning disable 169
     private bool _isRecording;
+#pragma warning restore 169
     private bool _isInitiate;
     private bool _oversize;
 
@@ -90,15 +106,14 @@ public class SaveRecord
 
         _directory = System.IO.Directory.GetCurrentDirectory();
         _currentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "Walking Data";
-        _format    = ".csv";
-        Separador = ";";
+        Separador  = ";";
 
         _startMessage = "INICIO";
         _endMessage   = "FIM";
-        _sigla        = "WVD";
+        _format       = ".csv";
         _versao       = "V11.7";
-
-
+        _sigla        = "WVD";
+        
         _recordingName   = null;
         _caminhoCompleto = null;
         _specialTypeDocName = SpecialTypeDoc.SolveDuplicate;
@@ -109,7 +124,6 @@ public class SaveRecord
      
         _header = GetHeader();
         _saveHeader = null;
-
     }
 
     ~SaveRecord()
@@ -159,8 +173,7 @@ public class SaveRecord
 
         //if (!_isInitiate) SetUpFileAndDirectory(message);
         //if (message != _startMessage  && !_isInitiate)
-        //{
-        //} else
+        //{} else
 
         CheckFileSize();
         if (message == _endMessage)
@@ -248,6 +261,7 @@ public class SaveRecord
         return temp;
     }
 
+    // ReSharper disable once UnusedMember.Local
     private void WriteStringInDoc(string registo)
     {
         _doc = new StreamWriter(_target + _currentDocName);
@@ -279,6 +293,7 @@ public class SaveRecord
         _target = _directory + "\\" + _currentFolderDestino + "\\";
     }
 
+    // ReSharper disable once UnusedMember.Global
     public void SpecialDocName(string newName)
     {
         //#if !UNITY_ANDROID
@@ -289,6 +304,7 @@ public class SaveRecord
         //#endif
     }
 
+    // ReSharper disable once UnusedMember.Global
     public void SpecialTypeDocName(SpecialTypeDoc t)
     {
         _specialTypeDocName = t;

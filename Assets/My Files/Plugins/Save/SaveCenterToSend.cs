@@ -13,12 +13,9 @@ using System.Text;
 using UnityEngine;
 
 // ReSharper disable once CheckNamespace
-public class SaveCenter
+public class SaveCenterToSend
 {
-    private SpecialTypeDoc _specialTypeDocName;
-
     private StreamWriter _doc;
-
 #pragma warning disable 169
     private DateTime _inicio;
 #pragma warning restore 169
@@ -29,35 +26,22 @@ public class SaveCenter
     public string Separador { get; private set; }
 
     private readonly string _defaultFolderDestino;
-#pragma warning disable 414
     private readonly string _startMessage;
-#pragma warning restore 414
     private readonly string _endMessage;
     private readonly string _directory;
     private readonly string _format;
 
     private string _currentFolderDestino;
-#pragma warning disable 414
     private string _caminhoCompleto;
-#pragma warning restore 414
-#pragma warning disable 169
     private string _defaultDocName;
-#pragma warning restore 169
     private string _currentDocName;
     private string _recordingName;
-    // ReSharper disable once NotAccessedField.Local
     private string _folderDestino;
-#pragma warning disable 414
     private string _saveHeader;
-#pragma warning restore 414
-#pragma warning disable 169
     private string _fimCiclo;
-#pragma warning restore 169
     private string _docName;
     private string _target;
-    // ReSharper disable once FieldCanBeMadeReadOnly.Local
     private string _versao;
-    // ReSharper disable once FieldCanBeMadeReadOnly.Local
     private string _sigla;
 
     // private string _header;
@@ -66,22 +50,19 @@ public class SaveCenter
 
     private static readonly int TamanhoMaximo = (int) Math.Pow(2, 20); // (2 ^ 30)
 
-#pragma warning disable 414
     private int _cont;
-#pragma warning restore 414
-    
+
+    private SpecialTypeDoc _specialTypeDocName;
+
     //  public bool DirectoryChange;
+
     private bool _useDefaultDocName;
     private bool _useDefaultFolder;
-#pragma warning disable 169
     private bool _isRecording;
-#pragma warning restore 169
     private bool _isInitiate;
-#pragma warning disable 414
     private bool _oversize;
-#pragma warning restore 414
     
-    public SaveCenter() 
+    public SaveCenterToSend() 
     {
         _useDefaultDocName = true;
         _useDefaultFolder  = true;
@@ -89,14 +70,14 @@ public class SaveCenter
         _oversize          = false;
 
         _directory = System.IO.Directory.GetCurrentDirectory();
-        _currentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "Center Data";
+        _currentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "Center To Send Data";
         _format   = ".txt";
         Separador = ";";
 
         _startMessage = "INICIO";
         _endMessage   = "FIM";
 
-        _sigla = "CD";
+        _sigla = "CDS";
         _versao = "V1";
 
         _recordingName = null;
@@ -112,7 +93,7 @@ public class SaveCenter
         // _header = GetHeader();
     }
 
-    ~SaveCenter()
+    ~SaveCenterToSend()
     {
         if (!_isInitiate) return;
         ResetRecord();
@@ -140,13 +121,10 @@ public class SaveCenter
 
     public void RecordMessage(string message)
     {
-       
         if (!_isInitiate) SetUpFileAndDirectory();
-
         //if (!_isInitiate) SetUpFileAndDirectory(message);
         //if (message != _startMessage  && !_isInitiate)
-        //{
-        //} else
+        //{} else
         CheckFileSize();
         if (message == _endMessage)
         {
@@ -155,7 +133,6 @@ public class SaveCenter
         }
         else
             WriteStringInDoc(message, true);
-        
     }
 
    private void SetUpFileAndDirectory()
@@ -312,71 +289,4 @@ public class SaveCenter
         _isInitiate = true;
     }
 }
-/*
- * 
-if (_oversize)
-        {
-            SetUpHeader();
-            _oversize = false;
-        }
-
- * 
- * 
-private void SetUpHeader()
-    {
-        //var info = GetHeader();
-        WriteStringInDoc(_saveHeader, true);
-    }
-  private void SetUpHeader(string first)
-{
-    var info = GetHeader(); 
-    if (first == info) return;
-    WriteStringInDoc(info, true);
-}
-    
-
-
-
-public void RecordOneMessage(string message)
-{
-
-    // if (!_isInitiate)
-    SetUpFileAndDirectory();
-
-    //if (!_isInitiate) SetUpFileAndDirectory(message);
-    //if (message != _startMessage  && !_isInitiate)
-    //{
-    //} else
-    // CheckFileSize();
-    if (message == _endMessage)
-    //{
-    //    StopRecording();
-    //    Console.WriteLine(_endMessage);
-    //}
-    //else
-    WriteStringInDoc(message, true);
-    StopRecording();
-}
-
-
-
-private string GetHeader()
-{
-    return "Registo" + Separador;       
-}
-
-
-
-
- */
-
-
-
-// _target = _directory + "\\" +_CurrentFolderDestino ;
-
-//if (!IsRecording)
-//{
-//    StopRecording();
-//    return;
-//}
-//CheckHeaders(message);
+///////////////////////////////////////////////////////////////////////////

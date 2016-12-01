@@ -38,6 +38,8 @@ public class HandleVirtualWorld : MonoBehaviour
     private Tracker _localTracker;
 
     private SaveCenter _saveCenter;
+    private SaveCenterToSend _centerToSend;
+
 
     private GameObject _forwardGameObject;
     private GameObject _centroGameObject;
@@ -61,11 +63,14 @@ public class HandleVirtualWorld : MonoBehaviour
     private bool _saveMessage;
     private bool _setUpCentro;
     private bool _saveCentro;
+    private bool _saveOne;
     private bool _reset;
     
     public int Index;
     
+#pragma warning disable 169
     private int _indicadorCounter;
+#pragma warning restore 169
     private int _countId;
     private int _port;
 
@@ -91,10 +96,12 @@ public class HandleVirtualWorld : MonoBehaviour
 
         _localTracker = gameObject.GetComponent<Tracker>();
 
-        _saveCenter = new SaveCenter();
-
         IndicatorsList = new List<GameObject>();
         ObstacleList   = new List<GameObject>();
+
+        _saveCenter = new SaveCenter();
+        _centerToSend = new SaveCenterToSend();
+
 
         _helpers = new GameObject { name = "Helpers" };
         _helpers.transform.position = transform.position;
@@ -147,7 +154,7 @@ public class HandleVirtualWorld : MonoBehaviour
         _localTrackerUi.UseSaveFile = CanUseSaveFile = length != 0;
 
         _saveMessage = true;
-
+        _saveOne = true;
 
     }
 	
@@ -192,7 +199,6 @@ public class HandleVirtualWorld : MonoBehaviour
 
 	    SaveMensagem();
         SendMensagem();
-        
 
         _localOptitrackManager.RenderMarker(UseOpti && ShowMarker);
         _marker.GetComponent<MeshRenderer>().enabled = !UseOpti && ShowMarker;
@@ -287,9 +293,16 @@ public class HandleVirtualWorld : MonoBehaviour
         
         //_mensagem = mensagem;
 
-        if (Send) _udpBroadcast.Send(mensagem);
-
-
+        if (Send)
+        {
+            _udpBroadcast.Send(mensagem);
+            if (_saveOne)
+            {
+                _centerToSend.RecordMessage(mensagem);
+                _centerToSend.StopRecording();
+                _saveOne = false;
+            }
+        }
     }
 
     public void SetCenterButton()
