@@ -296,12 +296,12 @@ public class HandleVirtualWorld : MonoBehaviour
         if (Send)
         {
             _udpBroadcast.Send(mensagem);
-            if (_saveOne)
-            {
-                _centerToSend.RecordMessage(mensagem);
-                _centerToSend.StopRecording();
-                _saveOne = false;
-            }
+            //_centerToSend.RecordMessage(mensagem);
+            //if (_saveOne)
+            //{
+            //    _centerToSend.StopRecording();
+            //    _saveOne = false;
+            //}
         }
     }
 
