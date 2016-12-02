@@ -105,7 +105,6 @@ public class MyUdpListener : MonoBehaviour
     void FixedUpdate()
     {
         PressToRestart();
-
         UpdateMessages();
     }
 
@@ -144,8 +143,8 @@ public class MyUdpListener : MonoBehaviour
     private void OnApplicationQuit()
     {
         if (_udpClientColicoes != null) _udpClientColicoes.Close();
-        if (_udpClientRecord != null)   _udpClientRecord.Close();
-        if (_udpClientAvr != null)      _udpClientAvr.Close();
+        if (_udpClientRecord   != null) _udpClientRecord.Close();
+        if (_udpClientAvr      != null) _udpClientAvr.Close();
     }
 
     // ReSharper disable once UnusedMember.Local
