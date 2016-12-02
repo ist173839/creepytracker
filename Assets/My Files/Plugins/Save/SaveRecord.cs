@@ -19,7 +19,6 @@ public enum ControloMode
     WIP,
     // ReSharper disable once InconsistentNaming
     CWIP,
-  
 }
 
 //public enum SpecialTypeDoc
@@ -88,7 +87,6 @@ public class SaveRecord
     private SpecialTypeDoc _specialTypeDocName;
 
     //  public bool DirectoryChange;
-
     private bool _useDefaultDocName;
     private bool _useDefaultFolder;
 #pragma warning disable 169
@@ -111,7 +109,7 @@ public class SaveRecord
         _startMessage = "INICIO";
         _endMessage   = "FIM";
         _format       = ".csv";
-        _versao       = "V11.7";
+        _versao       = "V12.1";
         _sigla        = "WVD";
         
         _recordingName   = null;
