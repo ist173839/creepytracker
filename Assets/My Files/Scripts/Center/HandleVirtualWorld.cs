@@ -39,8 +39,7 @@ public class HandleVirtualWorld : MonoBehaviour
 
     private SaveCenter _saveCenter;
     private SaveCenterToSend _centerToSend;
-
-
+    
     private GameObject _forwardGameObject;
     private GameObject _centroGameObject;
 
@@ -163,17 +162,15 @@ public class HandleVirtualWorld : MonoBehaviour
     // ReSharper disable once UnusedMember.Local
     void Update ()
 	{
-	    var length = -1;
 	    if (!CanUseSaveFile)
 	    {
             var info = new DirectoryInfo(_path);
             var fileInfo = info.GetFiles();
-            length = fileInfo.Length;
+            var length = fileInfo.Length;
             CanUseSaveFile = length != 0;
             //    MyDebug.Log(">>> Length = " + length + ", CanUseSaveFile = " + CanUseSaveFile);
         }
        
-
         if (_setUpCentro)
 	    {
 	        CanForce = true;
@@ -266,6 +263,9 @@ public class HandleVirtualWorld : MonoBehaviour
                     mensaHumans += MessageSeparators.L4; // "Desvio" + MessageSeparators.SET +
                     mensaHumans += CommonUtils.convertVectorToStringRPC(position);
                 }
+
+
+
 
                 mensagem = center + mensaHumans;
                 // mens = center;
@@ -448,6 +448,8 @@ public class HandleVirtualWorld : MonoBehaviour
 
         IndicatorsList = new List<GameObject>();
         ObstacleList   = new List<GameObject>();
+
+        _countId = 0;
     }
 
     private void SetRender(bool render)
@@ -528,6 +530,14 @@ public class HandleVirtualWorld : MonoBehaviour
         var objectIndicator = GameObjectHelper.MyCreateObject(chairGameObject, indicatorName, parent, newPos, scale, rotation, transparentMaterial, color, false);
       
         return objectIndicator;
+
+    }
+
+    // ReSharper disable once ArrangeTypeMemberModifiers
+    // ReSharper disable once UnusedMember.Local
+    void OnDrawGizmos()
+    {
+
 
     }
 
