@@ -116,7 +116,7 @@ public class SaveCenter
     {
         if (!_isInitiate) return;
         ResetRecord();
-        if (File.Exists(_target + _currentDocName)) File.SetAttributes(_target + _currentDocName, FileAttributes.ReadOnly);    
+        // if (File.Exists(_target + _currentDocName)) File.SetAttributes(_target + _currentDocName, FileAttributes.ReadOnly);    
     }
 
     private void ResetRecord()
@@ -178,8 +178,8 @@ public class SaveCenter
     {
         if (!_isInitiate) return;
         ResetRecord();
-        if (!File.Exists(_target + _currentDocName)) return;
-        File.SetAttributes(_target + _currentDocName, FileAttributes.ReadOnly);
+        // if (!File.Exists(_target + _currentDocName)) return;
+        // File.SetAttributes(_target + _currentDocName, FileAttributes.ReadOnly);
     }
 
     private void SetUpDirectory()
@@ -211,7 +211,6 @@ public class SaveCenter
                     break;
             }
             _currentDocName = temp + _format;
-
             Debug.Log("New Colision Data File : " + _currentDocName);
         }
     }
@@ -223,11 +222,12 @@ public class SaveCenter
         while (File.Exists(_target + temp + _format))
         {
             temp = string.Format("{0}_{1}", _currentDocName, count++);
-            Debug.Log(temp);
+            MyDebug.Log(temp);
         }
         return temp;
     }
 
+    // ReSharper disable once UnusedMember.Local
     private void WriteStringInDoc(string registo)
     {
         _doc = new StreamWriter(_target + _currentDocName);
@@ -245,7 +245,6 @@ public class SaveCenter
     }
 
     // ReSharper disable once UnusedMember.Global
-
     public void SetRecordingName(string recordName)
     {
         if (recordName.Equals(_recordingName)) return;
@@ -254,7 +253,6 @@ public class SaveCenter
     }
 
     // ReSharper disable once UnusedMember.Global
-
     public void SpecialFolderName(string newName)
     {
         _currentFolderDestino = _folderDestino = newName;
@@ -264,7 +262,6 @@ public class SaveCenter
     }
 
     // ReSharper disable once UnusedMember.Global
-
     public void SpecialDocName(string newName)
     {
         //#if !UNITY_ANDROID
@@ -276,14 +273,12 @@ public class SaveCenter
     }
 
     // ReSharper disable once UnusedMember.Global
-
     public void SpecialTypeDocName(SpecialTypeDoc t)
     {
         _specialTypeDocName = t;
     }
 
     // ReSharper disable once UnusedMember.Global
-
     public void UseDefaultDocName()
     {
         if (_useDefaultDocName) return;
@@ -292,7 +287,6 @@ public class SaveCenter
     }
 
     // ReSharper disable once UnusedMember.Global
-
     public void UseDefaultFolderName()
     {
         if (_useDefaultFolder) return;
@@ -302,10 +296,9 @@ public class SaveCenter
     }
 
     // ReSharper disable once UnusedMember.Local
-
+    // ReSharper disable once UnusedParameter.Local
     private void SetUpFileAndDirectory(string first)
     {
-
         SetUpDirectory();
         SetFileName();
         //SetUpHeader(first);

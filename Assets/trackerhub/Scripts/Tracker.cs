@@ -280,9 +280,7 @@ public class Tracker : MonoBehaviour
             var forward = sensor.Value.SensorGameObject.transform.forward;
 
             Debug.DrawLine(start, start + forward, Color.black);
-            
         }
-
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -296,7 +294,7 @@ public class Tracker : MonoBehaviour
 
     private void MergeHumans ()
 	{
-		List<SensorBody> aloneBodies = new List<SensorBody> ();
+		var aloneBodies = new List<SensorBody> ();
 
 		// refresh existing bodies
 		foreach (Sensor s in Sensors.Values)
@@ -552,14 +550,10 @@ public class Tracker : MonoBehaviour
 	internal void SetNewFrame (BodiesMessage bodies)
 	{
         //Debug.Log("bodies = " + bodies.Message + ", KinectId = " + bodies.KinectId);
-
-
         if (!Sensors.ContainsKey (bodies.KinectId))
         {
-			Vector3 position = new Vector3 (Mathf.Ceil (Sensors.Count / 2.0f) * (Sensors.Count % 2 == 0 ? -1.0f : 1.0f), 1, 0);
-            
-
-			Sensors [bodies.KinectId] = new Sensor (bodies.KinectId, (GameObject)Instantiate (Resources.Load ("Prefabs/KinectSensorPrefab"), position, Quaternion.identity));
+			var position = new Vector3 (Mathf.Ceil (Sensors.Count / 2.0f) * (Sensors.Count % 2 == 0 ? -1.0f : 1.0f), 1, 0);
+            Sensors [bodies.KinectId] = new Sensor (bodies.KinectId, (GameObject)Instantiate (Resources.Load ("Prefabs/KinectSensorPrefab"), position, Quaternion.identity));
 		}
 
 		Sensors [bodies.KinectId].lastBodiesMessage = bodies;
@@ -568,8 +562,10 @@ public class Tracker : MonoBehaviour
 	internal bool CalibrationStep1 ()
 	{
 		var canNotCalibrate = false;
-		foreach (var sensor in Sensors.Values) {
-			if (sensor.Active) {
+		foreach (var sensor in Sensors.Values)
+        {
+			if (sensor.Active)
+            {
 				if (sensor.lastBodiesMessage != null && sensor.lastBodiesMessage.Bodies.Count == 1)
                 {
 					sensor.CalibrationStep1 ();
@@ -594,7 +590,8 @@ public class Tracker : MonoBehaviour
 		var avgCenter = new Vector3 ();
 		var sensorCount = 0;
 
-		foreach (var sensor in Sensors.Values) {
+		foreach (var sensor in Sensors.Values)
+        {
 			if (sensor.lastBodiesMessage != null && sensor.lastBodiesMessage.Bodies.Count == 1 && sensor.Active) {
 				sensor.CalibrationStep2 ();
 
@@ -640,7 +637,7 @@ public class Tracker : MonoBehaviour
 
 		_saveConfig ();
 
-		DoNotify n = gameObject.GetComponent<DoNotify> ();
+		var n = gameObject.GetComponent<DoNotify> ();
 		n.notifySend (NotificationLevel.INFO, "Calibration complete", "Config file updated", 5000);
 	}
 
@@ -718,7 +715,7 @@ public class Tracker : MonoBehaviour
         var lastSensorConfidence = 0;
         SensorBody lastSensorBody = null;
 
-        foreach (SensorBody b in h.bodies)
+        foreach (var b in h.bodies)
         {
             var bConfidence = b.Confidence;
 
@@ -749,7 +746,7 @@ public class Tracker : MonoBehaviour
         {
             return st;
         }
-        foreach (SensorBody b in h.bodies)
+        foreach (var b in h.bodies)
         {
             st = GetHandStateFromBody(side, b);
             if (st == "Closed") return st;
@@ -779,7 +776,7 @@ public class Tracker : MonoBehaviour
 
     private void _saveConfig ()
 	{
-		string filePath = Application.dataPath + "/" + TrackerProperties.Instance.ConfigFilename;
+		var filePath = Application.dataPath + "/" + TrackerProperties.Instance.ConfigFilename;
 		ConfigProperties.clear (filePath);
 
 		ConfigProperties.writeComment (filePath, "Config File created in " + DateTime.Now.ToString ("yyyy-MM-dd HH:mm:ss"));
@@ -804,9 +801,9 @@ public class Tracker : MonoBehaviour
 
     private void _loadConfig ()
 	{
-		string filePath = Application.dataPath + "/" + TrackerProperties.Instance.ConfigFilename;
+		var filePath = Application.dataPath + "/" + TrackerProperties.Instance.ConfigFilename;
 
-		string port = ConfigProperties.Load (filePath, "udp.listenport");
+		var port = ConfigProperties.Load (filePath, "udp.listenport");
 		if (port != "") {
 			TrackerProperties.Instance.ListenPort = int.Parse (port);
 		}
@@ -903,6 +900,7 @@ public class Tracker : MonoBehaviour
 	}
 
 
+    // ReSharper disable once UnusedMember.Local
     private string GetKnees(Human h)
     {
         // CommonUtils.convertVectorToStringRPC
@@ -994,7 +992,7 @@ public class Tracker : MonoBehaviour
             foreach (Human h in _humans.Values) {
                 //GUI.Label(new Rect(10, Screen.height - (n++ * 50), 1000, 50), "Human " + h.ID + " as seen by " + h.seenBySensor);
 
-                Vector3 p = Camera.main.WorldToScreenPoint (h.Skeleton.GetHead () + new Vector3 (0, 0.2f, 0));
+                var p = Camera.main.WorldToScreenPoint (h.Skeleton.GetHead () + new Vector3 (0, 0.2f, 0));
                 if (p.z > 0) {
                     GUI.Label (new Rect (p.x, Screen.height - p.y - 25, 100, 25), "" + h.ID);
                 }
@@ -1003,7 +1001,7 @@ public class Tracker : MonoBehaviour
 
         foreach (Sensor s in Sensors.Values) {
             if (s.Active) {
-                Vector3 p = Camera.main.WorldToScreenPoint (s.SensorGameObject.transform.position + new Vector3 (0, 0.05f, 0));
+                var p = Camera.main.WorldToScreenPoint (s.SensorGameObject.transform.position + new Vector3 (0, 0.05f, 0));
                 if (p.z > 0) {
                     GUI.Label (new Rect (p.x, Screen.height - p.y - 25, 100, 25), "" + s.SensorID);
                 }

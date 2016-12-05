@@ -3,6 +3,8 @@ using System.Collections;
 using System;
 using Windows.Kinect;
 
+// ReSharper disable once ClassNeverInstantiated.Global
+// ReSharper disable once CheckNamespace
 public class HumanSkeleton : MonoBehaviour
 {
 
@@ -66,9 +68,11 @@ public class HumanSkeleton : MonoBehaviour
     private string HandRightState;
     
 
+    // ReSharper disable once UnusedMember.Local
+    // ReSharper disable once ArrangeTypeMemberModifiers
     void Start ()
 	{
-		CapsuleCollider humanCollider = gameObject.AddComponent<CapsuleCollider> ();
+		var humanCollider = gameObject.AddComponent<CapsuleCollider> ();
 		humanCollider.radius = 0.25f;
 		humanCollider.height = 1.75f;
 
@@ -151,17 +155,16 @@ public class HumanSkeleton : MonoBehaviour
 
 	private Vector3 CalcUnfilteredForward ()
 	{
-		Vector3 spineRight = (mirror ? tracker.GetJointPosition (ID, JointType.ShoulderLeft, Vector3.zero) : tracker.GetJointPosition (ID, JointType.ShoulderRight, Vector3.zero)) - tracker.GetJointPosition (ID, JointType.SpineShoulder, Vector3.zero);
-		Vector3 spineUp = tracker.GetJointPosition (ID, JointType.SpineShoulder, Vector3.zero) - tracker.GetJointPosition (ID, JointType.SpineMid, Vector3.zero);
-
-
+		var spineRight = (mirror ? tracker.GetJointPosition (ID, JointType.ShoulderLeft, Vector3.zero) : tracker.GetJointPosition (ID, JointType.ShoulderRight, Vector3.zero)) - tracker.GetJointPosition (ID, JointType.SpineShoulder, Vector3.zero);
+		var spineUp = tracker.GetJointPosition (ID, JointType.SpineShoulder, Vector3.zero) - tracker.GetJointPosition (ID, JointType.SpineMid, Vector3.zero);
+        
 		return Vector3.Cross (spineRight, spineUp);
 	}
 
 	private Vector3 CalcForward ()
 	{
-		Vector3 spineRight = rightShoulderKalman.Value - spineShoulderKalman.Value;
-		Vector3 spineUp = spineShoulderKalman.Value - spineMidKalman.Value;
+		var spineRight = rightShoulderKalman.Value - spineShoulderKalman.Value;
+		var spineUp = spineShoulderKalman.Value - spineMidKalman.Value;
 
 		return Vector3.Cross (spineRight, spineUp);
 	}
@@ -342,7 +345,12 @@ public class HumanSkeleton : MonoBehaviour
 			throw new Exception ("Human not initalized.");
 	}
 
-	public Vector3 GetHead ()
+	public Vector3 GetMidSpine()
+	{
+		return spineMidKalman.Value;
+	}
+
+    public Vector3 GetHead ()
 	{
 		return headKalman.Value;
 	}
@@ -371,4 +379,9 @@ public class HumanSkeleton : MonoBehaviour
     {
         return leftKneeKalman == null ? tracker.GetJointPosition(ID, JointType.KneeLeft) : leftKneeKalman.Value;
     }
+
+
+    
+
+
 }

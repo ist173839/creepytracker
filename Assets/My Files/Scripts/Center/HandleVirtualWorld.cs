@@ -251,20 +251,31 @@ public class HandleVirtualWorld : MonoBehaviour
         {
             var center = "CenterPos" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(_centro.Value);
             var humans = _localTracker.GetHumans();
-            var mensaHumans = "";
-            if (humans != null)
+          
+            var mensaHumans = ""; 
+            if (humans != null) 
             {
                 foreach (var h in humans)
                 {
-                    var position = _centro.Value - h.Value.Position;
-
+                    var mid = h.Value.Skeleton.GetMidSpine();
+                    var desvio = _centro.Value - h.Value.Position;
+                  
                     mensaHumans += MessageSeparators.L2;
                     mensaHumans += "Id" + MessageSeparators.SET + h.Value.ID;
+
                     mensaHumans += MessageSeparators.L4; // "Desvio" + MessageSeparators.SET +
-                    mensaHumans += CommonUtils.convertVectorToStringRPC(position);
+                    mensaHumans += CommonUtils.convertVectorToStringRPC(desvio);
+                    mensaHumans += MessageSeparators.L4;
+                    mensaHumans += CommonUtils.convertVectorToStringRPC(h.Value.Position);
+                    mensaHumans += MessageSeparators.L4;
+                    mensaHumans += CommonUtils.convertVectorToStringRPC(mid);
+                    
+                    MyDebug.DrawLine(h.Value.Position, h.Value.Position + desvio, Color.blue);
                 }
-
-
+                //foreach (var g in guardar1)
+                //{
+                //    MyDebug.DrawLine();
+                //}
 
 
                 mensagem = center + mensaHumans;
@@ -272,8 +283,7 @@ public class HandleVirtualWorld : MonoBehaviour
                 // _saveCenter.RecordMessage(center);
             }
         }
-
-
+        
         if (_setUpCentro && _centro.HasValue && _setUpForward && _forwardPoint.HasValue)
         {
             mensagem += MessageSeparators.L2;
@@ -290,9 +300,7 @@ public class HandleVirtualWorld : MonoBehaviour
         }
         
         mensagem += MessageSeparators.L2 + "Force" + MessageSeparators.SET + Force;
-        
         //_mensagem = mensagem;
-
         if (Send)
         {
             _udpBroadcast.Send(mensagem);
@@ -316,11 +324,8 @@ public class HandleVirtualWorld : MonoBehaviour
            // var human = _localTracker.GetHuman(_localTrackerUi.IdToCheck);
             var pos = MathHelper.DeslocamentoHorizontal(_marker.transform.position, 0.0f);
             SetUpNewCenter(pos);
-            
         }
-
         _saveMessage = true;
- 
         //  if (_localOptitrackManager != null ) SetUpNewCenter(_localOptitrackManager.GetUnityPositionVector());
         // _centroGameObject.GetComponent<MeshRenderer>().enabled = _setUpCentro; // && _localTrackerUi.SetUpCenter;
     }
@@ -332,8 +337,6 @@ public class HandleVirtualWorld : MonoBehaviour
         _centro = MathHelper.DeslocamentoHorizontal(newCenter);
         _centroGameObject.transform.position = _centro.Value;
         SetIndicators(_centro.Value);
-
-
     }
 
     public void SetForwardPointButton()
@@ -351,7 +354,6 @@ public class HandleVirtualWorld : MonoBehaviour
             var pos = MathHelper.DeslocamentoHorizontal(_marker.transform.position, 0.0f);
             SetUpNewForward(pos);
         }
-
         _saveMessage = true;
     }
 
@@ -421,7 +423,6 @@ public class HandleVirtualWorld : MonoBehaviour
 
         ObstacleList.Add(obstacle1);
         ObstacleList.Add(obstacle2);
-
     }
 
     public void ResetWorld()
@@ -542,3 +543,15 @@ public class HandleVirtualWorld : MonoBehaviour
     }
 
 }
+    /////////////////////////////////////////////////////////////////////////////////
+    /*
+   //var joints = _localTracker.GetJointPosition();
+
+     
+     
+     
+     
+     
+     
+     
+     */
