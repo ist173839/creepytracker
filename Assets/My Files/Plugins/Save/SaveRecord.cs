@@ -29,12 +29,14 @@ public enum ControloMode
 
 public class SaveRecord
 {
+    private SpecialTypeDoc _specialTypeDocName;
+   
     private StreamWriter _doc;
 #pragma warning disable 169
     private DateTime _inicio;
 #pragma warning restore 169
 
-    //private ControloMode _activeControloMode;
+  
 
     // ReSharper disable once MemberCanBePrivate.Global
     public string Separador { get; private set; }
@@ -73,7 +75,7 @@ public class SaveRecord
 
     //private string _headerCwip;
     //private string _headerWip;
-    
+
     // ReSharper disable once UnusedAutoPropertyAccessor.Global
     // ReSharper disable once MemberCanBePrivate.Global
     public int NumColunas   { get; private set; }
@@ -83,8 +85,6 @@ public class SaveRecord
 #pragma warning disable 414
     private int _cont;
 #pragma warning restore 414
-
-    private SpecialTypeDoc _specialTypeDocName;
 
     //  public bool DirectoryChange;
     private bool _useDefaultDocName;
@@ -109,7 +109,7 @@ public class SaveRecord
         _startMessage = "INICIO";
         _endMessage   = "FIM";
         _format       = ".csv";
-        _versao       = "V12.1";
+        _versao       = "V12.2";
         _sigla        = "WVD";
         
         _recordingName   = null;
@@ -375,7 +375,7 @@ public class SaveRecord
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*
-
+  //private ControloMode _activeControloMode;
 
   private string GetHeader()
 {
