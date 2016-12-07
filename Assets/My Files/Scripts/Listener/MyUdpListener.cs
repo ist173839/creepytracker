@@ -158,9 +158,9 @@ public class MyUdpListener : MonoBehaviour
     // ReSharper disable once ArrangeTypeMemberModifiers
     void OnDestroy()
     {
-        _udpClientColicoes.Close();
-        _udpClientRecord.Close();
-        _udpClientAvr.Close();
+        if (_udpClientColicoes != null) _udpClientColicoes.Close();
+        if (_udpClientRecord != null) _udpClientRecord.Close();
+        if (_udpClientAvr != null) _udpClientAvr.Close();
     }
 }
 

@@ -20,7 +20,9 @@ public class SaveAvr
     private DateTime _inicio;
 #pragma warning restore 169
 
-    //private ControloMode _activeControloMode;
+    private SpecialTypeDoc _specialTypeDocName;
+
+  
 
     // ReSharper disable once MemberCanBePrivate.Global
     // ReSharper disable once UnusedAutoPropertyAccessor.Global
@@ -40,7 +42,7 @@ public class SaveAvr
     private string _caminhoCompleto;
     private string _defaultDocName;
     private string _currentDocName;
-    private string _recordingName;
+    // private string _recordingName;
     private string _folderDestino;
     private string _saveHeader;
     private string _fimCiclo;
@@ -53,7 +55,6 @@ public class SaveAvr
 
     private int _cont;
 
-    private int _specialTypeDocName;
 
     //  public bool DirectoryChange;
 
@@ -81,7 +82,7 @@ public class SaveAvr
         _startMessage = "INICIO";
         _endMessage   = "FIM";
 
-        _recordingName   = null;
+        //_recordingName   = null;
         _caminhoCompleto = null;
         _saveHeader      = null;
 
@@ -107,9 +108,8 @@ public class SaveAvr
 
     private void ResetRecord()
     {
-        _recordingName = null;
+        //_recordingName = null;
         _isInitiate = false;
-
         _cont = 0;
         NumColunas = 0;
     }
@@ -138,15 +138,15 @@ public class SaveAvr
         // if (message != _startMessage  && !_isInitiate)
         // {
         // } else
-        CheckFileSize();
         if (message == _endMessage)
         {
             StopRecording();
-            Console.WriteLine(_endMessage);
+            Debug.Log(_endMessage);
         }
         else
             WriteStringInDoc(message, true);
-        
+
+        CheckFileSize();
     }
     
     private void SetUpFileAndDirectory()
@@ -193,14 +193,21 @@ public class SaveAvr
         _doc.Close();
     }
 
+    private void WriteStringInDoc(string registo)
+    {
+        _doc = new StreamWriter(_target + _currentDocName);
+        _doc.WriteLine(registo);
+        _doc.Close();
+    }
+
     private void StopRecording()
     {
         if (!_isInitiate) return;
-        ResetRecord();
         if (!File.Exists(_target + _currentDocName)) return;
         File.SetAttributes(_target + _currentDocName, FileAttributes.ReadOnly);
+        ResetRecord();
     }
-  
+
     private void SetUpDirectory()
     {
         if (!System.IO.Directory.Exists(_target))
@@ -219,10 +226,10 @@ public class SaveAvr
             string temp;
             switch (_specialTypeDocName)
             {
-                case 0:
+                case SpecialTypeDoc.SolveDuplicate:
                     temp = SolveDuplicateFileNames();
                     break;
-                case 1:
+                case SpecialTypeDoc.Normal:
                     temp = _currentDocName + "_" + DateTime.Now.ToString("yyyyMMddTHHmmss");
                     break;
                 default:
@@ -234,6 +241,7 @@ public class SaveAvr
             Debug.Log("New Walking Data File : " + _currentDocName);
         }
     }
+
 
     private string SolveDuplicateFileNames()
     {
@@ -247,28 +255,14 @@ public class SaveAvr
         return temp;
     }
 
-    private void WriteStringInDoc(string registo)
-    {
-        _doc = new StreamWriter(_target + _currentDocName);
-        _doc.WriteLine(registo);
-        _doc.Close();
-    }
-
     // ReSharper disable once UnusedMember.Global
     public string GetDocActivo()
     {
         if (_isInitiate) return _target + _currentDocName;
         return null;
     }
-
-    // ReSharper disable once UnusedMember.Global
-    public void SetRecordingName(string recordName)
-    {
-        if (recordName.Equals(_recordingName)) return;
-        _recordingName = recordName;
-        _isInitiate = false;
-    }
-
+    
+  
     // ReSharper disable once UnusedMember.Global
     public void SpecialFolderName(string newName)
     {
@@ -288,7 +282,8 @@ public class SaveAvr
         //#endif
     }
 
-    public void SpecialTypeDocName(int t)
+    // ReSharper disable once UnusedMember.Global
+    public void SpecialTypeDocName(SpecialTypeDoc t)
     {
         _specialTypeDocName = t;
     }
@@ -312,7 +307,23 @@ public class SaveAvr
 
 }
 
-
+/////////////////////////////////////////////////////////////////////////////////////////
+/*
+ 
+       public void SetRecordingName(string recordName)
+    {
+        if (recordName.Equals(_recordingName)) return;
+        _recordingName = recordName;
+        _isInitiate = false;
+    }
+     
+     
+     
+     
+     
+     
+     */
+//private ControloMode _activeControloMode;
 //if (!IsRecording)
 //{
 //    StopRecording();

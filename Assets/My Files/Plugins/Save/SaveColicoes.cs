@@ -134,15 +134,14 @@ public class SaveColicoes
         //if (message != _startMessage  && !_isInitiate)
         //{
         //} else
-        CheckFileSize();
         if (message == _endMessage)
         {
             StopRecording();
-            Console.WriteLine(_endMessage);
+            Debug.Log(_endMessage);
         }
         else
             WriteStringInDoc(message, true);
-        
+        CheckFileSize();
     }
 
     private void SetUpFileAndDirectory()

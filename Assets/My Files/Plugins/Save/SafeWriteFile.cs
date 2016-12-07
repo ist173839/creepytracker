@@ -231,7 +231,6 @@ public class SafeWriteFile
 #if !UNITY_ANDROID  || UNITY_EDITOR
         _target = Directory + "\\" + CurrentFolderDestino + "\\";
         //MyDebug.Log("Pasta : " + _target);
-        CheckFileSize();
         //if (!_activo || _versaoActiva == VersaoDisponivel.NaoActivo) NovoRegisto(VersaoDisponivel.Versao2);
         if (!_activo) NovoRegisto();
         //_caminhoCompleto = _target + _CurrentDocName;
@@ -251,6 +250,8 @@ public class SafeWriteFile
         _doc.Close();
 
         _tempoMensagemAnterior = agora;
+
+        CheckFileSize();
 #endif
     }
 

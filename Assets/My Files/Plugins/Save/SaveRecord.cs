@@ -109,7 +109,7 @@ public class SaveRecord
         _startMessage = "INICIO";
         _endMessage   = "FIM";
         _format       = ".csv";
-        _versao       = "V12.2";
+        _versao       = "V12.3";
         _sigla        = "WVD";
         
         _recordingName   = null;
@@ -168,19 +168,17 @@ public class SaveRecord
             //_cont = 0;
         }
         if (!_isInitiate) SetUpFileAndDirectory();
-
         //if (!_isInitiate) SetUpFileAndDirectory(message);
         //if (message != _startMessage  && !_isInitiate)
         //{} else
-
-        CheckFileSize();
         if (message == _endMessage)
         {
             StopRecording();
-            Console.WriteLine(_endMessage);
+            Debug.Log(_endMessage);
         }
         else
             WriteStringInDoc(message, true);
+        CheckFileSize();
     }
 
     private void SetUpFileAndDirectory()
