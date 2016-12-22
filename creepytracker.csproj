@@ -111,6 +111,7 @@
     <Compile Include="Assets\My Files\Plugins\Save\SaveCenter.cs" />
     <Compile Include="Assets\My Files\Plugins\Save\SaveCenterToSend.cs" />
     <Compile Include="Assets\My Files\Plugins\Save\SaveColicoes.cs" />
+    <Compile Include="Assets\My Files\Plugins\Save\SaveLog.cs" />
     <Compile Include="Assets\My Files\Plugins\Save\SaveRecord.cs" />
     <Compile Include="Assets\My Files\Plugins\Z_Outros\CenterServer.cs" />
     <Compile Include="Assets\My Files\Plugins\Z_Outros\CreateAndControlVirtualWorld.cs" />
