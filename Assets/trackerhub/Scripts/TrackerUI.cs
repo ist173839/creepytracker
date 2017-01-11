@@ -67,8 +67,7 @@ public class TrackerUI : MonoBehaviour
 
 	private bool _continuous;
     private bool _hideHumans;
-
-
+    
     ////////////////////////////////////////////////////////////////
 
     private HandleVirtualWorld _localHandleVirtualWorld;
