@@ -52,6 +52,9 @@
     <Reference Include="UnityEngine">
       <HintPath>Library\UnityAssemblies\UnityEngine.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.Advertisements">
+      <HintPath>Library\UnityAssemblies\UnityEngine.Advertisements.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>Library\UnityAssemblies\UnityEngine.UI.dll</HintPath>
     </Reference>
@@ -66,6 +69,9 @@
     </Reference>
     <Reference Include="UnityEngine.HoloLens">
       <HintPath>Library\UnityAssemblies\UnityEngine.HoloLens.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.Purchasing">
+      <HintPath>Library\UnityAssemblies\UnityEngine.Purchasing.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.VR">
       <HintPath>Library\UnityAssemblies\UnityEngine.VR.dll</HintPath>
@@ -83,14 +89,15 @@
   <ItemGroup>
     <Compile Include="Assets\Common\Plugins\AdaptiveDoubleExponentialFilterFloat.cs" />
     <Compile Include="Assets\Common\Plugins\AdaptiveDoubleExponentialFilterVector3.cs" />
-    <Compile Include="Assets\Common\Plugins\BodiesMessage.cs" />
-    <Compile Include="Assets\Common\Plugins\CloudMessage.cs" />
     <Compile Include="Assets\Common\Plugins\CommonUtils.cs" />
     <Compile Include="Assets\Common\Plugins\ConfigProperties.cs" />
     <Compile Include="Assets\Common\Plugins\KalmanFilterFloat.cs" />
     <Compile Include="Assets\Common\Plugins\KalmanFilterVector3.cs" />
     <Compile Include="Assets\Common\Plugins\UdpBroadcast.cs" />
+    <Compile Include="Assets\Common\Scripts\AvatarMessage.cs" />
+    <Compile Include="Assets\Common\Scripts\BodiesMessage.cs" />
     <Compile Include="Assets\Common\Scripts\CameraOrbit.cs" />
+    <Compile Include="Assets\Common\Scripts\CloudMessage.cs" />
     <Compile Include="Assets\Common\Scripts\DoNotify.cs" />
     <Compile Include="Assets\Common\Scripts\GridOverlay.cs" />
     <Compile Include="Assets\Common\Scripts\Logger.cs" />
@@ -149,6 +156,7 @@
     <None Include="Assets\My Files\Shaders\Silhouetted Diffuse.shader" />
     <None Include="Assets\Shaders\GS Billboard.shader" />
     <None Include="Assets\Shaders\VertexColor.shader" />
+    <None Include="Assets\Shaders\simpleBillboard.shader" />
     <None Include="Assets\Standard Assets\CrossPlatformInput\CrossPlatformInputGuidelines.txt" />
     <None Include="Assets\Standard Assets\Fonts\OpenSans\License!.txt" />
     <None Include="Assets\configSettings.txt" />
