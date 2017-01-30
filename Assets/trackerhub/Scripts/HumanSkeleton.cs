@@ -54,10 +54,10 @@ public class HumanSkeleton : MonoBehaviour
 	public Tracker tracker;
 	public int ID;
 
-	private bool canSend = false;
+	private bool _canSend = false;
 
-	private bool mirror = false;
-	private Vector3 lastForward;
+	private bool _mirror = false;
+	private Vector3 _lastForward;
 
 	//private GameObject forwardGO;
 
@@ -76,20 +76,20 @@ public class HumanSkeleton : MonoBehaviour
 		humanCollider.radius = 0.25f;
 		humanCollider.height = 1.75f;
 
-		head = CreateSphere ("head", 0.3f);
-		leftShoulder = CreateSphere ("leftShoulder");
+		head          = CreateSphere ("head", 0.3f);
+		leftShoulder  = CreateSphere ("leftShoulder");
 		rightShoulder = CreateSphere ("rightShoulder");
-		leftElbow = CreateSphere ("leftElbow");
-		rightElbow = CreateSphere ("rightElbow");
-		leftHand = CreateSphere ("leftHand");
-		rightHand = CreateSphere ("rightHand");
-		spineMid = CreateSphere ("spineMid", 0.2f);
-		leftHip = CreateSphere ("leftHip");
-		rightHip = CreateSphere ("rightHip");
-		leftKnee = CreateSphere ("leftKnee");
-		rightKnee = CreateSphere ("rightKnee");
-		leftFoot = CreateSphere ("leftFoot");
-		rightFoot = CreateSphere ("rightFoot");
+		leftElbow     = CreateSphere ("leftElbow");
+		rightElbow    = CreateSphere ("rightElbow");
+		leftHand      = CreateSphere ("leftHand");
+		rightHand     = CreateSphere ("rightHand");
+		spineMid      = CreateSphere ("spineMid", 0.2f);
+		leftHip       = CreateSphere ("leftHip");
+		rightHip      = CreateSphere ("rightHip");
+		leftKnee      = CreateSphere ("leftKnee");
+		rightKnee     = CreateSphere ("rightKnee");
+		leftFoot      = CreateSphere ("leftFoot");
+		rightFoot     = CreateSphere ("rightFoot");
 
 		headKalman          = new AdaptiveDoubleExponentialFilterVector3 ();
 		neckKalman          = new AdaptiveDoubleExponentialFilterVector3 ();
@@ -119,29 +119,26 @@ public class HumanSkeleton : MonoBehaviour
 		rightAnkleKalman    = new AdaptiveDoubleExponentialFilterVector3 ();
 		rightFootKalman     = new AdaptiveDoubleExponentialFilterVector3 ();
 
-		canSend = true;
+        _canSend = true;
+        _lastForward = Vector3.zero;
 
-		lastForward = Vector3.zero;
-
-		//forwardGO = new GameObject();
-		//forwardGO.name = "ForwardOld";
-		//forwardGO.transform.parent = transform;
-		//GameObject cylinder = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-		//cylinder.transform.localScale = new Vector3(0.05f, 0.25f, 0.05f);
-		//cylinder.transform.position += new Vector3(0, 0, 0.25f);
-		//cylinder.transform.up = Vector3.forward;
-		//cylinder.transform.parent = forwardGO.transform;
+		// forwardGO = new GameObject();
+		// forwardGO.name = "ForwardOld";
+		// forwardGO.transform.parent = transform;
+		// GameObject cylinder = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+		// cylinder.transform.localScale = new Vector3(0.05f, 0.25f, 0.05f);
+		// cylinder.transform.position += new Vector3(0, 0, 0.25f);
+		// cylinder.transform.up = Vector3.forward;
+		// cylinder.transform.parent = forwardGO.transform;
 
 		floorForwardGameObject = (GameObject)Instantiate (Resources.Load ("Prefabs/FloorForwardPlane"));
 		floorForwardGameObject.name = "Forward";
 		floorForwardGameObject.tag = "nocolor";
 		floorForwardGameObject.transform.parent = transform;
-
-
+        
         HandLeftState  = "Null";
         HandRightState = "Null";
-
-}
+    }
 
 	private GameObject CreateSphere (string sphereName, float scale = 0.1f)
 	{
@@ -155,7 +152,7 @@ public class HumanSkeleton : MonoBehaviour
 
 	private Vector3 CalcUnfilteredForward ()
 	{
-		var spineRight = (mirror ? tracker.GetJointPosition (ID, JointType.ShoulderLeft, Vector3.zero) : tracker.GetJointPosition (ID, JointType.ShoulderRight, Vector3.zero)) - tracker.GetJointPosition (ID, JointType.SpineShoulder, Vector3.zero);
+		var spineRight = (_mirror ? tracker.GetJointPosition (ID, JointType.ShoulderLeft, Vector3.zero) : tracker.GetJointPosition (ID, JointType.ShoulderRight, Vector3.zero)) - tracker.GetJointPosition (ID, JointType.SpineShoulder, Vector3.zero);
 		var spineUp = tracker.GetJointPosition (ID, JointType.SpineShoulder, Vector3.zero) - tracker.GetJointPosition (ID, JointType.SpineMid, Vector3.zero);
         
 		return Vector3.Cross (spineRight, spineUp);
@@ -180,15 +177,15 @@ public class HumanSkeleton : MonoBehaviour
 
             var forward = CalcUnfilteredForward ();
 
-			if (lastForward != Vector3.zero)
+			if (_lastForward != Vector3.zero)
             {
 				var projectedForward = new Vector3 (forward.x, 0, forward.z);
-				var projectedLastForward = new Vector3 (lastForward.x, 0, lastForward.z);
+				var projectedLastForward = new Vector3 (_lastForward.x, 0, _lastForward.z);
                 //if (Vector3.Angle(projectedLastForward, -projectedForward) < Vector3.Angle(projectedLastForward, projectedForward)) // the same as above
 
                 if (Vector3.Angle (projectedLastForward, projectedForward) > 90)
                 {
-                    mirror = !mirror;
+                    _mirror = !_mirror;
 					forward = CalcUnfilteredForward ();
 					projectedForward = new Vector3 (forward.x, 0, forward.z);
 				}
@@ -198,12 +195,12 @@ public class HumanSkeleton : MonoBehaviour
 				var elbowHand2 = tracker.GetJointPosition (ID, JointType.HandLeft, leftHandKalman.Value) - tracker.GetJointPosition (ID, JointType.ElbowLeft, leftElbowKalman.Value);
                 
                 if (Vector3.Angle (elbowHand1, -projectedForward) < 30 || Vector3.Angle (elbowHand2, -projectedForward) < 30) {
-					mirror = !mirror;
+					_mirror = !_mirror;
 					forward = CalcUnfilteredForward ();
 				}
 			}
 
-			lastForward = forward;
+			_lastForward = forward;
 
 			// Update Joints
 			try
@@ -214,7 +211,7 @@ public class HumanSkeleton : MonoBehaviour
 				spineMidKalman.Value      = tracker.GetJointPosition (ID, JointType.SpineMid,      spineMidKalman.Value);
 				spineBaseKalman.Value     = tracker.GetJointPosition (ID, JointType.SpineBase,     spineBaseKalman.Value);
 
-				if (mirror)
+				if (_mirror)
                 {
 					rightShoulderKalman.Value = tracker.GetJointPosition (ID, JointType.ShoulderLeft, rightShoulderKalman.Value);
 					rightElbowKalman.Value    = tracker.GetJointPosition (ID, JointType.ElbowLeft,    rightElbowKalman.Value);
@@ -300,17 +297,14 @@ public class HumanSkeleton : MonoBehaviour
 
 	internal string GetPdu ()
 	{
-		if (canSend) {
+		if (_canSend) {
 			string pdu = BodyPropertiesTypes.UID.ToString () + MessageSeparators.SET + ID + MessageSeparators.L2;
 
 			pdu += BodyPropertiesTypes.HandLeftState.ToString ()      + MessageSeparators.SET + HandLeftState  + MessageSeparators.L2;
 			pdu += BodyPropertiesTypes.HandLeftConfidence.ToString()  + MessageSeparators.SET + "Null"         + MessageSeparators.L2;
 			pdu += BodyPropertiesTypes.HandRightState.ToString ()     + MessageSeparators.SET + HandRightState + MessageSeparators.L2;
 			pdu += BodyPropertiesTypes.HandRightConfidence.ToString() + MessageSeparators.SET + "Null"         + MessageSeparators.L2;
-
-
-
-
+            
 			pdu += "head"          + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (headKalman.Value)          + MessageSeparators.L2;
 			pdu += "neck"          + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (neckKalman.Value)          + MessageSeparators.L2;
 			pdu += "spineShoulder" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC (spineShoulderKalman.Value) + MessageSeparators.L2;
@@ -341,8 +335,7 @@ public class HumanSkeleton : MonoBehaviour
 
 			return pdu;
 		}
-        else
-			throw new Exception ("Human not initalized.");
+        else throw new Exception ("Human not initalized.");
 	}
 
 	public Vector3 GetMidSpine()
@@ -354,7 +347,6 @@ public class HumanSkeleton : MonoBehaviour
 	{
 		return headKalman.Value;
 	}
-
 
     public Vector3 GetKnee(Side side)
     {
@@ -379,9 +371,4 @@ public class HumanSkeleton : MonoBehaviour
     {
         return leftKneeKalman == null ? tracker.GetJointPosition(ID, JointType.KneeLeft) : leftKneeKalman.Value;
     }
-
-
-    
-
-
 }
