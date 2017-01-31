@@ -80,6 +80,9 @@ public class TrackerUI : MonoBehaviour
     public bool Force         { get; set; }
     public bool Send          { get; set; }
 
+    public float FinalNum;
+    public int id;
+    
     ////////////////////////////////////////////////////////////////
 
     // ReSharper disable once ArrangeTypeMemberModifiers
@@ -119,8 +122,11 @@ public class TrackerUI : MonoBehaviour
 	    Force      = _localHandleVirtualWorld.Force;
 	    Send       = _localHandleVirtualWorld.Send;
 
-        ////////////////////////////////////////////////////////////////////
-    }
+	    FinalNum = -1;
+	    id = -1;
+
+	    ////////////////////////////////////////////////////////////////////
+	}
 
     // ReSharper disable once ArrangeTypeMemberModifiers
     // ReSharper disable once UnusedMember.Local
@@ -169,7 +175,8 @@ public class TrackerUI : MonoBehaviour
 		left = Screen.width - IconSize - 10;
 		DisplayMenuButton (MenuAction.NetworkSettings, networkTextureOn, networkTextureOff, new Rect (left, top, IconSize, IconSize));
 
-		if (_menuAction == MenuAction.Sensors) {
+		if (_menuAction == MenuAction.Sensors)
+        {
 			top = IconSize + IconSize / 2;
 			left = 20;
 
@@ -251,7 +258,8 @@ public class TrackerUI : MonoBehaviour
 			GUI.Label (new Rect (left + 40, top, 100, 25), "Smooth points");
 		}
 
-		if (_menuAction == MenuAction.Clouds) {
+		if (_menuAction == MenuAction.Clouds)
+        {
 			top = IconSize + IconSize / 2;
 			left = 20 + 3 * IconSize;
 			
@@ -367,7 +375,8 @@ public class TrackerUI : MonoBehaviour
 			top = IconSize + IconSize / 2;
 			left = Screen.width - 250;
 
-			GUI.Box (new Rect (left, top - 10, 240, 150), "");
+			//GUI.Box (new Rect (left, top - 10, 240, 150), "");
+			GUI.Box (new Rect (left, top - 10, 240, 250), "");
 			left += 10;
 
 			GUI.Label (new Rect (left, top, 200, 25), "Broadcast Settings:", _titleStyle);
@@ -417,13 +426,21 @@ public class TrackerUI : MonoBehaviour
 			}
             top += 35;
             left = Screen.width - 250 + 20;
-            UseRecord    = GUI.Toggle(new Rect(left, top, 100, 25), UseRecord, "Record");
+
+           // FinalNum++;
+
+            GUI.Label(new Rect(left, top, 180, 25), "Id = " + id + ", Objectivo = " + FinalNum);
+            top += 35;
+
+
+            
+            UseRecord = GUI.Toggle(new Rect(left, top, 100, 25), UseRecord, "Record");
             
             if (UseSaveFile)
             {
                 if (_localHandleVirtualWorld.CanShowIndicators)
                 {
-                    ShowIndicator = GUI.Toggle(new Rect(left + 120, top, 100, 25), ShowIndicator, "Show Indicators");
+                    ShowIndicator = GUI.Toggle(new Rect(left + 100, top, 100, 25), ShowIndicator, "Show Indicators");
                     _localHandleVirtualWorld.ShowIndicator = ShowIndicator;
                 }
                 else
@@ -442,7 +459,7 @@ public class TrackerUI : MonoBehaviour
                     if (_localHandleVirtualWorld.CanForce && Send)
                     {
                         Force = _localHandleVirtualWorld.Force;
-                        Force = GUI.Toggle(new Rect(left + 120, top, 100, 25), Force, "Force Center");
+                        Force = GUI.Toggle(new Rect(left + 100, top, 100, 25), Force, "Force Center");
                         _localHandleVirtualWorld.Force = Force;
                     }
                 }
