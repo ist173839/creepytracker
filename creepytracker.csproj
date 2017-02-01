@@ -13,11 +13,13 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile></CompilerResponseFile>
+    <CompilerResponseFile>
+    </CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.5.1f1</UnityVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <LangVersion Condition=" '$(VisualStudioVersion)' != '10.0' ">4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -107,13 +109,13 @@
     <Compile Include="Assets\My Files\Plugins\Helpers\ObterStringValues.cs" />
     <Compile Include="Assets\My Files\Plugins\Helpers\StringHelper.cs" />
     <Compile Include="Assets\My Files\Plugins\OptiTrack\DirectMulticastSocketClient.cs" />
-    <Compile Include="Assets\My Files\Plugins\Save\SafeWriteFile.cs" />
-    <Compile Include="Assets\My Files\Plugins\Save\SaveAvr.cs" />
-    <Compile Include="Assets\My Files\Plugins\Save\SaveCenter.cs" />
-    <Compile Include="Assets\My Files\Plugins\Save\SaveCenterToSend.cs" />
-    <Compile Include="Assets\My Files\Plugins\Save\SaveColicoes.cs" />
-    <Compile Include="Assets\My Files\Plugins\Save\SaveLog.cs" />
-    <Compile Include="Assets\My Files\Plugins\Save\SaveRecord.cs" />
+    <Compile Include="Assets\My Files\Plugins\Save\Info\SafeWriteFile.cs" />
+    <Compile Include="Assets\My Files\Plugins\Save\Data\SaveAvr.cs" />
+    <Compile Include="Assets\My Files\Plugins\Save\Info\SaveCenter.cs" />
+    <Compile Include="Assets\My Files\Plugins\Save\Info\SaveCenterToSend.cs" />
+    <Compile Include="Assets\My Files\Plugins\Save\Data\SaveColicoes.cs" />
+    <Compile Include="Assets\My Files\Plugins\Save\Data\SaveLog.cs" />
+    <Compile Include="Assets\My Files\Plugins\Save\Data\SaveRecord.cs" />
     <Compile Include="Assets\My Files\Plugins\Z_Outros\CenterServer.cs" />
     <Compile Include="Assets\My Files\Plugins\Z_Outros\CreateAndControlVirtualWorld.cs" />
     <Compile Include="Assets\My Files\Plugins\Z_Outros\Play\EmulateSaveData.cs" />
@@ -155,6 +157,7 @@
     <None Include="Assets\Standard Assets\Fonts\OpenSans\License!.txt" />
     <None Include="Assets\configSettings.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
 </Project>

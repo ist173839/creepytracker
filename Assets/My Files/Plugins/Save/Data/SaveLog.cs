@@ -13,7 +13,7 @@ using System.Text;
 using UnityEngine;
 
 // ReSharper disable once CheckNamespace
-public class SaveAvr
+public class SaveLog
 {
     private StreamWriter _doc;
 #pragma warning disable 169
@@ -21,23 +21,22 @@ public class SaveAvr
 #pragma warning restore 169
 
     private SpecialTypeDoc _specialTypeDocName;
-
-  
-
+    
     // ReSharper disable once MemberCanBePrivate.Global
     // ReSharper disable once UnusedAutoPropertyAccessor.Global
     public string Separador { get; private set; }
 
-    private readonly string _defaultFolderDestino;
+    private string _defaultFolderDestino;
 #pragma warning disable 414
-    private readonly string _startMessage;
+    private string _startMessage;
 #pragma warning restore 414
-    private readonly string _endMessage;
-    private readonly string _directory;
-    private readonly string _format;
-    private readonly string _versao;
-    private readonly string _sigla;
+    private string _endMessage;
+    private string _directory;
+    private string _format;
+    private string _versao;
+    private string _sigla;
 
+    private string _currentUserFolder = null;
     private string _currentFolderDestino;
     private string _caminhoCompleto;
     private string _defaultDocName;
@@ -55,7 +54,6 @@ public class SaveAvr
 
     private int _cont;
 
-
     //  public bool DirectoryChange;
 
     private bool _useDefaultDocName;
@@ -64,7 +62,17 @@ public class SaveAvr
     private bool _isInitiate;
     private bool _oversize;
 
-    public SaveAvr() 
+    public SaveLog(string userFolder)
+    {
+        SetUp(userFolder);
+    }
+    
+    public SaveLog()
+    {
+        SetUp(null);
+    }
+
+    private void SetUp(string userFolder)
     {
         _useDefaultDocName = true;
         _useDefaultFolder  = true;
@@ -72,33 +80,43 @@ public class SaveAvr
         _oversize          = false;
 
         _directory = System.IO.Directory.GetCurrentDirectory();
-        _currentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "AVR Data";
+        
+        _currentUserFolder = userFolder;
+
+
+        _currentFolderDestino =
+            _defaultFolderDestino =
+                _currentUserFolder == null
+                    ? "Saved Files" + "\\" + "Log Data"
+                    : _currentUserFolder + "\\" + "Saved Files" + "\\" + "Log Data";
+
+
         Separador = ";";
 
         _format = ".csv";
-        _sigla  = "AVRD";
+        _sigla = "LD";
         _versao = "V1";
 
         _startMessage = "INICIO";
-        _endMessage   = "FIM";
+        _endMessage = "FIM";
 
         //_recordingName   = null;
         _caminhoCompleto = null;
-        _saveHeader      = null;
+        _saveHeader = null;
 
         _specialTypeDocName = 0;
-        
+
         _target = _directory + "\\" + _currentFolderDestino + "\\";
         _cont = 0;
         NumColunas = 0;
-        
+
         //_activeControloMode  = ControloMode.CWIP;
         //_headerCwip          = GetCwipHeader();
         //_headerWip           = GetWipHeader();
         //_header = GetHeader();
     }
 
-    ~SaveAvr()
+    ~SaveLog()
     {
         if (!_isInitiate) return;
         ResetRecord();
@@ -241,8 +259,7 @@ public class SaveAvr
             Debug.Log("New Walking Data File : " + _currentDocName);
         }
     }
-
-
+    
     private string SolveDuplicateFileNames()
     {
         var temp = _currentDocName;
@@ -318,7 +335,16 @@ public class SaveAvr
     }
      
      
-     
+             //  _currentFolderDestino = _defaultFolderDestino = _currentUserFolder + "\\" + "Saved Files" + "\\" + "Log Data";
+        //if (_currentUserFolder == null)
+        //{
+        //    _currentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "Log Data";
+        //}
+        //else
+        //{
+        //    _currentFolderDestino = _defaultFolderDestino = _currentUserFolder + "\\" + "Saved Files" + "\\" + "Log Data";
+        //}
+        //_currentFolderDestino = _currentFolderDestino =
      
      
      

@@ -77,6 +77,7 @@ public class TrackerUI : MonoBehaviour
     public bool UseSaveFile   { get; set; }
     public bool ShowMarker    { get; set; }
     public bool UseRecord     { get; set; }
+    public bool SetNewUser    { get; set; }
     public bool Force         { get; set; }
     public bool Send          { get; set; }
 
@@ -117,8 +118,9 @@ public class TrackerUI : MonoBehaviour
         
         UseRecord     = false;
 	    ShowIndicator = false;
+	    SetNewUser    = false;
 
-	    ShowMarker = _localHandleVirtualWorld.ShowMarker;
+        ShowMarker = _localHandleVirtualWorld.ShowMarker;
 	    Force      = _localHandleVirtualWorld.Force;
 	    Send       = _localHandleVirtualWorld.Send;
 
@@ -133,7 +135,6 @@ public class TrackerUI : MonoBehaviour
     void Update ()
 	{   
         // if (!_localHandleVirtualWorld.CanUseSaveFile) _localHandleVirtualWorld.ShowMarker = false;
-
         if (UseSaveFile)
         {
             if (!_localHandleVirtualWorld.CanShowIndicators)
@@ -376,7 +377,7 @@ public class TrackerUI : MonoBehaviour
 			left = Screen.width - 250;
 
 			//GUI.Box (new Rect (left, top - 10, 240, 150), "");
-			GUI.Box (new Rect (left, top - 10, 240, 250), "");
+			GUI.Box (new Rect (left, top - 10, 240, 300), "");
 			left += 10;
 
 			GUI.Label (new Rect (left, top, 200, 25), "Broadcast Settings:", _titleStyle);
@@ -427,13 +428,21 @@ public class TrackerUI : MonoBehaviour
             top += 35;
             left = Screen.width - 250 + 20;
 
-           // FinalNum++;
+            // FinalNum++;
+            GUI.Label(new Rect(left, top, 180, 25), "EXTRA (FHV) : ", _titleStyle);
 
+            if (GUI.Button(new Rect(left + 100, top, 100, 25), "New User"))
+            {
+
+
+
+            }
+
+            top += 25;
             GUI.Label(new Rect(left, top, 180, 25), "Id = " + id + ", Objectivo = " + FinalNum);
-            top += 35;
+            top += 25;
+            //top += 35;
 
-
-            
             UseRecord = GUI.Toggle(new Rect(left, top, 100, 25), UseRecord, "Record");
             
             if (UseSaveFile)

@@ -13,7 +13,7 @@ using System.Text;
 using UnityEngine;
 
 // ReSharper disable once CheckNamespace
-public class SaveLog
+public class SaveAvr
 {
     private StreamWriter _doc;
 #pragma warning disable 169
@@ -53,6 +53,7 @@ public class SaveLog
 
     private int _cont;
 
+
     //  public bool DirectoryChange;
 
     private bool _useDefaultDocName;
@@ -61,7 +62,7 @@ public class SaveLog
     private bool _isInitiate;
     private bool _oversize;
 
-    public SaveLog() 
+    public SaveAvr() 
     {
         _useDefaultDocName = true;
         _useDefaultFolder  = true;
@@ -69,11 +70,11 @@ public class SaveLog
         _oversize          = false;
 
         _directory = System.IO.Directory.GetCurrentDirectory();
-        _currentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "Log Data";
+        _currentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "AVR Data";
         Separador = ";";
 
         _format = ".csv";
-        _sigla  = "LD";
+        _sigla  = "AVRD";
         _versao = "V1";
 
         _startMessage = "INICIO";
@@ -95,7 +96,7 @@ public class SaveLog
         //_header = GetHeader();
     }
 
-    ~SaveLog()
+    ~SaveAvr()
     {
         if (!_isInitiate) return;
         ResetRecord();
@@ -238,7 +239,8 @@ public class SaveLog
             Debug.Log("New Walking Data File : " + _currentDocName);
         }
     }
-    
+
+
     private string SolveDuplicateFileNames()
     {
         var temp = _currentDocName;
