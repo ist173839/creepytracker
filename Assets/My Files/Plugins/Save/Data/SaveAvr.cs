@@ -16,45 +16,41 @@ using UnityEngine;
 public class SaveAvr
 {
     private StreamWriter _doc;
-#pragma warning disable 169
+
     private DateTime _inicio;
-#pragma warning restore 169
 
     private SpecialTypeDoc _specialTypeDocName;
     
-    // ReSharper disable once MemberCanBePrivate.Global
-    // ReSharper disable once UnusedAutoPropertyAccessor.Global
     public string Separador { get; private set; }
 
-    private readonly string _defaultFolderDestino;
-#pragma warning disable 414
-    private readonly string _startMessage;
-#pragma warning restore 414
-    private readonly string _endMessage;
-    private readonly string _directory;
-    private readonly string _format;
-    private readonly string _versao;
-    private readonly string _sigla;
-
+    private string _defaultFolderDestino;
     private string _currentFolderDestino;
+    private string _currentUserFolder;
     private string _caminhoCompleto;
     private string _defaultDocName;
     private string _currentDocName;
-    // private string _recordingName;
     private string _folderDestino;
+    private string _startMessage;
+    private string _nameFolder;
     private string _saveHeader;
+    private string _endMessage;
+    private string _directory;
     private string _fimCiclo;
     private string _docName;
     private string _target;
+    private string _format;
+    private string _versao;
+    private string _sigla;
+
+    // private string _recordingName;
 
     public int NumColunas   { get; private set; }
 
     private static readonly int TamanhoMaximo = (int) Math.Pow(2, 20); // (2 ^ 30)
 
     private int _cont;
-
-
-    //  public bool DirectoryChange;
+    
+    // public bool DirectoryChange;
 
     private bool _useDefaultDocName;
     private bool _useDefaultFolder;
@@ -62,7 +58,17 @@ public class SaveAvr
     private bool _isInitiate;
     private bool _oversize;
 
-    public SaveAvr() 
+    public SaveAvr()
+    {
+        SetUp(null);
+    }
+
+    public SaveAvr(string userFolder)
+    {
+        SetUp(userFolder);
+    }
+
+    private void SetUp(string userFolder)
     {
         _useDefaultDocName = true;
         _useDefaultFolder  = true;
@@ -70,26 +76,40 @@ public class SaveAvr
         _oversize          = false;
 
         _directory = System.IO.Directory.GetCurrentDirectory();
-        _currentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "AVR Data";
+
+        _nameFolder = "AVR Data";
+
+        _currentUserFolder = userFolder;
+
+        _currentFolderDestino =
+            _defaultFolderDestino =
+                _currentUserFolder == null
+                    ? "Saved Files" + "\\" + _nameFolder
+                    : _currentUserFolder + "\\" + "Saved Files" + "\\" + _nameFolder;
+
+
+        //_currentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "AVR Data";
+
+
         Separador = ";";
 
         _format = ".csv";
-        _sigla  = "AVRD";
+        _sigla = "AVRD";
         _versao = "V1";
 
         _startMessage = "INICIO";
-        _endMessage   = "FIM";
+        _endMessage = "FIM";
 
         //_recordingName   = null;
         _caminhoCompleto = null;
-        _saveHeader      = null;
+        _saveHeader = null;
 
         _specialTypeDocName = 0;
-        
+
         _target = _directory + "\\" + _currentFolderDestino + "\\";
         _cont = 0;
         NumColunas = 0;
-        
+
         //_activeControloMode  = ControloMode.CWIP;
         //_headerCwip          = GetCwipHeader();
         //_headerWip           = GetWipHeader();

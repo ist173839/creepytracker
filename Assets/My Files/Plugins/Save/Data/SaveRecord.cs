@@ -41,38 +41,27 @@ public class SaveRecord
     // ReSharper disable once MemberCanBePrivate.Global
     public string Separador { get; private set; }
 
-    private readonly string _defaultFolderDestino;
-#pragma warning disable 414
-    private readonly string _startMessage;
-#pragma warning restore 414
-    private readonly string _endMessage;
-    private readonly string _directory;
-    private readonly string _format;
-
+    private string _defaultFolderDestino;
+    private string _startMessage;
+    private string _endMessage;
+    private string _directory;
+    private string _format;
+    
+    private string _currentUserFolder;
     private string _currentFolderDestino;
-#pragma warning disable 414
     private string _caminhoCompleto;
-#pragma warning restore 414
-#pragma warning disable 169
     private string _defaultDocName;
-#pragma warning restore 169
     private string _currentDocName;
     private string _recordingName;
-    // ReSharper disable once NotAccessedField.Local
     private string _folderDestino;
+    private string _nameFolder;
     private string _saveHeader;
-#pragma warning disable 169
     private string _fimCiclo;
-#pragma warning restore 169
     private string _docName;
     private string _target;
-    // ReSharper disable once FieldCanBeMadeReadOnly.Local
     private string _versao;
-    // ReSharper disable once NotAccessedField.Local
     private string _header;
-    // ReSharper disable once FieldCanBeMadeReadOnly.Local
     private string _sigla;
-
     //private string _headerCwip;
     //private string _headerWip;
 
@@ -82,44 +71,63 @@ public class SaveRecord
 
     private static readonly int TamanhoMaximo = (int) Math.Pow(2, 20); // (2 ^ 30)
 
-#pragma warning disable 414
-    private int _cont;
-#pragma warning restore 414
 
+    private int _cont;
     //  public bool DirectoryChange;
     private bool _useDefaultDocName;
     private bool _useDefaultFolder;
-#pragma warning disable 169
     private bool _isRecording;
-#pragma warning restore 169
     private bool _isInitiate;
     private bool _oversize;
 
-    public SaveRecord() 
+    public SaveRecord(string userFolder)
+    {
+        SetUp(userFolder);
+    }
+
+
+
+    public SaveRecord()
+    {
+        SetUp(null);
+    }
+
+    private void SetUp(string userFolder)
     {
         _useDefaultDocName = true;
-        _useDefaultFolder  = true;
-        _isInitiate        = false;
-        _oversize          = false;
+        _useDefaultFolder = true;
+        _isInitiate = false;
+        _oversize = false;
 
         _directory = System.IO.Directory.GetCurrentDirectory();
-        _currentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "Walking Data";
-        Separador  = ";";
+        
+        // _currentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "Walking Data";
+        _currentUserFolder = userFolder;
+        _nameFolder = "Walking Data";
+
+        _currentFolderDestino =
+            _defaultFolderDestino =
+                _currentUserFolder == null
+                    ? "Saved Files" + "\\" + _nameFolder
+                    : _currentUserFolder + "\\" + "Saved Files" + "\\" + _nameFolder;
+
+
+        Separador = ";";
 
         _startMessage = "INICIO";
         _endMessage   = "FIM";
         _format       = ".csv";
-        _versao       = "V12.3";
+        _versao       = "V12.5";
         _sigla        = "WVD";
-        
-        _recordingName   = null;
+
+        _recordingName = null;
         _caminhoCompleto = null;
         _specialTypeDocName = SpecialTypeDoc.SolveDuplicate;
-        
+
         _target = _directory + "\\" + _currentFolderDestino + "\\";
         _cont = 0;
         NumColunas = 0;
-     
+
         _header = GetHeader();
         _saveHeader = null;
     }

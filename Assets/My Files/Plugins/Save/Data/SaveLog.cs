@@ -26,27 +26,26 @@ public class SaveLog
     // ReSharper disable once UnusedAutoPropertyAccessor.Global
     public string Separador { get; private set; }
 
+    private string _currentFolderDestino;
     private string _defaultFolderDestino;
-#pragma warning disable 414
+    private string _currentUserFolder;
+    // private string _recordingName;
+    private string _caminhoCompleto;
+    private string _defaultDocName;
+    private string _currentDocName;
+    private string _folderDestino;
     private string _startMessage;
-#pragma warning restore 414
     private string _endMessage;
+    private string _nameFolder;
+    private string _saveHeader;
     private string _directory;
+    private string _fimCiclo;
+    private string _docName;
+    private string _target;
     private string _format;
     private string _versao;
     private string _sigla;
 
-    private string _currentUserFolder = null;
-    private string _currentFolderDestino;
-    private string _caminhoCompleto;
-    private string _defaultDocName;
-    private string _currentDocName;
-    // private string _recordingName;
-    private string _folderDestino;
-    private string _saveHeader;
-    private string _fimCiclo;
-    private string _docName;
-    private string _target;
 
     public int NumColunas   { get; private set; }
 
@@ -83,12 +82,13 @@ public class SaveLog
         
         _currentUserFolder = userFolder;
 
+        _nameFolder = "Log Data";
 
         _currentFolderDestino =
             _defaultFolderDestino =
                 _currentUserFolder == null
-                    ? "Saved Files" + "\\" + "Log Data"
-                    : _currentUserFolder + "\\" + "Saved Files" + "\\" + "Log Data";
+                    ? "Saved Files" + "\\" + _nameFolder
+                    : _currentUserFolder + "\\" + "Saved Files" + "\\" + _nameFolder;
 
 
         Separador = ";";
