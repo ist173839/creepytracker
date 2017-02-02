@@ -65,6 +65,19 @@ public class MyUdpListener : MonoBehaviour
         UdpRestart();
     }
 
+    public void SetNewUser( string id, string num)
+    {
+        var newUser = "Id" + id + "Num" + num;
+
+        _saveColicoes.SetUpUserFolder(newUser);
+        _saveRecord.SetUpUserFolder(newUser);
+        _saveAvr.SetUpUserFolder(newUser);
+        _saveLog.SetUpUserFolder(newUser);
+
+
+    }
+
+
     private void UdpRestart()
     {
         if (_udpClientRecord != null) _udpClientRecord.Close();

@@ -72,6 +72,8 @@ public class TrackerUI : MonoBehaviour
 
     private HandleVirtualWorld _localHandleVirtualWorld;
 
+    private MyUdpListener _localMyUdpListener;
+
     public bool ShowIndicator { get; set; }
     public bool UseOptiTrack  { get; set; }
     public bool UseSaveFile   { get; set; }
@@ -93,6 +95,8 @@ public class TrackerUI : MonoBehaviour
 		_userTracker = gameObject.GetComponent<Tracker> ();
 
         _localHandleVirtualWorld = gameObject.GetComponent<HandleVirtualWorld> ();
+
+        _localMyUdpListener = gameObject.GetComponent<MyUdpListener>();
 
         _menuAction = MenuAction.None;
 		_currentCloudSensor = 0;
@@ -432,9 +436,7 @@ public class TrackerUI : MonoBehaviour
 
             if (GUI.Button(new Rect(left + 100, top, 100, 25), "New User"))
             {
-
-
-
+                _localMyUdpListener.SetNewUser(id.ToString(), FinalNum.ToString());
             }
 
             top += 25;

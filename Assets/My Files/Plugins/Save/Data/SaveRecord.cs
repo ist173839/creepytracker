@@ -21,24 +21,14 @@ public enum ControloMode
     CWIP,
 }
 
-//public enum SpecialTypeDoc
-//{
-//    SolveDuplicate,
-//    Normal,
-//}
-
 public class SaveRecord
 {
     private SpecialTypeDoc _specialTypeDocName;
    
     private StreamWriter _doc;
-#pragma warning disable 169
+
     private DateTime _inicio;
-#pragma warning restore 169
 
-  
-
-    // ReSharper disable once MemberCanBePrivate.Global
     public string Separador { get; private set; }
 
     private string _defaultFolderDestino;
@@ -46,9 +36,9 @@ public class SaveRecord
     private string _endMessage;
     private string _directory;
     private string _format;
-    
-    private string _currentUserFolder;
+
     private string _currentFolderDestino;
+    private string _currentUserFolder;
     private string _caminhoCompleto;
     private string _defaultDocName;
     private string _currentDocName;
@@ -70,9 +60,9 @@ public class SaveRecord
     public int NumColunas   { get; private set; }
 
     private static readonly int TamanhoMaximo = (int) Math.Pow(2, 20); // (2 ^ 30)
-
-
+    
     private int _cont;
+    
     //  public bool DirectoryChange;
     private bool _useDefaultDocName;
     private bool _useDefaultFolder;
@@ -84,9 +74,7 @@ public class SaveRecord
     {
         SetUp(userFolder);
     }
-
-
-
+    
     public SaveRecord()
     {
         SetUp(null);
@@ -102,16 +90,10 @@ public class SaveRecord
         _directory = System.IO.Directory.GetCurrentDirectory();
         
         // _currentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "Walking Data";
-        _currentUserFolder = userFolder;
         _nameFolder = "Walking Data";
 
-        _currentFolderDestino =
-            _defaultFolderDestino =
-                _currentUserFolder == null
-                    ? "Saved Files" + "\\" + _nameFolder
-                    : _currentUserFolder + "\\" + "Saved Files" + "\\" + _nameFolder;
-
-
+        SetUpUserFolder(userFolder);
+        
         Separador = ";";
 
         _startMessage = "INICIO";
@@ -140,10 +122,21 @@ public class SaveRecord
             File.SetAttributes(_target + _currentDocName, FileAttributes.ReadOnly);        
     }
 
+    public void SetUpUserFolder(string userFolder)
+    {
+        _currentUserFolder = userFolder;
+        _currentFolderDestino =
+            _defaultFolderDestino =
+                _currentUserFolder == null
+                    ? "Saved Files" + "\\" + _nameFolder
+                    : "Saved Files" + "\\" + _currentUserFolder + "\\" +  _nameFolder;
+
+        _isInitiate = false;
+    }
+
     private void ResetRecord()
     {
         _recordingName = null;
-
         _isInitiate = false;
         _cont = 0;
         NumColunas = 0;
@@ -175,6 +168,7 @@ public class SaveRecord
             _isInitiate = false;
             //_cont = 0;
         }
+
         if (!_isInitiate) SetUpFileAndDirectory();
         //if (!_isInitiate) SetUpFileAndDirectory(message);
         //if (message != _startMessage  && !_isInitiate)
@@ -191,7 +185,7 @@ public class SaveRecord
 
     private void SetUpFileAndDirectory()
     {
-        // _target = _directory + "\\" +_CurrentFolderDestino ;
+        _target = _directory + "\\" + _currentFolderDestino + "\\";
         _cont = 0;
         SetUpDirectory();
         SetFileName();
@@ -412,3 +406,8 @@ public class SaveRecord
 
 
  */
+//public enum SpecialTypeDoc
+//{
+//    SolveDuplicate,
+//    Normal,
+//}

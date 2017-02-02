@@ -16,10 +16,9 @@ using UnityEngine;
 public class SaveColicoes
 {
     private StreamWriter _doc;
-#pragma warning disable 169
-    private DateTime _inicio;
-#pragma warning restore 169
 
+    private DateTime _inicio;
+    
     //private ControloMode _activeControloMode;
 
     // ReSharper disable once MemberCanBePrivate.Global
@@ -86,17 +85,7 @@ public class SaveColicoes
 
         _nameFolder = "Collisions Data";
 
-        _currentUserFolder = userFolder;
-        
-        _currentFolderDestino =
-            _defaultFolderDestino =
-                _currentUserFolder == null
-                    ? "Saved Files" + "\\" + _nameFolder
-                    : _currentUserFolder + "\\" + "Saved Files" + "\\" + _nameFolder;
-
-
-        //_currentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "Collisions Data";
-
+        SetUpUserFolder(userFolder);
 
 
         _format = ".csv";
@@ -119,6 +108,21 @@ public class SaveColicoes
         _saveHeader = null;
 
         // _header = GetHeader();
+    }
+
+    public void SetUpUserFolder(string userFolder)
+    {
+        _currentUserFolder = userFolder;
+
+        _currentFolderDestino =
+            _defaultFolderDestino =
+                _currentUserFolder == null
+                    ? "Saved Files" + "\\" + _nameFolder
+                    : "Saved Files" + "\\" + _currentUserFolder + "\\" +  _nameFolder;
+
+        _isInitiate = false;
+
+        //_currentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "Collisions Data";
     }
 
     ~SaveColicoes()
@@ -173,7 +177,7 @@ public class SaveColicoes
 
     private void SetUpFileAndDirectory()
     {
-        // _target = _directory + "\\" +_CurrentFolderDestino ;
+         _target = _directory + "\\" + _currentFolderDestino + "\\";
         _cont = 0;
         SetUpDirectory();
         SetFileName();

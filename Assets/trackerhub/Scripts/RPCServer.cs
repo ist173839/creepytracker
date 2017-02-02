@@ -3,10 +3,10 @@ using System.Collections;
 
 public class RPCServer : MonoBehaviour {
 
-    public GameObject trackerGameObject;
+    public GameObject TrackerGameObject;
 
-    public string port;
-    public string broadcastPort;
+    public string Port;
+    public string BroadcastPort;
 
     public Texture onlineTex;
     public Texture offlineTex;
@@ -17,16 +17,13 @@ public class RPCServer : MonoBehaviour {
     {
         showNetworkOptions = false;
 
-        port = "" + TrackerProperties.Instance.ListenPort;
-        broadcastPort = "" + TrackerProperties.Instance.BroadcastPort;
+        Port = "" + TrackerProperties.Instance.ListenPort;
+        BroadcastPort = "" + TrackerProperties.Instance.BroadcastPort;
 
-        Network.InitializeServer(32, int.Parse(port), false);
+        Network.InitializeServer(32, int.Parse(Port), false);
     }
 
-    void Update()
-    {
-
-    }
+    void Update() { }
 
     void OnGUI()
     {
@@ -69,15 +66,14 @@ public class RPCServer : MonoBehaviour {
                 GUI.Label(new Rect(left, top, 100, 25), "Sensors port:");
 
                 left += 100 + 10;
-                port = GUI.TextField(new Rect(left, top, 50, 25), port);
+                Port = GUI.TextField(new Rect(left, top, 50, 25), Port);
 
                 left += 50 + 10;
                 if (GUI.Button(new Rect(left, top, 50, 25), "Start"))
                 {
-                    Network.InitializeServer(32, int.Parse(port), false);
+                    Network.InitializeServer(32, int.Parse(Port), false);
                     showNetworkOptions = false;
                 }
-
             }
             else
             {
@@ -85,7 +81,7 @@ public class RPCServer : MonoBehaviour {
                 {
                     
                     top += 10;
-                    GUI.Label(new Rect(left + 20, top, 150, 25), "I'm a server on: " + port);
+                    GUI.Label(new Rect(left + 20, top, 150, 25), "I'm a server on: " + Port);
                     if (GUI.Button(new Rect(left + 190, top, 50, 25), "Stop"))
                     {
                         Network.Disconnect(250);
@@ -100,13 +96,13 @@ public class RPCServer : MonoBehaviour {
             GUI.Label(new Rect(left, top, 100, 25), "Broadcast port:");
 
             left += 100 + 10;
-            broadcastPort = GUI.TextField(new Rect(left, top, 50, 25), broadcastPort);
+            BroadcastPort = GUI.TextField(new Rect(left, top, 50, 25), BroadcastPort);
 
             left += 50 + 10;
             if (GUI.Button(new Rect(left, top, 50, 25), "Reset"))
             {
-                TrackerProperties.Instance.BroadcastPort = int.Parse(broadcastPort);
-                trackerGameObject.GetComponent<Tracker>().ResetBroadcast();
+                TrackerProperties.Instance.BroadcastPort = int.Parse(BroadcastPort);
+                TrackerGameObject.GetComponent<Tracker>().ResetBroadcast();
                 showNetworkOptions = false;
             }
         }
@@ -133,7 +129,7 @@ public class RPCServer : MonoBehaviour {
         try
         {
             BodiesMessage b = new BodiesMessage(bodies);
-            trackerGameObject.GetComponent<Tracker>().SetNewFrame(b);
+            TrackerGameObject.GetComponent<Tracker>().SetNewFrame(b);
         }
         catch (BodiesMessageException e)
         {

@@ -79,18 +79,12 @@ public class SaveLog
         _oversize          = false;
 
         _directory = System.IO.Directory.GetCurrentDirectory();
-        
-        _currentUserFolder = userFolder;
+
 
         _nameFolder = "Log Data";
 
-        _currentFolderDestino =
-            _defaultFolderDestino =
-                _currentUserFolder == null
-                    ? "Saved Files" + "\\" + _nameFolder
-                    : _currentUserFolder + "\\" + "Saved Files" + "\\" + _nameFolder;
-
-
+        SetUpUserFolder(userFolder);
+        
         Separador = ";";
 
         _format = ".csv";
@@ -114,6 +108,19 @@ public class SaveLog
         //_headerCwip          = GetCwipHeader();
         //_headerWip           = GetWipHeader();
         //_header = GetHeader();
+    }
+
+    public void SetUpUserFolder(string userFolder)
+    {
+        _currentUserFolder = userFolder;
+
+        _currentFolderDestino =
+            _defaultFolderDestino =
+                _currentUserFolder == null
+                    ? "Saved Files" + "\\" + _nameFolder
+                    : "Saved Files" + "\\" + _currentUserFolder + "\\" + _nameFolder;
+
+        _isInitiate = false;
     }
 
     ~SaveLog()
@@ -169,7 +176,7 @@ public class SaveLog
     
     private void SetUpFileAndDirectory()
     {
-        // _target = _directory + "\\" +_CurrentFolderDestino ;
+         _target = _directory + "\\" + _currentFolderDestino + "\\";
         _cont = 0;
         SetUpDirectory();
         SetFileName();
