@@ -25,12 +25,13 @@ public class SaveColicoes
     // ReSharper disable once MemberCanBePrivate.Global
     public string Separador { get; private set; }
 
-    private readonly string _defaultFolderDestino;
-    private readonly string _startMessage;
-    private readonly string _endMessage;
-    private readonly string _directory;
-    private readonly string _format;
+    private string _defaultFolderDestino;
+    private string _startMessage;
+    private string _endMessage;
+    private string _directory;
+    private string _format;
 
+    private string _currentUserFolder;
     private string _currentFolderDestino;
     private string _caminhoCompleto;
     private string _defaultDocName;
@@ -38,6 +39,7 @@ public class SaveColicoes
     private string _recordingName;
     private string _folderDestino;
     private string _saveHeader;
+    private string _nameFolder;
     private string _fimCiclo;
     private string _docName;
     private string _target;
@@ -63,20 +65,45 @@ public class SaveColicoes
     private bool _oversize;
 
 
-    public SaveColicoes() 
+    public SaveColicoes(string userFolder)
+    {
+        SetUp(userFolder);
+    }
+
+    public SaveColicoes()
+    {
+        SetUp(null);
+    }
+
+    private void SetUp(string userFolder)
     {
         _useDefaultDocName = true;
-        _useDefaultFolder  = true;
-        _isInitiate        = false;
-        _oversize          = false;
+        _useDefaultFolder = true;
+        _isInitiate = false;
+        _oversize = false;
 
         _directory = System.IO.Directory.GetCurrentDirectory();
-        _currentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "Collisions Data";
-        _format   = ".csv";
+
+        _nameFolder = "Collisions Data";
+
+        _currentUserFolder = userFolder;
+        
+        _currentFolderDestino =
+            _defaultFolderDestino =
+                _currentUserFolder == null
+                    ? "Saved Files" + "\\" + _nameFolder
+                    : _currentUserFolder + "\\" + "Saved Files" + "\\" + _nameFolder;
+
+
+        //_currentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "Collisions Data";
+
+
+
+        _format = ".csv";
         Separador = ";";
 
         _startMessage = "INICIO";
-        _endMessage   = "FIM";
+        _endMessage = "FIM";
 
         _sigla = "COD";
         _versao = "V1";
@@ -84,7 +111,7 @@ public class SaveColicoes
         _recordingName = null;
         _caminhoCompleto = null;
         _specialTypeDocName = SpecialTypeDoc.SolveDuplicate;
-        
+
         _target = _directory + "\\" + _currentFolderDestino + "\\";
         _cont = 0;
         NumColunas = 0;

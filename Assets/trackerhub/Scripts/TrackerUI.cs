@@ -140,7 +140,6 @@ public class TrackerUI : MonoBehaviour
             if (!_localHandleVirtualWorld.CanShowIndicators)
             {
                 _localHandleVirtualWorld.SetSaveFilesButton();
-               
             }
             _localHandleVirtualWorld.ShowMarker = false;
         }
