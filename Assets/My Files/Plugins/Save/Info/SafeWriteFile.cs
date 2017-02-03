@@ -12,19 +12,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-// ReSharper disable once CheckNamespace
-//public static class MyMessaSepa
-//{
-//    public const string InicioOptitrack = "&";
-//    public const string InicioMensagem  = "$";
-//    public const string InicioRegisto   = "«";
-//    public const string SepaOptitrack   = "!";
-//    public const string SepaCabeRoda    = ";";
-//    public const string SepaRegisto     = "_";
-//    public const string CabeRoda        = "£";
-//    public const string SepaVec         = "|";
-//    public const string SepaCol         = "+";
-//}
 
 // ReSharper disable once CheckNamespace
 public enum SpecialTypeDoc
@@ -430,7 +417,30 @@ public class SafeWriteFile
 }
 
 
+/////////////////////////////////////////////////////////////////////////////
+
+
 /*
+ * 
+ * 
+
+// ReSharper disable once CheckNamespace
+//public static class MyMessaSepa
+//{
+//    public const string InicioOptitrack = "&";
+//    public const string InicioMensagem  = "$";
+//    public const string InicioRegisto   = "«";
+//    public const string SepaOptitrack   = "!";
+//    public const string SepaCabeRoda    = ";";
+//    public const string SepaRegisto     = "_";
+//    public const string CabeRoda        = "£";
+//    public const string SepaVec         = "|";
+//    public const string SepaCol         = "+";
+//}
+
+ * 
+ * 
+ //////////////////////////////////////////////////////////////////
  //string registo1 = "«" + _cont + //  "_" +
         //                  "_" + diff.TotalSeconds +
         //                  "_" + diffIntervalo.TotalSeconds +

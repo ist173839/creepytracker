@@ -11,11 +11,11 @@ public class RPCServer : MonoBehaviour {
     public Texture onlineTex;
     public Texture offlineTex;
 
-    public bool showNetworkOptions;
+    public bool ShowNetworkOptions;
 
     void Start()
     {
-        showNetworkOptions = false;
+        ShowNetworkOptions = false;
 
         Port = "" + TrackerProperties.Instance.ListenPort;
         BroadcastPort = "" + TrackerProperties.Instance.BroadcastPort;
@@ -43,14 +43,14 @@ public class RPCServer : MonoBehaviour {
         if (Input.mousePosition.x < Screen.width && Input.mousePosition.x > Screen.width - 100
             && Input.mousePosition.y < Screen.height && Input.mousePosition.y > Screen.height - 100)
         {
-            showNetworkOptions = true;
+            ShowNetworkOptions = true;
         }
         if (Input.mousePosition.x < Screen.width / 2 || Input.mousePosition.y < ((3 / 4) * Screen.height))
         {
-            showNetworkOptions = false;
+            ShowNetworkOptions = false;
         }
 
-        if (showNetworkOptions)
+        if (ShowNetworkOptions)
         {
 
             int left = Screen.width - 270;
@@ -72,7 +72,7 @@ public class RPCServer : MonoBehaviour {
                 if (GUI.Button(new Rect(left, top, 50, 25), "Start"))
                 {
                     Network.InitializeServer(32, int.Parse(Port), false);
-                    showNetworkOptions = false;
+                    ShowNetworkOptions = false;
                 }
             }
             else
@@ -103,7 +103,7 @@ public class RPCServer : MonoBehaviour {
             {
                 TrackerProperties.Instance.BroadcastPort = int.Parse(BroadcastPort);
                 TrackerGameObject.GetComponent<Tracker>().ResetBroadcast();
-                showNetworkOptions = false;
+                ShowNetworkOptions = false;
             }
         }
     }

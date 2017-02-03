@@ -23,10 +23,8 @@ public class HandleVirtualWorld : MonoBehaviour
         Front,
         Behind,
     }
-
-    // ReSharper disable once MemberCanBePrivate.Global
+    
     public List<GameObject> IndicatorsList;
-    // ReSharper disable once MemberCanBePrivate.Global
     public List<GameObject> ObstacleList;
 
     private OptitrackManager _localOptitrackManager;
@@ -38,6 +36,7 @@ public class HandleVirtualWorld : MonoBehaviour
     private Tracker _localTracker;
 
     private SaveCenter _saveCenter;
+
     private SaveCenterToSend _centerToSend;
     
     private GameObject _forwardGameObject;
@@ -66,10 +65,8 @@ public class HandleVirtualWorld : MonoBehaviour
     private bool _reset;
     
     public int Index;
-    
-#pragma warning disable 169
+
     private int _indicadorCounter;
-#pragma warning restore 169
     private int _countId;
     private int _port;
 
@@ -98,7 +95,7 @@ public class HandleVirtualWorld : MonoBehaviour
         IndicatorsList = new List<GameObject>();
         ObstacleList   = new List<GameObject>();
 
-        _saveCenter = new SaveCenter();
+        _saveCenter   = new SaveCenter();
         _centerToSend = new SaveCenterToSend();
 
 
@@ -121,8 +118,7 @@ public class HandleVirtualWorld : MonoBehaviour
         _forwardGameObject = GameObjectHelper.MyCreatePrimitiveObject(PrimitiveType.Sphere, "Forward", Vector3.zero, _helpers.transform, false);
         _forwardGameObject.GetComponent<MeshRenderer>().material.color = Color.white;
         _forwardGameObject.transform.localScale = new Vector3(0.50f, 0.1f, 0.50f);
-
-
+        
         // ShowIndicator = false;
         _countId = 0;
       
@@ -168,7 +164,7 @@ public class HandleVirtualWorld : MonoBehaviour
             var fileInfo = info.GetFiles();
             var length = fileInfo.Length;
             CanUseSaveFile = length != 0;
-            //    MyDebug.Log(">>> Length = " + length + ", CanUseSaveFile = " + CanUseSaveFile);
+            // MyDebug.Log(">>> Length = " + length + ", CanUseSaveFile = " + CanUseSaveFile);
         }
        
         if (_setUpCentro)
@@ -213,8 +209,7 @@ public class HandleVirtualWorld : MonoBehaviour
                 _marker.transform.position = pos;
             }
 	    }
-
-      //  MyDebug.Log("Length = " + length + ", CanUseSaveFile = " + CanUseSaveFile);
+        //  MyDebug.Log("Length = " + length + ", CanUseSaveFile = " + CanUseSaveFile);
     }
 
     private void SaveMensagem()
@@ -239,7 +234,6 @@ public class HandleVirtualWorld : MonoBehaviour
         {
             _saveCenter.StopRecording();
         }
-
     }
 
     private void SendMensagem()
@@ -276,8 +270,6 @@ public class HandleVirtualWorld : MonoBehaviour
                 //{
                 //    MyDebug.DrawLine();
                 //}
-
-
                 mensagem = center + mensaHumans;
                 // mens = center;
                 // _saveCenter.RecordMessage(center);
@@ -287,7 +279,7 @@ public class HandleVirtualWorld : MonoBehaviour
         if (_setUpCentro && _centro.HasValue && _setUpForward && _forwardPoint.HasValue)
         {
             mensagem += MessageSeparators.L2;
-            // mens     += MessageSeparators.L2;
+            // mens += MessageSeparators.L2;
             // _saveCenter.RecordMessage("" + MessageSeparators.L2);
         }
 

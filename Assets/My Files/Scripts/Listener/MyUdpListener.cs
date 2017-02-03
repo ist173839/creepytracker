@@ -53,8 +53,8 @@ public class MyUdpListener : MonoBehaviour
         _portRecord   = 57839;
         _portColicoes = 58839;
         _portAvr      = 59839;
-        _portLog      = 50839;
-        _portBase     = 60839;
+        _portLog      = 60839;
+        _portBase     = 61839;
 
         _saveColicoes = new SaveColicoes();
         _saveRecord   = new SaveRecord();
@@ -73,7 +73,7 @@ public class MyUdpListener : MonoBehaviour
         _saveRecord.SetUpUserFolder(newUser);
         _saveAvr.SetUpUserFolder(newUser);
         _saveLog.SetUpUserFolder(newUser);
-
+        //
 
     }
 
@@ -100,8 +100,7 @@ public class MyUdpListener : MonoBehaviour
         _udpClientAvr = new UdpClient(_anyIpAvr);
         _udpClientAvr.BeginReceive(new AsyncCallback(this.ReceiveCallbackAvr), null);
         Debug.Log("[UDPListener] Receiving Avr in port: " + _portAvr);
-
-
+        
         if (_udpClientLog != null) _udpClientLog.Close();
         _stringsToParseLog = new List<string>();
         _anyIpLog = new IPEndPoint(IPAddress.Any, _portLog);
@@ -109,7 +108,12 @@ public class MyUdpListener : MonoBehaviour
         _udpClientLog.BeginReceive(new AsyncCallback(this.ReceiveCallbackLog), null);
         Debug.Log("[UDPListener] Receiving Log in port: " + _portLog);
 
-
+        if (_udpClientBase != null) _udpClientBase.Close();
+        _stringsToParseBase = new List<string>();
+        _anyIpBase = new IPEndPoint(IPAddress.Any, _portBase);
+        _udpClientBase = new UdpClient(_anyIpBase);
+        _udpClientBase.BeginReceive(new AsyncCallback(this.ReceiveCallbackBase), null);
+        Debug.Log("[UDPListener] Receiving Base in port: " + _portBase);
 
     }
 
@@ -181,13 +185,16 @@ public class MyUdpListener : MonoBehaviour
             _saveColicoes.RecordMessage(stringToParse);
         }
 
-
         while (_stringsToParseAvr.Count > 0)
         {
             var stringToParse = _stringsToParseAvr.First();
             _stringsToParseAvr.RemoveAt(0);
             _saveAvr.RecordMessage(stringToParse);
         }
+
+
+
+
     }
 
     private void OnApplicationQuit()
@@ -196,6 +203,9 @@ public class MyUdpListener : MonoBehaviour
         if (_udpClientRecord   != null) _udpClientRecord.Close();
         if (_udpClientAvr      != null) _udpClientAvr.Close();
         if (_udpClientLog      != null) _udpClientLog.Close();
+        if (_udpClientBase     != null) _udpClientBase.Close();
+
+
     }
 
     // ReSharper disable once UnusedMember.Local
@@ -213,6 +223,7 @@ public class MyUdpListener : MonoBehaviour
         if (_udpClientRecord   != null) _udpClientRecord.Close();
         if (_udpClientAvr      != null) _udpClientAvr.Close();
         if (_udpClientLog      != null) _udpClientLog.Close();
+        if (_udpClientBase     != null) _udpClientBase.Close();
     }
 }
 

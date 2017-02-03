@@ -16,14 +16,11 @@ using UnityEngine;
 public class SaveLog
 {
     private StreamWriter _doc;
-#pragma warning disable 169
+
     private DateTime _inicio;
-#pragma warning restore 169
 
     private SpecialTypeDoc _specialTypeDocName;
     
-    // ReSharper disable once MemberCanBePrivate.Global
-    // ReSharper disable once UnusedAutoPropertyAccessor.Global
     public string Separador { get; private set; }
 
     private string _currentFolderDestino;
@@ -45,8 +42,7 @@ public class SaveLog
     private string _format;
     private string _versao;
     private string _sigla;
-
-
+    
     public int NumColunas   { get; private set; }
 
     private static readonly int TamanhoMaximo = (int) Math.Pow(2, 20); // (2 ^ 30)
@@ -79,8 +75,7 @@ public class SaveLog
         _oversize          = false;
 
         _directory = System.IO.Directory.GetCurrentDirectory();
-
-
+        
         _nameFolder = "Log Data";
 
         SetUpUserFolder(userFolder);
@@ -88,11 +83,11 @@ public class SaveLog
         Separador = ";";
 
         _format = ".csv";
-        _sigla = "LD";
+        _sigla  = "LD";
         _versao = "V1";
 
         _startMessage = "INICIO";
-        _endMessage = "FIM";
+        _endMessage   = "FIM";
 
         //_recordingName   = null;
         _caminhoCompleto = null;
@@ -340,48 +335,48 @@ public class SaveLog
         _recordingName = recordName;
         _isInitiate = false;
     }
+          
+    //  _currentFolderDestino = _defaultFolderDestino = _currentUserFolder + "\\" + "Saved Files" + "\\" + "Log Data";
+    //if (_currentUserFolder == null)
+    //{
+    //    _currentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "Log Data";
+    //}
+    //else
+    //{
+    //    _currentFolderDestino = _defaultFolderDestino = _currentUserFolder + "\\" + "Saved Files" + "\\" + "Log Data";
+    //}
+    //_currentFolderDestino = _currentFolderDestino =
      
      
-             //  _currentFolderDestino = _defaultFolderDestino = _currentUserFolder + "\\" + "Saved Files" + "\\" + "Log Data";
-        //if (_currentUserFolder == null)
-        //{
-        //    _currentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "Log Data";
-        //}
-        //else
-        //{
-        //    _currentFolderDestino = _defaultFolderDestino = _currentUserFolder + "\\" + "Saved Files" + "\\" + "Log Data";
-        //}
-        //_currentFolderDestino = _currentFolderDestino =
-     
-     
-     
-     */
-//private ControloMode _activeControloMode;
-//if (!IsRecording)
-//{
-//    StopRecording();
-//    return;
-//}
-//CheckHeaders(message);
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //private ControloMode _activeControloMode;
+    //if (!IsRecording)
+    //{
+    //    StopRecording();
+    //    return;
+    //}
+    //CheckHeaders(message);
 
 
-//private string GetHeader()
-//{
-//    return
-//       null;
-//}
+    //private string GetHeader()
+    //{
+    //    return
+    //       null;
+    //}
 
-//private void SetUpHeader()
-//{
-//    var info = GetHeader();
-//    WriteStringInDoc(info, true);
-//}
+    //private void SetUpHeader()
+    //{
+    //    var info = GetHeader();
+    //    WriteStringInDoc(info, true);
+    //}
 
-//private void SetUpHeader(string first)
-//{
-//    var info = GetHeader(); 
-//    if (first == info) return;
-//    WriteStringInDoc(info, true);
-//}
+    //private void SetUpHeader(string first)
+    //{
+    //    var info = GetHeader(); 
+    //    if (first == info) return;
+    //    WriteStringInDoc(info, true);
+    //}
 
-//private string _header;
+    //private string _header;
+*/

@@ -85,11 +85,11 @@ public class SaveAvr
         Separador = ";";
 
         _format = ".csv";
-        _sigla = "AVRD";
+        _sigla  = "AVRD";
         _versao = "V1";
 
         _startMessage = "INICIO";
-        _endMessage = "FIM";
+        _endMessage   = "FIM";
 
         //_recordingName   = null;
         _caminhoCompleto = null;

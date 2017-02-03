@@ -13,29 +13,28 @@ using System.Text;
 using UnityEngine;
 
 // ReSharper disable once CheckNamespace
-public class SaveColicoes
+public class ListenBase
 {
     private StreamWriter _doc;
 
     private DateTime _inicio;
-    
-    //private ControloMode _activeControloMode;
 
-    // ReSharper disable once MemberCanBePrivate.Global
-    public string Separador { get; private set; }
+    private SpecialTypeDoc _specialTypeDocName;
     
+    public string Separador { get; private set; }
+
     private string _currentFolderDestino;
     private string _defaultFolderDestino;
     private string _currentUserFolder;
+    // private string _recordingName;
     private string _caminhoCompleto;
     private string _defaultDocName;
     private string _currentDocName;
-    private string _recordingName;
     private string _folderDestino;
     private string _startMessage;
+    private string _endMessage;
     private string _nameFolder;
     private string _saveHeader;
-    private string _endMessage;
     private string _directory;
     private string _fimCiclo;
     private string _docName;
@@ -43,32 +42,27 @@ public class SaveColicoes
     private string _format;
     private string _versao;
     private string _sigla;
-
-    // private string _header;
-
+    
     public int NumColunas   { get; private set; }
 
     private static readonly int TamanhoMaximo = (int) Math.Pow(2, 20); // (2 ^ 30)
 
     private int _cont;
 
-    private SpecialTypeDoc _specialTypeDocName;
-
     //  public bool DirectoryChange;
 
     private bool _useDefaultDocName;
     private bool _useDefaultFolder;
-    private bool _isInitiate;
     private bool _isRecording;
+    private bool _isInitiate;
     private bool _oversize;
 
-
-    public SaveColicoes(string userFolder)
+    public ListenBase(string userFolder)
     {
         SetUp(userFolder);
     }
-
-    public SaveColicoes()
+    
+    public ListenBase()
     {
         SetUp(null);
     }
@@ -76,37 +70,39 @@ public class SaveColicoes
     private void SetUp(string userFolder)
     {
         _useDefaultDocName = true;
-        _useDefaultFolder = true;
-        _isInitiate = false;
-        _oversize = false;
+        _useDefaultFolder  = true;
+        _isInitiate        = false;
+        _oversize          = false;
 
         _directory = System.IO.Directory.GetCurrentDirectory();
-
-        _nameFolder = "Collisions Data";
+        
+        _nameFolder = "Log Data";
 
         SetUpUserFolder(userFolder);
-
-
-        _format = ".csv";
+        
         Separador = ";";
 
-        _startMessage = "INICIO";
-        _endMessage = "FIM";
-
-        _sigla = "COD";
+        _format = ".csv";
+        _sigla  = "LD";
         _versao = "V1";
 
-        _recordingName = null;
+        _startMessage = "INICIO";
+        _endMessage   = "FIM";
+
+        //_recordingName   = null;
         _caminhoCompleto = null;
-        _specialTypeDocName = SpecialTypeDoc.SolveDuplicate;
+        _saveHeader = null;
+
+        _specialTypeDocName = 0;
 
         _target = _directory + "\\" + _currentFolderDestino + "\\";
         _cont = 0;
         NumColunas = 0;
 
-        _saveHeader = null;
-
-        // _header = GetHeader();
+        //_activeControloMode  = ControloMode.CWIP;
+        //_headerCwip          = GetCwipHeader();
+        //_headerWip           = GetWipHeader();
+        //_header = GetHeader();
     }
 
     public void SetUpUserFolder(string userFolder)
@@ -117,23 +113,22 @@ public class SaveColicoes
             _defaultFolderDestino =
                 _currentUserFolder == null
                     ? "Saved Files" + "\\" + _nameFolder
-                    : "Saved Files" + "\\" + _currentUserFolder + "\\" +  _nameFolder;
+                    : "Saved Files" + "\\" + _currentUserFolder + "\\" + _nameFolder;
 
         _isInitiate = false;
-
-        //_currentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "Collisions Data";
     }
 
-    ~SaveColicoes()
+    ~ListenBase()
     {
         if (!_isInitiate) return;
         ResetRecord();
-        if (File.Exists(_target + _currentDocName)) File.SetAttributes(_target + _currentDocName, FileAttributes.ReadOnly);    
+        if (File.Exists(_target + _currentDocName)) File.SetAttributes(_target + _currentDocName, FileAttributes.ReadOnly);
+        
     }
 
     private void ResetRecord()
     {
-        _recordingName = null;
+        //_recordingName = null;
         _isInitiate = false;
         _cont = 0;
         NumColunas = 0;
@@ -157,13 +152,12 @@ public class SaveColicoes
             _isInitiate = false;
             _saveHeader = message;
         }
-
+        
         if (!_isInitiate) SetUpFileAndDirectory();
-
-        //if (!_isInitiate) SetUpFileAndDirectory(message);
-        //if (message != _startMessage  && !_isInitiate)
-        //{
-        //} else
+        // if (!_isInitiate) SetUpFileAndDirectory(message);
+        // if (message != _startMessage  && !_isInitiate)
+        // {
+        // } else
         if (message == _endMessage)
         {
             StopRecording();
@@ -171,9 +165,10 @@ public class SaveColicoes
         }
         else
             WriteStringInDoc(message, true);
+
         CheckFileSize();
     }
-
+    
     private void SetUpFileAndDirectory()
     {
          _target = _directory + "\\" + _currentFolderDestino + "\\";
@@ -185,9 +180,30 @@ public class SaveColicoes
             SetUpHeader();
             _oversize = false;
         }
-
-        
         _isInitiate = true;
+    }
+
+    // ReSharper disable once UnusedMember.Local
+    private void SetUpFileAndDirectory(string first)
+    {
+        // _target = _directory + "\\" +_CurrentFolderDestino ;
+        SetUpDirectory();
+        SetFileName();
+        //SetUpHeader(first);
+        _isInitiate = true;
+    }
+    private void SetUpHeader()
+    {
+        // if (first.Contains("Registo")) return;
+        WriteStringInDoc(_saveHeader, true);
+    }
+
+
+    // ReSharper disable once UnusedMember.Local
+    private void SetUpHeader(string first)
+    {
+        if (first.Contains("Registo")) return;
+        WriteStringInDoc(first, true);
     }
 
     private void WriteStringInDoc(string registo, bool isAppend)
@@ -197,12 +213,19 @@ public class SaveColicoes
         _doc.Close();
     }
 
+    private void WriteStringInDoc(string registo)
+    {
+        _doc = new StreamWriter(_target + _currentDocName);
+        _doc.WriteLine(registo);
+        _doc.Close();
+    }
+
     private void StopRecording()
     {
         if (!_isInitiate) return;
-        ResetRecord();
         if (!File.Exists(_target + _currentDocName)) return;
         File.SetAttributes(_target + _currentDocName, FileAttributes.ReadOnly);
+        ResetRecord();
     }
 
     private void SetUpDirectory()
@@ -235,10 +258,10 @@ public class SaveColicoes
             }
             _currentDocName = temp + _format;
 
-            Debug.Log("New Colision Data File : " + _currentDocName);
+            Debug.Log("New Walking Data File : " + _currentDocName);
         }
     }
-
+    
     private string SolveDuplicateFileNames()
     {
         var temp = _currentDocName;
@@ -251,32 +274,15 @@ public class SaveColicoes
         return temp;
     }
 
-    private void WriteStringInDoc(string registo)
-    {
-        _doc = new StreamWriter(_target + _currentDocName);
-        _doc.WriteLine(registo);
-        _doc.Close();
-    }
-
     // ReSharper disable once UnusedMember.Global
-
     public string GetDocActivo()
     {
         if (_isInitiate) return _target + _currentDocName;
         return null;
     }
-
+    
+  
     // ReSharper disable once UnusedMember.Global
-
-    public void SetRecordingName(string recordName)
-    {
-        if (recordName.Equals(_recordingName)) return;
-        _recordingName = recordName;
-        _isInitiate = false;
-    }
-
-    // ReSharper disable once UnusedMember.Global
-
     public void SpecialFolderName(string newName)
     {
         _currentFolderDestino = _folderDestino = newName;
@@ -318,38 +324,59 @@ public class SaveColicoes
         _currentFolderDestino = _defaultFolderDestino;
     }
 
-    // ReSharper disable once UnusedMember.Local
-    private void SetUpFileAndDirectory(string first)
-    {
-        SetUpDirectory();
-        SetFileName();
-        SetUpHeader(first);
-        _isInitiate = true;
-    }
-
-    private void SetUpHeader()
-    {
-        //var info = GetHeader();
-        WriteStringInDoc(_saveHeader, true);
-    }
-
-    private void SetUpHeader(string first)
-    {
-        var info = GetHeader(); 
-        if (first == info) return;
-        WriteStringInDoc(info, true);
-    }
-
-    private string GetHeader()
-    {
-        return "Registo" + Separador + "Name" + Separador + "Position Object" + Separador + "Position Player" + Separador + "State" + Separador + "Time";       
-    }
 }
-// _target = _directory + "\\" +_CurrentFolderDestino ;
 
-//if (!IsRecording)
-//{
-//    StopRecording();
-//    return;
-//}
-//CheckHeaders(message);
+/////////////////////////////////////////////////////////////////////////////////////////
+/*
+ 
+       public void SetRecordingName(string recordName)
+    {
+        if (recordName.Equals(_recordingName)) return;
+        _recordingName = recordName;
+        _isInitiate = false;
+    }
+          
+    //  _currentFolderDestino = _defaultFolderDestino = _currentUserFolder + "\\" + "Saved Files" + "\\" + "Log Data";
+    //if (_currentUserFolder == null)
+    //{
+    //    _currentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "Log Data";
+    //}
+    //else
+    //{
+    //    _currentFolderDestino = _defaultFolderDestino = _currentUserFolder + "\\" + "Saved Files" + "\\" + "Log Data";
+    //}
+    //_currentFolderDestino = _currentFolderDestino =
+     
+     
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //private ControloMode _activeControloMode;
+    //if (!IsRecording)
+    //{
+    //    StopRecording();
+    //    return;
+    //}
+    //CheckHeaders(message);
+
+
+    //private string GetHeader()
+    //{
+    //    return
+    //       null;
+    //}
+
+    //private void SetUpHeader()
+    //{
+    //    var info = GetHeader();
+    //    WriteStringInDoc(info, true);
+    //}
+
+    //private void SetUpHeader(string first)
+    //{
+    //    var info = GetHeader(); 
+    //    if (first == info) return;
+    //    WriteStringInDoc(info, true);
+    //}
+
+    //private string _header;
+*/
