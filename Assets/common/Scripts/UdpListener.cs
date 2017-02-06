@@ -81,8 +81,16 @@ public class UdpListener : MonoBehaviour {
                     {
                         string stringToParse = Encoding.ASCII.GetString(toProcess);
                         string[] splitmsg = stringToParse.Split(MessageSeparators.L0);
-                        CloudMessage c = new CloudMessage(splitmsg[1], toProcess);
+
+                        CloudMessage c = new CloudMessage(splitmsg[1], toProcess, splitmsg[0].Length);
                         gameObject.GetComponent<Tracker>().SetNewCloud(c);
+                    }
+                    else if (Convert.ToChar(toProcess[0]) == 'A')
+                    {
+                        string stringToParse = Encoding.ASCII.GetString(toProcess);
+                        string[] splitmsg = stringToParse.Split(MessageSeparators.L0);
+                        AvatarMessage av = new AvatarMessage(splitmsg[1], toProcess);
+                        gameObject.GetComponent<Tracker>().processAvatarMessage(av);
                     }
                 }
                 _stringsToParse.RemoveAt(0);

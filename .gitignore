@@ -5,3 +5,9 @@ Temp/
 Library/
 bin/
 Export/
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
