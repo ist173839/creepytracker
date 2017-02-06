@@ -51,11 +51,12 @@ public class HandleVirtualWorld : MonoBehaviour
     public bool CanUseSaveFile;
     public bool ShowIndicator;
     public bool ShowMarker;
+    public bool SendReset;
     public bool CanForce;
     public bool UseOpti;
     public bool Force;
     public bool Send;
-    
+
     private bool _setUpForward;
     private bool _saveForward;
     private bool _saveMessage;
@@ -137,7 +138,8 @@ public class HandleVirtualWorld : MonoBehaviour
         _reset       = false;
         Force        = false;
         Send         = true;
-      //  ShowOpti     = true;
+        SendReset    = false;
+        // ShowOpti     = true;
         UseOpti      = false;
         ShowMarker   = true;
         CanShowIndicators = false;
@@ -292,6 +294,8 @@ public class HandleVirtualWorld : MonoBehaviour
         }
         
         mensagem += MessageSeparators.L2 + "Force" + MessageSeparators.SET + Force;
+        //mensagem += MessageSeparators.L2 + "Reset" + MessageSeparators.SET + SendReset;
+
         //_mensagem = mensagem;
         if (Send)
         {

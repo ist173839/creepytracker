@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 
-
 // ReSharper disable once CheckNamespace
 public enum Side
 {
