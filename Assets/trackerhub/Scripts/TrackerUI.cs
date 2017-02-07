@@ -59,13 +59,15 @@ public class TrackerUI : MonoBehaviour
     private int _currentCloudSensor;
     private int _packetsPerSec;
     
-    public float _rotStep = 2f;
-    public float _transStep = 0.02f;
+    public float RotStep   = 2.00f;
+    public float TransStep = 0.02f;
     
     private string _newUnicastAddress;
 	private string _newUnicastPort;
+    private string _user;
+    private string _userInicial;
 
-	private bool _continuous;
+    private bool _continuous;
     private bool _hideHumans;
     
     ////////////////////////////////////////////////////////////////
@@ -73,6 +75,11 @@ public class TrackerUI : MonoBehaviour
     private HandleVirtualWorld _localHandleVirtualWorld;
 
     private MyUdpListener _localMyUdpListener;
+
+    //public TrackerUI()
+    //{
+        
+    //}
 
     public bool ShowIndicator { get; set; }
     public bool UseOptiTrack  { get; set; }
@@ -83,8 +90,8 @@ public class TrackerUI : MonoBehaviour
     public bool Force         { get; set; }
     public bool Send          { get; set; }
 
-    public float FinalNum;
-    public int id;
+    //public float FinalNum;
+    //public int id;
     
     ////////////////////////////////////////////////////////////////
 
@@ -128,11 +135,13 @@ public class TrackerUI : MonoBehaviour
 	    Force      = _localHandleVirtualWorld.Force;
 	    Send       = _localHandleVirtualWorld.Send;
 
-	    FinalNum = -1;
-	    id = -1;
+        _user = _userInicial = "User 0";
 
-	    ////////////////////////////////////////////////////////////////////
-	}
+        //FinalNum = -1;
+        //id = -1;
+
+        ////////////////////////////////////////////////////////////////////
+    }
 
     // ReSharper disable once ArrangeTypeMemberModifiers
     // ReSharper disable once UnusedMember.Local
@@ -318,13 +327,13 @@ public class TrackerUI : MonoBehaviour
 				GUI.TextField (new Rect (left + 147, top + 2, 40, 20), px);
 				
 				if (GUI.RepeatButton (new Rect (left + 15, top + 2, 20, 20), "<"))
-					rotation.x = rotation.x - _rotStep * t;
+					rotation.x = rotation.x - RotStep * t;
 				if (GUI.RepeatButton (new Rect (left + 79, top + 2, 20, 20), ">"))
-					rotation.x = rotation.x + _rotStep * t;
+					rotation.x = rotation.x + RotStep * t;
 				if (GUI.RepeatButton (new Rect (left + 125, top + 2, 20, 20), "<"))
-					position.x = position.x - _transStep * t;
+					position.x = position.x - TransStep * t;
 				if (GUI.RepeatButton (new Rect (left + 189, top + 2, 20, 20), ">"))
-					position.x = position.x + _transStep * t;
+					position.x = position.x + TransStep * t;
 				top += 30;
 				GUI.Label (new Rect (left + 2, top, 100, 40), "y:");
 				GUI.TextField (new Rect (left + 37, top + 2, 40, 20), ry);
@@ -332,13 +341,13 @@ public class TrackerUI : MonoBehaviour
 				GUI.TextField (new Rect (left + 147, top + 2, 40, 20), py);
 				
 				if (GUI.RepeatButton (new Rect (left + 15, top + 2, 20, 20), "<"))
-					rotation.y = rotation.y - _rotStep * t;
+					rotation.y = rotation.y - RotStep * t;
 				if (GUI.RepeatButton (new Rect (left + 79, top + 2, 20, 20), ">"))
-					rotation.y = rotation.y + _rotStep * t;
+					rotation.y = rotation.y + RotStep * t;
 				if (GUI.RepeatButton (new Rect (left + 125, top + 2, 20, 20), "<"))
-					position.y = position.y - _transStep * t;
+					position.y = position.y - TransStep * t;
 				if (GUI.RepeatButton (new Rect (left + 189, top + 2, 20, 20), ">"))
-					position.y = position.y + _transStep * t;
+					position.y = position.y + TransStep * t;
 
 
 				top += 30;
@@ -348,13 +357,13 @@ public class TrackerUI : MonoBehaviour
 				GUI.TextField (new Rect (left + 147, top + 2, 40, 20), pz);
 				
 				if (GUI.RepeatButton (new Rect (left + 15, top + 2, 20, 20), "<"))
-					rotation.z = rotation.z - _rotStep * t;
+					rotation.z = rotation.z - RotStep * t;
 				if (GUI.RepeatButton (new Rect (left + 79, top + 2, 20, 20), ">"))
-					rotation.z = rotation.z + _rotStep * t;
+					rotation.z = rotation.z + RotStep * t;
 				if (GUI.RepeatButton (new Rect (left + 125, top + 2, 20, 20), "<"))
-					position.z = position.z - _transStep * t;
+					position.z = position.z - TransStep * t;
 				if (GUI.RepeatButton (new Rect (left + 189, top + 2, 20, 20), ">"))
-					position.z = position.z + _transStep * t;
+					position.z = position.z + TransStep * t;
 
 				float x, y, z;
 				float xr, yr, zr;
@@ -434,15 +443,21 @@ public class TrackerUI : MonoBehaviour
             // FinalNum++;
             GUI.Label(new Rect(left, top, 180, 25), "EXTRA (FHV) : ", _titleStyle);
 
+            //top += 25;
+            
             if (GUI.Button(new Rect(left + 100, top, 100, 25), "New User"))
             {
-                _localMyUdpListener.SetNewUser(id.ToString(), FinalNum.ToString());
+                _localMyUdpListener.SetNewUser(string.IsNullOrEmpty(_user) ? _userInicial : _user);
             }
 
+            top += 30;
+            GUI.Label(new Rect(left, top, 180, 25), "User Name :");
+            
+             
+            var user = GUI.TextField(new Rect(left + 100, top, 100, 25), _user);
+            _user = user;
+            
             top += 25;
-            GUI.Label(new Rect(left, top, 180, 25), "Id = " + id + ", Objectivo = " + FinalNum);
-            top += 25;
-            //top += 35;
 
             UseRecord = GUI.Toggle(new Rect(left, top, 100, 25), UseRecord, "Record");
             
@@ -619,3 +634,20 @@ public class TrackerUI : MonoBehaviour
 		    _menuAction = _menuAction == button ? MenuAction.None : button;
 	}
 }
+/*
+
+    if (GUI.Button(new Rect(left + 100, top, 100, 25), "New User"))
+    {
+        _localMyUdpListener.SetNewUser(id.ToString(), FinalNum.ToString());
+    }
+    top += 25;
+    GUI.Label(new Rect(left, top, 180, 25), "Id = " + id + ", Objectivo = " + FinalNum);
+    top += 25;
+
+
+  // _localMyUdpListener.SetNewUser(id.ToString(), FinalNum.ToString());
+
+
+
+
+ */

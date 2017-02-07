@@ -16,6 +16,11 @@ using System.Text;
 // ReSharper disable once UnusedMember.Global
 public class MyUdpListener : MonoBehaviour
 {
+    private List<string> _stringsToParseColicoes;
+    private List<string> _stringsToParseRecord;
+    private List<string> _stringsToParseAvr;
+    private List<string> _stringsToParseLog;
+    
     private SaveColicoes _saveColicoes;
     private SaveRecord   _saveRecord;
     private SaveAvr      _saveAvr;
@@ -25,49 +30,40 @@ public class MyUdpListener : MonoBehaviour
     private IPEndPoint _anyIpRecord;
     private IPEndPoint _anyIpAvr;
     private IPEndPoint _anyIpLog;
-    private IPEndPoint _anyIpBase;
     
     private UdpClient _udpClientColicoes = null;
     private UdpClient _udpClientRecord   = null;
     private UdpClient _udpClientAvr      = null;
     private UdpClient _udpClientLog      = null;
-    private UdpClient _udpClientBase     = null;
-
+    
     private int _portColicoes;
     private int _portRecord;
     private int _portAvr;
     private int _portLog;
-    private int _portBase;
-    
-    private List<string> _stringsToParseColicoes;
-    private List<string> _stringsToParseRecord;
-    private List<string> _stringsToParseAvr;
-    private List<string> _stringsToParseLog;
-    private List<string> _stringsToParseBase;
+
 
     // ReSharper disable once ArrangeTypeMemberModifiers
     // ReSharper disable once UnusedMember.Local
     void Start()
     {
-
         _portRecord   = 57839;
         _portColicoes = 58839;
         _portAvr      = 59839;
         _portLog      = 60839;
-        _portBase     = 61839;
-
+   
         _saveColicoes = new SaveColicoes();
         _saveRecord   = new SaveRecord();
         _saveAvr      = new SaveAvr();
         _saveLog      = new SaveLog();
-
-
+        
         UdpRestart();
     }
 
-    public void SetNewUser( string id, string num)
+  
+
+    public void SetNewUser(string nameUser)
     {
-        var newUser = "Id" + id + "Num" + num;
+        var newUser = "User-" + nameUser + "_Time-" + DateTime.Now.ToString("yyyyMMddTHHmmss");
 
         _saveColicoes.SetUpUserFolder(newUser);
         _saveRecord.SetUpUserFolder(newUser);
@@ -108,12 +104,7 @@ public class MyUdpListener : MonoBehaviour
         _udpClientLog.BeginReceive(new AsyncCallback(this.ReceiveCallbackLog), null);
         Debug.Log("[UDPListener] Receiving Log in port: " + _portLog);
 
-        if (_udpClientBase != null) _udpClientBase.Close();
-        _stringsToParseBase = new List<string>();
-        _anyIpBase = new IPEndPoint(IPAddress.Any, _portBase);
-        _udpClientBase = new UdpClient(_anyIpBase);
-        _udpClientBase.BeginReceive(new AsyncCallback(this.ReceiveCallbackBase), null);
-        Debug.Log("[UDPListener] Receiving Base in port: " + _portBase);
+      
 
     }
 
@@ -147,12 +138,6 @@ public class MyUdpListener : MonoBehaviour
         _udpClientLog.BeginReceive(new AsyncCallback(this.ReceiveCallbackLog), null);
     }
 
-  private void ReceiveCallbackBase(IAsyncResult ar)
-    {
-        var receiveBytes = _udpClientLog.EndReceive(ar, ref _anyIpBase);
-        _stringsToParseBase.Add(Encoding.ASCII.GetString(receiveBytes));
-        _udpClientBase.BeginReceive(new AsyncCallback(this.ReceiveCallbackBase), null);
-    }
 
     // ReSharper disable once ArrangeTypeMemberModifiers
     // ReSharper disable once UnusedMember.Local
@@ -191,10 +176,6 @@ public class MyUdpListener : MonoBehaviour
             _stringsToParseAvr.RemoveAt(0);
             _saveAvr.RecordMessage(stringToParse);
         }
-
-
-
-
     }
 
     private void OnApplicationQuit()
@@ -203,9 +184,6 @@ public class MyUdpListener : MonoBehaviour
         if (_udpClientRecord   != null) _udpClientRecord.Close();
         if (_udpClientAvr      != null) _udpClientAvr.Close();
         if (_udpClientLog      != null) _udpClientLog.Close();
-        if (_udpClientBase     != null) _udpClientBase.Close();
-
-
     }
 
     // ReSharper disable once UnusedMember.Local
@@ -223,10 +201,50 @@ public class MyUdpListener : MonoBehaviour
         if (_udpClientRecord   != null) _udpClientRecord.Close();
         if (_udpClientAvr      != null) _udpClientAvr.Close();
         if (_udpClientLog      != null) _udpClientLog.Close();
-        if (_udpClientBase     != null) _udpClientBase.Close();
+      
     }
 }
+/*
+ 
 
+
+//////////////////////////////////////////////////////////////////////////////////////////
+    private IPEndPoint _anyIpBase;
+    private int _portBase;
+    private List<string> _stringsToParseBase;
+    private UdpClient _udpClientBase     = null;
+    _portBase     = 61839;
+    
+      if (_udpClientBase != null) _udpClientBase.Close();
+        _stringsToParseBase = new List<string>();
+        _anyIpBase = new IPEndPoint(IPAddress.Any, _portBase);
+        _udpClientBase = new UdpClient(_anyIpBase);
+        _udpClientBase.BeginReceive(new AsyncCallback(this.ReceiveCallbackBase), null);
+        Debug.Log("[UDPListener] Receiving Base in port: " + _portBase);
+            
+  private void ReceiveCallbackBase(IAsyncResult ar)
+    {
+        var receiveBytes = _udpClientLog.EndReceive(ar, ref _anyIpBase);
+        _stringsToParseBase.Add(Encoding.ASCII.GetString(receiveBytes));
+        _udpClientBase.BeginReceive(new AsyncCallback(this.ReceiveCallbackBase), null);
+    }
+
+      if (_udpClientBase     != null) _udpClientBase.Close();
+//////////////////////////////////////////////////////////////////////////////////////////
+
+      public void SetNewUser( string id, string num)
+    {
+        var newUser = "Id" + id + "Num" + num;
+
+        _saveColicoes.SetUpUserFolder(newUser);
+        _saveRecord.SetUpUserFolder(newUser);
+        _saveAvr.SetUpUserFolder(newUser);
+        _saveLog.SetUpUserFolder(newUser);
+        //
+
+    }
+ 
+//////////////////////////////////////////////////////////////////////////////////////////
 // private List<string> _stringsToParse;
 // private UdpClient _udpClient = null;
 // private IPEndPoint _anyIp;
@@ -238,3 +256,8 @@ public class MyUdpListener : MonoBehaviour
 //    _udpClient.BeginReceive(new AsyncCallback(this.ReceiveCallback), null);
 //} 
 // Input.GetMouseButtonDown(0)
+
+
+
+    */
+
