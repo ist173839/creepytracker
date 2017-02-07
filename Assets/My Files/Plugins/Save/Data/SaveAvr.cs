@@ -266,7 +266,6 @@ public class SaveAvr
         }
     }
 
-
     private string SolveDuplicateFileNames()
     {
         var temp = _currentDocName;

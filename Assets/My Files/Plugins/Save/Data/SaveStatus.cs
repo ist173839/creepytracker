@@ -83,7 +83,7 @@ public class SaveStatus
         Separador = ";";
 
         _format = ".csv";
-        _sigla  = "LD";
+        _sigla  = "SD";
         _versao = "V1";
 
         _startMessage = "INICIO";
@@ -147,7 +147,7 @@ public class SaveStatus
 
     public void RecordMessage(string message)
     {
-        if (message.Contains("Registo"))
+        if (message.Contains("Tempo"))
         {
             _isInitiate = false;
             _saveHeader = message;
@@ -198,11 +198,10 @@ public class SaveStatus
         WriteStringInDoc(_saveHeader, true);
     }
 
-
     // ReSharper disable once UnusedMember.Local
     private void SetUpHeader(string first)
     {
-        if (first.Contains("Registo")) return;
+        if (first.Contains("Tempo")) return;
         WriteStringInDoc(first, true);
     }
 
@@ -257,7 +256,6 @@ public class SaveStatus
                     break;
             }
             _currentDocName = temp + _format;
-
             Debug.Log("New Walking Data File : " + _currentDocName);
         }
     }
@@ -281,7 +279,6 @@ public class SaveStatus
         return null;
     }
     
-  
     // ReSharper disable once UnusedMember.Global
     public void SpecialFolderName(string newName)
     {
