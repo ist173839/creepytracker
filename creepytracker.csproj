@@ -108,6 +108,7 @@
     <Compile Include="Assets\My Files\Plugins\Helpers\Math\RandomHelper.cs" />
     <Compile Include="Assets\My Files\Plugins\Helpers\ObterStringValues.cs" />
     <Compile Include="Assets\My Files\Plugins\Helpers\StringHelper.cs" />
+    <Compile Include="Assets\My Files\Plugins\Save\Data\SaveStatus.cs" />
     <Compile Include="Assets\My Files\Plugins\Z_Outros\Listen\ListenBase.cs" />
     <Compile Include="Assets\My Files\Plugins\Z_Outros\OptiTrack\DirectMulticastSocketClient.cs" />
     <Compile Include="Assets\My Files\Plugins\Save\Info\SafeWriteFile.cs" />
