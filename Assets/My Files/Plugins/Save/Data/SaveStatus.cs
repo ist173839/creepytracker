@@ -112,8 +112,8 @@ public class SaveStatus
         _currentFolderDestino =
             _defaultFolderDestino =
                 _currentUserFolder == null
-                    ? "Saved Files" + "\\" + _nameFolder
-                    : "Saved Files" + "\\" + _currentUserFolder + "\\" + _nameFolder;
+                    ? "Files" + "\\" + "Saved Files" + "\\" + _nameFolder
+                    : "Files" + "\\" + "Saved Files" + "\\" + _currentUserFolder + "\\" + _nameFolder;
 
         _isInitiate = false;
     }

@@ -91,7 +91,7 @@ public class SafeWriteFile
 
         Directory = System.IO.Directory.GetCurrentDirectory();
 
-        CurrentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "Recordings";
+        CurrentFolderDestino = _defaultFolderDestino = "Files" + "\\" + "Saved Files" + "\\" + "Recordings";
 
         InfoCompl = "NADA";
 

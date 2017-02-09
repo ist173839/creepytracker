@@ -14,6 +14,7 @@ using System.Text;
 
 // ReSharper disable once CheckNamespace
 // ReSharper disable once UnusedMember.Global
+// ReSharper disable once ClassNeverInstantiated.Global
 public class MyUdpListener : MonoBehaviour
 {
     private List<string> _stringsToParseColicoes;

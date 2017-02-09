@@ -101,6 +101,9 @@ public class SaveColicoes
         _specialTypeDocName = SpecialTypeDoc.SolveDuplicate;
 
         _target = _directory + "\\" + _currentFolderDestino + "\\";
+
+
+
         _cont = 0;
         NumColunas = 0;
 
@@ -116,8 +119,8 @@ public class SaveColicoes
         _currentFolderDestino =
             _defaultFolderDestino =
                 _currentUserFolder == null
-                    ? "Saved Files" + "\\" + _nameFolder
-                    : "Saved Files" + "\\" + _currentUserFolder + "\\" +  _nameFolder;
+                    ? "Files" + "\\" + "Saved Files" + "\\" + _nameFolder
+                    : "Files" + "\\" + "Saved Files" + "\\" + _currentUserFolder + "\\" +  _nameFolder;
 
         _isInitiate = false;
 

@@ -123,7 +123,7 @@ public class HandleVirtualWorld : MonoBehaviour
         // ShowIndicator = false;
         _countId = 0;
       
-        _path = System.IO.Directory.GetCurrentDirectory() + "\\" + "Files To Use" + "\\" + "Center Data";
+        _path = System.IO.Directory.GetCurrentDirectory() + "\\" + "Files" + "\\" + "Files To Use" + "\\" + "Center Data";
 
         if (!System.IO.Directory.Exists(_path)) System.IO.Directory.CreateDirectory(_path);
 

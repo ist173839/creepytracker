@@ -70,7 +70,7 @@ public class SaveCenterToSend
         _oversize          = false;
 
         _directory = System.IO.Directory.GetCurrentDirectory();
-        _currentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "Center To Send Data";
+        _currentFolderDestino = _defaultFolderDestino = "Files" + "\\" + "Saved Files" + "\\" + "Center To Send Data";
         _format   = ".txt";
         Separador = ";";
 

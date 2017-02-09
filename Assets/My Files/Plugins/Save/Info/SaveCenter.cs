@@ -90,7 +90,7 @@ public class SaveCenter
         _oversize          = false;
 
         _directory = System.IO.Directory.GetCurrentDirectory();
-        _currentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "Center Data";
+        _currentFolderDestino = _defaultFolderDestino = "Files" + "\\" + "Saved Files" + "\\" + "Center Data";
         _format   = ".txt";
         Separador = ";";
 
