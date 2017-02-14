@@ -13,13 +13,11 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile>
-    </CompilerResponseFile>
+    <CompilerResponseFile></CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.5.1f1</UnityVersion>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace></RootNamespace>
     <LangVersion Condition=" '$(VisualStudioVersion)' != '10.0' ">4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -108,32 +106,32 @@
     <Compile Include="Assets\My Files\Plugins\Helpers\Math\RandomHelper.cs" />
     <Compile Include="Assets\My Files\Plugins\Helpers\ObterStringValues.cs" />
     <Compile Include="Assets\My Files\Plugins\Helpers\StringHelper.cs" />
-    <Compile Include="Assets\My Files\Plugins\Save\Data\SaveStatus.cs" />
-    <Compile Include="Assets\My Files\Plugins\Z_Outros\Listen\ListenBase.cs" />
-    <Compile Include="Assets\My Files\Plugins\Z_Outros\OptiTrack\DirectMulticastSocketClient.cs" />
-    <Compile Include="Assets\My Files\Plugins\Save\Info\SafeWriteFile.cs" />
     <Compile Include="Assets\My Files\Plugins\Save\Data\SaveAvr.cs" />
-    <Compile Include="Assets\My Files\Plugins\Save\Info\SaveCenter.cs" />
-    <Compile Include="Assets\My Files\Plugins\Save\Info\SaveCenterToSend.cs" />
     <Compile Include="Assets\My Files\Plugins\Save\Data\SaveColicoes.cs" />
     <Compile Include="Assets\My Files\Plugins\Save\Data\SaveLog.cs" />
     <Compile Include="Assets\My Files\Plugins\Save\Data\SaveRecord.cs" />
+    <Compile Include="Assets\My Files\Plugins\Save\Data\SaveStatus.cs" />
+    <Compile Include="Assets\My Files\Plugins\Save\Info\SafeWriteFile.cs" />
+    <Compile Include="Assets\My Files\Plugins\Save\Info\SaveCenter.cs" />
+    <Compile Include="Assets\My Files\Plugins\Save\Info\SaveCenterToSend.cs" />
     <Compile Include="Assets\My Files\Plugins\Z_Outros\Geral\CenterServer.cs" />
     <Compile Include="Assets\My Files\Plugins\Z_Outros\Geral\CreateAndControlVirtualWorld.cs" />
-    <Compile Include="Assets\My Files\Plugins\Z_Outros\Play\EmulateSaveData.cs" />
     <Compile Include="Assets\My Files\Plugins\Z_Outros\Geral\ReadMatrix.cs" />
     <Compile Include="Assets\My Files\Plugins\Z_Outros\Geral\SafeCenter.cs" />
+    <Compile Include="Assets\My Files\Plugins\Z_Outros\Geral\WriteMatrix.cs" />
+    <Compile Include="Assets\My Files\Plugins\Z_Outros\Listen\ListenBase.cs" />
+    <Compile Include="Assets\My Files\Plugins\Z_Outros\OptiTrack\DirectMulticastSocketClient.cs" />
+    <Compile Include="Assets\My Files\Plugins\Z_Outros\Play\EmulateSaveData.cs" />
     <Compile Include="Assets\My Files\Plugins\Z_Outros\Set Up\EmulateSaveDataSetUp.cs" />
     <Compile Include="Assets\My Files\Plugins\Z_Outros\Virtual World\Indicator.cs" />
     <Compile Include="Assets\My Files\Plugins\Z_Outros\Virtual World\IndicatorSetUp.cs" />
-    <Compile Include="Assets\My Files\Plugins\Z_Outros\Geral\WriteMatrix.cs" />
     <Compile Include="Assets\My Files\Scripts\Center\HandleVirtualWorld.cs" />
     <Compile Include="Assets\My Files\Scripts\Listener\MyUdpListener.cs" />
-    <Compile Include="Assets\My Files\Scripts\Z_Outros\OptiTrack_1\OptitrackManager.cs" />
+    <Compile Include="Assets\My Files\Scripts\OptiTrack\OptitrackManager.cs" />
     <Compile Include="Assets\My Files\Scripts\Z_Outros\Geral\MyKnees.cs" />
-    <Compile Include="Assets\My Files\Scripts\Z_Outros\Geral\MyUdpListenerAvr.cs" />
-    <Compile Include="Assets\My Files\Scripts\Z_Outros\Geral\MyUdpListenerColicoes.cs" />
-    <Compile Include="Assets\My Files\Scripts\Z_Outros\Geral\MyUdpListenerRecord.cs" />
+    <Compile Include="Assets\My Files\Scripts\Z_Outros\Listener\MyUdpListenerAvr.cs" />
+    <Compile Include="Assets\My Files\Scripts\Z_Outros\Listener\MyUdpListenerColicoes.cs" />
+    <Compile Include="Assets\My Files\Scripts\Z_Outros\Listener\MyUdpListenerRecord.cs" />
     <Compile Include="Assets\My Files\Scripts\Z_Outros\OptiTrack_0\ApplyTransformation.cs" />
     <Compile Include="Assets\My Files\Scripts\Z_Outros\OptiTrack_0\ObjectTracker.cs" />
     <Compile Include="Assets\My Files\Scripts\Z_Outros\OptiTrack_0\OptiDrawScript.cs" />
@@ -159,7 +157,6 @@
     <None Include="Assets\Standard Assets\Fonts\OpenSans\License!.txt" />
     <None Include="Assets\configSettings.txt" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
 </Project>

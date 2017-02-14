@@ -79,19 +79,15 @@ public class HandleVirtualWorld : MonoBehaviour
     private string _mensagem;
     private string _mens;
     private string _path;
-    
-    // Use this for initialization
+
+
     // ReSharper disable once UnusedMember.Local
     // ReSharper disable once ArrangeTypeMemberModifiers
-    void Start ()
+    void Awake()
     {
         _port = 53839;
-        _udpBroadcast = new UdpBroadcast(_port);
-      
-        _localOptitrackManager = gameObject.GetComponent<OptitrackManager>();
-        _localTrackerUi        = gameObject.GetComponent<TrackerUI>();
 
-        _localTracker = gameObject.GetComponent<Tracker>();
+        _udpBroadcast = new UdpBroadcast(_port);
 
         IndicatorsList = new List<GameObject>();
         ObstacleList   = new List<GameObject>();
@@ -99,60 +95,69 @@ public class HandleVirtualWorld : MonoBehaviour
         _saveCenter   = new SaveCenter();
         _centerToSend = new SaveCenterToSend();
 
-
         _helpers = new GameObject { name = "Helpers" };
         _helpers.transform.position = transform.position;
-        _helpers.transform.parent   = transform;
+        _helpers.transform.parent = transform;
 
         _indicadores = new GameObject { name = "Indicators" };
         _indicadores.transform.position = transform.position;
-        _indicadores.transform.parent   = _helpers.transform;
-        
+        _indicadores.transform.parent = _helpers.transform;
+
         _marker = GameObjectHelper.MyCreatePrimitiveObject(PrimitiveType.Sphere, "Marker", Vector3.zero, _helpers.transform, false);
         _marker.GetComponent<MeshRenderer>().material.color = Color.green;
         _marker.transform.localScale = new Vector3(0.50f, 0.50f, 0.50f);
 
-        _centroGameObject  = GameObjectHelper.MyCreatePrimitiveObject(PrimitiveType.Sphere, "Centro", Vector3.zero, _helpers.transform, false);
+        _centroGameObject = GameObjectHelper.MyCreatePrimitiveObject(PrimitiveType.Sphere, "Centro", Vector3.zero, _helpers.transform, false);
         _centroGameObject.GetComponent<MeshRenderer>().material.color = Color.black;
         _centroGameObject.transform.localScale = new Vector3(0.50f, 0.1f, 0.50f);
 
         _forwardGameObject = GameObjectHelper.MyCreatePrimitiveObject(PrimitiveType.Sphere, "Forward", Vector3.zero, _helpers.transform, false);
         _forwardGameObject.GetComponent<MeshRenderer>().material.color = Color.white;
         _forwardGameObject.transform.localScale = new Vector3(0.50f, 0.1f, 0.50f);
-        
-        // ShowIndicator = false;
-        _countId = 0;
-      
+
+
         _path = System.IO.Directory.GetCurrentDirectory() + "\\" + "Files" + "\\" + "Files To Use" + "\\" + "Center Data";
 
         if (!System.IO.Directory.Exists(_path)) System.IO.Directory.CreateDirectory(_path);
-
+        
         _centro = new Vector3?();
-        Index = 0;
 
+        Index    = 0;
+        _countId = 0;
+        
         _mens = "";
         _mensagem = "";
 
-        _saveForward = false;
-        _saveCentro  = false;
-        _reset       = false;
-        Force        = false;
-        Send         = true;
-        SendReset    = false;
-        // ShowOpti     = true;
-        UseOpti      = false;
-        ShowMarker   = true;
+
         CanShowIndicators = false;
+        ShowMarker = true;
+        SendReset = false;
         CanForce = false;
+        UseOpti = false;
+        Force = false;
+        Send = true;
+
+        _saveForward = false;
+        _saveMessage = true;
+        _saveCentro  = false;
+        _saveOne     = true;
+        _reset       = false;
+    }
+    
+    // Use this for initialization
+    // ReSharper disable once UnusedMember.Local
+    // ReSharper disable once ArrangeTypeMemberModifiers
+    void Start ()
+    {
+        _localOptitrackManager = gameObject.GetComponent<OptitrackManager>();
+        _localTrackerUi        = gameObject.GetComponent<TrackerUI>();
+        _localTracker          = gameObject.GetComponent<Tracker>();
         
         var info = new DirectoryInfo(_path);
         var fileInfo = info.GetFiles();
         var length = fileInfo.Length;
+
         _localTrackerUi.UseSaveFile = CanUseSaveFile = length != 0;
-
-        _saveMessage = true;
-        _saveOne = true;
-
     }
 	
 	// Update is called once per frame
@@ -539,15 +544,17 @@ public class HandleVirtualWorld : MonoBehaviour
     }
 
 }
-    /////////////////////////////////////////////////////////////////////////////////
-    /*
-   //var joints = _localTracker.GetJointPosition();
+/////////////////////////////////////////////////////////////////////////////////
+/*
+//var joints = _localTracker.GetJointPosition();
 
-     
-     
-     
-     
-     
-     
-     
-     */
+
+
+    // ShowIndicator = false;
+    // ShowOpti     = true;
+
+
+
+
+
+ */

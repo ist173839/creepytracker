@@ -49,20 +49,27 @@ public class MyUdpListener : MonoBehaviour
 
     // ReSharper disable once ArrangeTypeMemberModifiers
     // ReSharper disable once UnusedMember.Local
-    void Start()
+    void Awake()
     {
         _portRecord   = 57839;
         _portColicoes = 58839;
         _portAvr      = 59839;
         _portLog      = 60839;
         _portStatus   = 61839;
-   
+
         _saveColicoes = new SaveColicoes();
         _saveRecord   = new SaveRecord();
         _saveAvr      = new SaveAvr();
         _saveLog      = new SaveLog();
         _saveStatus   = new SaveStatus();
-        
+
+    }
+
+
+    // ReSharper disable once ArrangeTypeMemberModifiers
+    // ReSharper disable once UnusedMember.Local
+    void Start()
+    {
         UdpRestart();
     }
     
