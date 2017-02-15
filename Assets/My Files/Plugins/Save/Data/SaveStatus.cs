@@ -155,9 +155,7 @@ public class SaveStatus
         
         if (!_isInitiate) SetUpFileAndDirectory();
         // if (!_isInitiate) SetUpFileAndDirectory(message);
-        // if (message != _startMessage  && !_isInitiate)
-        // {
-        // } else
+        // if (message != _startMessage  && !_isInitiate) { } else
         if (message == _endMessage)
         {
             StopRecording();

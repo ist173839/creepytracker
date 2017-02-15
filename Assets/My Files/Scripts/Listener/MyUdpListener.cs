@@ -62,7 +62,6 @@ public class MyUdpListener : MonoBehaviour
         _saveAvr      = new SaveAvr();
         _saveLog      = new SaveLog();
         _saveStatus   = new SaveStatus();
-
     }
 
 
@@ -75,13 +74,13 @@ public class MyUdpListener : MonoBehaviour
     
     public void SetNewUser(string nameUser)
     {
-        var newUser = "User-" + nameUser + "_Time-" + DateTime.Now.ToString("yyyyMMddTHHmmss");
+        var newUser = "User- " + nameUser + " Time- " + DateTime.Now.ToString("yyyyMMddTHHmmss");
 
+        _saveStatus.SetUpUserFolder(newUser);
         _saveColicoes.SetUpUserFolder(newUser);
         _saveRecord.SetUpUserFolder(newUser);
         _saveAvr.SetUpUserFolder(newUser);
         _saveLog.SetUpUserFolder(newUser);
-        _saveStatus.SetUpUserFolder(newUser);
     }
 
     private void UdpRestart()

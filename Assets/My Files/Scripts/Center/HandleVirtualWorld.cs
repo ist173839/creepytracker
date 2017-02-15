@@ -27,7 +27,7 @@ public class HandleVirtualWorld : MonoBehaviour
     public List<GameObject> IndicatorsList;
     public List<GameObject> ObstacleList;
 
-    private OptitrackManager _localOptitrackManager;
+    // private OptitrackManager _localOptitrackManager;
 
     private UdpBroadcast _udpBroadcast;
     
@@ -46,6 +46,8 @@ public class HandleVirtualWorld : MonoBehaviour
     private GameObject _helpers;
     private GameObject _marker;
 
+    //public bool UseOpti;
+
     public bool IsSaveFilePossible;
     public bool CanShowIndicators;
     public bool CanUseSaveFile;
@@ -53,7 +55,6 @@ public class HandleVirtualWorld : MonoBehaviour
     public bool ShowMarker;
     public bool SendReset;
     public bool CanForce;
-    public bool UseOpti;
     public bool Force;
     public bool Send;
 
@@ -133,7 +134,7 @@ public class HandleVirtualWorld : MonoBehaviour
         ShowMarker = true;
         SendReset = false;
         CanForce = false;
-        UseOpti = false;
+        //UseOpti = false;
         Force = false;
         Send = true;
 
@@ -149,7 +150,7 @@ public class HandleVirtualWorld : MonoBehaviour
     // ReSharper disable once ArrangeTypeMemberModifiers
     void Start ()
     {
-        _localOptitrackManager = gameObject.GetComponent<OptitrackManager>();
+        // _localOptitrackManager = gameObject.GetComponent<OptitrackManager>();
         _localTrackerUi        = gameObject.GetComponent<TrackerUI>();
         _localTracker          = gameObject.GetComponent<Tracker>();
         
@@ -185,7 +186,8 @@ public class HandleVirtualWorld : MonoBehaviour
         
 	    if (_setUpCentro && _centro.HasValue && _setUpForward  && _forwardPoint.HasValue && _reset)
         {
-	        _forward = _forwardPoint.Value - _centro.Value;
+	        // _forward = (_forwardPoint.Value - _centro.Value).normalized;
+	        _forward = (_forwardPoint.Value - _centro.Value);
             _reset = false;
             Debug.DrawLine(_centro.Value, _centro.Value + _forward * 2.0f, Color.white);
         }
@@ -200,13 +202,15 @@ public class HandleVirtualWorld : MonoBehaviour
 	    SaveMensagem();
         SendMensagem();
 
-        _localOptitrackManager.RenderMarker(UseOpti && ShowMarker);
-        _marker.GetComponent<MeshRenderer>().enabled = !UseOpti && ShowMarker;
+        //_localOptitrackManager.RenderMarker(UseOpti && ShowMarker);
+        //_marker.GetComponent<MeshRenderer>().enabled = !UseOpti && ShowMarker;
+        
+        _marker.GetComponent<MeshRenderer>().enabled = ShowMarker;
         
         _centroGameObject.GetComponent<MeshRenderer>().enabled  = _setUpCentro;
         _forwardGameObject.GetComponent<MeshRenderer>().enabled = _setUpForward;
 
-	    if (!UseOpti)
+	    //if (!UseOpti)
 	    {
 	        var idToCheck  = _localTrackerUi.IdToCheck;
 	        var humanCheck = _localTracker.GetHuman(idToCheck);
@@ -316,11 +320,11 @@ public class HandleVirtualWorld : MonoBehaviour
 
     public void SetCenterButton()
     {
-        if (UseOpti)
-        {
-            if (_localOptitrackManager != null) SetUpNewCenter(_localOptitrackManager.GetUnityPositionVector());
-        }
-        else
+        //if (UseOpti)
+        //{
+        //    if (_localOptitrackManager != null) SetUpNewCenter(_localOptitrackManager.GetUnityPositionVector());
+        //}
+        //else
         {
            // var human = _localTracker.GetHuman(_localTrackerUi.IdToCheck);
             var pos = MathHelper.DeslocamentoHorizontal(_marker.transform.position, 0.0f);
@@ -342,14 +346,14 @@ public class HandleVirtualWorld : MonoBehaviour
 
     public void SetForwardPointButton()
     {
-        if (UseOpti)
-        {
-            if (_localOptitrackManager != null)
-            {
-                SetUpNewForward(_localOptitrackManager.GetUnityPositionVector());
-            }
-        }
-        else
+        //if (UseOpti)
+        //{
+        //    if (_localOptitrackManager != null)
+        //    {
+        //        SetUpNewForward(_localOptitrackManager.GetUnityPositionVector());
+        //    }
+        //}
+        //else
         {
             // var human = _localTracker.GetHuman(_localTrackerUi.IdToCheck);
             var pos = MathHelper.DeslocamentoHorizontal(_marker.transform.position, 0.0f);

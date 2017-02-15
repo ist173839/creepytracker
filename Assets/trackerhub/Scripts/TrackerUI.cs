@@ -90,6 +90,9 @@ public class TrackerUI : MonoBehaviour
     public bool Force         { get; set; }
     public bool Send          { get; set; }
 
+    public float Extra;
+
+
     //public float FinalNum;
     //public int id;
     
@@ -389,7 +392,10 @@ public class TrackerUI : MonoBehaviour
 			left = Screen.width - 250;
 
 			//GUI.Box (new Rect (left, top - 10, 240, 150), "");
-			GUI.Box (new Rect (left, top - 10, 240, 300), "");
+
+            Extra = UseSaveFile ? 0.0f : 90.0f;
+
+			GUI.Box (new Rect (left, top - 10, 240, 300 + Extra), "");
 			left += 10;
 
 			GUI.Label (new Rect (left, top, 200, 25), "Broadcast Settings:", _titleStyle);
@@ -497,9 +503,9 @@ public class TrackerUI : MonoBehaviour
             }
             else
             {
-                UseOptiTrack = _localHandleVirtualWorld.UseOpti;
-                UseOptiTrack = GUI.Toggle(new Rect(left + 120, top, 100, 25), UseOptiTrack, "Use Opti");
-                _localHandleVirtualWorld.UseOpti = UseOptiTrack; // = useOptiTrack;
+                //UseOptiTrack = _localHandleVirtualWorld.UseOpti;
+                //UseOptiTrack = GUI.Toggle(new Rect(left + 120, top, 100, 25), UseOptiTrack, "Use Opti");
+                //_localHandleVirtualWorld.UseOpti = UseOptiTrack; // = useOptiTrack;
 
                 top += 30;
 
