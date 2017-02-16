@@ -42,7 +42,7 @@ public class Tracker : MonoBehaviour
 
     private SafeWriteFile _safeWriteFile;
 
-    private OptitrackManager _localOptitrackManager;
+    //private OptitrackManager _localOptitrackManager;
 
     // ReSharper disable once UnassignedField.Global
     // ReSharper disable once MemberCanBePrivate.Global
@@ -98,7 +98,7 @@ public class Tracker : MonoBehaviour
 		_udpBroadcast  = new UdpBroadcast (TrackerProperties.Instance.BroadcastPort);
         _safeWriteFile = new SafeWriteFile();
 
-        _localOptitrackManager = gameObject.GetComponent<OptitrackManager>();
+        //_localOptitrackManager = gameObject.GetComponent<OptitrackManager>();
 	    _localTrackerUi = gameObject.GetComponent<TrackerUI>();
         
 	    _loadConfig();
@@ -536,15 +536,44 @@ public class Tracker : MonoBehaviour
 		_udpBroadcast.RemoveUnicast (key);
 	}
 
-	internal void SetNewCloud (CloudMessage cloud)
+    //FOR TCP
+    internal void SetNewCloud(string kinectId, byte[] data, int size)
+    {
+
+        // tirar o id da mensagem que é um int
+        if (Sensors.ContainsKey(kinectId))
+        {
+            byte[] idb = { data[0], data[1], data[2], data[3] };
+            uint id = BitConverter.ToUInt32(idb, 0);
+            Sensors[kinectId].lastCloud.setPoints(data, 4, id, size);
+            Sensors[kinectId].lastCloud.setToView();
+        }
+    }
+
+    internal void SetNewCloud (CloudMessage cloud)
 	{
-		if (!Sensors.ContainsKey (cloud.KinectId)) {
-			Vector3 position = new Vector3 (Mathf.Ceil (Sensors.Count / 2.0f) * (Sensors.Count % 2 == 0 ? -1.0f : 1.0f), 1, 0);
-            Sensors [cloud.KinectId] = new Sensor (cloud.KinectId, (GameObject)Instantiate (Resources.Load ("Prefabs/KinectSensorPrefab"), position, Quaternion.identity));
-		}
+        //if (!Sensors.ContainsKey (cloud.KinectId)) {
+        //	Vector3 position = new Vector3 (Mathf.Ceil (Sensors.Count / 2.0f) * (Sensors.Count % 2 == 0 ? -1.0f : 1.0f), 1, 0);
+        //          Sensors [cloud.KinectId] = new Sensor (cloud.KinectId, (GameObject)Instantiate (Resources.Load ("Prefabs/KinectSensorPrefab"), position, Quaternion.identity));
+        //}
+        //      Sensors[cloud.KinectId].lastCloudupdateCloud (cloud);
 
-        Sensors[cloud.KinectId].UpdateCloud (cloud);
+        int step = cloud.HeaderSize+3; // TMA: Size in bytes of heading: "CloudMessage" + L0 + 2 * L1. Check the UDPListener.cs from the Client.
+        string[] pdu = cloud.Message.Split(MessageSeparators.L1);
+       
 
+        string kinectId = pdu[0]; 
+        uint  id = uint.Parse(pdu[1]);
+        step += pdu[0].Length + pdu[1].Length;
+
+        if (Sensors.ContainsKey(kinectId))
+        {
+            if (pdu[2] == "") {
+                Sensors[kinectId].lastCloud.setToView();
+            }
+            else
+                Sensors[kinectId].lastCloud.setPoints(cloud.ReceivedBytes,step,id,cloud.ReceivedBytes.Length);
+        }
 	}
 
 	internal void SetNewFrame (BodiesMessage bodies)
