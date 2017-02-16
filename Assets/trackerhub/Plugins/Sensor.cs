@@ -99,7 +99,8 @@ public class Sensor
 	{
 		return SensorGameObject.transform.localToWorldMatrix.MultiplyPoint (p);
 	}
-    
+
+
 	internal void UpdateBodies ()
 	{
         BodiesMessage bodiesMessage = lastBodiesMessage;
@@ -319,3 +320,15 @@ public class Sensor
 		return m;
 	}
 }
+
+/*
+
+    <<<<<<< HEAD
+	internal void UpdateCloud (CloudMessage cl)
+	{
+		lastCloud.setPoints (cl.Points_highres, cl.Points_lowres, cl.id);
+        lastCloud.setToView ();
+	}
+=======
+	
+*/

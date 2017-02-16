@@ -1044,11 +1044,11 @@ public class Tracker : MonoBehaviour
        // string message = av.createCalibrationMessage(_sensors);
         string message = av.createCalibrationMessage(Sensors);
         byte[] data = Encoding.UTF8.GetBytes(message);
-        IPEndPoint remoteEndPoint = new IPEndPoint(av.replyIPAddress, av.port);
+        IPEndPoint remoteEndPoint = new IPEndPoint(av.ReplyIpAddress, av.Port);
         Debug.Log("Sent reply with calibration data " + message);
         udp.Send(data, data.Length, remoteEndPoint);
         //broadcast
-        string message2 = CloudMessage.CreateRequestMessage(av.mode, av.replyIPAddress.ToString(), av.port);
+        string message2 = CloudMessage.CreateRequestMessage(av.Mode, av.ReplyIpAddress.ToString(), av.Port);
         byte[] data2 = Encoding.UTF8.GetBytes(message2);
         IPEndPoint remoteEndPoint2 = new IPEndPoint(IPAddress.Broadcast, TrackerProperties.Instance.ListenPort + 1);
         udp.Send(data2, data2.Length, remoteEndPoint2);

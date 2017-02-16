@@ -85,6 +85,7 @@ public class UdpListener : MonoBehaviour {
                         string[] splitmsg = stringToParse.Split(MessageSeparators.L0);
 
                         message.set(splitmsg[1], toProcess, splitmsg[0].Length);
+
                         gameObject.GetComponent<Tracker>().SetNewCloud(message);
                     }
                     else if (Convert.ToChar(toProcess[0]) == 'A')

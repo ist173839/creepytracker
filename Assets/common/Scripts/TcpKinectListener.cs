@@ -44,12 +44,12 @@ public class TcpKinectListener : MonoBehaviour
 
     private List<KinectStream> _kinectStreams;
     
-    void Start ()
-    {
+    void Start () {
 
         //_threads = new List<Thread>();
 
         _kinectStreams = new List<KinectStream>();
+
 
         _tcpListeningPort = TrackerProperties.Instance.ListenPort;
         _server = new TcpListener(IPAddress.Any, _tcpListeningPort);
@@ -64,7 +64,6 @@ public class TcpKinectListener : MonoBehaviour
 
     void AcceptClients(object o)
     {
-
         while (_running)
         {
             TcpClient newclient = _server.AcceptTcpClient();

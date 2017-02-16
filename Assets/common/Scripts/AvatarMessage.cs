@@ -2,18 +2,23 @@
 using System.Collections.Generic;
 using System.Net;
 
+// ReSharper disable once CheckNamespace
 public class AvatarMessage {
 
-    public IPAddress replyIPAddress;
-    public int port;
-    public int mode;
+    // ReSharper disable once FieldCanBeMadeReadOnly.Global
+    public IPAddress ReplyIpAddress;
+
+    // ReSharper disable once FieldCanBeMadeReadOnly.Global
+    public int Port;
+    // ReSharper disable once FieldCanBeMadeReadOnly.Global
+    public int Mode;
 
     public AvatarMessage(string message, byte[] receivedBytes)
     {
         string[] msg = message.Split(MessageSeparators.L1);
-        replyIPAddress = IPAddress.Parse(msg[0]);
-        mode = int.Parse(msg[1]);
-        port = int.Parse(msg[2]);
+        ReplyIpAddress = IPAddress.Parse(msg[0]);
+        Mode = int.Parse(msg[1]);
+        Port = int.Parse(msg[2]);
     }
 
     public string createCalibrationMessage(Dictionary<string,Sensor> sensors)

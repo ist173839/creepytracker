@@ -12,7 +12,6 @@ public class CloudMessage
 
     public string Message;
 
-
     public CloudMessage()
     {
         Message = "";
