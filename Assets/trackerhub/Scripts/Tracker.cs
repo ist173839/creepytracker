@@ -330,13 +330,43 @@ public class Tracker : MonoBehaviour
 		_udpBroadcast.removeUnicast (key);
 	}
 
-	internal void setNewCloud (CloudMessage cloud)
+    //FOR TCP
+    internal void setNewCloud(string KinectID, byte[] data, int size)
+    {
+
+        // tirar o id da mensagem que é um int
+        if (Sensors.ContainsKey(KinectID))
+        {
+            byte[] idb = { data[0], data[1], data[2], data[3] };
+            uint id = BitConverter.ToUInt32(idb, 0);
+            Sensors[KinectID].lastCloud.setPoints(data, 4, id, size);
+            Sensors[KinectID].lastCloud.setToView();
+        }
+    }
+
+    internal void setNewCloud (CloudMessage cloud)
 	{
-		if (!Sensors.ContainsKey (cloud.KinectId)) {
-			Vector3 position = new Vector3 (Mathf.Ceil (Sensors.Count / 2.0f) * (Sensors.Count % 2 == 0 ? -1.0f : 1.0f), 1, 0);
-            Sensors [cloud.KinectId] = new Sensor (cloud.KinectId, (GameObject)Instantiate (Resources.Load ("Prefabs/KinectSensorPrefab"), position, Quaternion.identity));
-		}
-        Sensors[cloud.KinectId].updateCloud (cloud);
+		//if (!Sensors.ContainsKey (cloud.KinectId)) {
+		//	Vector3 position = new Vector3 (Mathf.Ceil (Sensors.Count / 2.0f) * (Sensors.Count % 2 == 0 ? -1.0f : 1.0f), 1, 0);
+  //          Sensors [cloud.KinectId] = new Sensor (cloud.KinectId, (GameObject)Instantiate (Resources.Load ("Prefabs/KinectSensorPrefab"), position, Quaternion.identity));
+		//}
+  //      Sensors[cloud.KinectId].lastCloudupdateCloud (cloud);
+        int step = cloud.headerSize+3; // TMA: Size in bytes of heading: "CloudMessage" + L0 + 2 * L1. Check the UDPListener.cs from the Client.
+        string[] pdu = cloud.message.Split(MessageSeparators.L1);
+       
+
+        string KinectId = pdu[0]; 
+        uint  id = uint.Parse(pdu[1]);
+        step += pdu[0].Length + pdu[1].Length;
+
+        if (Sensors.ContainsKey(KinectId))
+        {
+            if (pdu[2] == "") {
+                Sensors[KinectId].lastCloud.setToView();
+            }
+            else
+                Sensors[KinectId].lastCloud.setPoints(cloud.receivedBytes,step,id,cloud.receivedBytes.Length);
+        }
 	}
 
 	internal void setNewFrame (BodiesMessage bodies)
@@ -586,7 +616,7 @@ public class Tracker : MonoBehaviour
 			s.lastCloud.hideFromView ();
 		}
 		UdpClient udp = new UdpClient ();
-		string message = CloudMessage.createRequestMessage (2); 
+		string message = CloudMessage.createRequestMessage (2,Network.player.ipAddress, TrackerProperties.Instance.listenPort); 
 		byte[] data = Encoding.UTF8.GetBytes(message);
 		IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Broadcast, TrackerProperties.Instance.listenPort + 1);
 		udp.Send(data, data.Length, remoteEndPoint);
@@ -595,10 +625,27 @@ public class Tracker : MonoBehaviour
 	public void broadCastCloudRequests (bool continuous)
 	{
 		UdpClient udp = new UdpClient ();
-		string message = CloudMessage.createRequestMessage (continuous ? 1 : 0); 
+		string message = CloudMessage.createRequestMessage (continuous ? 1 : 0, Network.player.ipAddress, TrackerProperties.Instance.listenPort); 
 		byte[] data = Encoding.UTF8.GetBytes (message);
 		IPEndPoint remoteEndPoint = new IPEndPoint (IPAddress.Broadcast, TrackerProperties.Instance.listenPort + 1);
 		udp.Send (data, data.Length, remoteEndPoint);
 	}
+
+    public void processAvatarMessage(AvatarMessage av)
+    {
+        UdpClient udp = new UdpClient();
+        //Calibration
+        string message = av.createCalibrationMessage(_sensors);
+        byte[] data = Encoding.UTF8.GetBytes(message);
+        IPEndPoint remoteEndPoint = new IPEndPoint(av.replyIPAddress, av.port);
+        Debug.Log("Sent reply with calibration data " + message);
+        udp.Send(data, data.Length, remoteEndPoint);
+        //broadcast
+        string message2 = CloudMessage.createRequestMessage(av.mode, av.replyIPAddress.ToString(), av.port);
+        byte[] data2 = Encoding.UTF8.GetBytes(message2);
+        IPEndPoint remoteEndPoint2 = new IPEndPoint(IPAddress.Broadcast, TrackerProperties.Instance.listenPort + 1);
+        udp.Send(data2, data2.Length, remoteEndPoint2);
+        Debug.Log("Forwarded request to clients " + message2);
+    }
 
 }
