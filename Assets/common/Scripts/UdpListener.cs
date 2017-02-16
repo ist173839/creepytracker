@@ -15,12 +15,16 @@ public class UdpListener : MonoBehaviour {
     private List<byte[]> _stringsToParse; // TMA: Store the bytes from the socket instead of converting to strings. Saves time.
 #pragma warning disable 169
     private byte[] _receivedBytes;
-#pragma warning restore 169
-    private int _number = 0;
 
-    // ReSharper disable once ArrangeTypeMemberModifiers
-    // ReSharper disable once UnusedMember.Local
-    void Start() { }
+    private int number = 0;
+    //so we don't have to create again
+    CloudMessage message;
+
+    void Start()
+    {
+        message = new CloudMessage();
+    }
+
 
     public void UdpRestart()
     {
@@ -35,11 +39,10 @@ public class UdpListener : MonoBehaviour {
 
     public void ReceiveCallback(IAsyncResult ar)
     {
-        Byte[] receiveBytes = _udpClient.EndReceive(ar, ref _anyIp);
-        
-		_stringsToParse.Add(receiveBytes);
 
+        Byte[] receiveBytes = _udpClient.EndReceive(ar, ref _anyIp);
         _udpClient.BeginReceive(new AsyncCallback(this.ReceiveCallback), null);
+        _stringsToParse.Add(receiveBytes);
     }
 
     private void PressToRestart()
@@ -82,8 +85,8 @@ public class UdpListener : MonoBehaviour {
                         string stringToParse = Encoding.ASCII.GetString(toProcess);
                         string[] splitmsg = stringToParse.Split(MessageSeparators.L0);
 
-                        CloudMessage c = new CloudMessage(splitmsg[1], toProcess, splitmsg[0].Length);
-                        gameObject.GetComponent<Tracker>().SetNewCloud(c);
+                        message.set(splitmsg[1], toProcess, splitmsg[0].Length);
+                        gameObject.GetComponent<Tracker>().setNewCloud(message);
                     }
                     else if (Convert.ToChar(toProcess[0]) == 'A')
                     {
