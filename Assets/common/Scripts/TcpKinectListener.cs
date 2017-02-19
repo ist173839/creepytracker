@@ -14,12 +14,18 @@ public class KinectStream
     internal string name;
     internal byte[] data;
     internal int size;
+    internal uint lastUpdated;
+    internal uint lastID;
+    internal bool dirty;
+    public int BUFFER = 4341760;
 
     public KinectStream(TcpClient client)
     {
-        
+
         name = "Unknown Kinect Stream";
         _client = client;
+        data = new byte[BUFFER];
+        dirty = false;
     }
 
     public void StopStream()
@@ -28,24 +34,19 @@ public class KinectStream
     }
 }
 
-// ReSharper disable once UnusedMember.Global
 public class TcpKinectListener : MonoBehaviour
 {
-
-    public int Buffer = 4341760;
-
-    public bool ShowNetworkDetails = true;
-
-    private int _tcpListeningPort;
+    private List<KinectStream> _kinectStreams;
 
     private TcpListener _server;
 
+    private int _tcpListeningPort;
+    
     private bool _running;
 
-    private List<KinectStream> _kinectStreams;
-    
-    void Start () {
 
+    void Start()
+    {
         //_threads = new List<Thread>();
 
         _kinectStreams = new List<KinectStream>();
@@ -72,9 +73,10 @@ public class TcpKinectListener : MonoBehaviour
             clientThread.Start(newclient);
         }
     }
-
+    
     void clientHandler(object o)
     {
+        int SIZEHELLO = 200;
         TcpClient client = (TcpClient)o;
         KinectStream kstream = new KinectStream(client);
 
@@ -82,57 +84,89 @@ public class TcpKinectListener : MonoBehaviour
 
         using (NetworkStream ns = client.GetStream())
         {
-            bool login = false;
 
-            byte[] message = new byte[Buffer];
-            int bytesRead;
+            byte[] message = new byte[SIZEHELLO];
+            int bytesRead = 0;
+            byte[] buffer = new byte[4341760];
+            try
+            {
+                bytesRead = ns.Read(message, 0, SIZEHELLO);
+            }
+            catch
+            {
+                Debug.Log("Connection Lost from " + kstream.name);
+                client.Close();
+                _kinectStreams.Remove(kstream); ;
+            }
 
+            if (bytesRead == 0)
+            {
+                Debug.Log("Connection Lost from " + kstream.name);
+                client.Close();
+                _kinectStreams.Remove(kstream); ;
+            }
+            
+            //Login
+            string s = System.Text.Encoding.Default.GetString(message);
+            string[] l = s.Split('/');
+
+            if (l.Length == 3 && l[0] == "k")
+            {
+                kstream.name = l[1];
+                Debug.Log("New stream from " + l[1]);
+            }
             while (_running)
             {
                 try
                 {
-                    bytesRead = ns.Read(message, 0, Buffer);
+                    bytesRead = ns.Read(message, 0, 8);
                 }
-                catch
+                catch(Exception e)
                 {
+                    Debug.Log(e.Message);
+                    _running = false;
+                    break;
+                }
+                if (bytesRead == 0)
+                {
+                    _running = false;
                     break;
                 }
 
-                if (bytesRead == 0)
-                {
-                    break;
-                }
-               
-            //new message
-            if (!login)
-                {
-                    string s = System.Text.Encoding.Default.GetString(message);
-                    string[] l = s.Split('/');
-                    if (l.Length == 3 && l[0] == "k")
-                    {
-                        kstream.name = l[1];
-                        login = true;
-                        Debug.Log("New stream from " + l[1]);
+                byte[] idb = { message[0], message[1], message[2], message[3] };
+                uint id = BitConverter.ToUInt32(idb, 0);
+                kstream.lastID = id;
+                byte[] sizeb = { message[4], message[5], message[6], message[7] };
+                int size = BitConverter.ToInt32(sizeb, 0);
+                kstream.size = size;
+                while (size > 0) { 
+                    try{
+                        bytesRead = ns.Read(buffer, 0, size);
+                    }catch(Exception e) { 
+                        Debug.Log(e.Message);
+                        _running = false;
+                        break;
                     }
-                }
-                else
-                {
+                    if (bytesRead == 0)
+                    {
+                        _running = false;
+                        break;
+                    }
                     //save because can't update from outside main thread
-                    kstream.data = message;
-                    kstream.size = bytesRead;
+                   
+                    Array.Copy(buffer, 0, kstream.data, kstream.size - size, bytesRead);
+                    size -= bytesRead;
                 }
-            } 
+                kstream.dirty = true;
+            }
         }
-        Debug.Log("Connection Lost from " + kstream.name);
-        client.Close();
-        _kinectStreams.Remove(kstream);
     }
 
     private int Convert2BytesToInt(byte b1, byte b2)
     {
         return (int)b1 + (int)(b2 * 256);
     }
-    
+
     public void CloseTcpConnections()
     {
         foreach (KinectStream ks in _kinectStreams)
@@ -152,9 +186,12 @@ public class TcpKinectListener : MonoBehaviour
     // ReSharper disable once UnusedMember.Local
     void Update()
     {
-        foreach(KinectStream k in _kinectStreams)
-        {    
-            gameObject.GetComponent<Tracker>().SetNewCloud(k.name, k.data,k.size);
+        foreach (KinectStream k in _kinectStreams)
+        {
+            if (k.dirty) {
+                gameObject.GetComponent<Tracker>().SetNewCloud(k.name, k.data, k.size,k.lastID);
+                k.dirty = false;
+            }
         }
     }
 

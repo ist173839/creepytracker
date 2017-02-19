@@ -535,18 +535,15 @@ public class Tracker : MonoBehaviour
 	{
 		_udpBroadcast.RemoveUnicast (key);
 	}
-
     //FOR TCP
-    internal void SetNewCloud(string kinectId, byte[] data, int size)
+    internal void SetNewCloud(string KinectID, byte[] data, int size, uint id)
     {
-
         // tirar o id da mensagem que é um int
-        if (Sensors.ContainsKey(kinectId))
+        
+        if (Sensors.ContainsKey(KinectID))
         {
-            byte[] idb = { data[0], data[1], data[2], data[3] };
-            uint id = BitConverter.ToUInt32(idb, 0);
-            Sensors[kinectId].lastCloud.setPoints(data, 4, id, size);
-            Sensors[kinectId].lastCloud.setToView();
+            Sensors[KinectID].lastCloud.setPoints(data, 0, id, size);
+            Sensors[KinectID].lastCloud.setToView();
         }
     }
 
@@ -576,15 +573,19 @@ public class Tracker : MonoBehaviour
         }
 	}
 
-	internal void SetNewFrame (BodiesMessage bodies)
+    internal void SetCloudToView(string KinectID)
+    {
+        Sensors[KinectID].lastCloud.setToView();
+    }
+
+    internal void SetNewFrame (BodiesMessage bodies)
 	{
         //Debug.Log("bodies = " + bodies.Message + ", KinectId = " + bodies.KinectId);
         if (!Sensors.ContainsKey (bodies.KinectId))
         {
 			var position = new Vector3 (Mathf.Ceil (Sensors.Count / 2.0f) * (Sensors.Count % 2 == 0 ? -1.0f : 1.0f), 1, 0);
-            Sensors [bodies.KinectId] = new Sensor (bodies.KinectId, (GameObject)Instantiate (Resources.Load ("Prefabs/KinectSensorPrefab"), position, Quaternion.identity));
+            Sensors [bodies.KinectId] = new Sensor (bodies.KinectId, (GameObject) Instantiate (Resources.Load ("Prefabs/KinectSensorPrefab"), position, Quaternion.identity));
 		}
-
 		Sensors [bodies.KinectId].lastBodiesMessage = bodies;
 	}
 
@@ -811,16 +812,18 @@ public class Tracker : MonoBehaviour
 		ConfigProperties.writeComment (filePath, "Config File created in " + DateTime.Now.ToString ("yyyy-MM-dd HH:mm:ss"));
 
 		// save properties
-		ConfigProperties.save (filePath, "udp.listenport", "" + TrackerProperties.Instance.ListenPort);
-		ConfigProperties.save (filePath, "udp.broadcastport", "" + TrackerProperties.Instance.BroadcastPort);
-		ConfigProperties.save (filePath, "udp.sendinterval", "" + TrackerProperties.Instance.SendInterval);
-		ConfigProperties.save (filePath, "tracker.mergedistance", "" + TrackerProperties.Instance.MergeDistance);
+		ConfigProperties.save (filePath, "udp.listenport",              "" + TrackerProperties.Instance.ListenPort);
+		ConfigProperties.save (filePath, "udp.broadcastport",           "" + TrackerProperties.Instance.BroadcastPort);
+		ConfigProperties.save (filePath, "udp.sendinterval",            "" + TrackerProperties.Instance.SendInterval);
+		ConfigProperties.save (filePath, "tracker.mergedistance",       "" + TrackerProperties.Instance.MergeDistance);
 		ConfigProperties.save (filePath, "tracker.confidencethreshold", "" + TrackerProperties.Instance.ConfidenceTreshold);
 //		ConfigProperties.save (filePath, "tracker.filtergain", "" + AdaptiveDoubleExponentialFilterFloat.Gain);
 
 		// save sensors
-		foreach (Sensor s in Sensors.Values) {
-			if (s.Active) {
+		foreach (Sensor s in Sensors.Values)
+        {
+			if (s.Active)
+            {
 				Vector3 p = s.SensorGameObject.transform.position;
 				Quaternion r = s.SensorGameObject.transform.rotation;
 				ConfigProperties.save (filePath, "kinect." + s.SensorID, "" + s.SensorID + ";" + p.x + ";" + p.y + ";" + p.z + ";" + r.x + ";" + r.y + ";" + r.z + ";" + r.w);
@@ -964,13 +967,9 @@ public class Tracker : MonoBehaviour
             MessageSeparators.L2 +
             "MeanTrackKneeRight" + MessageSeparators.SET + stringMeanTrackKneeRight +
             MessageSeparators.L2 +
-            "MeanTrackKneeLeft" + MessageSeparators.SET + stringMeanTrackKneeLeft;
-
-
+            "MeanTrackKneeLeft"  + MessageSeparators.SET + stringMeanTrackKneeLeft;
         return mensagem;
     }
-
-
 
     private static Vector3? GetMeanList(Dictionary<string, KneesInfo> meanList)
     {
@@ -1016,28 +1015,33 @@ public class Tracker : MonoBehaviour
     {
         //int n = 1;
 
-        if (ShowHumanBodies == -1) {
-            foreach (Human h in _humans.Values) {
+        if (ShowHumanBodies == -1)
+        {
+            foreach (Human h in _humans.Values)
+            {
                 //GUI.Label(new Rect(10, Screen.height - (n++ * 50), 1000, 50), "Human " + h.ID + " as seen by " + h.seenBySensor);
-
                 var p = Camera.main.WorldToScreenPoint (h.Skeleton.GetHead () + new Vector3 (0, 0.2f, 0));
-                if (p.z > 0) {
+                if (p.z > 0)
+                {
                     GUI.Label (new Rect (p.x, Screen.height - p.y - 25, 100, 25), "" + h.ID);
                 }
             }
         }
 
-        foreach (Sensor s in Sensors.Values) {
-            if (s.Active) {
+        foreach (Sensor s in Sensors.Values)
+        {
+            if (s.Active)
+            {
                 var p = Camera.main.WorldToScreenPoint (s.SensorGameObject.transform.position + new Vector3 (0, 0.05f, 0));
-                if (p.z > 0) {
+                if (p.z > 0)
+                {
                     GUI.Label (new Rect (p.x, Screen.height - p.y - 25, 100, 25), "" + s.SensorID);
                 }
             }
         }
     }
 
-    public void processAvatarMessage(AvatarMessage av)
+    public void ProcessAvatarMessage(AvatarMessage av)
     {
         UdpClient udp = new UdpClient();
         //Calibration

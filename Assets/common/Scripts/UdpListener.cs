@@ -93,7 +93,7 @@ public class UdpListener : MonoBehaviour {
                         string stringToParse = Encoding.ASCII.GetString(toProcess);
                         string[] splitmsg = stringToParse.Split(MessageSeparators.L0);
                         AvatarMessage av = new AvatarMessage(splitmsg[1], toProcess);
-                        gameObject.GetComponent<Tracker>().processAvatarMessage(av);
+                        gameObject.GetComponent<Tracker>().ProcessAvatarMessage(av);
                     }
                 }
                 _stringsToParse.RemoveAt(0);
