@@ -9,7 +9,7 @@ using Object = UnityEngine.Object;
 // ReSharper disable once CheckNamespace
 public class CenterServer
 {
-    private OptitrackManager _localOptitrackManager;
+    //private OptitrackManager _localOptitrackManager;
 
     private UdpBroadcast _udpBroadcast;
 
@@ -35,6 +35,10 @@ public class CenterServer
         //_localOptitrackManager = gameObject.GetComponent<OptitrackManager>();
     }
     
+}
+///////////////////////////////////////////////////////////////////////////////////////////////
+    /*
+ 
     public void SetCenterOptiTrack()
     {
             if (_localOptitrackManager != null)
@@ -53,4 +57,5 @@ public class CenterServer
             _udpBroadcast.Send(mensagem);
         }
     }
-}
+     
+     */

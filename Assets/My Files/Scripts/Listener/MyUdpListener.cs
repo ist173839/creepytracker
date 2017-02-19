@@ -17,33 +17,35 @@ using System.Text;
 // ReSharper disable once ClassNeverInstantiated.Global
 public class MyUdpListener : MonoBehaviour
 {
+    //private List<string> _stringsToParseAvr;
+    //private SaveAvr      _saveAvr;
+    //private IPEndPoint _anyIpAvr;
+    //private UdpClient _udpClientAvr = null;
+    //private int _portAvr;
+
     private List<string> _stringsToParseColicoes;
     private List<string> _stringsToParseRecord;
-    private List<string> _stringsToParseAvr;
     private List<string> _stringsToParseLog;
     private List<string> _stringsToParseStatus;
-    
+
+
     private SaveColicoes _saveColicoes;
     private SaveRecord   _saveRecord;
-    private SaveAvr      _saveAvr;
     private SaveLog      _saveLog;
     private SaveStatus   _saveStatus;
 
     private IPEndPoint _anyIpColicoes;
     private IPEndPoint _anyIpRecord;
-    private IPEndPoint _anyIpAvr;
     private IPEndPoint _anyIpLog;
     private IPEndPoint _anyIpStatus;
-    
+
     private UdpClient _udpClientColicoes = null;
     private UdpClient _udpClientRecord   = null;
-    private UdpClient _udpClientAvr      = null;
     private UdpClient _udpClientLog      = null;
     private UdpClient _udpClientStatus   = null;
-    
+
     private int _portColicoes;
     private int _portRecord;
-    private int _portAvr;
     private int _portLog;
     private int _portStatus;
 
@@ -51,15 +53,16 @@ public class MyUdpListener : MonoBehaviour
     // ReSharper disable once UnusedMember.Local
     void Awake()
     {
+        //_portAvr = 59839;
+        //_saveAvr = new SaveAvr();
+
         _portRecord   = 57839;
         _portColicoes = 58839;
-        _portAvr      = 59839;
         _portLog      = 60839;
         _portStatus   = 61839;
 
         _saveColicoes = new SaveColicoes();
         _saveRecord   = new SaveRecord();
-        _saveAvr      = new SaveAvr();
         _saveLog      = new SaveLog();
         _saveStatus   = new SaveStatus();
     }
@@ -75,37 +78,37 @@ public class MyUdpListener : MonoBehaviour
     public void SetNewUser(string nameUser)
     {
         var newUser = "User- " + nameUser + " Time- " + DateTime.Now.ToString("yyyyMMddTHHmmss");
+        //_saveAvr.SetUpUserFolder(newUser);
 
         _saveStatus.SetUpUserFolder(newUser);
         _saveColicoes.SetUpUserFolder(newUser);
         _saveRecord.SetUpUserFolder(newUser);
-        _saveAvr.SetUpUserFolder(newUser);
         _saveLog.SetUpUserFolder(newUser);
     }
 
     private void UdpRestart()
     {
+        //if (_udpClientAvr != null) _udpClientAvr.Close();
+        //_stringsToParseAvr = new List<string>();
+        //_anyIpAvr          = new IPEndPoint(IPAddress.Any, _portAvr);
+        //_udpClientAvr      = new UdpClient(_anyIpAvr);
+        //_udpClientAvr.BeginReceive(new AsyncCallback(this.ReceiveCallbackAvr), null);
+        //Debug.Log("[UDPListener] Receiving Avr in port: " + _portAvr);
+
         if (_udpClientRecord != null) _udpClientRecord.Close();
         _stringsToParseRecord = new List<string>();
         _anyIpRecord          = new IPEndPoint(IPAddress.Any, _portRecord);
         _udpClientRecord      = new UdpClient(_anyIpRecord);
         _udpClientRecord.BeginReceive(new AsyncCallback(this.ReceiveCallbackRecord), null);
         Debug.Log("[UDPListener] Receiving Record in port : " + _portRecord);
-        
+
         if (_udpClientColicoes != null) _udpClientColicoes.Close();
         _stringsToParseColicoes = new List<string>();
         _anyIpColicoes          = new IPEndPoint(IPAddress.Any, _portColicoes);
         _udpClientColicoes      = new UdpClient(_anyIpColicoes);
         _udpClientColicoes.BeginReceive(new AsyncCallback(this.ReceiveCallbackColicoes), null);
+
         Debug.Log("[UDPListener] Receiving Colicoes in port: " + _portColicoes);
-
-        if (_udpClientAvr != null) _udpClientAvr.Close();
-        _stringsToParseAvr = new List<string>();
-        _anyIpAvr          = new IPEndPoint(IPAddress.Any, _portAvr);
-        _udpClientAvr      = new UdpClient(_anyIpAvr);
-        _udpClientAvr.BeginReceive(new AsyncCallback(this.ReceiveCallbackAvr), null);
-        Debug.Log("[UDPListener] Receiving Avr in port: " + _portAvr);
-
         if (_udpClientLog != null) _udpClientLog.Close();
         _stringsToParseLog = new List<string>();
         _anyIpLog          = new IPEndPoint(IPAddress.Any, _portLog);
@@ -137,12 +140,7 @@ public class MyUdpListener : MonoBehaviour
         _udpClientColicoes.BeginReceive(new AsyncCallback(this.ReceiveCallbackColicoes), null);
     }
 
-    private void ReceiveCallbackAvr(IAsyncResult ar)
-    {
-        var receiveBytes = _udpClientAvr.EndReceive(ar, ref _anyIpAvr);
-        _stringsToParseAvr.Add(Encoding.ASCII.GetString(receiveBytes));
-        _udpClientAvr.BeginReceive(new AsyncCallback(this.ReceiveCallbackAvr), null);
-    }
+  
 
     private void ReceiveCallbackLog(IAsyncResult ar)
     {
@@ -176,6 +174,13 @@ public class MyUdpListener : MonoBehaviour
 
     private void UpdateMessages()
     {
+        //while (_stringsToParseAvr.Count > 0)
+        //{
+        //    var stringToParse = _stringsToParseAvr.First();
+        //    _stringsToParseAvr.RemoveAt(0);
+        //    _saveAvr.RecordMessage(stringToParse);
+        //}
+
         while (_stringsToParseRecord.Count > 0)
         {
             var stringToParse = _stringsToParseRecord.First();
@@ -190,13 +195,6 @@ public class MyUdpListener : MonoBehaviour
             _saveColicoes.RecordMessage(stringToParse);
         }
 
-        while (_stringsToParseAvr.Count > 0)
-        {
-            var stringToParse = _stringsToParseAvr.First();
-            _stringsToParseAvr.RemoveAt(0);
-            _saveAvr.RecordMessage(stringToParse);
-        }
-        
         while (_stringsToParseLog.Count > 0)
         {
             var stringToParse = _stringsToParseLog.First();
@@ -219,9 +217,10 @@ public class MyUdpListener : MonoBehaviour
 
     private void CloseClients()
     {
+        //if (_udpClientAvr != null)      _udpClientAvr.Close();
+
         if (_udpClientColicoes != null) _udpClientColicoes.Close();
         if (_udpClientRecord != null)   _udpClientRecord.Close();
-        if (_udpClientAvr != null)      _udpClientAvr.Close();
         if (_udpClientLog != null)      _udpClientLog.Close();
         if (_udpClientStatus != null)   _udpClientStatus.Close();
     }
@@ -242,7 +241,12 @@ public class MyUdpListener : MonoBehaviour
 }
 /*
  
-
+      private void ReceiveCallbackAvr(IAsyncResult ar)
+    {
+        var receiveBytes = _udpClientAvr.EndReceive(ar, ref _anyIpAvr);
+        _stringsToParseAvr.Add(Encoding.ASCII.GetString(receiveBytes));
+        _udpClientAvr.BeginReceive(new AsyncCallback(this.ReceiveCallbackAvr), null);
+    }
 
 //////////////////////////////////////////////////////////////////////////////////////////
     private IPEndPoint _anyIpBase;
