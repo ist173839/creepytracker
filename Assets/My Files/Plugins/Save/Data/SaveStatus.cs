@@ -43,11 +43,13 @@ public class SaveStatus
     private string _versao;
     private string _sigla;
     
-    public int NumColunas   { get; private set; }
+    public int NumColunas { get; private set; }
+    public int FinalNum   { get; private set; }
 
     private static readonly int TamanhoMaximo = (int) Math.Pow(2, 20); // (2 ^ 30)
 
     private int _cont;
+
 
     //  public bool DirectoryChange;
 
@@ -99,6 +101,7 @@ public class SaveStatus
         _cont = 0;
         NumColunas = 0;
 
+        FinalNum = -1;
         //_activeControloMode  = ControloMode.CWIP;
         //_headerCwip          = GetCwipHeader();
         //_headerWip           = GetWipHeader();
@@ -132,6 +135,7 @@ public class SaveStatus
         _isInitiate = false;
         _cont = 0;
         NumColunas = 0;
+        FinalNum   = -1;
     }
 
     private void CheckFileSize()
@@ -154,15 +158,27 @@ public class SaveStatus
         }
         
         if (!_isInitiate) SetUpFileAndDirectory();
+        
         // if (!_isInitiate) SetUpFileAndDirectory(message);
         // if (message != _startMessage  && !_isInitiate) { } else
+
         if (message == _endMessage)
         {
+            WriteStringInDoc(message, true);
             StopRecording();
             Debug.Log(_endMessage);
+
         }
         else
+        {
+            if (!message.Contains("Tempo"))
+            {
+                char[] del = { ';' };
+                var lineText = message.Split(del);
+                FinalNum = int.Parse(lineText[0]);
+            }
             WriteStringInDoc(message, true);
+        }
 
         CheckFileSize();
     }

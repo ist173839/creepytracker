@@ -45,6 +45,8 @@ public class SaveLog
     
     public int NumColunas   { get; private set; }
 
+
+
     private static readonly int TamanhoMaximo = (int) Math.Pow(2, 20); // (2 ^ 30)
 
     private int _cont;

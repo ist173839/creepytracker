@@ -81,8 +81,9 @@ public class TrackerUI : MonoBehaviour
         
     //}
 
+    //public bool UseOptiTrack  { get; set; }
+
     public bool ShowIndicator { get; set; }
-    public bool UseOptiTrack  { get; set; }
     public bool UseSaveFile   { get; set; }
     public bool ShowMarker    { get; set; }
     public bool UseRecord     { get; set; }
@@ -91,11 +92,10 @@ public class TrackerUI : MonoBehaviour
     public bool Send          { get; set; }
 
     public float Extra;
+    public float FinalNum;
 
-
-    //public float FinalNum;
     //public int id;
-    
+
     ////////////////////////////////////////////////////////////////
 
     // ReSharper disable once ArrangeTypeMemberModifiers
@@ -140,7 +140,7 @@ public class TrackerUI : MonoBehaviour
 
         _user = _userInicial = "User 0";
 
-        //FinalNum = -1;
+        FinalNum = -1;
         //id = -1;
 
         ////////////////////////////////////////////////////////////////////
@@ -166,6 +166,11 @@ public class TrackerUI : MonoBehaviour
 
 	    if (_userTracker.CalibrationStatus == CalibrationProcess.CalcNormal)
 			_userTracker.CalibrationStep3 ();
+
+	    if (_localMyUdpListener != null)
+	    {
+	        FinalNum = _localMyUdpListener.FinalNum;
+	    }
 	}
 
     // ReSharper disable once UnusedMember.Local
@@ -284,22 +289,28 @@ public class TrackerUI : MonoBehaviour
 			var t = Time.deltaTime;
 			if (_userTracker.Sensors.Count > 0) {
 
-				if (GUI.Button (new Rect (left, top, 60, 20), "Request")) {
+				if (GUI.Button (new Rect (left, top, 60, 20), "Request"))
+                {
 					_userTracker.BroadCastCloudRequests(_continuous);
 				}
 				_continuous = GUI.Toggle(new Rect(left,top+20,90,20),_continuous,"Continuous");
 
                 var oldh = _hideHumans;
                 _hideHumans = GUI.Toggle(new Rect(left + 90, top + 20, 90, 20), _hideHumans, "Hide humans");
-                if(oldh != _hideHumans)
+
+                if (oldh != _hideHumans)
                 {
                     _userTracker.SetHumansVisibility(_hideHumans);
                 }
-                if (GUI.Button (new Rect (left + 70, top, 60, 20), "Hide")) {
+
+                if (GUI.Button (new Rect (left + 70, top, 60, 20), "Hide"))
+                {
 					_userTracker.HideAllClouds ();
 
 				}
-				if (GUI.Button (new Rect (left + 140, top, 60, 20), "Save")) {
+
+                if (GUI.Button (new Rect (left + 140, top, 60, 20), "Save"))
+                {
 					_userTracker.Save ();
 				}
 				top += 45;
@@ -407,7 +418,8 @@ public class TrackerUI : MonoBehaviour
 
 			TrackerProperties.Instance.ListenPort = int.Parse (GUI.TextField (new Rect (left, top, 50, 20), "" + TrackerProperties.Instance.ListenPort));
 			left += 55;
-			if (GUI.Button (new Rect (left, top, 50, 25), "Reset")) {
+			if (GUI.Button (new Rect (left, top, 50, 25), "Reset"))
+            {
 				_userTracker.ResetListening ();
 				_userTracker.Save ();
 
@@ -449,9 +461,11 @@ public class TrackerUI : MonoBehaviour
             // FinalNum++;
             GUI.Label(new Rect(left, top, 180, 25), "EXTRA (FHV) : ", _titleStyle);
 
-            //top += 25;
+            GUI.Label(new Rect(left + 100, top, 180, 25), "Objectivo = " + FinalNum);
+
+            top += 25;
             
-            if (GUI.Button(new Rect(left + 100, top, 100, 25), "New User"))
+            if (GUI.Button(new Rect(left, top, 100, 25), "New User"))
             {
                 _localMyUdpListener.SetNewUser(string.IsNullOrEmpty(_user) ? _userInicial : _user);
             }
@@ -503,9 +517,9 @@ public class TrackerUI : MonoBehaviour
             }
             else
             {
-                //UseOptiTrack = _localHandleVirtualWorld.UseOpti;
-                //UseOptiTrack = GUI.Toggle(new Rect(left + 120, top, 100, 25), UseOptiTrack, "Use Opti");
-                //_localHandleVirtualWorld.UseOpti = UseOptiTrack; // = useOptiTrack;
+                // UseOptiTrack = _localHandleVirtualWorld.UseOpti;
+                // UseOptiTrack = GUI.Toggle(new Rect(left + 120, top, 100, 25), UseOptiTrack, "Use Opti");
+                // _localHandleVirtualWorld.UseOpti = UseOptiTrack; // = useOptiTrack;
 
                 top += 30;
 
@@ -536,7 +550,7 @@ public class TrackerUI : MonoBehaviour
                     }
                 }
 
-                if (!UseOptiTrack)
+                //if (!UseOptiTrack)
                 {
                     top += 30;
                     if (_userTracker.IdIntList.Count > 0)
