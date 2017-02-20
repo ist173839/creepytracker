@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading;
 using UnityEngine;
 
-// ReSharper disable once CheckNamespace
 public class KinectStream
 {
     private TcpClient _client;
@@ -28,7 +27,7 @@ public class KinectStream
         dirty = false;
     }
 
-    public void StopStream()
+    public void stopStream()
     {
         _client.Close();
     }
@@ -36,28 +35,32 @@ public class KinectStream
 
 public class TcpKinectListener : MonoBehaviour
 {
-    private List<KinectStream> _kinectStreams;
 
+
+    public bool showNetworkDetails = true;
+
+    private int TcpListeningPort;
     private TcpListener _server;
 
-    private int _tcpListeningPort;
-    
     private bool _running;
+
+    private List<KinectStream> _kinectStreams;
+
 
 
     void Start()
     {
+
         //_threads = new List<Thread>();
 
         _kinectStreams = new List<KinectStream>();
 
-
-        _tcpListeningPort = TrackerProperties.Instance.ListenPort;
-        _server = new TcpListener(IPAddress.Any, _tcpListeningPort);
+        TcpListeningPort = TrackerProperties.Instance.ListenPort;
+        _server = new TcpListener(IPAddress.Any, TcpListeningPort);
 
         _running = true;
         _server.Start();
-        Debug.Log("Accepting clients at port " + _tcpListeningPort);
+        Debug.Log("Accepting clients at port " + TcpListeningPort);
         Thread acceptLoop = new Thread(new ParameterizedThreadStart(AcceptClients));
         //_threads.Add(acceptLoop);
         acceptLoop.Start();
@@ -65,6 +68,7 @@ public class TcpKinectListener : MonoBehaviour
 
     void AcceptClients(object o)
     {
+
         while (_running)
         {
             TcpClient newclient = _server.AcceptTcpClient();
@@ -73,7 +77,8 @@ public class TcpKinectListener : MonoBehaviour
             clientThread.Start(newclient);
         }
     }
-    
+
+
     void clientHandler(object o)
     {
         int SIZEHELLO = 200;
@@ -105,7 +110,7 @@ public class TcpKinectListener : MonoBehaviour
                 client.Close();
                 _kinectStreams.Remove(kstream); ;
             }
-            
+
             //Login
             string s = System.Text.Encoding.Default.GetString(message);
             string[] l = s.Split('/');
@@ -115,13 +120,16 @@ public class TcpKinectListener : MonoBehaviour
                 kstream.name = l[1];
                 Debug.Log("New stream from " + l[1]);
             }
+
+
+
             while (_running)
             {
                 try
                 {
                     bytesRead = ns.Read(message, 0, 8);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     Debug.Log(e.Message);
                     _running = false;
@@ -139,10 +147,15 @@ public class TcpKinectListener : MonoBehaviour
                 byte[] sizeb = { message[4], message[5], message[6], message[7] };
                 int size = BitConverter.ToInt32(sizeb, 0);
                 kstream.size = size;
-                while (size > 0) { 
-                    try{
+
+                while (size > 0)
+                {
+                    try
+                    {
                         bytesRead = ns.Read(buffer, 0, size);
-                    }catch(Exception e) { 
+                    }
+                    catch (Exception e)
+                    {
                         Debug.Log(e.Message);
                         _running = false;
                         break;
@@ -153,25 +166,26 @@ public class TcpKinectListener : MonoBehaviour
                         break;
                     }
                     //save because can't update from outside main thread
-                   
+
                     Array.Copy(buffer, 0, kstream.data, kstream.size - size, bytesRead);
                     size -= bytesRead;
                 }
                 kstream.dirty = true;
             }
         }
+
     }
 
-    private int Convert2BytesToInt(byte b1, byte b2)
+    private int convert2BytesToInt(byte b1, byte b2)
     {
         return (int)b1 + (int)(b2 * 256);
     }
 
-    public void CloseTcpConnections()
+    public void closeTcpConnections()
     {
         foreach (KinectStream ks in _kinectStreams)
         {
-            ks.StopStream();
+            ks.stopStream();
         }
         _kinectStreams = new List<KinectStream>();
     }
@@ -179,24 +193,21 @@ public class TcpKinectListener : MonoBehaviour
     void OnApplicationQuit()
     {
         _running = false;
-        CloseTcpConnections();
+        closeTcpConnections();
     }
 
-    // ReSharper disable once ArrangeTypeMemberModifiers
-    // ReSharper disable once UnusedMember.Local
     void Update()
     {
         foreach (KinectStream k in _kinectStreams)
         {
-            if (k.dirty) {
-                gameObject.GetComponent<Tracker>().SetNewCloud(k.name, k.data, k.size,k.lastID);
+            if (k.dirty)
+            {
+                gameObject.GetComponent<Tracker>().SetNewCloud(k.name, k.data, k.size, k.lastID);
                 k.dirty = false;
             }
         }
     }
 
-    // ReSharper disable once ArrangeTypeMemberModifiers
-    // ReSharper disable once UnusedMember.Local
     void OnQuit()
     {
         OnApplicationQuit();
