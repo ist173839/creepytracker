@@ -2,7 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class TrackerProperties : MonoBehaviour {
+// ReSharper disable once ClassNeverInstantiated.Global
+// ReSharper disable once CheckNamespace
+public class TrackerProperties : MonoBehaviour
+{
 
     private static TrackerProperties _singleton;
 
@@ -33,6 +36,8 @@ public class TrackerProperties : MonoBehaviour {
         }
     }
 
+    // ReSharper disable once UnusedMember.Local
+    // ReSharper disable once ArrangeTypeMemberModifiers
     void Start()
     {
         //_singleton = this;

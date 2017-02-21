@@ -7,16 +7,18 @@ using System.Text;
 using System.Threading;
 using UnityEngine;
 
+// ReSharper disable once CheckNamespace
 public class KinectStream
 {
     private TcpClient _client;
-    internal string name;
+    public int BUFFER = 4341760;
+
     internal byte[] data;
+    internal string name;
     internal int size;
     internal uint lastUpdated;
     internal uint lastID;
     internal bool dirty;
-    public int BUFFER = 4341760;
 
     public KinectStream(TcpClient client)
     {
@@ -27,7 +29,7 @@ public class KinectStream
         dirty = false;
     }
 
-    public void stopStream()
+    public void StopStream()
     {
         _client.Close();
     }
@@ -35,19 +37,18 @@ public class KinectStream
 
 public class TcpKinectListener : MonoBehaviour
 {
+    private List<KinectStream> _kinectStreams;
 
-
-    public bool showNetworkDetails = true;
-
-    private int TcpListeningPort;
     private TcpListener _server;
+
+    public bool ShowNetworkDetails = true;
 
     private bool _running;
 
-    private List<KinectStream> _kinectStreams;
-
-
-
+    private int TcpListeningPort;
+    
+    // ReSharper disable once ArrangeTypeMemberModifiers
+    // ReSharper disable once UnusedMember.Local
     void Start()
     {
 
@@ -66,7 +67,7 @@ public class TcpKinectListener : MonoBehaviour
         acceptLoop.Start();
     }
 
-    void AcceptClients(object o)
+    private void AcceptClients(object o)
     {
 
         while (_running)
@@ -79,7 +80,7 @@ public class TcpKinectListener : MonoBehaviour
     }
 
 
-    void clientHandler(object o)
+    private void clientHandler(object o)
     {
         int SIZEHELLO = 200;
         TcpClient client = (TcpClient)o;
@@ -120,8 +121,6 @@ public class TcpKinectListener : MonoBehaviour
                 kstream.name = l[1];
                 Debug.Log("New stream from " + l[1]);
             }
-
-
 
             while (_running)
             {
@@ -176,26 +175,29 @@ public class TcpKinectListener : MonoBehaviour
 
     }
 
-    private int convert2BytesToInt(byte b1, byte b2)
+    private int Convert2BytesToInt(byte b1, byte b2)
     {
         return (int)b1 + (int)(b2 * 256);
     }
 
-    public void closeTcpConnections()
+    public void CloseTcpConnections()
     {
         foreach (KinectStream ks in _kinectStreams)
         {
-            ks.stopStream();
+            ks.StopStream();
         }
         _kinectStreams = new List<KinectStream>();
     }
 
+    // ReSharper disable once ArrangeTypeMemberModifiers
     void OnApplicationQuit()
     {
         _running = false;
-        closeTcpConnections();
+        CloseTcpConnections();
     }
 
+    // ReSharper disable once UnusedMember.Local
+    // ReSharper disable once ArrangeTypeMemberModifiers
     void Update()
     {
         foreach (KinectStream k in _kinectStreams)
@@ -208,6 +210,8 @@ public class TcpKinectListener : MonoBehaviour
         }
     }
 
+    // ReSharper disable once ArrangeTypeMemberModifiers
+    // ReSharper disable once UnusedMember.Local
     void OnQuit()
     {
         OnApplicationQuit();
