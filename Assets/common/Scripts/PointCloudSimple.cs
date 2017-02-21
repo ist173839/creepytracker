@@ -4,12 +4,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 
-
-
 public class PointCloudSimple : MonoBehaviour
 {
     Mesh[] highres_cloud;
     Mesh[] lowres_cloud;
+
     int highres_nclouds = 0;
     int lowres_nclouds = 0;
     uint id;
@@ -85,9 +84,6 @@ public class PointCloudSimple : MonoBehaviour
     int countPack = 0;
     public void setPoints(byte[] receivedBytes, int step, uint newid, int size)
     {
-
-
-
         pointsH = new List<Vector3>();
         colorsH = new List<Color>();
         indH = new List<int>();
