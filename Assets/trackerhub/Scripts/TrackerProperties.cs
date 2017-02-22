@@ -6,7 +6,6 @@ using System.Collections.Generic;
 // ReSharper disable once CheckNamespace
 public class TrackerProperties : MonoBehaviour
 {
-
     private static TrackerProperties _singleton;
 
     public int ListenPort = 56555;

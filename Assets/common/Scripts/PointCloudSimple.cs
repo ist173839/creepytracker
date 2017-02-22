@@ -29,7 +29,7 @@ public class PointCloudSimple : MonoBehaviour
     byte[] buffer;
 
 
-    void readFileWithColor(string f)
+    void ReadFileWithColor(string f)
     {
         FileStream fs = new FileStream(f, FileMode.Open);
         StreamReader sr = new StreamReader(fs);

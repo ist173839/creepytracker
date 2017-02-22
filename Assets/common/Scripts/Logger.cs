@@ -21,22 +21,28 @@ class LogMessage
 		Message = message;
 	}
 
-	public LogLevel LogLevel {
-		get {
+	public LogLevel LogLevel
+    {
+		get
+        {
 			return _logLevel;
 		}
 
-		set {
+		set
+        {
 			_logLevel = value;
 		}
 	}
 
-	public string Message {
-		get {
+	public string Message
+    {
+		get
+        {
 			return _message;
 		}
 
-		set {
+		set
+        {
 			_message = value;
 		}
 	}

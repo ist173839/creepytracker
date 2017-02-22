@@ -35,6 +35,7 @@ public class KinectStream
     }
 }
 
+// ReSharper disable once UnusedMember.Global
 public class TcpKinectListener : MonoBehaviour
 {
     private List<KinectStream> _kinectStreams;

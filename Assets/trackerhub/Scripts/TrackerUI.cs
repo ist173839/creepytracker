@@ -406,7 +406,7 @@ public class TrackerUI : MonoBehaviour
 
             Extra = UseSaveFile ? 0.0f : 90.0f;
 
-			GUI.Box (new Rect (left, top - 10, 240, 300 + Extra), "");
+			GUI.Box (new Rect (left, top - 10, 240, 320 + Extra), "");
 			left += 10;
 
 			GUI.Label (new Rect (left, top, 200, 25), "Broadcast Settings:", _titleStyle);
