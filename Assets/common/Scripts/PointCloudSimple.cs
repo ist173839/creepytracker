@@ -28,7 +28,6 @@ public class PointCloudSimple : MonoBehaviour
     Color[] colBucket;
     byte[] buffer;
 
-
     void ReadFileWithColor(string f)
     {
         FileStream fs = new FileStream(f, FileMode.Open);
@@ -67,7 +66,7 @@ public class PointCloudSimple : MonoBehaviour
             pts.Add(1);
         }
 
-        setPoints(pts.ToArray(), 0, ++id, i);
+        SetPoints(pts.ToArray(), 0, ++id, i);
         setToView();
     }
 
@@ -81,15 +80,17 @@ public class PointCloudSimple : MonoBehaviour
         public float[] Floats;
 
     }
-    int countPack = 0;
-    public void setPoints(byte[] receivedBytes, int step, uint newid, int size)
+
+    int _countPack = 0;
+    public void SetPoints(byte[] receivedBytes, int step, uint newid, int size)
     {
         pointsH = new List<Vector3>();
         colorsH = new List<Color>();
-        indH = new List<int>();
+        indH    = new List<int>();
         pointsL = new List<Vector3>();
-        indL = new List<int>();
+        indL    = new List<int>();
         colorsL = new List<Color>();
+
         UnionArray rec = new UnionArray { Bytes = receivedBytes };
 
         if (newid > id)
@@ -107,11 +108,11 @@ public class PointCloudSimple : MonoBehaviour
             l = 0;
             h = 0;
             pointCount = 0;
-            countPack = 0;
+            _countPack = 0;
         }
         else if (newid == id)
         {
-            countPack++;
+            _countPack++;
             pointsL.AddRange(lowres_cloud[lowres_nclouds].vertices);
             colorsL.AddRange(lowres_cloud[lowres_nclouds].colors);
             indL.AddRange(lowres_cloud[lowres_nclouds].GetIndices(0));
@@ -150,9 +151,9 @@ public class PointCloudSimple : MonoBehaviour
                 Vector3 pos = posBucket[pointCount];
                 pos.Set(x, y, z);
                 Color c = colBucket[pointCount++];
-                c.r = (float)r / 255;
-                c.g = (float)g / 255;
-                c.b = (float)b / 255;
+                c.r = (float) r / 255;
+                c.g = (float) g / 255;
+                c.b = (float) b / 255;
 
                 if (receivedBytes[i + 15] == 1)// If it's a HR point, save it to the high resolution points.
                 {

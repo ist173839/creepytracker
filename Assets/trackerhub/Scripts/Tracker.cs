@@ -542,7 +542,7 @@ public class Tracker : MonoBehaviour
         
         if (Sensors.ContainsKey(KinectID))
         {
-            Sensors[KinectID].lastCloud.setPoints(data, 0, id, size);
+            Sensors[KinectID].lastCloud.SetPoints(data, 0, id, size);
             Sensors[KinectID].lastCloud.setToView();
         }
     }
@@ -569,7 +569,7 @@ public class Tracker : MonoBehaviour
                 Sensors[kinectId].lastCloud.setToView();
             }
             else
-                Sensors[kinectId].lastCloud.setPoints(cloud.ReceivedBytes,step,id,cloud.ReceivedBytes.Length);
+                Sensors[kinectId].lastCloud.SetPoints(cloud.ReceivedBytes,step,id,cloud.ReceivedBytes.Length);
         }
 	}
 

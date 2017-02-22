@@ -19,6 +19,8 @@ public class CameraOrbit : MonoBehaviour
 	public float x = 0.0f;
 	public float y = 0.0f;
 
+    // ReSharper disable once ArrangeTypeMemberModifiers
+    // ReSharper disable once UnusedMember.Local
 	void Start ()
 	{
 		//Vector3 angles = transform.eulerAngles;
@@ -29,15 +31,15 @@ public class CameraOrbit : MonoBehaviour
             GetComponent<Rigidbody>().freezeRotation = true;*/
 	}
 
+    // ReSharper disable once UnusedMember.Local
+    // ReSharper disable once ArrangeTypeMemberModifiers
 	void LateUpdate ()
 	{
-
 		if (target) {
 
 			if (Input.GetMouseButton (0)) {
 				x += Input.GetAxis ("Mouse X") * xSpeed * distance * 0.02f;
 				y -= Input.GetAxis ("Mouse Y") * ySpeed * 0.02f;
-			
 
 				y = ClampAngle (y, yMinLimit, yMaxLimit);
 			}
@@ -45,21 +47,19 @@ public class CameraOrbit : MonoBehaviour
 			
 			distance = Mathf.Clamp (distance - Input.GetAxis ("Mouse ScrollWheel") * 5, distanceMin, distanceMax);
 
-			/*RaycastHit hit;
+			/*
+            // RaycastHit hit;
             if (Physics.Linecast(target.position, transform.position, out hit))
             {
                 distance -= hit.distance;
-            }*/
+            }
+            */
 			Vector3 negDistance = new Vector3 (0.0f, 0.0f, -distance);
 			Vector3 position = rotation * negDistance + target.position;
-
-			
+            
 			transform.rotation = rotation;
-			
 			transform.position = position;
-			
 		}
-
 	}
 
 	public static float ClampAngle (float angle, float min, float max)
@@ -70,6 +70,4 @@ public class CameraOrbit : MonoBehaviour
 			angle -= 360F;
 		return Mathf.Clamp (angle, min, max);
 	}
-
-
 }
