@@ -15,7 +15,6 @@ public static class MessageSeparators {
     public const char SET = '=';
 }
 
-
 public enum BodyPropertiesTypes
 {
     UID,
@@ -38,7 +37,7 @@ public class Skeleton
     public bool IsMirrorBody;
 
 
-    private Vector3 lastForwardBody;
+    private Vector3 _lastForwardBody;
 
     public string ID
     {
@@ -55,7 +54,7 @@ public class Skeleton
     {
         JointsPositions = new Dictionary<Windows.Kinect.JointType, Vector3>();
         BodyProperties = new Dictionary<BodyPropertiesTypes, string>();
-        lastForwardBody = Vector3.zero;
+        _lastForwardBody = Vector3.zero;
     }
 
     public Skeleton(Kinect.Body body)
@@ -122,13 +121,11 @@ public class Skeleton
     private int BodyConfidence(Kinect.Body body)
     {
         var confidence = 0;
-
         foreach (Kinect.Joint j in body.Joints.Values)
         {
             if (j.TrackingState == Windows.Kinect.TrackingState.Tracked)
                 confidence += 1;
         }
-
         return confidence;
     }
 }
@@ -145,12 +142,23 @@ public class BodiesMessage
     public string KinectId { get; internal set; }
     
     public List<Skeleton> _bodies;
-    public int NumberOfBodies { get { return _bodies.Count; } }
-    public List<Skeleton> Bodies { get { return _bodies;  } }
 
+    public int NumberOfBodies
+    {
+        get
+        {
+            return _bodies.Count;
+        }
+    }
 
-
-
+    public List<Skeleton> Bodies
+    {
+        get
+        {
+            return _bodies;
+        }
+    }
+    
     private void _start()
     {
         _bodies = new List<Skeleton>();
@@ -196,7 +204,6 @@ public class BodiesMessage
         }
     }
 
-    public BodiesMessage()
-    {
-    }
+    public BodiesMessage() { }
+
 }

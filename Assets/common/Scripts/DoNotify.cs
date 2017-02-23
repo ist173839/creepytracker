@@ -13,28 +13,64 @@ public enum NotificationLevel
 public class Notification
 {
 	private NotificationLevel _level;
+
 	public NotificationLevel Level 
-	{ get { return _level; } }
+	{
+	    get
+	    {
+	        return _level;
+	    }
+    }
 	
 	private string _title;
+
 	public string Title 
-	{ get { return _title; } }
+	{
+	    get
+	    {
+	        return _title; 
+	    }
+    }
 	
 	private string _content;
+
 	public string Content 
-	{ get { return _content; } }
+	{
+	    get
+	    {
+	        return _content;
+	    }
+    }
 	
 	private DateTime _creationTime;
+
 	public DateTime CreationTime
-	{ get { return _creationTime; } }
+	{
+	    get
+	    {
+	        return _creationTime;
+	    }
+    }
 	
 	private Texture _icon;
+
 	public Texture Icon
-	{ get { return _icon; } }
+	{
+	    get
+	    {
+	        return _icon;
+	    }
+    }
 
     public int _activeTimeMilliseconds;
+
     public int ActiveTimeMilliseconds
-    { get { return _activeTimeMilliseconds; } }
+    {
+        get
+        {
+            return _activeTimeMilliseconds;
+        }
+    }
 
     public Notification(NotificationLevel level, Texture icon, string title, string content, int activeTimeMilliseconds)
 	{
@@ -47,8 +83,9 @@ public class Notification
     }
 }
 
-public class DoNotify : MonoBehaviour {
-	
+// ReSharper disable once ClassNeverInstantiated.Global
+public class DoNotify : MonoBehaviour
+{
 	private GUIStyle _titleStyle;
 	private GUIStyle _contentStyle;
 	
@@ -57,7 +94,8 @@ public class DoNotify : MonoBehaviour {
 	public Texture importantTex;
 	public Texture infoTex;
 
-    void Start () {
+    void Start ()
+    {
 		_notifications = new List<Notification> ();
 		
 		_titleStyle = new GUIStyle ();
@@ -66,7 +104,8 @@ public class DoNotify : MonoBehaviour {
 	}
 	
 	
-	void Update () {
+	void Update ()
+    {
 		DateTime now = DateTime.Now;
 		List<Notification> rmv = new List<Notification> ();
 		foreach (Notification n in _notifications) 
@@ -82,7 +121,7 @@ public class DoNotify : MonoBehaviour {
 		}
 	}
 	
-	void displayNotification(Notification notification, int left, int top)
+	void DisplayNotification(Notification notification, int left, int top)
 	{
 		GUI.Box (new Rect ( left - 5, top - 5, 200, 35), "");
 		GUI.DrawTexture (new Rect (left, top, 24, 25), notification.Icon);
@@ -90,6 +129,9 @@ public class DoNotify : MonoBehaviour {
 		GUI.Label (new Rect (left + 30, top + 10, 400, 200), notification.Content);
 	}
 	
+    // ReSharper disable once ArrangeTypeMemberModifiers
+    // ReSharper disable once UnusedMember.Local
+    // ReSharper disable once InconsistentNaming
 	void OnGUI()
 	{
 		int i = 10;
@@ -97,7 +139,7 @@ public class DoNotify : MonoBehaviour {
         {
             foreach (Notification n in _notifications)
             {
-                displayNotification(n, Screen.width / 2 - 100, i);
+                DisplayNotification(n, Screen.width / 2 - 100, i);
                 i += 40;
             }
         }

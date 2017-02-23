@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Net;
 
 // ReSharper disable once CheckNamespace
-public class AvatarMessage {
+public class AvatarMessage
+{
 
     // ReSharper disable once FieldCanBeMadeReadOnly.Global
     public IPAddress ReplyIpAddress;

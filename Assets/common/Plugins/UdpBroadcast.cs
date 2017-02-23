@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Collections.Generic;
 
+// ReSharper disable once CheckNamespace
 public class UdpBroadcast
 {
     private Dictionary<string, IPEndPoint> _unicastClients;

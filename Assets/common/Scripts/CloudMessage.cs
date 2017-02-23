@@ -17,7 +17,7 @@ public class CloudMessage
         Message = "";
     }
 
-    public void set(string message, byte[] receivedBytes, int headerSize)
+    public void Set(string message, byte[] receivedBytes, int headerSize)
     {
         //moved implementation to
         this.Message = message;

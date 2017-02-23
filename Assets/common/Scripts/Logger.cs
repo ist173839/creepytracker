@@ -48,6 +48,7 @@ class LogMessage
 	}
 }
 
+// ReSharper disable once UnusedMember.Global
 public class Logger : MonoBehaviour
 {
     
@@ -59,11 +60,15 @@ public class Logger : MonoBehaviour
 		_messages = new List<LogMessage> ();
 	}
 
+    // ReSharper disable once UnusedMember.Local
 	void Update ()
 	{
 		//Debug.Log("" + this.GetType().FullName + " " + System.Reflection.MethodBase.GetCurrentMethod().Name);
 	}
 
+    // ReSharper disable once ArrangeTypeMemberModifiers
+    // ReSharper disable once UnusedMember.Local
+    // ReSharper disable once InconsistentNaming
 	void OnGUI ()
 	{
 		/*
@@ -80,10 +85,12 @@ public class Logger : MonoBehaviour
         }*/
 	}
 
-	public void saveLog (LogLevel logLevel, string message)
+	public void SaveLog (LogLevel logLevel, string message)
 	{
 		LogMessage n = new LogMessage (logLevel, message);
-		if (_messages.Count >= max) {
+
+        if (_messages.Count >= max)
+        {
 			_messages.RemoveAt (0);
 		}
 		_messages.Add (n);
