@@ -193,7 +193,7 @@ public class Tracker : MonoBehaviour
 		}
 
         // Debug.Log("Send = " + strToSend);
-        _udpBroadcast.Send (strToSend);
+        _udpBroadcast.Send(strToSend);
         SaveRecordServer(strToSend);
 
 		// set human material

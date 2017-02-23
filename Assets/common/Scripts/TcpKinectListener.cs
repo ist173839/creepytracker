@@ -47,7 +47,15 @@ public class TcpKinectListener : MonoBehaviour
     private bool _running;
 
     private int TcpListeningPort;
-    
+
+    void Awake()
+    {
+        
+
+
+    }
+
+
     // ReSharper disable once ArrangeTypeMemberModifiers
     // ReSharper disable once UnusedMember.Local
     void Start()
