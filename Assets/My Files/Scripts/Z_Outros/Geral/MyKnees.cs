@@ -36,7 +36,8 @@ public struct KneesInfo
 }
 
 [RequireComponent(typeof(Tracker))]
-public class MyKnees : MonoBehaviour {
+public class MyKnees : MonoBehaviour
+{
 
     private Dictionary<string, GameObject> _humanDictionary;
     
@@ -66,22 +67,18 @@ public class MyKnees : MonoBehaviour {
     private Vector3? _lastRigthPosition;
     private Vector3? _lastLeftPosition;
 
-    // Use this for initialization
-    // ReSharper disable once ArrangeTypeMemberModifiers
-    // ReSharper disable once UnusedMember.Local
-    void Start () {
-        _localTracker = gameObject.GetComponent<Tracker>();
 
+    void Awake()
+    {
         _humanDictionary = new Dictionary<string, GameObject>();
-
-
-        _objectList = new List <GameObject>();
+    
+        _objectList = new List<GameObject>();
 
         _rightKneeList = new List<string>();
         _leftKneeList  = new List<string>();
         _meanKneeList  = new List<string>();
-        
-        _idList    = new List<string>();
+
+        _idList = new List<string>();
 
         _colorTrack = Color.yellow;
         _colorTrack.a = 0.5f;
@@ -99,11 +96,21 @@ public class MyKnees : MonoBehaviour {
         _humans.transform.parent = transform;
 
         _lastRigthPosition = null;
-        _lastLeftPosition  = null;
+        _lastLeftPosition = null;
 
         _isShowAll = false;
 
         _track = false;
+
+    }
+
+    
+    // Use this for initialization
+    // ReSharper disable once ArrangeTypeMemberModifiers
+    // ReSharper disable once UnusedMember.Local
+    void Start ()
+    {
+        _localTracker = gameObject.GetComponent<Tracker>();       
     }
 	
 	// Update is called once per frame
@@ -115,7 +122,6 @@ public class MyKnees : MonoBehaviour {
         {
             MyKneesFixedUpdate();
         }
-
     }
 
     private void MyKneesFixedUpdate()
@@ -127,8 +133,7 @@ public class MyKnees : MonoBehaviour {
         var idList = _localTracker.IdList;
         // var idUpdateList = new List<string>();
         // _idList = new List<string>();
-
-
+        
         foreach (var id in idList)
         {
             //idUpdateList.Add(idHuman);

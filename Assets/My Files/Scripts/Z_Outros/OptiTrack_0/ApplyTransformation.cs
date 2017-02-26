@@ -6,7 +6,8 @@ public class ApplyTransformation : MonoBehaviour {
     public Vector3 scaledPosition = Vector3.zero;
     public Vector3 transformPosition = Vector3.zero;
 	// Use this for initialization
-	void Start () {
+	void Start ()
+    {
 	
 	}
 	

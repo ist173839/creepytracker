@@ -8,7 +8,8 @@ using Windows.Kinect;
 // [RequireComponent(typeof(TrackerClient))]
 // ReSharper disable once CheckNamespace
 // ReSharper disable once UnusedMember.Global
-public class ObjectTracker: MonoBehaviour {
+public class ObjectTracker: MonoBehaviour
+{
 
     //References to both trackers to get objects from them
     

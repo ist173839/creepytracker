@@ -7,7 +7,6 @@ using Windows.Kinect;
 // ReSharper disable once CheckNamespace
 public class HumanSkeleton : MonoBehaviour
 {
-
 	private GameObject head;
 	private GameObject leftShoulder;
 	private GameObject rightShoulder;
@@ -133,7 +132,7 @@ public class HumanSkeleton : MonoBehaviour
 
 		floorForwardGameObject = (GameObject)Instantiate (Resources.Load ("Prefabs/FloorForwardPlane"));
 		floorForwardGameObject.name = "Forward";
-		floorForwardGameObject.tag = "nocolor";
+		floorForwardGameObject.tag  = "nocolor";
 		floorForwardGameObject.transform.parent = transform;
         
         HandLeftState  = "Null";

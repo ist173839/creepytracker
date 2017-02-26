@@ -115,11 +115,11 @@ public class HandleVirtualWorld : MonoBehaviour
         _forwardGameObject = GameObjectHelper.MyCreatePrimitiveObject(PrimitiveType.Sphere, "Forward", Vector3.zero, _helpers.transform, false);
         _forwardGameObject.GetComponent<MeshRenderer>().material.color = Color.white;
         _forwardGameObject.transform.localScale = new Vector3(0.50f, 0.1f, 0.50f);
-
-
+        
         _path = System.IO.Directory.GetCurrentDirectory() + "\\" + "Files" + "\\" + "Files To Use" + "\\" + "Center Data";
 
-        if (!System.IO.Directory.Exists(_path)) System.IO.Directory.CreateDirectory(_path);
+        if (!System.IO.Directory.Exists(_path))
+             System.IO.Directory.CreateDirectory(_path);
         
         _centro = new Vector3?();
 
@@ -128,8 +128,7 @@ public class HandleVirtualWorld : MonoBehaviour
         
         _mens = "";
         _mensagem = "";
-
-
+        
         CanShowIndicators = false;
         ShowMarker = true;
         SendReset = false;
