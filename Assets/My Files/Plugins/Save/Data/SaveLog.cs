@@ -45,8 +45,6 @@ public class SaveLog
     
     public int NumColunas   { get; private set; }
 
-
-
     private static readonly int TamanhoMaximo = (int) Math.Pow(2, 20); // (2 ^ 30)
 
     private int _cont;
@@ -91,41 +89,47 @@ public class SaveLog
         _startMessage = "INICIO";
         _endMessage   = "FIM";
 
-        //_recordingName   = null;
         _caminhoCompleto = null;
-        _saveHeader = null;
+        _saveHeader      = null;
 
         _specialTypeDocName = 0;
 
         _target = _directory + "\\" + _currentFolderDestino + "\\";
         _cont = 0;
         NumColunas = 0;
-
-        //_activeControloMode  = ControloMode.CWIP;
-        //_headerCwip          = GetCwipHeader();
-        //_headerWip           = GetWipHeader();
-        //_header = GetHeader();
     }
 
     public void SetUpUserFolder(string userFolder)
     {
         _currentUserFolder = userFolder;
-
+        var sessao = "Time " + DateTime.Now.ToString("yyyyMMddTHHmmss");
         _currentFolderDestino =
             _defaultFolderDestino =
                 _currentUserFolder == null
                     ? "Files" + "\\" + "Saved Files" + "\\" + _nameFolder
-                    : "Files" + "\\" + "Saved Files" + "\\" + _currentUserFolder + "\\" + _nameFolder;
+                    : "Files" + "\\" + "Saved Files" + "\\" + _currentUserFolder + "\\" + sessao + "\\" + _nameFolder;
+
+        _isInitiate = false;
+    }
+
+    public void SetUpUserFolder()
+    {
+        var sessao = "Time " + DateTime.Now.ToString("yyyyMMddTHHmmss");
+        _currentFolderDestino =
+            _defaultFolderDestino =
+                _currentUserFolder == null
+                    ? "Files" + "\\" + "Saved Files" + "\\" + _nameFolder
+                    : "Files" + "\\" + "Saved Files" + "\\" + _currentUserFolder + "\\" + sessao + "\\" + _nameFolder;
 
         _isInitiate = false;
     }
 
     ~SaveLog()
     {
-        if (!_isInitiate) return;
-        ResetRecord();
-        if (File.Exists(_target + _currentDocName)) File.SetAttributes(_target + _currentDocName, FileAttributes.ReadOnly);
-        
+        StopRecording();
+        //if (!_isInitiate) return;
+        //ResetRecord();
+        //if (File.Exists(_target + _currentDocName)) File.SetAttributes(_target + _currentDocName, FileAttributes.ReadOnly);      
     }
 
     private void ResetRecord()
@@ -154,12 +158,19 @@ public class SaveLog
             _isInitiate = false;
             _saveHeader = message;
         }
-        
+        else
+        {
+            if (!_isInitiate)
+            {
+                SetUpFileAndDirectory();
+                if (_saveHeader != null)
+                    WriteStringInDoc(_saveHeader + " (*)", true);
+            }
+
+        }
+
         if (!_isInitiate) SetUpFileAndDirectory();
-        // if (!_isInitiate) SetUpFileAndDirectory(message);
-        // if (message != _startMessage  && !_isInitiate)
-        // {
-        // } else
+
         if (message == _endMessage)
         {
             StopRecording();
@@ -331,7 +342,18 @@ public class SaveLog
 /////////////////////////////////////////////////////////////////////////////////////////
 /*
  
-       public void SetRecordingName(string recordName)
+        //_recordingName   = null;
+        //_activeControloMode  = ControloMode.CWIP;
+        //_headerCwip          = GetCwipHeader();
+        //_headerWip           = GetWipHeader();
+        //_header = GetHeader();
+
+           // if (!_isInitiate) SetUpFileAndDirectory(message);
+        // if (message != _startMessage  && !_isInitiate)
+        // {
+        // } else
+        
+    public void SetRecordingName(string recordName)
     {
         if (recordName.Equals(_recordingName)) return;
         _recordingName = recordName;

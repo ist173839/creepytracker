@@ -169,7 +169,7 @@ public class TrackerUI : MonoBehaviour
 
 	    if (_localMyUdpListener != null)
 	    {
-	        FinalNum = _localMyUdpListener.FinalNum;
+	        FinalNum = _localMyUdpListener.GetFinalNum();
 	    }
 	}
 
@@ -402,7 +402,7 @@ public class TrackerUI : MonoBehaviour
 			top = IconSize + IconSize / 2;
 			left = Screen.width - 250;
 
-			//GUI.Box (new Rect (left, top - 10, 240, 150), "");
+			// GUI.Box (new Rect (left, top - 10, 240, 150), "");
 
             Extra = UseSaveFile ? 0.0f : 90.0f;
 
@@ -411,7 +411,7 @@ public class TrackerUI : MonoBehaviour
 
 			GUI.Label (new Rect (left, top, 200, 25), "Broadcast Settings:", _titleStyle);
 			left += 10;
-			top += 35;
+			top  += 35;
 
 			GUI.Label (new Rect (left, top, 150, 25), "Sensors port:");
 			left += 100;
@@ -434,7 +434,8 @@ public class TrackerUI : MonoBehaviour
 
 			TrackerProperties.Instance.BroadcastPort = int.Parse (GUI.TextField (new Rect (left, top, 50, 20), "" + TrackerProperties.Instance.BroadcastPort));
 			left += 55;
-			if (GUI.Button (new Rect (left, top, 50, 25), "Reset")) {
+			if (GUI.Button (new Rect (left, top, 50, 25), "Reset"))
+            {
 				_userTracker.ResetBroadcast ();
 				_userTracker.Save ();
 
@@ -459,24 +460,25 @@ public class TrackerUI : MonoBehaviour
             left = Screen.width - 250 + 20;
 
             // FinalNum++;
-            GUI.Label(new Rect(left, top, 180, 25), "EXTRA (FHV) : ", _titleStyle);
-
+            GUI.Label(new Rect(left,       top, 180, 25), "EXTRA (FHV) : ", _titleStyle);
             GUI.Label(new Rect(left + 100, top, 180, 25), "Objectivo = " + FinalNum);
 
             top += 25;
-            
-            if (GUI.Button(new Rect(left, top, 100, 25), "New User"))
-            {
-                _localMyUdpListener.SetNewUser(string.IsNullOrEmpty(_user) ? _userInicial : _user);
-            }
-
-            top += 30;
             GUI.Label(new Rect(left, top, 180, 25), "User Name :");
-            
-             
             var user = GUI.TextField(new Rect(left + 100, top, 100, 25), _user);
             _user = user;
-            
+
+            top += 30;
+            if (GUI.Button(new Rect(left, top, 80, 25), "New User"))
+            {
+                _localMyUdpListener.SetNewUser(string.IsNullOrEmpty(_user) ? _userInicial : _user);
+                _localMyUdpListener.ResetFinalNum();
+
+            }
+            if (GUI.Button(new Rect(left + 100, top, 100, 25), "New Section"))
+            {
+                _localMyUdpListener.SetNewSection();
+            }
             top += 25;
 
             UseRecord = GUI.Toggle(new Rect(left, top, 100, 25), UseRecord, "Record");

@@ -42,20 +42,17 @@ public class SaveStatus
     private string _format;
     private string _versao;
     private string _sigla;
-    
+
+    private string _statusLine;
+    //private string _headerLine;
+
     public int NumColunas { get; private set; }
     public int FinalNum   { get; private set; }
 
     private static readonly int TamanhoMaximo = (int) Math.Pow(2, 20); // (2 ^ 30)
 
-    private int _cont;
-
-
-    //  public bool DirectoryChange;
-
     private bool _useDefaultDocName;
     private bool _useDefaultFolder;
-    private bool _isRecording;
     private bool _isInitiate;
     private bool _oversize;
 
@@ -98,7 +95,7 @@ public class SaveStatus
         _specialTypeDocName = 0;
 
         _target = _directory + "\\" + _currentFolderDestino + "\\";
-        _cont = 0;
+        
         NumColunas = 0;
 
         FinalNum = -1;
@@ -111,12 +108,24 @@ public class SaveStatus
     public void SetUpUserFolder(string userFolder)
     {
         _currentUserFolder = userFolder;
-
+        var sessao = "Time " + DateTime.Now.ToString("yyyyMMddTHHmmss");
         _currentFolderDestino =
             _defaultFolderDestino =
                 _currentUserFolder == null
                     ? "Files" + "\\" + "Saved Files" + "\\" + _nameFolder
-                    : "Files" + "\\" + "Saved Files" + "\\" + _currentUserFolder + "\\" + _nameFolder;
+                    : "Files" + "\\" + "Saved Files" + "\\" + _currentUserFolder + "\\" + sessao + "\\" + _nameFolder;
+
+        _isInitiate = false;
+    }
+
+    public void SetUpUserFolder()
+    {
+        var sessao = "Time " + DateTime.Now.ToString("yyyyMMddTHHmmss");
+        _currentFolderDestino =
+            _defaultFolderDestino =
+                _currentUserFolder == null
+                    ? "Files" + "\\" + "Saved Files" + "\\" + _nameFolder
+                    : "Files" + "\\" + "Saved Files" + "\\" + _currentUserFolder + "\\" + sessao + "\\" + _nameFolder;
 
         _isInitiate = false;
     }
@@ -124,19 +133,30 @@ public class SaveStatus
     ~SaveStatus()
     {
         if (!_isInitiate) return;
-        ResetRecord();
-        if (File.Exists(_target + _currentDocName)) File.SetAttributes(_target + _currentDocName, FileAttributes.ReadOnly);
+        StopRecording();
+
+        //ResetRecord();
+        //if (File.Exists(_target + _currentDocName))
+        //    File.SetAttributes(_target + _currentDocName, FileAttributes.ReadOnly);
         
+    }
+
+    public void ResetFinalNum()
+    {
+        FinalNum = -1;
     }
 
     private void ResetRecord()
     {
         //_recordingName = null;
+        //_headerLine = null;
+        _statusLine = null;
+        _saveHeader = null;
         _isInitiate = false;
-        _cont = 0;
         NumColunas = 0;
-        FinalNum   = -1;
+        //FinalNum = -1;
     }
+
 
     private void CheckFileSize()
     {
@@ -156,18 +176,22 @@ public class SaveStatus
             _isInitiate = false;
             _saveHeader = message;
         }
-        
-        if (!_isInitiate) SetUpFileAndDirectory();
-        
-        // if (!_isInitiate) SetUpFileAndDirectory(message);
-        // if (message != _startMessage  && !_isInitiate) { } else
+        else
+        {
+            if (!_isInitiate && _saveHeader != null)
+            {
+                SetUpFileAndDirectory();
+                WriteStringInDoc(_saveHeader + " (*)", true);
+            }  
+        }
 
+        if (!_isInitiate) SetUpFileAndDirectory();
+       
         if (message == _endMessage)
         {
             WriteStringInDoc(message, true);
             StopRecording();
-            Debug.Log(_endMessage);
-
+            //Debug.Log(_endMessage);
         }
         else
         {
@@ -176,17 +200,19 @@ public class SaveStatus
                 char[] del = { ';' };
                 var lineText = message.Split(del);
                 FinalNum = int.Parse(lineText[0]);
+                if (_statusLine != message)
+                {
+                    _statusLine = message;
+                    WriteStringInDoc(message, true);
+                }
             }
-            WriteStringInDoc(message, true);
         }
-
         CheckFileSize();
     }
     
     private void SetUpFileAndDirectory()
     {
          _target = _directory + "\\" + _currentFolderDestino + "\\";
-        _cont = 0;
         SetUpDirectory();
         SetFileName();
         if (_oversize)
@@ -206,6 +232,7 @@ public class SaveStatus
         //SetUpHeader(first);
         _isInitiate = true;
     }
+
     private void SetUpHeader()
     {
         // if (first.Contains("Registo")) return;
@@ -233,7 +260,7 @@ public class SaveStatus
         _doc.Close();
     }
 
-    private void StopRecording()
+    public void StopRecording()
     {
         if (!_isInitiate) return;
         if (!File.Exists(_target + _currentDocName)) return;
@@ -340,7 +367,14 @@ public class SaveStatus
 /////////////////////////////////////////////////////////////////////////////////////////
 /*
  
-       public void SetRecordingName(string recordName)
+    //private int _cont;
+     
+        // if (!_isInitiate) SetUpFileAndDirectory(message);
+        // if (message != _startMessage  && !_isInitiate) { } else
+        
+    
+    
+    public void SetRecordingName(string recordName)
     {
         if (recordName.Equals(_recordingName)) return;
         _recordingName = recordName;
@@ -360,6 +394,8 @@ public class SaveStatus
      
      
 //////////////////////////////////////////////////////////////////////////////////////////////////
+//  public bool DirectoryChange;
+    //  private bool _isRecording;
 
     //private ControloMode _activeControloMode;
     //if (!IsRecording)

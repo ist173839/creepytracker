@@ -161,7 +161,7 @@ public class ListenBase
         if (message == _endMessage)
         {
             StopRecording();
-            Debug.Log(_endMessage);
+            //Debug.Log(_endMessage);
         }
         else
             WriteStringInDoc(message, true);

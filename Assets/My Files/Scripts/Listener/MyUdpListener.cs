@@ -49,7 +49,7 @@ public class MyUdpListener : MonoBehaviour
     private int _portLog;
     private int _portStatus;
 
-    public int FinalNum { get; private set; }
+    private int _finalNum; // { get; set; }
 
     // ReSharper disable once ArrangeTypeMemberModifiers
     // ReSharper disable once UnusedMember.Local
@@ -79,7 +79,8 @@ public class MyUdpListener : MonoBehaviour
     
     public void SetNewUser(string nameUser)
     {
-        var newUser = "User- " + nameUser + " Time- " + DateTime.Now.ToString("yyyyMMddTHHmmss");
+        //var newUser = "User-> " + nameUser;// + ", Time-> " + DateTime.Now.ToString("yyyyMMddTHHmmss");
+        var newUser = nameUser;// + ", Time-> " + DateTime.Now.ToString("yyyyMMddTHHmmss");
         //_saveAvr.SetUpUserFolder(newUser);
 
         _saveStatus.SetUpUserFolder(newUser);
@@ -88,6 +89,14 @@ public class MyUdpListener : MonoBehaviour
         _saveLog.SetUpUserFolder(newUser);
     }
 
+    public void SetNewSection()
+    {
+        _saveStatus.SetUpUserFolder();
+        _saveColicoes.SetUpUserFolder();
+        _saveRecord.SetUpUserFolder();
+        _saveLog.SetUpUserFolder();
+    }
+    
     private void UdpRestart()
     {
         //if (_udpClientAvr != null) _udpClientAvr.Close();
@@ -162,14 +171,23 @@ public class MyUdpListener : MonoBehaviour
     {
         PressToRestart();
         UpdateMessages();
-        FinalNum = _saveStatus.FinalNum;
+    }
+
+    public int GetFinalNum()
+    {
+        return _finalNum = _saveStatus.FinalNum;
+    }
+
+    public void ResetFinalNum()
+    {
+        _saveStatus.ResetFinalNum();
     }
 
     private void PressToRestart()
     {
         if (!Input.GetKeyUp("r")) return;
         UdpRestart();
-        Debug.Log("R");
+        Debug.Log("R Press - Restart Udps");
     }
 
     private void UpdateMessages()
@@ -213,6 +231,7 @@ public class MyUdpListener : MonoBehaviour
     private void OnApplicationQuit()
     {
         CloseClients();
+        UpdateMessages();
     }
 
     private void CloseClients()
@@ -236,7 +255,8 @@ public class MyUdpListener : MonoBehaviour
     // ReSharper disable once ArrangeTypeMemberModifiers
     void OnDestroy()
     {
-        CloseClients();
+        OnApplicationQuit();
+        //CloseClients();
     }
 }
 ///////////////////////////////////////////////////////////////////////////////////

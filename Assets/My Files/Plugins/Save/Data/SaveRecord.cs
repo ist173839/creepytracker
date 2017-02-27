@@ -50,9 +50,9 @@ public class SaveRecord
     private string _docName;
     private string _target;
     private string _versao;
-    private string _header;
     private string _sigla;
-    //private string _headerCwip;
+    // private string _header;
+    // private string _headerCwip;
     //private string _headerWip;
 
     // ReSharper disable once UnusedAutoPropertyAccessor.Global
@@ -99,7 +99,7 @@ public class SaveRecord
         _startMessage = "INICIO";
         _endMessage   = "FIM";
         _format       = ".csv";
-        _versao       = "V12.5";
+        _versao       = "V13";
         _sigla        = "WVD";
 
         _recordingName = null;
@@ -110,30 +110,45 @@ public class SaveRecord
         _cont = 0;
         NumColunas = 0;
 
-        _header = GetHeader();
+        //_header = GetHeader();
         _saveHeader = null;
     }
 
     ~SaveRecord()
     {
-        if (!_isInitiate) return;
-        ResetRecord();
-        if (File.Exists(_target + _currentDocName))
-            File.SetAttributes(_target + _currentDocName, FileAttributes.ReadOnly);        
+        StopRecording();
+        //if (!_isInitiate) return;
+        //ResetRecord();
+        //if (File.Exists(_target + _currentDocName))
+        //    File.SetAttributes(_target + _currentDocName, FileAttributes.ReadOnly);        
     }
 
     public void SetUpUserFolder(string userFolder)
     {
         _currentUserFolder = userFolder;
+
+        var sessao = "Time " + DateTime.Now.ToString("yyyyMMddTHHmmss");
         _currentFolderDestino =
             _defaultFolderDestino =
                 _currentUserFolder == null
                     ? "Files" + "\\" + "Saved Files" + "\\" + _nameFolder
-                    : "Files" + "\\" + "Saved Files" + "\\" + _currentUserFolder + "\\" +  _nameFolder;
+                    : "Files" + "\\" + "Saved Files" + "\\" + _currentUserFolder + "\\" + sessao + "\\" + _nameFolder;
 
         _isInitiate = false;
     }
 
+    public void SetUpUserFolder()
+    {
+        var sessao = "Time " + DateTime.Now.ToString("yyyyMMddTHHmmss");
+        _currentFolderDestino =
+            _defaultFolderDestino =
+                _currentUserFolder == null
+                    ? "Files" + "\\" + "Saved Files" + "\\" + _nameFolder
+                    : "Files" + "\\" + "Saved Files" + "\\" + _currentUserFolder + "\\" + sessao + "\\" + _nameFolder;
+
+        _isInitiate = false;
+    }
+    
     private void ResetRecord()
     {
         _recordingName = null;
@@ -155,24 +170,24 @@ public class SaveRecord
 
     public void RecordMessage(string message)
     {
-        //if (!IsRecording)
-        //{
-        //    StopRecording();
-        //    return;
-        //}
-        //CheckHeaders(message);
-
         if (message.Contains("Registo"))
         {
             _saveHeader = message;
             _isInitiate = false;
             //_cont = 0;
         }
+        else
+        {
+            if (!_isInitiate)
+            {
+                SetUpFileAndDirectory();
+                if (_saveHeader != null)
+                    WriteStringInDoc(_saveHeader + " (*)", true);
+            }
+        }
 
         if (!_isInitiate) SetUpFileAndDirectory();
-        //if (!_isInitiate) SetUpFileAndDirectory(message);
-        //if (message != _startMessage  && !_isInitiate)
-        //{} else
+       
         if (message == _endMessage)
         {
             StopRecording();
@@ -180,6 +195,7 @@ public class SaveRecord
         }
         else
             WriteStringInDoc(message, true);
+
         CheckFileSize();
     }
 
@@ -325,6 +341,21 @@ public class SaveRecord
         _currentFolderDestino = _defaultFolderDestino;
     }
 
+    private void SetUpSaveHeader()
+    {
+        // _positionThreshold,  (_numSteps) 
+        // var info = GetHeader(); // _header;//
+        WriteStringInDoc(_saveHeader, true);
+    }
+
+   
+    
+    
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/*
+ * 
+ 
     private string GetHeader()
     {
         return
@@ -339,23 +370,9 @@ public class SaveRecord
             "Joelho Direito (y, Kalman)" + Separador + "Joelho Esquerdo (y, Kalman)"
             ;
     }
+    
 
-    // ReSharper disable once UnusedMember.Local
-    private void SetUpHeader()
-    {
-        // _positionThreshold,  (_numSteps) 
-        var info = GetHeader(); // _header;//
-        WriteStringInDoc(info, true);
-    }
-
-    private void SetUpSaveHeader()
-    {
-        // _positionThreshold,  (_numSteps) 
-        // var info = GetHeader(); // _header;//
-        WriteStringInDoc(_saveHeader, true);
-    }
-
-    private void SetUpHeader(string first)
+ private void SetUpHeader(string first)
     {
         // _positionThreshold,  (_numSteps) 
         var info = GetHeader(); // _header;//
@@ -363,20 +380,33 @@ public class SaveRecord
         WriteStringInDoc(info, true);
     }
 
-    // ReSharper disable once UnusedMember.Local
-    private void SetUpFileAndDirectory(string first)
+  //if (!_isInitiate) SetUpFileAndDirectory(message);
+        //if (message != _startMessage  && !_isInitiate)
+        //{} else
+private void SetUpFileAndDirectory(string first)
     {
         // _target = _directory + "\\" +_CurrentFolderDestino ;
         SetUpDirectory();
         SetFileName();
         SetUpHeader(first);
         _isInitiate = true;
-    }
-}
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/*
-  //private ControloMode _activeControloMode;
+    } 
 
+private void SetUpHeader()
+    {
+        // _positionThreshold,  (_numSteps) 
+        var info = GetHeader(); // _header;//
+        WriteStringInDoc(info, true);
+    }
+    
+    //private ControloMode _activeControloMode;
+  
+        //if (!IsRecording)
+        //{
+        //    StopRecording();
+        //    return;
+        //}
+        //CheckHeaders(message);
   private string GetHeader()
 {
     return
