@@ -90,10 +90,10 @@
     <Compile Include="Assets\Common\Plugins\KalmanFilterFloat.cs" />
     <Compile Include="Assets\Common\Plugins\KalmanFilterVector3.cs" />
     <Compile Include="Assets\Common\Plugins\UdpBroadcast.cs" />
-    <Compile Include="Assets\Common\Scripts\AvatarMessage.cs" />
-    <Compile Include="Assets\Common\Scripts\BodiesMessage.cs" />
+    <Compile Include="Assets\Common\Plugins\AvatarMessage.cs" />
+    <Compile Include="Assets\Common\Plugins\BodiesMessage.cs" />
     <Compile Include="Assets\Common\Scripts\CameraOrbit.cs" />
-    <Compile Include="Assets\Common\Scripts\CloudMessage.cs" />
+    <Compile Include="Assets\Common\Plugins\CloudMessage.cs" />
     <Compile Include="Assets\Common\Scripts\DoNotify.cs" />
     <Compile Include="Assets\Common\Scripts\GridOverlay.cs" />
     <Compile Include="Assets\Common\Scripts\Logger.cs" />
@@ -134,11 +134,11 @@
     <Compile Include="Assets\My Files\Scripts\Z_Outros\Listener\MyUdpListenerAvr.cs" />
     <Compile Include="Assets\My Files\Scripts\Z_Outros\Listener\MyUdpListenerColicoes.cs" />
     <Compile Include="Assets\My Files\Scripts\Z_Outros\Listener\MyUdpListenerRecord.cs" />
-    <Compile Include="Assets\My Files\Scripts\Z_Outros\OptiTrack_0\ApplyTransformation.cs" />
-    <Compile Include="Assets\My Files\Scripts\Z_Outros\OptiTrack_0\ObjectTracker.cs" />
-    <Compile Include="Assets\My Files\Scripts\Z_Outros\OptiTrack_0\OptiDrawScript.cs" />
-    <Compile Include="Assets\My Files\Scripts\Z_Outros\OptiTrack_0\OptiObjects.cs" />
-    <Compile Include="Assets\My Files\Scripts\Z_Outros\OptiTrack_1\OptitrackManager.cs" />
+    <Compile Include="Assets\My Files\Scripts\Z_Outros\OptiTrack\ApplyTransformation.cs" />
+    <Compile Include="Assets\My Files\Scripts\Z_Outros\OptiTrack\ObjectTracker.cs" />
+    <Compile Include="Assets\My Files\Scripts\Z_Outros\OptiTrack\OptiDrawScript.cs" />
+    <Compile Include="Assets\My Files\Scripts\Z_Outros\OptiTrack\OptiObjects.cs" />
+    <Compile Include="Assets\My Files\Scripts\Z_Outros\OptiTrack\OptitrackManager.cs" />
     <Compile Include="Assets\Trackerhub\Plugins\Human.cs" />
     <Compile Include="Assets\Trackerhub\Plugins\Sensor.cs" />
     <Compile Include="Assets\Trackerhub\Plugins\SensorBody.cs" />
@@ -161,6 +161,7 @@
     <None Include="Assets\configSettings.txt" />
     <None Include="Assets\simpleBillboard.shader" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
 </Project>

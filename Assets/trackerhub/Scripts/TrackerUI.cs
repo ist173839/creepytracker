@@ -75,14 +75,7 @@ public class TrackerUI : MonoBehaviour
     private HandleVirtualWorld _localHandleVirtualWorld;
 
     private MyUdpListener _localMyUdpListener;
-
-    //public TrackerUI()
-    //{
-        
-    //}
-
-    //public bool UseOptiTrack  { get; set; }
-
+    
     public bool ShowIndicator { get; set; }
     public bool UseSaveFile   { get; set; }
     public bool ShowMarker    { get; set; }
@@ -94,7 +87,9 @@ public class TrackerUI : MonoBehaviour
     public float Extra;
     public float FinalNum;
 
-    //public int id;
+    // public TrackerUI() { }
+    // public int id;
+    // public bool UseOptiTrack  { get; set; }
 
     ////////////////////////////////////////////////////////////////
 

@@ -4,7 +4,8 @@ using System.Collections;
 
 // ReSharper disable once UnusedMember.Global
 // ReSharper disable once CheckNamespace
-public class OptiObjects : MonoBehaviour {
+public class OptiObjects : MonoBehaviour
+{
 
     private GameObject _rigid;
 
@@ -22,20 +23,22 @@ public class OptiObjects : MonoBehaviour {
 
     public int Index { get; set; }
 
-    ~OptiObjects() {
-    }
+    //~OptiObjects()
+    //{
+    //}
 
     // Use this for initialization
-    void Start () {
+    void Start ()
+    {
         _rigid = CreateSphere ("rigid");
         _lastUpdated = DateTime.Now;
     }
 	
     // Update is called once per frame
-    void Update () {
-    }
+    void Update () {}
 
-    public void Update(Vector3 pos) {
+    public void Update(Vector3 pos)
+    {
         _position = pos;
         _lastUpdated = DateTime.Now;
     }

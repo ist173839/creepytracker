@@ -25,29 +25,28 @@ public class MyUdpListener : MonoBehaviour
 
     private List<string> _stringsToParseColicoes;
     private List<string> _stringsToParseRecord;
-    private List<string> _stringsToParseLog;
     private List<string> _stringsToParseStatus;
-
+    private List<string> _stringsToParseLog;
 
     private SaveColicoes _saveColicoes;
     private SaveRecord   _saveRecord;
-    private SaveLog      _saveLog;
     private SaveStatus   _saveStatus;
+    private SaveLog      _saveLog;
 
     private IPEndPoint _anyIpColicoes;
     private IPEndPoint _anyIpRecord;
-    private IPEndPoint _anyIpLog;
     private IPEndPoint _anyIpStatus;
+    private IPEndPoint _anyIpLog;
 
     private UdpClient _udpClientColicoes = null;
     private UdpClient _udpClientRecord   = null;
-    private UdpClient _udpClientLog      = null;
     private UdpClient _udpClientStatus   = null;
+    private UdpClient _udpClientLog      = null;
 
     private int _portColicoes;
     private int _portRecord;
-    private int _portLog;
     private int _portStatus;
+    private int _portLog;
 
     private int _finalNum; // { get; set; }
 
@@ -79,8 +78,8 @@ public class MyUdpListener : MonoBehaviour
     
     public void SetNewUser(string nameUser)
     {
-        //var newUser = "User-> " + nameUser;// + ", Time-> " + DateTime.Now.ToString("yyyyMMddTHHmmss");
         var newUser = nameUser;// + ", Time-> " + DateTime.Now.ToString("yyyyMMddTHHmmss");
+        //var newUser = "User-> " + nameUser;// + ", Time-> " + DateTime.Now.ToString("yyyyMMddTHHmmss");
         //_saveAvr.SetUpUserFolder(newUser);
 
         _saveStatus.SetUpUserFolder(newUser);
@@ -199,11 +198,11 @@ public class MyUdpListener : MonoBehaviour
         //    _saveAvr.RecordMessage(stringToParse);
         //}
 
-        while (_stringsToParseRecord.Count > 0)
+        while (_stringsToParseStatus.Count > 0)
         {
-            var stringToParse = _stringsToParseRecord.First();
-            _stringsToParseRecord.RemoveAt(0);
-            _saveRecord.RecordMessage(stringToParse);
+            var stringToParse = _stringsToParseStatus.First();
+            _stringsToParseStatus.RemoveAt(0);
+            _saveStatus.RecordMessage(stringToParse);
         }
 
         while (_stringsToParseColicoes.Count > 0)
@@ -220,11 +219,11 @@ public class MyUdpListener : MonoBehaviour
             _saveLog.RecordMessage(stringToParse);
         }
 
-        while (_stringsToParseStatus.Count > 0)
+        while (_stringsToParseRecord.Count > 0)
         {
-            var stringToParse = _stringsToParseStatus.First();
-            _stringsToParseStatus.RemoveAt(0);
-            _saveStatus.RecordMessage(stringToParse);
+            var stringToParse = _stringsToParseRecord.First();
+            _stringsToParseRecord.RemoveAt(0);
+            _saveRecord.RecordMessage(stringToParse);
         }
     }
 
@@ -239,13 +238,13 @@ public class MyUdpListener : MonoBehaviour
         //if (_udpClientAvr != null)      _udpClientAvr.Close();
 
         if (_udpClientColicoes != null) _udpClientColicoes.Close();
-        if (_udpClientRecord != null)   _udpClientRecord.Close();
-        if (_udpClientStatus != null)   _udpClientStatus.Close();
-        if (_udpClientLog != null)      _udpClientLog.Close();
+        if (_udpClientRecord   != null) _udpClientRecord.Close();
+        if (_udpClientStatus   != null) _udpClientStatus.Close();
+        if (_udpClientLog      != null) _udpClientLog.Close();
     }
 
-    // ReSharper disable once UnusedMember.Local
     // ReSharper disable once ArrangeTypeMemberModifiers
+    // ReSharper disable once UnusedMember.Local
     void OnQuit()
     {
         OnApplicationQuit();

@@ -45,6 +45,8 @@ public class OptitrackManager : MonoBehaviour
         OptitrackManagement.DirectMulticastSocketClient.Close();
     }
 
+    // ReSharper disable once UnusedMember.Local
+    // ReSharper disable once ArrangeTypeMemberModifiers
     void Start()
     {
         _localTrackerUi = gameObject.GetComponent<TrackerUI>();
@@ -104,8 +106,7 @@ public class OptitrackManager : MonoBehaviour
                 Debug.Log("Restart OptiTrack");
                 OptitrackManagement.DirectMulticastSocketClient.Start();
             }
-
-
+            
             // transform.position = PositionVector;
 
             if (_deinitValue)

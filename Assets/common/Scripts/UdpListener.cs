@@ -8,7 +8,8 @@ using System.Text;
 
 // ReSharper disable once ClassNeverInstantiated.Global
 // ReSharper disable once CheckNamespace
-public class UdpListener : MonoBehaviour {
+public class UdpListener : MonoBehaviour
+{
 
     private UdpClient _udpClient = null;
     private IPEndPoint _anyIp;

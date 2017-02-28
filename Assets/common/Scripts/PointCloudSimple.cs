@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 
+// ReSharper disable once ClassNeverInstantiated.Global
+// ReSharper disable once CheckNamespace
 public class PointCloudSimple : MonoBehaviour
 {
     Mesh[] highres_cloud;

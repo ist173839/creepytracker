@@ -19,10 +19,10 @@ public class CloudMessage
 
     public void Set(string message, byte[] receivedBytes, int headerSize)
     {
-        //moved implementation to
-        this.Message = message;
+        // moved implementation to
+        this.Message       = message;
         this.ReceivedBytes = receivedBytes;
-        this.HeaderSize = headerSize;
+        this.HeaderSize    = headerSize;
     }
 
     public static string CreateRequestMessage(int mode, string addr, int port)

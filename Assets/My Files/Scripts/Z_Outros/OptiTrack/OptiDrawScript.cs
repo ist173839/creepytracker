@@ -11,7 +11,8 @@ using OptitrackManagement;
 //WARNING: THIS SCRIPT SHOULD BE ASSOCIATED TO THE CAMERA!
 // ReSharper disable once CheckNamespace
 // ReSharper disable once UnusedMember.Global
-public class OptiDrawScript : MonoBehaviour {
+public class OptiDrawScript : MonoBehaviour
+{
 
     public GameObject MarkerObject;
     public GameObject TrailObject;

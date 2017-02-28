@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ApplyTransformation : MonoBehaviour {
+public class ApplyTransformation : MonoBehaviour
+{
     public Matrix4x4 transformMatrix = Matrix4x4.identity;
     public Vector3 scaledPosition = Vector3.zero;
     public Vector3 transformPosition = Vector3.zero;
@@ -12,7 +13,8 @@ public class ApplyTransformation : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void Update ()
+    {
 
     }
 

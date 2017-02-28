@@ -5,7 +5,8 @@ using Kinect = Windows.Kinect;
 using System;
 using System.Linq;
 
-public static class MessageSeparators {
+public static class MessageSeparators
+{
 	public const char L0  = '$'; // header separator
     public const char L1  = '#'; // top level separator -> bodies
     public const char L2  = '/'; // -> body attributes
@@ -35,7 +36,6 @@ public class Skeleton
     public Kinect.TrackingState TrackingStateKneeLeft;
 
     public bool IsMirrorBody;
-
 
     private Vector3 _lastForwardBody;
 

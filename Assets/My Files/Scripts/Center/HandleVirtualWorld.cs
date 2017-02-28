@@ -23,21 +23,17 @@ public class HandleVirtualWorld : MonoBehaviour
         Front,
         Behind,
     }
-    
-    public List<GameObject> IndicatorsList;
-    public List<GameObject> ObstacleList;
 
-    // private OptitrackManager _localOptitrackManager;
+    private List<GameObject> _indicatorsList;
+    private List<GameObject> _obstacleList;
 
     private UdpBroadcast _udpBroadcast;
-    
+
     private TrackerUI _localTrackerUi;
 
     private Tracker _localTracker;
 
     private SaveCenter _saveCenter;
-
-    private SaveCenterToSend _centerToSend;
     
     private GameObject _forwardGameObject;
     private GameObject _centroGameObject;
@@ -45,30 +41,23 @@ public class HandleVirtualWorld : MonoBehaviour
     private GameObject _indicadores;
     private GameObject _helpers;
     private GameObject _marker;
-
-    //public bool UseOpti;
-
+    
     public bool IsSaveFilePossible;
     public bool CanShowIndicators;
-    public bool CanUseSaveFile;
     public bool ShowIndicator;
     public bool ShowMarker;
-    public bool SendReset;
     public bool CanForce;
     public bool Force;
     public bool Send;
 
+    private bool _canUseSaveFile;
     private bool _setUpForward;
     private bool _saveForward;
     private bool _saveMessage;
     private bool _setUpCentro;
     private bool _saveCentro;
-    private bool _saveOne;
     private bool _reset;
-    
-    public int Index;
 
-    private int _indicadorCounter;
     private int _countId;
     private int _port;
 
@@ -76,11 +65,18 @@ public class HandleVirtualWorld : MonoBehaviour
 
     private Vector3? _forwardPoint;
     private Vector3? _centro;
-
-    private string _mensagem;
-    private string _mens;
+    
     private string _path;
 
+    // private OptitrackManager _localOptitrackManager;
+    // private SaveCenterToSend _centerToSend;
+    // public int Index;
+    // private int _indicadorCounter;
+    // public bool UseOpti;
+    // public bool SendReset;
+    // private bool _saveOne;
+    // private string _mensagem;
+    // private string _mens;
 
     // ReSharper disable once UnusedMember.Local
     // ReSharper disable once ArrangeTypeMemberModifiers
@@ -90,11 +86,10 @@ public class HandleVirtualWorld : MonoBehaviour
 
         _udpBroadcast = new UdpBroadcast(_port);
 
-        IndicatorsList = new List<GameObject>();
-        ObstacleList   = new List<GameObject>();
+        _indicatorsList = new List<GameObject>();
+        _obstacleList   = new List<GameObject>();
 
         _saveCenter   = new SaveCenter();
-        _centerToSend = new SaveCenterToSend();
 
         _helpers = new GameObject { name = "Helpers" };
         _helpers.transform.position = transform.position;
@@ -115,35 +110,36 @@ public class HandleVirtualWorld : MonoBehaviour
         _forwardGameObject = GameObjectHelper.MyCreatePrimitiveObject(PrimitiveType.Sphere, "Forward", Vector3.zero, _helpers.transform, false);
         _forwardGameObject.GetComponent<MeshRenderer>().material.color = Color.white;
         _forwardGameObject.transform.localScale = new Vector3(0.50f, 0.1f, 0.50f);
-        
+
         _path = System.IO.Directory.GetCurrentDirectory() + "\\" + "Files" + "\\" + "Files To Use" + "\\" + "Center Data";
 
         if (!System.IO.Directory.Exists(_path))
-             System.IO.Directory.CreateDirectory(_path);
-        
+            System.IO.Directory.CreateDirectory(_path);
+
         _centro = new Vector3?();
 
-        Index    = 0;
         _countId = 0;
-        
-        _mens = "";
-        _mensagem = "";
-        
+
         CanShowIndicators = false;
         ShowMarker = true;
-        SendReset = false;
         CanForce = false;
-        //UseOpti = false;
         Force = false;
         Send = true;
 
         _saveForward = false;
         _saveMessage = true;
         _saveCentro  = false;
-        _saveOne     = true;
         _reset       = false;
+
+        // Index    = 0;
+        // UseOpti = false;
+        // SendReset = false;
+        // _saveOne     = true;
+        // _centerToSend = new SaveCenterToSend();
+        // _mens = "";
+        // _mensagem = "";
     }
-    
+
     // Use this for initialization
     // ReSharper disable once UnusedMember.Local
     // ReSharper disable once ArrangeTypeMemberModifiers
@@ -157,48 +153,48 @@ public class HandleVirtualWorld : MonoBehaviour
         var fileInfo = info.GetFiles();
         var length = fileInfo.Length;
 
-        _localTrackerUi.UseSaveFile = CanUseSaveFile = length != 0;
+        _localTrackerUi.UseSaveFile = _canUseSaveFile = length != 0;
     }
 	
-	// Update is called once per frame
+    // Update is called once per frame
     // ReSharper disable once ArrangeTypeMemberModifiers
     // ReSharper disable once UnusedMember.Local
     void Update ()
-	{
-	    if (!CanUseSaveFile)
-	    {
+    {
+        if (!_canUseSaveFile)
+        {
             var info = new DirectoryInfo(_path);
             var fileInfo = info.GetFiles();
             var length = fileInfo.Length;
-            CanUseSaveFile = length != 0;
+            _canUseSaveFile = length != 0;
             // MyDebug.Log(">>> Length = " + length + ", CanUseSaveFile = " + CanUseSaveFile);
         }
        
         if (_setUpCentro)
-	    {
-	        CanForce = true;
-            if (_setUpForward)
-	        {
-	            CanShowIndicators = true;
-	        }
-	    }
-        
-	    if (_setUpCentro && _centro.HasValue && _setUpForward  && _forwardPoint.HasValue && _reset)
         {
-	        // _forward = (_forwardPoint.Value - _centro.Value).normalized;
-	        _forward = (_forwardPoint.Value - _centro.Value);
+            CanForce = true;
+            if (_setUpForward)
+            {
+                CanShowIndicators = true;
+            }
+        }
+        
+        if (_setUpCentro && _centro.HasValue && _setUpForward  && _forwardPoint.HasValue && _reset)
+        {
+            // _forward = (_forwardPoint.Value - _centro.Value).normalized;
+            _forward = (_forwardPoint.Value - _centro.Value);
             _reset = false;
             Debug.DrawLine(_centro.Value, _centro.Value + _forward * 2.0f, Color.white);
         }
 
         SetRender(ShowIndicator);
         
-	    if (_setUpForward && _forwardPoint.HasValue)
-	    {
-           _indicadores.transform.rotation = Quaternion.LookRotation(_forward);
+        if (_setUpForward && _forwardPoint.HasValue)
+        {
+            _indicadores.transform.rotation = Quaternion.LookRotation(_forward);
         }
 
-	    SaveMensagem();
+        SaveMensagem();
         SendMensagem();
 
         //_localOptitrackManager.RenderMarker(UseOpti && ShowMarker);
@@ -209,16 +205,16 @@ public class HandleVirtualWorld : MonoBehaviour
         _centroGameObject.GetComponent<MeshRenderer>().enabled  = _setUpCentro;
         _forwardGameObject.GetComponent<MeshRenderer>().enabled = _setUpForward;
 
-	    //if (!UseOpti)
-	    {
-	        var idToCheck  = _localTrackerUi.IdToCheck;
-	        var humanCheck = _localTracker.GetHuman(idToCheck);
-	        if (humanCheck != null)
-	        {
+        //if (!UseOpti)
+        {
+            var idToCheck  = _localTrackerUi.IdToCheck;
+            var humanCheck = _localTracker.GetHuman(idToCheck);
+            if (humanCheck != null)
+            {
                 var pos = MathHelper.DeslocamentoHorizontal(humanCheck.gameObject.transform.position, 0.5f);
                 _marker.transform.position = pos;
             }
-	    }
+        }
         //  MyDebug.Log("Length = " + length + ", CanUseSaveFile = " + CanUseSaveFile);
     }
 
@@ -249,7 +245,7 @@ public class HandleVirtualWorld : MonoBehaviour
     private void SendMensagem()
     {
         var mensagem = "";
-       // var mens = "";
+        // var mens = "";
 
         if (_setUpCentro && _centro.HasValue)
         {
@@ -325,7 +321,7 @@ public class HandleVirtualWorld : MonoBehaviour
         //}
         //else
         {
-           // var human = _localTracker.GetHuman(_localTrackerUi.IdToCheck);
+            // var human = _localTracker.GetHuman(_localTrackerUi.IdToCheck);
             var pos = MathHelper.DeslocamentoHorizontal(_marker.transform.position, 0.0f);
             SetUpNewCenter(pos);
         }
@@ -374,7 +370,7 @@ public class HandleVirtualWorld : MonoBehaviour
         var info = new DirectoryInfo(_path);
         var fileInfo = info.GetFiles();
         var length = fileInfo.Length;
-        CanUseSaveFile = length != 0;
+        _canUseSaveFile = length != 0;
         
         if (length == 0) return;
 
@@ -386,7 +382,7 @@ public class HandleVirtualWorld : MonoBehaviour
             using (var sr = new StreamReader(bs))
             {
                 string line;
-               // int l = 0;
+                // int l = 0;
                 while ((line = sr.ReadLine()) != null)
                 {
                     var lineText = line.Split(MessageSeparators.SET);
@@ -396,13 +392,13 @@ public class HandleVirtualWorld : MonoBehaviour
                             //  _centro       = CommonUtils.ConvertRpcStringToVector3(lineText[1]);
                             SetUpNewCenter(CommonUtils.ConvertRpcStringToVector3(lineText[1]));
                             // MyDebug.Log("CenterPos = " + _centro);
-                        break;
+                            break;
                         case "ForwardPos":
                             //_forwardPoint = CommonUtils.ConvertRpcStringToVector3(lineText[1]);
                             SetUpNewForward(CommonUtils.ConvertRpcStringToVector3(lineText[1]));
                             break;
                         default:
-                        break;
+                            break;
                     } //  MyDebug.Log("Print : " + l++ + ",  " + line);
                 }
             }
@@ -414,19 +410,19 @@ public class HandleVirtualWorld : MonoBehaviour
     {
         DestroyAll();
     
-        IndicatorsList.Add(CreateLimit(_indicadores.transform, center, Side.Right,  _countId++));
-        IndicatorsList.Add(CreateLimit(_indicadores.transform, center, Side.Left,   _countId++));
-        IndicatorsList.Add(CreateLimit(_indicadores.transform, center, Side.Front,  _countId++));
-        IndicatorsList.Add(CreateLimit(_indicadores.transform, center, Side.Behind, _countId++));
+        _indicatorsList.Add(CreateLimit(_indicadores.transform, center, Side.Right,  _countId++));
+        _indicatorsList.Add(CreateLimit(_indicadores.transform, center, Side.Left,   _countId++));
+        _indicatorsList.Add(CreateLimit(_indicadores.transform, center, Side.Front,  _countId++));
+        _indicatorsList.Add(CreateLimit(_indicadores.transform, center, Side.Behind, _countId++));
 
         var obstacle1 = CreateObstacles(_indicadores.transform, center, new Vector3(-0.80f, -0.015f,  0.90f), _countId++);
         var obstacle2 = CreateObstacles(_indicadores.transform, center, new Vector3(-0.90f, -0.015f, -0.90f), _countId++);
 
-        IndicatorsList.Add(obstacle1);
-        IndicatorsList.Add(obstacle2);
+        _indicatorsList.Add(obstacle1);
+        _indicatorsList.Add(obstacle2);
 
-        ObstacleList.Add(obstacle1);
-        ObstacleList.Add(obstacle2);
+        _obstacleList.Add(obstacle1);
+        _obstacleList.Add(obstacle2);
     }
 
     public void ResetWorld()
@@ -444,27 +440,27 @@ public class HandleVirtualWorld : MonoBehaviour
     
     private void DestroyAll()
     {
-        if (IndicatorsList.Count == 0) return;
+        if (_indicatorsList.Count == 0) return;
 
-        foreach (var indicator in IndicatorsList) Destroy(indicator);
+        foreach (var indicator in _indicatorsList) Destroy(indicator);
 
-        IndicatorsList = null;
-        ObstacleList   = null;
+        _indicatorsList = null;
+        _obstacleList   = null;
 
-        IndicatorsList = new List<GameObject>();
-        ObstacleList   = new List<GameObject>();
+        _indicatorsList = new List<GameObject>();
+        _obstacleList   = new List<GameObject>();
 
         _countId = 0;
     }
 
     private void SetRender(bool render)
     {
-        if (IndicatorsList.Count == 0) return;
+        if (_indicatorsList.Count == 0) return;
 
-        foreach (var indicator in IndicatorsList)
+        foreach (var indicator in _indicatorsList)
             indicator.GetComponent<MeshRenderer>().enabled = render;
 
-        foreach (var obstacle in ObstacleList)
+        foreach (var obstacle in _obstacleList)
             for (var i = 0; i < obstacle.transform.childCount; i++)
                 obstacle.transform.GetChild(i).GetComponent<MeshRenderer>().enabled = render;
 
@@ -540,13 +536,9 @@ public class HandleVirtualWorld : MonoBehaviour
 
     // ReSharper disable once ArrangeTypeMemberModifiers
     // ReSharper disable once UnusedMember.Local
-    void OnDrawGizmos()
-    {
-
-
-    }
-
+    void OnDrawGizmos() { }
 }
+
 /////////////////////////////////////////////////////////////////////////////////
 /*
 //var joints = _localTracker.GetJointPosition();
