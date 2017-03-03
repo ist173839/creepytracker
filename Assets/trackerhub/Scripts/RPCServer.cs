@@ -111,7 +111,7 @@ public class RPCServer : MonoBehaviour {
     void OnPlayerConnected(NetworkPlayer player)
     {
         DoNotify n = gameObject.GetComponent<DoNotify>();
-        n.notifySend(NotificationLevel.INFO, "Network", "New Connection", 5000);
+        n.NotifySend(NotificationLevel.INFO, "Network", "New Connection", 5000);
     }
 
     void OnPlayerDisconnected(NetworkPlayer player)
@@ -120,7 +120,7 @@ public class RPCServer : MonoBehaviour {
         Network.DestroyPlayerObjects(player);
 
         DoNotify n = gameObject.GetComponent<DoNotify>();
-        n.notifySend(NotificationLevel.IMPORTANT, "Network", "Lost Connection", 5000);
+        n.NotifySend(NotificationLevel.IMPORTANT, "Network", "Lost Connection", 5000);
     }
 
     [RPC]

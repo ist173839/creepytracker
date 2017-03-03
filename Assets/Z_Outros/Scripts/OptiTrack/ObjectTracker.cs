@@ -10,9 +10,7 @@ using Windows.Kinect;
 // ReSharper disable once UnusedMember.Global
 public class ObjectTracker: MonoBehaviour
 {
-
     //References to both trackers to get objects from them
-    
     private enum Point
     {
         Point1,
@@ -29,8 +27,7 @@ public class ObjectTracker: MonoBehaviour
     public int MatrixUpdateTimer = 10;
     public int PointSampleTimer  = 05;
     public int OptiObjectIndex   = 00;
-
-
+    
     public bool AutoUpdatePoints = false;
 
     public Vector3 TransformationVectorCPtoOt = Vector3.zero;
@@ -52,7 +49,10 @@ public class ObjectTracker: MonoBehaviour
     public int MainId;
 
     // Use this for initialization
-    void Start () {
+    // ReSharper disable once ArrangeTypeMemberModifiers
+    // ReSharper disable once UnusedMember.Local
+    void Start ()
+    {
 
         _localTracker = gameObject.GetComponent<Tracker>();
         _myWriteMatrix = new WriteMatrix();
@@ -66,6 +66,8 @@ public class ObjectTracker: MonoBehaviour
     }
 	
 	// Update is called once per frame
+    // ReSharper disable once ArrangeTypeMemberModifiers
+    // ReSharper disable once UnusedMember.Local
 	void Update ()
 	{
 	    if (!SetMainId() || _localTracker == null) return;

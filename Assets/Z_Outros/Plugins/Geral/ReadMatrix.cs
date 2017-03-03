@@ -100,10 +100,7 @@ public class ReadMatrix
     {
         return new Vector3(v2.x, y, v2.y);
     }
-
     
-
-
     private string ProcessAllDoc(string path) // FileStream
     {
         if (_previousPath == path) return null;

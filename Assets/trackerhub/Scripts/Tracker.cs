@@ -608,7 +608,7 @@ public class Tracker : MonoBehaviour
 		if (canNotCalibrate)
         {
 			var n = gameObject.GetComponent<DoNotify> ();
-			n.notifySend (NotificationLevel.IMPORTANT, "Calibration error", "Incorrect user placement!", 5000);
+			n.NotifySend (NotificationLevel.IMPORTANT, "Calibration error", "Incorrect user placement!", 5000);
 		}
 
 		return !canNotCalibrate;
@@ -643,7 +643,7 @@ public class Tracker : MonoBehaviour
 		_saveConfig();
 
 		var n = gameObject.GetComponent<DoNotify> ();
-		n.notifySend (NotificationLevel.INFO, "Calibration complete", "Config file updated", 5000);
+		n.NotifySend (NotificationLevel.INFO, "Calibration complete", "Config file updated", 5000);
 	}
 
 	internal void CalibrationStep3 ()
@@ -668,7 +668,7 @@ public class Tracker : MonoBehaviour
 		_saveConfig ();
 
 		var n = gameObject.GetComponent<DoNotify> ();
-		n.notifySend (NotificationLevel.INFO, "Calibration complete", "Config file updated", 5000);
+		n.NotifySend (NotificationLevel.INFO, "Calibration complete", "Config file updated", 5000);
 	}
 
 	internal Vector3 GetJointPosition (int id, JointType joint)

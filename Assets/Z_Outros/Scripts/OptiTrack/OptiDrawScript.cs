@@ -7,7 +7,6 @@ using UnityEngine;
 using System.Collections;
 using OptitrackManagement;
 
-
 //WARNING: THIS SCRIPT SHOULD BE ASSOCIATED TO THE CAMERA!
 // ReSharper disable once CheckNamespace
 // ReSharper disable once UnusedMember.Global
@@ -39,7 +38,7 @@ public class OptiDrawScript : MonoBehaviour
     //private OVRCameraController RiftCamController;
    // private OVRCameraRig RiftCamController;
 
-    private bool drawing;
+    private bool _drawing;
 
     ~OptiDrawScript()
     {
@@ -48,7 +47,10 @@ public class OptiDrawScript : MonoBehaviour
     }
 
 	// Use this for initialization
-	void Start () {
+    // ReSharper disable once ArrangeTypeMemberModifiers
+    // ReSharper disable once UnusedMember.Local
+	void Start ()
+    {
         WorldScaleOffset = Vector3.zero;
         message_to_show = "";
         OptitrackManagement.DirectMulticastSocketClient.Start();
@@ -69,7 +71,10 @@ public class OptiDrawScript : MonoBehaviour
 	}
 	
 	// Update is called once per frame
-	void Update () {
+    // ReSharper disable once UnusedMember.Local
+    // ReSharper disable once ArrangeTypeMemberModifiers
+	void Update ()
+    {
         OptitrackManagement.DirectMulticastSocketClient.Update();
         ProcessOptiTrackInput();
 

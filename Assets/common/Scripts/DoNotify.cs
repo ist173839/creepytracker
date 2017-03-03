@@ -94,6 +94,8 @@ public class DoNotify : MonoBehaviour
 	public Texture importantTex;
 	public Texture infoTex;
 
+    // ReSharper disable once UnusedMember.Local
+    // ReSharper disable once ArrangeTypeMemberModifiers
     void Start ()
     {
 		_notifications = new List<Notification> ();
@@ -104,6 +106,8 @@ public class DoNotify : MonoBehaviour
 	}
 	
 	
+    // ReSharper disable once ArrangeTypeMemberModifiers
+    // ReSharper disable once UnusedMember.Local
 	void Update ()
     {
 		DateTime now = DateTime.Now;
@@ -120,8 +124,8 @@ public class DoNotify : MonoBehaviour
 			_notifications.Remove(n);
 		}
 	}
-	
-	void DisplayNotification(Notification notification, int left, int top)
+
+    private void DisplayNotification(Notification notification, int left, int top)
 	{
 		GUI.Box (new Rect ( left - 5, top - 5, 200, 35), "");
 		GUI.DrawTexture (new Rect (left, top, 24, 25), notification.Icon);
@@ -145,12 +149,11 @@ public class DoNotify : MonoBehaviour
         }
         catch (Exception)
         {
-
             // ignore
         }
 	}
 	
-	public void notifySend(NotificationLevel level, string title, string content, int activeTimeMilliseconds)
+	public void NotifySend(NotificationLevel level, string title, string content, int activeTimeMilliseconds)
 	{
 		Texture t = new Texture();
 		if (level == NotificationLevel.IMPORTANT) 

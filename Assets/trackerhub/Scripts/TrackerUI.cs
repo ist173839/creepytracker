@@ -419,7 +419,7 @@ public class TrackerUI : MonoBehaviour
 				_userTracker.Save ();
 
 				DoNotify n = gameObject.GetComponent<DoNotify> ();
-				n.notifySend (NotificationLevel.INFO, "Udp Listening", "Listening to port " + TrackerProperties.Instance.ListenPort, 2000);
+				n.NotifySend (NotificationLevel.INFO, "Udp Listening", "Listening to port " + TrackerProperties.Instance.ListenPort, 2000);
 			}
 			top += 35;
 
@@ -435,7 +435,7 @@ public class TrackerUI : MonoBehaviour
 				_userTracker.Save ();
 
 				var n = gameObject.GetComponent<DoNotify> ();
-				n.notifySend (NotificationLevel.INFO, "Udp Broadcast", "Sending to port " + TrackerProperties.Instance.BroadcastPort, 2000);
+				n.NotifySend (NotificationLevel.INFO, "Udp Broadcast", "Sending to port " + TrackerProperties.Instance.BroadcastPort, 2000);
 			}
 
 			top += 35;
@@ -449,7 +449,7 @@ public class TrackerUI : MonoBehaviour
 				_userTracker.Save ();
 
 				DoNotify n = gameObject.GetComponent<DoNotify> ();
-				n.notifySend (NotificationLevel.INFO, "Udp Broadcast", "Sending " + _packetsPerSec + " packets / sec", 2000);
+				n.NotifySend (NotificationLevel.INFO, "Udp Broadcast", "Sending " + _packetsPerSec + " packets / sec", 2000);
 			}
             top += 35;
             left = Screen.width - 250 + 20;
