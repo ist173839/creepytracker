@@ -68,18 +68,8 @@ public class HandleVirtualWorld : MonoBehaviour
     
     private string _path;
 
-    // private OptitrackManager _localOptitrackManager;
-    // private SaveCenterToSend _centerToSend;
-    // public int Index;
-    // private int _indicadorCounter;
-    // public bool UseOpti;
-    // public bool SendReset;
-    // private bool _saveOne;
-    // private string _mensagem;
-    // private string _mens;
-
-    // ReSharper disable once UnusedMember.Local
     // ReSharper disable once ArrangeTypeMemberModifiers
+    // ReSharper disable once UnusedMember.Local
     void Awake()
     {
         _port = 53839;
@@ -541,7 +531,17 @@ public class HandleVirtualWorld : MonoBehaviour
 
 /////////////////////////////////////////////////////////////////////////////////
 /*
-//var joints = _localTracker.GetJointPosition();
+    // private OptitrackManager _localOptitrackManager;
+    // private SaveCenterToSend _centerToSend;
+    // public int Index;
+    // private int _indicadorCounter;
+    // public bool UseOpti;
+    // public bool SendReset;
+    // private bool _saveOne;
+    // private string _mensagem;
+    // private string _mens; 
+ 
+    // var joints = _localTracker.GetJointPosition();
 
 
 

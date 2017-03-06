@@ -17,12 +17,6 @@ using System.Text;
 // ReSharper disable once ClassNeverInstantiated.Global
 public class MyUdpListener : MonoBehaviour
 {
-    //private List<string> _stringsToParseAvr;
-    //private SaveAvr      _saveAvr;
-    //private IPEndPoint _anyIpAvr;
-    //private UdpClient _udpClientAvr = null;
-    //private int _portAvr;
-
     private List<string> _stringsToParseColicoes;
     private List<string> _stringsToParseRecord;
     private List<string> _stringsToParseStatus;
@@ -54,9 +48,6 @@ public class MyUdpListener : MonoBehaviour
     // ReSharper disable once UnusedMember.Local
     void Awake()
     {
-        //_portAvr = 59839;
-        //_saveAvr = new SaveAvr();
-
         _portRecord   = 57839;
         _portColicoes = 58839;
         _portLog      = 60839;
@@ -67,8 +58,7 @@ public class MyUdpListener : MonoBehaviour
         _saveLog      = new SaveLog();
         _saveStatus   = new SaveStatus();
     }
-
-
+    
     // ReSharper disable once ArrangeTypeMemberModifiers
     // ReSharper disable once UnusedMember.Local
     void Start()
@@ -191,13 +181,6 @@ public class MyUdpListener : MonoBehaviour
 
     private void UpdateMessages()
     {
-        //while (_stringsToParseAvr.Count > 0)
-        //{
-        //    var stringToParse = _stringsToParseAvr.First();
-        //    _stringsToParseAvr.RemoveAt(0);
-        //    _saveAvr.RecordMessage(stringToParse);
-        //}
-
         while (_stringsToParseStatus.Count > 0)
         {
             var stringToParse = _stringsToParseStatus.First();
@@ -235,8 +218,6 @@ public class MyUdpListener : MonoBehaviour
 
     private void CloseClients()
     {
-        //if (_udpClientAvr != null)      _udpClientAvr.Close();
-
         if (_udpClientColicoes != null) _udpClientColicoes.Close();
         if (_udpClientRecord   != null) _udpClientRecord.Close();
         if (_udpClientStatus   != null) _udpClientStatus.Close();
@@ -255,12 +236,35 @@ public class MyUdpListener : MonoBehaviour
     void OnDestroy()
     {
         OnApplicationQuit();
-        //CloseClients();
     }
 }
 ///////////////////////////////////////////////////////////////////////////////////
 /*
  
+
+    // private List<string> _stringsToParseAvr;
+    // private SaveAvr      _saveAvr;
+    // private IPEndPoint _anyIpAvr;
+    // private UdpClient _udpClientAvr = null;
+    // private int _portAvr;
+
+    // _portAvr = 59839;
+    // _saveAvr = new SaveAvr();
+    
+    //while (_stringsToParseAvr.Count > 0)
+    //{
+    //    var stringToParse = _stringsToParseAvr.First();
+    //    _stringsToParseAvr.RemoveAt(0);
+    //    _saveAvr.RecordMessage(stringToParse);
+    //}
+
+
+     //if (_udpClientAvr != null)      _udpClientAvr.Close();
+
+
+
+     //CloseClients();
+
       private void ReceiveCallbackAvr(IAsyncResult ar)
     {
         var receiveBytes = _udpClientAvr.EndReceive(ar, ref _anyIpAvr);
