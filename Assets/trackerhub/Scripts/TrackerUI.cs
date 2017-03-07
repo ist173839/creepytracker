@@ -659,20 +659,8 @@ public class TrackerUI : MonoBehaviour
 		    _menuAction = _menuAction == button ? MenuAction.None : button;
 	}
 }
-/*
-
-    if (GUI.Button(new Rect(left + 100, top, 100, 25), "New User"))
-    {
-        _localMyUdpListener.SetNewUser(id.ToString(), FinalNum.ToString());
-    }
-    top += 25;
-    GUI.Label(new Rect(left, top, 180, 25), "Id = " + id + ", Objectivo = " + FinalNum);
-    top += 25;
+///////////////////////////////////////////////////////////////////////////////////////////////////
+    /*
 
 
-  // _localMyUdpListener.SetNewUser(id.ToString(), FinalNum.ToString());
-
-
-
-
- */
+    */
