@@ -37,7 +37,7 @@ public class Human
 
     public Human(GameObject gameObject, Tracker tracker)
     {
-        ID = CommonUtils.getNewID();
+        ID = CommonUtils.GetNewId();
         bodies = new List<SensorBody>();
         this.gameObject = gameObject;
         this.gameObject.name = "Human " + ID;

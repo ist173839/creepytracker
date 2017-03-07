@@ -518,8 +518,11 @@ public class Tracker : MonoBehaviour
 			_humans.Remove (h.ID);
 		}
 	}
+    
+   // private static float CalcHorizontalDistance (Vector3 a, Vector3 b)
+   
+    private float CalcHorizontalDistance (Vector3 a, Vector3 b)
 
-    private static float CalcHorizontalDistance (Vector3 a, Vector3 b)
 	{
 		var c = new Vector3 (a.x, 0, a.z);
 		var d = new Vector3 (b.x, 0, b.z);
@@ -807,16 +810,16 @@ public class Tracker : MonoBehaviour
     private void _saveConfig ()
 	{
 		var filePath = Application.dataPath + "/" + TrackerProperties.Instance.ConfigFilename;
-		ConfigProperties.clear (filePath);
+		ConfigProperties.Clear (filePath);
 
-		ConfigProperties.writeComment (filePath, "Config File created in " + DateTime.Now.ToString ("yyyy-MM-dd HH:mm:ss"));
+		ConfigProperties.WriteComment (filePath, "Config File created in " + DateTime.Now.ToString ("yyyy-MM-dd HH:mm:ss"));
 
 		// save properties
-		ConfigProperties.save (filePath, "udp.listenport",              "" + TrackerProperties.Instance.ListenPort);
-		ConfigProperties.save (filePath, "udp.broadcastport",           "" + TrackerProperties.Instance.BroadcastPort);
-		ConfigProperties.save (filePath, "udp.sendinterval",            "" + TrackerProperties.Instance.SendInterval);
-		ConfigProperties.save (filePath, "tracker.mergedistance",       "" + TrackerProperties.Instance.MergeDistance);
-		ConfigProperties.save (filePath, "tracker.confidencethreshold", "" + TrackerProperties.Instance.ConfidenceTreshold);
+		ConfigProperties.Save (filePath, "udp.listenport",              "" + TrackerProperties.Instance.ListenPort);
+		ConfigProperties.Save (filePath, "udp.broadcastport",           "" + TrackerProperties.Instance.BroadcastPort);
+		ConfigProperties.Save (filePath, "udp.sendinterval",            "" + TrackerProperties.Instance.SendInterval);
+		ConfigProperties.Save (filePath, "tracker.mergedistance",       "" + TrackerProperties.Instance.MergeDistance);
+		ConfigProperties.Save (filePath, "tracker.confidencethreshold", "" + TrackerProperties.Instance.ConfidenceTreshold);
 //		ConfigProperties.save (filePath, "tracker.filtergain", "" + AdaptiveDoubleExponentialFilterFloat.Gain);
 
 		// save sensors
@@ -826,7 +829,7 @@ public class Tracker : MonoBehaviour
             {
 				Vector3 p = s.SensorGameObject.transform.position;
 				Quaternion r = s.SensorGameObject.transform.rotation;
-				ConfigProperties.save (filePath, "kinect." + s.SensorID, "" + s.SensorID + ";" + p.x + ";" + p.y + ";" + p.z + ";" + r.x + ";" + r.y + ";" + r.z + ";" + r.w);
+				ConfigProperties.Save (filePath, "kinect." + s.SensorID, "" + s.SensorID + ";" + p.x + ";" + p.y + ";" + p.z + ";" + r.x + ";" + r.y + ";" + r.z + ";" + r.w);
 			}
 		}
 	}
@@ -872,7 +875,7 @@ public class Tracker : MonoBehaviour
 
     private void _loadSavedSensors ()
 	{
-		foreach (var line in ConfigProperties.loadKinects(Application.dataPath + "/" + TrackerProperties.Instance.ConfigFilename)) {
+		foreach (var line in ConfigProperties.LoadKinects(Application.dataPath + "/" + TrackerProperties.Instance.ConfigFilename)) {
 			var values = line.Split (';');
 
 			var id = values [0];
@@ -1059,6 +1062,38 @@ public class Tracker : MonoBehaviour
         Debug.Log("Forwarded request to clients " + message2);
     }
     
+    internal void LoadSurfaces()
+    {
+        Surface [] surfaces = Surface.loadSurfaces("Surfaces");
+        foreach (Surface s in surfaces)
+        {
+            if (Sensors.ContainsKey(s.sensorid))
+            {
+                s.surfaceGO = __createSurfaceGos(s.name, Vector3.zero, Sensors[s.sensorid].SensorGameObject.transform);
+
+                GameObject bl = __createSurfaceGos("bl", s.BottomLeft,  s.surfaceGO.transform);
+                GameObject br = __createSurfaceGos("br", s.BottomRight, s.surfaceGO.transform);
+                GameObject tl = __createSurfaceGos("tl", s.TopLeft,     s.surfaceGO.transform);
+                GameObject tr = __createSurfaceGos("tr", s.TopRight,    s.surfaceGO.transform);
+
+                gameObject.GetComponent<DoNotify>().NotifySend(NotificationLevel.INFO, "New Surface", "Surface " + s.name + " added", 5000);
+
+                s.saveSurface(bl, br, tl, tr);
+
+            }
+        }
+    }
+
+    internal GameObject __createSurfaceGos(string nameSurface, Vector3 position, Transform parent)
+    {
+        GameObject g = new GameObject();
+        g.transform.parent = parent;
+        g.transform.localRotation = Quaternion.identity;
+        g.name = nameSurface;
+        g.transform.localPosition = CommonUtils.PointKinectToUnity(position); 
+        return g;
+    }
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

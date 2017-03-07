@@ -119,6 +119,7 @@
     <Compile Include="Assets\Trackerhub\Plugins\Human.cs" />
     <Compile Include="Assets\Trackerhub\Plugins\Sensor.cs" />
     <Compile Include="Assets\Trackerhub\Plugins\SensorBody.cs" />
+    <Compile Include="Assets\Trackerhub\Plugins\Surface.cs" />
     <Compile Include="Assets\Trackerhub\Scripts\HumanSkeleton.cs" />
     <Compile Include="Assets\Trackerhub\Scripts\RPCServer.cs" />
     <Compile Include="Assets\Trackerhub\Scripts\Tracker.cs" />
@@ -156,6 +157,7 @@
     <None Include="Assets\Shaders\simpleBillboard.shader" />
     <None Include="Assets\Standard Assets\CrossPlatformInput\CrossPlatformInputGuidelines.txt" />
     <None Include="Assets\Standard Assets\Fonts\OpenSans\License!.txt" />
+    <None Include="Assets\Surfaces\rectangle.txt" />
     <None Include="Assets\configSettings.txt" />
     <None Include="Assets\simpleBillboard.shader" />
   </ItemGroup>

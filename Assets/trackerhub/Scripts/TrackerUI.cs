@@ -226,7 +226,7 @@ public class TrackerUI : MonoBehaviour
 			top = IconSize + IconSize / 2;
 			left = IconSize + 50;
 
-			GUI.Box (new Rect (left, top - 10, 200, 140), "");
+			GUI.Box (new Rect (left, top - 10, 200, 260), "");
 			left += 10;
 
 			GUI.Label (new Rect (left, top, 500, 35), "Calibration: ", _titleStyle);
@@ -272,10 +272,18 @@ public class TrackerUI : MonoBehaviour
 				AdaptiveDoubleExponentialFilterFloat.filtering = !AdaptiveDoubleExponentialFilterFloat.filtering;
 			}
 			GUI.Label (new Rect (left + 40, top, 100, 25), "Smooth points");
-		}
 
-		if (_menuAction == MenuAction.Clouds)
-        {
+
+            top += 60;
+            GUI.Label(new Rect(left, top, 500, 35), "Surfaces: ", _titleStyle);
+            top += 40;
+            if (GUI.Button(new Rect(left, top, 150, 35), "Load Surfaces"))
+            {
+                _userTracker.LoadSurfaces();
+            }
+        }
+
+        if (_menuAction == MenuAction.Clouds) {
 			top = IconSize + IconSize / 2;
 			left = 20 + 3 * IconSize;
 			

@@ -297,21 +297,21 @@ public class Sensor
 	{
 		if (_materials == null) {
 			System.Random rng = new System.Random ();
-			int n = CommonUtils.colors.Count;
+			int n = CommonUtils.Colors.Count;
 			while (n > 1) {
 				n--;
 				int k = rng.Next (n + 1);
-				Color value = CommonUtils.colors [k];
-				CommonUtils.colors [k] = CommonUtils.colors [n];
-				CommonUtils.colors [n] = value;
+				Color value = CommonUtils.Colors [k];
+				CommonUtils.Colors [k] = CommonUtils.Colors [n];
+				CommonUtils.Colors [n] = value;
 			}
 
 
 
 			_materials = new List<Material> ();
-			for (int i = 0; i < CommonUtils.colors.Count; i++) {
+			for (int i = 0; i < CommonUtils.Colors.Count; i++) {
 				Material aux = new Material (Shader.Find ("Standard"));
-				aux.color = CommonUtils.colors [i];
+				aux.color = CommonUtils.Colors [i];
 				_materials.Add (aux);
 			}
 		}

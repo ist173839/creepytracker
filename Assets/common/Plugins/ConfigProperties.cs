@@ -5,14 +5,14 @@ using UnityEngine;
 
 public class ConfigProperties
 {
-    public static void clear(string filename)
+    public static void Clear(string filename)
     {
         File.Create(filename).Close();
     }
 
 	private static char LineComment = '%';
 
-	public static void writeComment (string filename, string line)
+	public static void WriteComment (string filename, string line)
 	{
 		using (StreamWriter file = new StreamWriter(filename))
 		{
@@ -20,7 +20,7 @@ public class ConfigProperties
 		}
 	}
 
-	public static void save(string filename, string property, string value)
+	public static void Save(string filename, string property, string value)
 	{
 		if (File.Exists(filename))
 		{
@@ -33,9 +33,7 @@ public class ConfigProperties
 					index = lines.IndexOf(line);
 				}
 			}
-
-
-			if (index > - 1)
+            if (index > - 1)
 			{
 				lines[index] = property + "=" + value;
 			}
@@ -75,7 +73,7 @@ public class ConfigProperties
         return "";
 	}
 
-	public static string[] loadKinects(string filename)
+	public static string[] LoadKinects(string filename)
 	{
 		List<string> kinects = new List<string>();
 
@@ -90,7 +88,6 @@ public class ConfigProperties
 				}
 			}
 		}
-
 		return kinects.ToArray();
 	}
 }
