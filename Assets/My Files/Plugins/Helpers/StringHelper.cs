@@ -24,7 +24,6 @@ public static class MyMessaSepa
     public const string SepaVec = "|";
     public const string SepaCol = "+";
     public const string Sepa = ";";
-
 }
 
 
@@ -44,19 +43,8 @@ public static class StringHelper
                 return null;
         }
     }
-
-    //public static bool GetBoolFromString(string s)
-    //{
-    //    switch (s)
-    //    {
-    //        case "True":
-    //            return true;
-    //        case "False":
-    //            return false;
-    //        default:
-    //    }
-    //}
-
+    
+    // ReSharper disable once UnusedMember.Global
     public static bool? ConvertHandStateToBool(string s)
     {
         switch (s)
@@ -69,41 +57,47 @@ public static class StringHelper
                 return null;
         }
     }
-
-
+    
+    // ReSharper disable once UnusedMember.Global
     public static string RemoverExtraCompleto(string text)
     {
         char[] del = { '£' };
         return text.Split(del)[2];
     }
 
+    // ReSharper disable once UnusedMember.Global
     public static string ObterInfoTempoLinha(string text)
     {
         char[] del1 = { '$' };
         return text.Split(del1)[0];
     }
 
+    // ReSharper disable once UnusedMember.Global
     public static string ObterMensagemLinha(string text)
     {
         char[] del1 = { '$' };
         return text.Split(del1)[1];
     }
 
+    // ReSharper disable once UnusedMember.Global
     public static string ObterOptitrackLinha(string text)
     {
         return text.Split(MyMessaSepa.InicioOptitrack[0])[1];
     }
 
+    // ReSharper disable once UnusedMember.Global
     public static Vector3 ObterOptiPos(string text)
     {
         return StringToVector3(text.Split(MyMessaSepa.SepaOptitrack[0])[0]);
     }
 
+    // ReSharper disable once UnusedMember.Global
     public static Quaternion ObterOptiRot(string text)
     {
         return StringToQuaternion(text.Split(MyMessaSepa.SepaOptitrack[0])[1]);
     }
 
+    // ReSharper disable once MemberCanBePrivate.Global
     public static Vector3 StringToVector3(string text)
     {
         return new Vector3
@@ -114,6 +108,7 @@ public static class StringHelper
         };
     }
 
+    // ReSharper disable once MemberCanBePrivate.Global
     public static Quaternion StringToQuaternion(string text)
     {
         return new Quaternion()
@@ -125,6 +120,7 @@ public static class StringHelper
         };
     }
 
+    // ReSharper disable once UnusedMember.Local
     private static Vector3 StringToVector3([NotNull] string text, char separador)
     {
         if (text == null) throw new ArgumentNullException("text");
@@ -136,6 +132,7 @@ public static class StringHelper
         };
     }
 
+    // ReSharper disable once UnusedMember.Local
     private static Vector3 MyStringToVector3([NotNull] string text, char separador, [NotNull] string newNumberDecimalSeparator)
     {
         if (text == null) throw new ArgumentNullException("text");
@@ -148,6 +145,7 @@ public static class StringHelper
         };
     }
 
+    // ReSharper disable once UnusedMember.Local
     private static Quaternion MyStringToQuaternion([NotNull] string text, char separador)
     {
         if (text == null) throw new ArgumentNullException("text");
@@ -160,6 +158,7 @@ public static class StringHelper
         };
     }
 
+    // ReSharper disable once UnusedMember.Local
     private static Quaternion MyStringToQuaternion([NotNull] string text, char separador,
         [NotNull] string newNumberDecimalSeparator)
     {
@@ -174,23 +173,14 @@ public static class StringHelper
         };
     }
 
-    //public static string Vector3ToStringV1(Vector3 vector3, string separador = MyMessaSepa.SepaVec)
-    //{
-    //    return vector3.x.ToString("0.000", new NumberFormatInfo() { NumberDecimalSeparator = "," }) + separador +
-    //           vector3.y.ToString("0.000", new NumberFormatInfo() { NumberDecimalSeparator = "," }) + separador +
-    //           vector3.z.ToString("0.000", new NumberFormatInfo() { NumberDecimalSeparator = "," });
-    //}
-
-
     public static string Vector3ToStringV1(Vector3 vector3, string separador = MyMessaSepa.SepaVec, string decimalSeparator = ",")
     {
         return vector3.x.ToString("0.000", new NumberFormatInfo() { NumberDecimalSeparator = decimalSeparator }) + separador +
                vector3.y.ToString("0.000", new NumberFormatInfo() { NumberDecimalSeparator = decimalSeparator }) + separador +
                vector3.z.ToString("0.000", new NumberFormatInfo() { NumberDecimalSeparator = decimalSeparator });
     }
-
-
-  
+    
+    // ReSharper disable once UnusedMember.Global
     public static string Vector3ToStringV2(Vector3 vector3, string separador = MyMessaSepa.SepaVec)
     {
         var stringX = vector3.x < 0
@@ -207,9 +197,6 @@ public static class StringHelper
         
         return stringX + stringY + stringZ;
     }
-
-
-
     public static string QuaternionToString(Quaternion quaternion)
     {
         return quaternion.x.ToString("0.000", new NumberFormatInfo() { NumberDecimalSeparator = "," }) + MyMessaSepa.SepaVec +
@@ -218,12 +205,14 @@ public static class StringHelper
                quaternion.w.ToString("0.000", new NumberFormatInfo() { NumberDecimalSeparator = "," });
     }
 
+    // ReSharper disable once UnusedMember.Global
     public static Vector3 _convertBodyJointStringToVector3(string strJoint)
     {
         var p = strJoint.Split(MessageSeparators.L3);
         return new Vector3(Single.Parse(p[0].Replace(',', '.')), Single.Parse(p[1].Replace(',', '.')), Single.Parse(p[2].Replace(',', '.')));
     }
     
+    // ReSharper disable once UnusedMember.Local
     private static string Matrix4ToString(Matrix4x4 matrix4)
     {
 
@@ -249,21 +238,25 @@ public static class StringHelper
             ;
     }
 
+    // ReSharper disable once UnusedMember.Global
     public static string Vector3ToStringRecord(Vector3 vec)
     {
         return "( " + vec.x.ToString("0.000f") + ", " + vec.y.ToString("0.000f") + ", " + vec.z.ToString("0.000f") + " )";
     }
 
+    // ReSharper disable once UnusedMember.Global
     public static string Vector3ToVector2ToStringRecord(Vector3 vec)
     {
         return "( " + vec.x.ToString("0.000f") + ", " + vec.z.ToString("0.000f") + " )";
     }
 
+    // ReSharper disable once UnusedMember.Global
     public static string QuaternionToStringRecord(Quaternion qua)
     {
         return "( " + qua.x.ToString("0.000f") + ", " + qua.y.ToString("0.000f") + ", " + qua.z.ToString("0.000f") + ", " + qua.w.ToString("0.000f") + " )"; 
     }
 
+    // ReSharper disable once UnusedMember.Global
     public static string GetFrameRateString(float delta)
     {
         var msec = delta * 1000.0f;
@@ -272,24 +265,7 @@ public static class StringHelper
         return text;
     }
 }
-
-/*
-   //public static string Vector3ToStringV2(Vector3 vector3, string separador)
-    //{
-    //    var stringX = vector3.x < 0
-    //        ? " " + vector3.x.ToString("0.000", new NumberFormatInfo() { NumberDecimalSeparator = "," }) + separador + " "
-    //        :       vector3.x.ToString("0.000", new NumberFormatInfo() { NumberDecimalSeparator = "," }) + separador + " ";
-
-    //    var stringY = vector3.y < 0
-    //        ? " " + vector3.y.ToString("0.000", new NumberFormatInfo() { NumberDecimalSeparator = "," }) + separador + " "
-    //        :       vector3.y.ToString("0.000", new NumberFormatInfo() { NumberDecimalSeparator = "," }) + separador + " ";
-        
-    //    var stringZ = vector3.z < 0
-    //        ? " " + vector3.z.ToString("0.000", new NumberFormatInfo() { NumberDecimalSeparator = "," }) + separador + " "
-    //        :       vector3.z.ToString("0.000", new NumberFormatInfo() { NumberDecimalSeparator = "," });
-        
-    //    return stringX + stringY + stringZ;
-    //}
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /*
      
-     */
+     */ 

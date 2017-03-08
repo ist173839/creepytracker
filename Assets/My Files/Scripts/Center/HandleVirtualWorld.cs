@@ -121,13 +121,6 @@ public class HandleVirtualWorld : MonoBehaviour
         _saveCentro  = false;
         _reset       = false;
 
-        // Index    = 0;
-        // UseOpti = false;
-        // SendReset = false;
-        // _saveOne     = true;
-        // _centerToSend = new SaveCenterToSend();
-        // _mens = "";
-        // _mensagem = "";
     }
 
     // Use this for initialization
@@ -135,7 +128,6 @@ public class HandleVirtualWorld : MonoBehaviour
     // ReSharper disable once ArrangeTypeMemberModifiers
     void Start ()
     {
-        // _localOptitrackManager = gameObject.GetComponent<OptitrackManager>();
         _localTrackerUi        = gameObject.GetComponent<TrackerUI>();
         _localTracker          = gameObject.GetComponent<Tracker>();
         
@@ -157,7 +149,6 @@ public class HandleVirtualWorld : MonoBehaviour
             var fileInfo = info.GetFiles();
             var length = fileInfo.Length;
             _canUseSaveFile = length != 0;
-            // MyDebug.Log(">>> Length = " + length + ", CanUseSaveFile = " + CanUseSaveFile);
         }
        
         if (_setUpCentro)
@@ -531,6 +522,91 @@ public class HandleVirtualWorld : MonoBehaviour
 
 /////////////////////////////////////////////////////////////////////////////////
 /*
+   
+
+
+
+    /////////////////////////////////////////////////////////////////////////////////
+     void Update ()
+    {
+        if (!_canUseSaveFile)
+        {
+            var info = new DirectoryInfo(_path);
+            var fileInfo = info.GetFiles();
+            var length = fileInfo.Length;
+            _canUseSaveFile = length != 0;
+        }
+       
+        if (_setUpCentro)
+        {
+            CanForce = true;
+            if (_setUpForward)
+            {
+                CanShowIndicators = true;
+            }
+        }
+        
+        if (_setUpCentro && _centro.HasValue && _setUpForward  && _forwardPoint.HasValue && _reset)
+        {
+            // _forward = (_forwardPoint.Value - _centro.Value).normalized;
+            _forward = (_forwardPoint.Value - _centro.Value);
+            _reset = false;
+            Debug.DrawLine(_centro.Value, _centro.Value + _forward * 2.0f, Color.white);
+        }
+
+        SetRender(ShowIndicator);
+        
+        if (_setUpForward && _forwardPoint.HasValue)
+        {
+            _indicadores.transform.rotation = Quaternion.LookRotation(_forward);
+        }
+
+        SaveMensagem();
+        SendMensagem();
+
+        //_localOptitrackManager.RenderMarker(UseOpti && ShowMarker);
+        //_marker.GetComponent<MeshRenderer>().enabled = !UseOpti && ShowMarker;
+        
+        _marker.GetComponent<MeshRenderer>().enabled = ShowMarker;
+        
+        _centroGameObject.GetComponent<MeshRenderer>().enabled  = _setUpCentro;
+        _forwardGameObject.GetComponent<MeshRenderer>().enabled = _setUpForward;
+
+        //if (!UseOpti)
+        {
+            var idToCheck  = _localTrackerUi.IdToCheck;
+            var humanCheck = _localTracker.GetHuman(idToCheck);
+            if (humanCheck != null)
+            {
+                var pos = MathHelper.DeslocamentoHorizontal(humanCheck.gameObject.transform.position, 0.5f);
+                _marker.transform.position = pos;
+            }
+        }
+        //  MyDebug.Log("Length = " + length + ", CanUseSaveFile = " + CanUseSaveFile);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+    
+        // Index    = 0;
+        // UseOpti = false;
+        // SendReset = false;
+        // _saveOne     = true;
+        // _centerToSend = new SaveCenterToSend();
+        // _mens = "";
+        // _mensagem = "";
+    
+        // _localOptitrackManager = gameObject.GetComponent<OptitrackManager>();
+    /////////////////////////////////////////////////////////////////////////////////
+    
+    
+            // MyDebug.Log(">>> Length = " + length + ", CanUseSaveFile = " + CanUseSaveFile);
+    
+    
+    
     // private OptitrackManager _localOptitrackManager;
     // private SaveCenterToSend _centerToSend;
     // public int Index;

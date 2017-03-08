@@ -53,15 +53,15 @@ public class SaveColicoes
     private bool _useDefaultFolder;
     private bool _isInitiate;
     private bool _oversize;
-    
-    public SaveColicoes(string userFolder)
-    {
-        SetUp(userFolder);
-    }
 
     public SaveColicoes()
     {
         SetUp(null);
+    }
+
+    public SaveColicoes(string userFolder)
+    {
+        SetUp(userFolder);
     }
 
     private void SetUp(string userFolder)
@@ -97,7 +97,6 @@ public class SaveColicoes
 
         _saveHeader = null;
 
-        // _header = GetHeader();
     }
 
     public void SetUpUserFolder(string userFolder)
@@ -337,7 +336,11 @@ public class SaveColicoes
 }
 //////////////////////////////////////////////////////////////////////
 /*
+  
+   
+        // _header = GetHeader(); 
     
+      
     //  public bool DirectoryChange;
     
     // private string _header;

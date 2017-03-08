@@ -11,23 +11,22 @@ using System.Text;
 using JetBrains.Annotations;
 using UnityEngine;
 
-
-//namespace Assets.CWIP.Plugins.Helpers
-//{
 // ReSharper disable once CheckNamespace
 public static class DebugHelper
 {
+    // ReSharper disable once UnusedMember.Global
     public static string DebugVector(Vector3 vector3)
     {
         return "( x = " + vector3.x + ", y = " + vector3.y + ", z = " + vector3.z +"  )";
-
     }
 
+    // ReSharper disable once UnusedMember.Global
     public static string DebugColor(Color color)
     {
         return "( R = " + color.r + ", G = " + color.g + ", B = " + color.b + ", A = " + color.a + "  )";
     }
 
+    // ReSharper disable once UnusedMember.Global
     public static void DebugFoV(Vector3 reticleRight, Vector3 reticleLeft, Vector3 reticleUp, Vector3 reticle)
     {
         MyDebug.DrawLine(reticle, reticleRight, Color.green);
@@ -46,20 +45,14 @@ public static class DebugHelper
         MyDebug.DrawLine(ret, retUp,    Color.blue);
 
     }
-
-
+    
+    // ReSharper disable once UnusedMember.Global
     public static void DebugCameraForward(Vector3 cameraRigPosition, Vector3 cameraRigForward, Vector3 transformPosition, Vector3 transformForward)
     {
-        //Vector3 cameraRigPosition = CameraRig.transform.position;
-        //Vector3 cameraRigForward = CameraRig.transform.forward;
-        //Vector3 transformPosition = transform.position;
-        //Vector3 transformForward = transform.forward;
-
         MyDebug.DrawLine(cameraRigPosition, cameraRigPosition + cameraRigForward, Color.black);
         MyDebug.DrawLine(transformPosition, transformPosition + transformForward, Color.blue);
     }
-
-
+    
     public static void DebugIndicatorPlane(Indicator ind, Plane indPlane, float distanciaPreAviso, float distanciaAviso, float distanciaPerigo, float y = 0.0f)
     {
         var position            = MathHelper.DeslocamentoHorizontal(ind.ObjectIndicator.transform.position, y);
@@ -67,16 +60,12 @@ public static class DebugHelper
     
         MyDebug.DrawLine(position, positionPlusNormal, Color.blue);
 
-        //indPlane.normal = ind.ObjectIndicator.transform.forward;
-
         var objIndName = GameObject.Find(ind.Name);
 
         var debugPosStart = MathHelper.DeslocamentoHorizontal(objIndName.transform.position - objIndName.transform.forward * 2.5f, y);
         var debugPosEnd   = MathHelper.DeslocamentoHorizontal(objIndName.transform.position + objIndName.transform.forward * 2.5f, y);
          
-        //debugPosStart.y = 0.0f;
-        //debugPosEnd.y = 0.0f;
-
+       
         MyDebug.DrawLine(debugPosStart, debugPosEnd, Color.black);
         
         DebugLine(debugPosStart, debugPosEnd, objIndName, distanciaPreAviso, Color.gray,   y);
@@ -93,12 +82,10 @@ public static class DebugHelper
         posPreAvisoStart += MathHelper.DeslocamentoHorizontal(objIndName.transform.up * distancia, y);
         posPreAvisoEnd   += MathHelper.DeslocamentoHorizontal(objIndName.transform.up * distancia, y);
 
-        //posPreAvisoStart.y = 0.0f;
-        //posPreAvisoEnd.y   = 0.0f;
-
         MyDebug.DrawLine(posPreAvisoStart, posPreAvisoEnd, cor);
     }
 
+    // ReSharper disable once UnusedMember.Global
     public static void DebugGetDiffObstacle(Vector3 player, Indicator ind)
     {
         var playerV3 = new Vector3(player.x, 0.0f, player.z);
@@ -108,15 +95,15 @@ public static class DebugHelper
         MyDebug.DrawLine(ind.ObjectIndicator.transform.position, ind.ObjectIndicator.transform.position + Vector3.forward * ind.Raio * 0.5f, Color.cyan);
     }
 
+    // ReSharper disable once UnusedMember.Global
     public static void DebugGetDistObstacle(Vector3 player, Indicator ind)
     {
         var playerV3 = new Vector3(player.x, 0.0f, player.z);
         var indV3 = new Vector3(ind.ObjectIndicator.transform.position.x, 0.0f, ind.ObjectIndicator.transform.position.z);
         MyDebug.DrawLine(playerV3, indV3, Color.black);
-        // MyDebug.DrawLine(indV3, indV3 + Vector3.forward * ind.Raio * 0.5f, Color.cyan);
-        // MyDebug.DrawLine(ind.ObjectIndicator.transform.position, ind.ObjectIndicator.transform.position + Vector3.forward * ind.Raio * 0.5f, Color.cyan);
     }
 
+    // ReSharper disable once UnusedMember.Global
     public static void DebugCheckAngles(Vector3 right, Vector3 left, Vector3 position)
     {
         var angle1 = Vector3.Angle(right, left);
@@ -146,4 +133,7 @@ public static class DebugHelper
         }
     }
 }
-//}
+/////////////////////////////////////////////////////////////////////////////////////
+    /*
+     
+     */

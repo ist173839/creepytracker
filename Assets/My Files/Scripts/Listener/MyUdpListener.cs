@@ -68,10 +68,7 @@ public class MyUdpListener : MonoBehaviour
     
     public void SetNewUser(string nameUser)
     {
-        var newUser = nameUser;// + ", Time-> " + DateTime.Now.ToString("yyyyMMddTHHmmss");
-        //var newUser = "User-> " + nameUser;// + ", Time-> " + DateTime.Now.ToString("yyyyMMddTHHmmss");
-        //_saveAvr.SetUpUserFolder(newUser);
-
+        var newUser = nameUser;
         _saveStatus.SetUpUserFolder(newUser);
         _saveColicoes.SetUpUserFolder(newUser);
         _saveRecord.SetUpUserFolder(newUser);
@@ -88,13 +85,6 @@ public class MyUdpListener : MonoBehaviour
     
     private void UdpRestart()
     {
-        //if (_udpClientAvr != null) _udpClientAvr.Close();
-        //_stringsToParseAvr = new List<string>();
-        //_anyIpAvr          = new IPEndPoint(IPAddress.Any, _portAvr);
-        //_udpClientAvr      = new UdpClient(_anyIpAvr);
-        //_udpClientAvr.BeginReceive(new AsyncCallback(this.ReceiveCallbackAvr), null);
-        //Debug.Log("[UDPListener] Receiving Avr in port: " + _portAvr);
-
         if (_udpClientRecord != null) _udpClientRecord.Close();
         _stringsToParseRecord = new List<string>();
         _anyIpRecord          = new IPEndPoint(IPAddress.Any, _portRecord);
@@ -239,8 +229,6 @@ public class MyUdpListener : MonoBehaviour
     }
 }
 ///////////////////////////////////////////////////////////////////////////////////
-    /*
-     
-     
-     
-     */
+/*
+   
+ */
