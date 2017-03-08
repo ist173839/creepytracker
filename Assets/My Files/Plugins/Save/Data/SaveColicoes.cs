@@ -29,18 +29,19 @@ public class SaveColicoes
     private string _currentDocName;
     private string _recordingName;
     private string _folderDestino;
-    private string _startMessage;
     private string _nameFolder;
     private string _saveHeader;
     private string _endMessage;
     private string _directory;
     private string _fimCiclo;
     private string _docName;
+    private string _header;
     private string _target;
     private string _format;
     private string _versao;
     private string _sigla;
-    
+    // private string _startMessage;
+
     public int NumColunas   { get; private set; }
 
     private static readonly int TamanhoMaximo = (int) Math.Pow(2, 20); // (2 ^ 30)
@@ -62,41 +63,6 @@ public class SaveColicoes
     public SaveColicoes(string userFolder)
     {
         SetUp(userFolder);
-    }
-
-    private void SetUp(string userFolder)
-    {
-        _useDefaultDocName = true;
-        _useDefaultFolder  = true;
-        _isInitiate        = false;
-        _oversize          = false;
-
-        _directory = System.IO.Directory.GetCurrentDirectory();
-
-        _nameFolder = "Collisions Data";
-
-        SetUpUserFolder(userFolder);
-        
-        _format = ".csv";
-        Separador = ";";
-
-        _startMessage = "INICIO";
-        _endMessage = "FIM";
-
-        _sigla = "COD";
-        _versao = "V1";
-
-        _recordingName = null;
-        _caminhoCompleto = null;
-        _specialTypeDocName = SpecialTypeDoc.SolveDuplicate;
-
-        _target = _directory + "\\" + _currentFolderDestino + "\\";
-        
-        _cont = 0;
-        NumColunas = 0;
-
-        _saveHeader = null;
-
     }
 
     public void SetUpUserFolder(string userFolder)
@@ -137,6 +103,43 @@ public class SaveColicoes
         //if (File.Exists(_target + _currentDocName)) File.SetAttributes(_target + _currentDocName, FileAttributes.ReadOnly);    
     }
 
+    private void SetUp(string userFolder)
+    {
+        _useDefaultDocName = true;
+        _useDefaultFolder  = true;
+        _isInitiate        = false;
+        _oversize          = false;
+
+        _directory = System.IO.Directory.GetCurrentDirectory();
+
+        _nameFolder = "Collisions Data";
+
+        SetUpUserFolder(userFolder);
+
+        Separador = ";";
+
+        _endMessage = "FIM";
+        _format     = ".csv";
+        _versao     = "V1";
+        _sigla      = "COD";
+
+        _caminhoCompleto = null;
+        _recordingName   = null;
+        _saveHeader      = null;
+
+        _specialTypeDocName = SpecialTypeDoc.SolveDuplicate;
+
+        _target = _directory + "\\" + _currentFolderDestino + "\\";
+
+        _cont = 0;
+        NumColunas = 0;
+
+
+        _header = GetHeader();
+
+        // _startMessage = "INICIO";
+    }
+
     private void ResetRecord()
     {
         _recordingName = null;
@@ -162,6 +165,8 @@ public class SaveColicoes
         {
             _isInitiate = false;
             _saveHeader = message;
+            StopRecording();
+            // WriteStringInDoc(_saveHeader, true);
         }
         else
         {
@@ -169,7 +174,9 @@ public class SaveColicoes
             {
                 SetUpFileAndDirectory();
                 if (_saveHeader != null)
-                    WriteStringInDoc(_saveHeader + " (*)", true);
+                    WriteStringInDoc(_saveHeader + " (*)",  true);
+                else
+                    WriteStringInDoc(_header, true);
             }
         }
 
@@ -182,6 +189,7 @@ public class SaveColicoes
         }
         else
             WriteStringInDoc(message, true);
+
         CheckFileSize();
     }
 
@@ -260,6 +268,7 @@ public class SaveColicoes
         return temp;
     }
 
+    // ReSharper disable once UnusedMember.Local
     private void WriteStringInDoc(string registo)
     {
         _doc = new StreamWriter(_target + _currentDocName);
@@ -268,7 +277,6 @@ public class SaveColicoes
     }
 
     // ReSharper disable once UnusedMember.Global
-
     public string GetDocActivo()
     {
         if (_isInitiate) return _target + _currentDocName;
@@ -276,7 +284,6 @@ public class SaveColicoes
     }
 
     // ReSharper disable once UnusedMember.Global
-
     public void SetRecordingName(string recordName)
     {
         if (recordName.Equals(_recordingName)) return;
@@ -285,7 +292,6 @@ public class SaveColicoes
     }
 
     // ReSharper disable once UnusedMember.Global
-
     public void SpecialFolderName(string newName)
     {
         _currentFolderDestino = _folderDestino = newName;
@@ -294,14 +300,13 @@ public class SaveColicoes
         _target = _directory + "\\" + _currentFolderDestino + "\\";
     }
 
+    // ReSharper disable once UnusedMember.Global
     public void SpecialDocName(string newName)
     {
-        //#if !UNITY_ANDROID
-        _docName = newName;
         _useDefaultDocName = false;
-        _currentDocName = _docName;
-        _isInitiate = false;
-        //#endif
+        _currentDocName    = _docName;
+        _isInitiate        = false;
+        _docName           = newName;
     }
 
     // ReSharper disable once UnusedMember.Global
@@ -329,8 +334,14 @@ public class SaveColicoes
     
     private void SetUpHeader()
     {
-        //var info = GetHeader();
-        WriteStringInDoc(_saveHeader, true);
+        var header = _saveHeader == null ? _header : _saveHeader;
+
+        WriteStringInDoc(header, true);
+    }
+
+    private string GetHeader()
+    {
+        return "Registo" + Separador + "Name" + Separador + "Position Object" + Separador + "Position Player" + Separador + "State" + Separador + "Time";
     }
 
 }
