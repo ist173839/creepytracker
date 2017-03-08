@@ -157,6 +157,7 @@ public class SaveLog
         {
             _isInitiate = false;
             _saveHeader = message;
+            StopRecording();
         }
         else
         {
