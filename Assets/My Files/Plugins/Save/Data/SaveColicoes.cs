@@ -40,7 +40,6 @@ public class SaveColicoes
     private string _format;
     private string _versao;
     private string _sigla;
-    // private string _startMessage;
 
     public int NumColunas   { get; private set; }
 
@@ -54,6 +53,9 @@ public class SaveColicoes
     private bool _useDefaultFolder;
     private bool _isInitiate;
     private bool _oversize;
+
+
+    // private string _startMessage;
 
     public SaveColicoes()
     {

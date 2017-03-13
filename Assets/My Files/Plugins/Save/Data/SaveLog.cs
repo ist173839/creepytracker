@@ -26,7 +26,6 @@ public class SaveLog
     private string _currentFolderDestino;
     private string _defaultFolderDestino;
     private string _currentUserFolder;
-    // private string _recordingName;
     private string _caminhoCompleto;
     private string _defaultDocName;
     private string _currentDocName;
@@ -42,15 +41,13 @@ public class SaveLog
     private string _format;
     private string _versao;
     private string _sigla;
-    
+
     public int NumColunas   { get; private set; }
 
     private static readonly int TamanhoMaximo = (int) Math.Pow(2, 20); // (2 ^ 30)
 
     private int _cont;
-
-    //  public bool DirectoryChange;
-
+    
     private bool _useDefaultDocName;
     private bool _useDefaultFolder;
     private bool _isRecording;
@@ -61,7 +58,7 @@ public class SaveLog
     {
         SetUp(userFolder);
     }
-    
+
     public SaveLog()
     {
         SetUp(null);
@@ -167,7 +164,6 @@ public class SaveLog
                 if (_saveHeader != null)
                     WriteStringInDoc(_saveHeader + " (*)", true);
             }
-
         }
 
         if (!_isInitiate) SetUpFileAndDirectory();
@@ -227,6 +223,7 @@ public class SaveLog
         _doc.Close();
     }
 
+    // ReSharper disable once UnusedMember.Local
     private void WriteStringInDoc(string registo)
     {
         _doc = new StreamWriter(_target + _currentDocName);
@@ -294,8 +291,7 @@ public class SaveLog
         if (_isInitiate) return _target + _currentDocName;
         return null;
     }
-    
-  
+
     // ReSharper disable once UnusedMember.Global
     public void SpecialFolderName(string newName)
     {
@@ -305,6 +301,7 @@ public class SaveLog
         _target = _directory + "\\" + _currentFolderDestino + "\\";
     }
 
+    // ReSharper disable once UnusedMember.Global
     public void SpecialDocName(string newName)
     {
         //#if !UNITY_ANDROID
@@ -343,6 +340,10 @@ public class SaveLog
 /////////////////////////////////////////////////////////////////////////////////////////
 /*
  
+
+    // public bool DirectoryChange;
+    // private string _recordingName;
+
         //_recordingName   = null;
         //_activeControloMode  = ControloMode.CWIP;
         //_headerCwip          = GetCwipHeader();
