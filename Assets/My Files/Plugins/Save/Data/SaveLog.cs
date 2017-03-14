@@ -81,7 +81,7 @@ public class SaveLog
 
         _format = ".csv";
         _sigla  = "LD";
-        _versao = "V1";
+        _versao = "V2";
 
         _startMessage = "INICIO";
         _endMessage   = "FIM";
