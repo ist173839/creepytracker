@@ -71,6 +71,7 @@ public static class MathHelper
         return Math.Sqrt(Math.Pow(p1.x - p2.x, 2) + Math.Pow(p1.y - p2.y, 2) + Math.Pow(p1.z - p2.z, 2));
     }
 
+    // ReSharper disable once UnusedMember.Global
     public static double BoneLength(params Vector3[] joints)
     {
         double length = 0;
@@ -82,11 +83,13 @@ public static class MathHelper
         return length;
     }
     
+    // ReSharper disable once UnusedMember.Global
     public static Vector3 ConvertUnityVector3(Vector3 vector3)
     {
         return new Vector3(-1 * vector3.x, vector3.y, vector3.z);
     }
 
+    // ReSharper disable once UnusedMember.Global
     public static Vector3 CheckMidAngles(Vector3 right, Vector3 left)
     {
         var res = Vector3.zero;
@@ -115,6 +118,7 @@ public static class MathHelper
         return new Vector3(vector3.x, y, vector3.z);
     }
 
+    // ReSharper disable once UnusedMember.Global
     public static Vector3 DeslocamentoHorizontalAdd(Vector3 vector3, float y)
     {
         return new Vector3(vector3.x, vector3.y + y, vector3.z);
@@ -125,6 +129,7 @@ public static class MathHelper
         return new Vector2(vector3.x, vector3.z);
     }
 
+    // ReSharper disable once UnusedMember.Global
     public static Vector2 GetVector2FromVector3(Vector3 vector3, Coordenadas semCoord)
     {
         switch (semCoord)
@@ -140,6 +145,7 @@ public static class MathHelper
         }
     }
 
+    // ReSharper disable once UnusedMember.Global
     public static float GetDeltaFromDateTimeInSeconds(DateTime date)
     {
         return (float)(DateTime.Now - date).TotalSeconds;
@@ -150,6 +156,7 @@ public static class MathHelper
         return Math.Abs(y0 + (y1 - y0) * ((x - x0) / (x1 - x0)));
     }
     
+    // ReSharper disable once UnusedMember.Global
     public static Vector3 GetNormal(Vector3 a, Vector3 b, Vector3 c)
     {
         var side1 = b - a;
@@ -157,6 +164,7 @@ public static class MathHelper
         return Vector3.Cross(side1, side2).normalized;
     }
 
+    // ReSharper disable once UnusedMember.Global
     public static float SmallestDifferenceBetweenTwoAngles(float sourceAngle, float targetAngle)
     {
         var delta = targetAngle - sourceAngle;
@@ -165,16 +173,19 @@ public static class MathHelper
         return delta;
     }
 
+    // ReSharper disable once UnusedMember.Global
     public static Vector3 ConvertOrientationToVector(float orientation)
     {
         return new Vector3((float)Math.Sin(orientation), 0, (float)Math.Cos(orientation));
     }
 
+    // ReSharper disable once UnusedMember.Global
     public static float ConvertVectorToOrientation(Vector3 vector)
     {
         return Mathf.Atan2(vector.x, vector.z);
     }
 
+    // ReSharper disable once UnusedMember.Global
     public static Vector3 Rotate2D(Vector3 vector, float angle)
     {
         var sin = (float) Math.Sin(angle);

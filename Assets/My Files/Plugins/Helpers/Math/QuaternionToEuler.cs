@@ -12,10 +12,12 @@ using UnityEngine;
 
 // ReSharper disable once CheckNamespace
 // ReSharper disable once ArrangeTypeModifiers
+// ReSharper disable once UnusedMember.Global
 class QuaternionToEuler
 {
     private const float Tolerance = 0.001f; 
 
+    // ReSharper disable once UnusedMember.Global
     public static float[] ToEuler(Vector4 q)
     {
         float[] euler = new float[3];

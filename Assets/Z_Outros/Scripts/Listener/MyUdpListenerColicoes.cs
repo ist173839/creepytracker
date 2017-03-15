@@ -22,8 +22,7 @@ public class MyUdpListenerColicoes : MonoBehaviour
 
     private int _port;
     private List<string> _stringsToParse;
-
-
+    
     // ReSharper disable once ArrangeTypeMemberModifiers
     // ReSharper disable once UnusedMember.Local
     void Start()

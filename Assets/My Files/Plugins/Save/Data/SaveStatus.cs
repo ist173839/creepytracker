@@ -88,21 +88,17 @@ public class SaveStatus
         _startMessage = "INICIO";
         _endMessage   = "FIM";
 
-        //_recordingName   = null;
         _caminhoCompleto = null;
         _saveHeader = null;
 
         _specialTypeDocName = 0;
 
         _target = _directory + "\\" + _currentFolderDestino + "\\";
-        
+
         NumColunas = 0;
 
         FinalNum = -1;
-        //_activeControloMode  = ControloMode.CWIP;
-        //_headerCwip          = GetCwipHeader();
-        //_headerWip           = GetWipHeader();
-        //_header = GetHeader();
+
     }
 
     public void SetUpUserFolder(string userFolder)
@@ -148,13 +144,14 @@ public class SaveStatus
 
     private void ResetRecord()
     {
-        //_recordingName = null;
-        //_headerLine = null;
         _statusLine = null;
         _saveHeader = null;
         _isInitiate = false;
         NumColunas = 0;
-        //FinalNum = -1;
+
+        // _recordingName = null;
+        // _headerLine = null;
+        // FinalNum = -1;
     }
 
 
@@ -365,65 +362,7 @@ public class SaveStatus
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-/*
- 
-    //private int _cont;
-     
-        // if (!_isInitiate) SetUpFileAndDirectory(message);
-        // if (message != _startMessage  && !_isInitiate) { } else
-        
     
-    
-    public void SetRecordingName(string recordName)
-    {
-        if (recordName.Equals(_recordingName)) return;
-        _recordingName = recordName;
-        _isInitiate = false;
-    }
-          
-    //  _currentFolderDestino = _defaultFolderDestino = _currentUserFolder + "\\" + "Saved Files" + "\\" + "Log Data";
-    //if (_currentUserFolder == null)
-    //{
-    //    _currentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "Log Data";
-    //}
-    //else
-    //{
-    //    _currentFolderDestino = _defaultFolderDestino = _currentUserFolder + "\\" + "Saved Files" + "\\" + "Log Data";
-    //}
-    //_currentFolderDestino = _currentFolderDestino =
+    /*
      
-     
-//////////////////////////////////////////////////////////////////////////////////////////////////
-//  public bool DirectoryChange;
-    //  private bool _isRecording;
-
-    //private ControloMode _activeControloMode;
-    //if (!IsRecording)
-    //{
-    //    StopRecording();
-    //    return;
-    //}
-    //CheckHeaders(message);
-
-
-    //private string GetHeader()
-    //{
-    //    return
-    //       null;
-    //}
-
-    //private void SetUpHeader()
-    //{
-    //    var info = GetHeader();
-    //    WriteStringInDoc(info, true);
-    //}
-
-    //private void SetUpHeader(string first)
-    //{
-    //    var info = GetHeader(); 
-    //    if (first == info) return;
-    //    WriteStringInDoc(info, true);
-    //}
-
-    //private string _header;
-*/
+     */
