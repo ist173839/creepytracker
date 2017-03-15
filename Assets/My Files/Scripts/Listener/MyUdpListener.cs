@@ -18,28 +18,27 @@ using System.Text;
 public class MyUdpListener : MonoBehaviour
 {
     private List<string> _stringsToParseColicoes;
-    private List<string> _stringsToParseRecord;
-    private List<string> _stringsToParseStatus;
-    private List<string> _stringsToParseLog;
-
     private SaveColicoes _saveColicoes;
-    private SaveRecord   _saveRecord;
-    private SaveStatus   _saveStatus;
-    private SaveLog      _saveLog;
-
     private IPEndPoint _anyIpColicoes;
-    private IPEndPoint _anyIpRecord;
-    private IPEndPoint _anyIpStatus;
-    private IPEndPoint _anyIpLog;
-
     private UdpClient _udpClientColicoes = null;
-    private UdpClient _udpClientRecord   = null;
-    private UdpClient _udpClientStatus   = null;
-    private UdpClient _udpClientLog      = null;
-
     private int _portColicoes;
+    
+    private List<string> _stringsToParseRecord;
+    private SaveRecord   _saveRecord;
+    private IPEndPoint   _anyIpRecord;
+    private UdpClient _udpClientRecord   = null;
     private int _portRecord;
+
+    private List<string> _stringsToParseStatus;
+    private SaveStatus   _saveStatus;
+    private IPEndPoint _anyIpStatus;
+    private UdpClient _udpClientStatus   = null;
     private int _portStatus;
+
+    private List<string> _stringsToParseLog;
+    private SaveLog      _saveLog;
+    private IPEndPoint _anyIpLog;
+    private UdpClient _udpClientLog      = null;
     private int _portLog;
 
     private int _finalNum; // { get; set; }
