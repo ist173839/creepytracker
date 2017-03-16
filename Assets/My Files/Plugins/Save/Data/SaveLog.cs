@@ -91,7 +91,7 @@ public class SaveLog
 
         _format = ".csv";
         _sigla  = "LD";
-        _versao = "V2";
+        _versao = "V3";
 
         _startMessage = "INICIO";
         _endMessage   = "FIM";
@@ -185,13 +185,17 @@ public class SaveLog
         }
         else
         {
-            char[] del = { ';' };
-            var lineText = message.Split(del);
-            FinalNum = int.Parse(lineText[1]);
+           
+            if (!message.Contains("Registo"))
+            {
+                char[] del = { ';' };
+                var lineText = message.Split(del);
+                FinalNum = int.Parse(lineText[1]);
 
+            }
+            // Debug.Log("FinalNum = " + FinalNum);
             WriteStringInDoc(message, true);
         }
-           
 
         CheckFileSize();
     }
@@ -224,9 +228,7 @@ public class SaveLog
         // if (first.Contains("Registo")) return;
         WriteStringInDoc(_saveHeader, true);
     }
-
-
-    // ReSharper disable once UnusedMember.Local
+    
     private void SetUpHeader(string first)
     {
         if (first.Contains("Registo")) return;
@@ -235,6 +237,7 @@ public class SaveLog
 
     private void WriteStringInDoc(string registo, bool isAppend)
     {
+        //Debug.Log("registo > " + registo);
         _doc = new StreamWriter(_target + _currentDocName, isAppend);
         _doc.WriteLine(registo);
         _doc.Close();

@@ -1,2 +1,0 @@
-CenterPos=0.013:0:0.154
-ForwardPos=0.038:0:1.558

@@ -29,11 +29,11 @@ public class MyUdpListener : MonoBehaviour
     private UdpClient _udpClientRecord   = null;
     private int _portRecord;
 
-    private List<string> _stringsToParseStatus;
-    private SaveStatus   _saveStatus;
-    private IPEndPoint _anyIpStatus;
-    private UdpClient _udpClientStatus   = null;
-    private int _portStatus;
+    //private List<string> _stringsToParseStatus;
+    //private SaveStatus   _saveStatus;
+    //private IPEndPoint _anyIpStatus;
+    //private UdpClient _udpClientStatus   = null;
+    //private int _portStatus;
 
     private List<string> _stringsToParseLog;
     private SaveLog      _saveLog;
@@ -48,14 +48,16 @@ public class MyUdpListener : MonoBehaviour
     void Awake()
     {
         _portRecord   = 57839;
-        _portColicoes = 58839;
-        _portLog      = 60839;
-        _portStatus   = 61839;
-
-        _saveColicoes = new SaveColicoes();
         _saveRecord   = new SaveRecord();
+
+        _portColicoes = 58839;
+        _saveColicoes = new SaveColicoes();
+
+        _portLog      = 60839;
         _saveLog      = new SaveLog();
-        _saveStatus   = new SaveStatus();
+
+        //_portStatus   = 61839;
+        //_saveStatus   = new SaveStatus();
     }
     
     // ReSharper disable once ArrangeTypeMemberModifiers
@@ -68,18 +70,18 @@ public class MyUdpListener : MonoBehaviour
     public void SetNewUser(string nameUser)
     {
         var newUser = nameUser;
-        _saveStatus.SetUpUserFolder(newUser);
         _saveColicoes.SetUpUserFolder(newUser);
         _saveRecord.SetUpUserFolder(newUser);
         _saveLog.SetUpUserFolder(newUser);
+        //_saveStatus.SetUpUserFolder(newUser);
     }
 
     public void SetNewSection()
     {
-        _saveStatus.SetUpUserFolder();
         _saveColicoes.SetUpUserFolder();
         _saveRecord.SetUpUserFolder();
         _saveLog.SetUpUserFolder();
+        //_saveStatus.SetUpUserFolder();
     }
     
     private void UdpRestart()
@@ -105,12 +107,12 @@ public class MyUdpListener : MonoBehaviour
         _udpClientLog.BeginReceive(new AsyncCallback(this.ReceiveCallbackLog), null);
         Debug.Log("[UDPListener] Receiving Log in port: " + _portLog);
 
-        if (_udpClientStatus != null) _udpClientStatus.Close();
-        _stringsToParseStatus = new List<string>();
-        _anyIpStatus          = new IPEndPoint(IPAddress.Any, _portStatus);
-        _udpClientStatus      = new UdpClient(_anyIpStatus);
-        _udpClientStatus.BeginReceive(new AsyncCallback(this.ReceiveCallbackStatus), null);
-        Debug.Log("[UDPListener] Receiving Status in port: " + _portStatus);
+        //if (_udpClientStatus != null) _udpClientStatus.Close();
+        //_stringsToParseStatus = new List<string>();
+        //_anyIpStatus          = new IPEndPoint(IPAddress.Any, _portStatus);
+        //_udpClientStatus      = new UdpClient(_anyIpStatus);
+        //_udpClientStatus.BeginReceive(new AsyncCallback(this.ReceiveCallbackStatus), null);
+        //Debug.Log("[UDPListener] Receiving Status in port: " + _portStatus);
     }
 
     private void ReceiveCallbackRecord(IAsyncResult ar)
@@ -136,12 +138,12 @@ public class MyUdpListener : MonoBehaviour
         _udpClientLog.BeginReceive(new AsyncCallback(this.ReceiveCallbackLog), null);
     }
 
-    private void ReceiveCallbackStatus(IAsyncResult ar)
-    {
-        var receiveBytes = _udpClientStatus.EndReceive(ar, ref _anyIpLog);
-        _stringsToParseStatus.Add(Encoding.ASCII.GetString(receiveBytes));
-        _udpClientStatus.BeginReceive(new AsyncCallback(this.ReceiveCallbackStatus), null);
-    }
+    //private void ReceiveCallbackStatus(IAsyncResult ar)
+    //{
+    //    var receiveBytes = _udpClientStatus.EndReceive(ar, ref _anyIpLog);
+    //    _stringsToParseStatus.Add(Encoding.ASCII.GetString(receiveBytes));
+    //    _udpClientStatus.BeginReceive(new AsyncCallback(this.ReceiveCallbackStatus), null);
+    //}
     
     // ReSharper disable once ArrangeTypeMemberModifiers
     // ReSharper disable once UnusedMember.Local
@@ -153,13 +155,18 @@ public class MyUdpListener : MonoBehaviour
 
     public int GetFinalNum()
     {
-        return _finalNum = _saveStatus.FinalNum;
+        return _finalNum = _saveLog.FinalNum;
+        // return _finalNum = _saveStatus.FinalNum;
     }
 
     public void ResetFinalNum()
     {
-        _saveStatus.ResetFinalNum();
+        _saveLog.ResetFinalNum();
+        // _saveStatus.ResetFinalNum();
     }
+
+
+
 
     private void PressToRestart()
     {
@@ -170,12 +177,12 @@ public class MyUdpListener : MonoBehaviour
 
     private void UpdateMessages()
     {
-        while (_stringsToParseStatus.Count > 0)
-        {
-            var stringToParse = _stringsToParseStatus.First();
-            _stringsToParseStatus.RemoveAt(0);
-            _saveStatus.RecordMessage(stringToParse);
-        }
+        //while (_stringsToParseStatus.Count > 0)
+        //{
+        //    var stringToParse = _stringsToParseStatus.First();
+        //    _stringsToParseStatus.RemoveAt(0);
+        //    _saveStatus.RecordMessage(stringToParse);
+        //}
 
         while (_stringsToParseColicoes.Count > 0)
         {
@@ -209,8 +216,8 @@ public class MyUdpListener : MonoBehaviour
     {
         if (_udpClientColicoes != null) _udpClientColicoes.Close();
         if (_udpClientRecord   != null) _udpClientRecord.Close();
-        if (_udpClientStatus   != null) _udpClientStatus.Close();
         if (_udpClientLog      != null) _udpClientLog.Close();
+        //if (_udpClientStatus   != null) _udpClientStatus.Close();
     }
 
     // ReSharper disable once ArrangeTypeMemberModifiers
