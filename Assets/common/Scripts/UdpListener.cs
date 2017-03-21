@@ -14,16 +14,23 @@ public class UdpListener : MonoBehaviour
     private UdpClient _udpClient = null;
     private IPEndPoint _anyIp;
     private List<byte[]> _stringsToParse; // TMA: Store the bytes from the socket instead of converting to strings. Saves time.
+ 
 #pragma warning disable 169
     private byte[] _receivedBytes;
+#pragma warning restore 169
 
-    private int number = 0;
+#pragma warning disable 169
+    private int _number = 0;
+#pragma warning restore 169
+
     //so we don't have to create again
-    CloudMessage message;
+    private CloudMessage _message;
 
+    // ReSharper disable once ArrangeTypeMemberModifiers
+    // ReSharper disable once UnusedMember.Local
     void Start()
     {
-        message = new CloudMessage();
+        _message = new CloudMessage();
     }
 
     public void UdpRestart()
@@ -37,6 +44,7 @@ public class UdpListener : MonoBehaviour
         Debug.Log("[UDPListener] Receiving in port: " + TrackerProperties.Instance.ListenPort);
     }
 
+    // ReSharper disable once MemberCanBePrivate.Global
     public void ReceiveCallback(IAsyncResult ar)
     {
 
@@ -71,8 +79,8 @@ public class UdpListener : MonoBehaviour
                         try
                         {
                             string stringToParse = Encoding.ASCII.GetString(toProcess);
-                            string[] splitmsg = stringToParse.Split(MessageSeparators.L0);
-                            BodiesMessage b = new BodiesMessage(splitmsg[1]);
+                            string[] splitmsg    = stringToParse.Split(MessageSeparators.L0);
+                            BodiesMessage b      = new BodiesMessage(splitmsg[1]);
                             gameObject.GetComponent<Tracker>().SetNewFrame(b);
                         }
                         catch (BodiesMessageException e)
@@ -83,29 +91,30 @@ public class UdpListener : MonoBehaviour
                     else if (Convert.ToChar(toProcess[0]) == 'C')
                     {
                         string stringToParse = Encoding.ASCII.GetString(toProcess);
-                        string[] splitmsg = stringToParse.Split(MessageSeparators.L0);
+                        string[] splitmsg    = stringToParse.Split(MessageSeparators.L0);
 
-                        message.Set(splitmsg[1], toProcess, splitmsg[0].Length);
+                        _message.Set(splitmsg[1], toProcess, splitmsg[0].Length);
 
-                        gameObject.GetComponent<Tracker>().SetNewCloud(message);
+                        gameObject.GetComponent<Tracker>().SetNewCloud(_message);
                     }
                     else if (Convert.ToChar(toProcess[0]) == 'A')
                     {
                         string stringToParse = Encoding.ASCII.GetString(toProcess);
-                        string[] splitmsg = stringToParse.Split(MessageSeparators.L0);
-                        AvatarMessage av = new AvatarMessage(splitmsg[1], toProcess);
+                        string[] splitmsg    = stringToParse.Split(MessageSeparators.L0);
+                        AvatarMessage av     = new AvatarMessage(splitmsg[1], toProcess);
                         gameObject.GetComponent<Tracker>().ProcessAvatarMessage(av);
                     }
                 }
                 _stringsToParse.RemoveAt(0);
             }
-            catch (Exception exc)
+            catch (Exception)
             {
                 _stringsToParse.RemoveAt(0);
             }
         }
     }
 
+    // ReSharper disable once ArrangeTypeMemberModifiers
     void OnApplicationQuit()
     {
         if (_udpClient != null) _udpClient.Close();

@@ -228,7 +228,6 @@ public class Tracker : MonoBehaviour
 			}
 		}
 	    IdIntList = idIntList;
-
 	}
     
     public Dictionary<int, Human> GetHumans()
