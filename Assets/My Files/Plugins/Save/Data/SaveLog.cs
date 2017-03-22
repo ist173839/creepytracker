@@ -23,6 +23,8 @@ public class SaveLog
     
     public string Separador { get; private set; }
 
+    public string UserLevelName;
+
     private string _currentFolderDestino;
     private string _defaultFolderDestino;
     private string _currentUserFolder;
@@ -106,10 +108,10 @@ public class SaveLog
         NumColunas = 0;
         
         FinalNum = -1;
-
+        UserLevelName = null;
     }
 
-    public void SetUpUserFolder(string userFolder)
+public void SetUpUserFolder(string userFolder)
     {
         _currentUserFolder = userFolder;
         var sessao = "Time " + DateTime.Now.ToString("yyyyMMddTHHmmss");
@@ -191,6 +193,7 @@ public class SaveLog
                 char[] del = { ';' };
                 var lineText = message.Split(del);
                 FinalNum = int.Parse(lineText[1]);
+                UserLevelName = lineText[2];
 
             }
             // Debug.Log("FinalNum = " + FinalNum);
