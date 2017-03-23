@@ -41,20 +41,21 @@ public class HandleVirtualWorld : MonoBehaviour
     private GameObject _indicadores;
     private GameObject _helpers;
     private GameObject _marker;
-    
+
+    public bool IsCentroSetUp { get; private set; }
+
     public bool IsSaveFilePossible;
     public bool CanShowIndicators;
     public bool ShowIndicator;
     public bool ShowMarker;
-    public bool CanForce;
-    public bool Force;
-    public bool Send;
+    // public bool CanForce;
+    // public bool Send;
+
 
     private bool _canUseSaveFile;
     private bool _setUpForward;
     private bool _saveForward;
     private bool _saveMessage;
-    private bool _setUpCentro;
     private bool _saveCentro;
     private bool _reset;
 
@@ -65,8 +66,12 @@ public class HandleVirtualWorld : MonoBehaviour
 
     private Vector3? _forwardPoint;
     private Vector3? _centro;
-    
+
     private string _path;
+
+
+    // public bool Force;
+    ////////////////////////////////////////////////////////////////////////////////////////
 
     // ReSharper disable once ArrangeTypeMemberModifiers
     // ReSharper disable once UnusedMember.Local
@@ -112,15 +117,15 @@ public class HandleVirtualWorld : MonoBehaviour
 
         CanShowIndicators = false;
         ShowMarker = true;
-        CanForce = false;
-        Force = false;
-        Send = true;
-
+        // CanForce = false;
+        
         _saveForward = false;
-        _saveMessage = true;
+        _saveMessage = true; 
         _saveCentro  = false;
         _reset       = false;
 
+        // Send  = true;
+        // Force = false;
     }
 
     // Use this for initialization
@@ -151,16 +156,16 @@ public class HandleVirtualWorld : MonoBehaviour
             _canUseSaveFile = length != 0;
         }
        
-        if (_setUpCentro)
+        if (IsCentroSetUp)
         {
-            CanForce = true;
+            // CanForce = true;
             if (_setUpForward)
             {
                 CanShowIndicators = true;
             }
         }
         
-        if (_setUpCentro && _centro.HasValue && _setUpForward  && _forwardPoint.HasValue && _reset)
+        if (IsCentroSetUp && _centro.HasValue && _setUpForward  && _forwardPoint.HasValue && _reset)
         {
             // _forward = (_forwardPoint.Value - _centro.Value).normalized;
             _forward = (_forwardPoint.Value - _centro.Value);
@@ -183,7 +188,7 @@ public class HandleVirtualWorld : MonoBehaviour
         
         _marker.GetComponent<MeshRenderer>().enabled = ShowMarker;
         
-        _centroGameObject.GetComponent<MeshRenderer>().enabled  = _setUpCentro;
+        _centroGameObject.GetComponent<MeshRenderer>().enabled  = IsCentroSetUp;
         _forwardGameObject.GetComponent<MeshRenderer>().enabled = _setUpForward;
 
         //if (!UseOpti)
@@ -203,7 +208,7 @@ public class HandleVirtualWorld : MonoBehaviour
     {
         if (!_saveMessage) return;
 
-        if (_setUpCentro && _centro.HasValue && !_saveCentro)
+        if (IsCentroSetUp && _centro.HasValue && !_saveCentro)
         {
             var center = "CenterPos" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(_centro.Value);
             _saveCenter.RecordMessage(center);
@@ -217,7 +222,7 @@ public class HandleVirtualWorld : MonoBehaviour
             _saveForward = true;
         }
 
-        if (_setUpCentro && _centro.HasValue && _setUpForward && _forwardPoint.HasValue)
+        if (IsCentroSetUp && _centro.HasValue && _setUpForward && _forwardPoint.HasValue)
         {
             _saveCenter.StopRecording();
         }
@@ -226,9 +231,8 @@ public class HandleVirtualWorld : MonoBehaviour
     private void SendMensagem()
     {
         var mensagem = "";
-        // var mens = "";
-
-        if (_setUpCentro && _centro.HasValue)
+        
+        if (IsCentroSetUp && _centro.HasValue)
         {
             var center = "CenterPos" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(_centro.Value);
             var humans = _localTracker.GetHumans();
@@ -243,7 +247,6 @@ public class HandleVirtualWorld : MonoBehaviour
                   
                     mensaHumans += MessageSeparators.L2;
                     mensaHumans += "Id" + MessageSeparators.SET + h.Value.ID;
-
                     mensaHumans += MessageSeparators.L4; // "Desvio" + MessageSeparators.SET +
                     mensaHumans += CommonUtils.convertVectorToStringRPC(desvio);
                     mensaHumans += MessageSeparators.L4;
@@ -253,68 +256,34 @@ public class HandleVirtualWorld : MonoBehaviour
                     
                     MyDebug.DrawLine(h.Value.Position, h.Value.Position + desvio, Color.blue);
                 }
-                //foreach (var g in guardar1)
-                //{
-                //    MyDebug.DrawLine();
-                //}
                 mensagem = center + mensaHumans;
-                // mens = center;
-                // _saveCenter.RecordMessage(center);
             }
         }
         
-        if (_setUpCentro && _centro.HasValue && _setUpForward && _forwardPoint.HasValue)
+        if (IsCentroSetUp && _centro.HasValue && _setUpForward && _forwardPoint.HasValue)
         {
             mensagem += MessageSeparators.L2;
-            // mens += MessageSeparators.L2;
-            // _saveCenter.RecordMessage("" + MessageSeparators.L2);
         }
 
         if (_setUpForward && _forwardPoint.HasValue)
         {
             var forward = "ForwardPos" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(_forwardPoint.Value);
             mensagem += forward;
-            // mens += forward;
-            // _saveCenter.RecordMessage(forward);
         }
-        
-        mensagem += MessageSeparators.L2 + "Force" + MessageSeparators.SET + Force;
-        //mensagem += MessageSeparators.L2 + "Reset" + MessageSeparators.SET + SendReset;
-
-        //_mensagem = mensagem;
-        if (Send)
-        {
-            _udpBroadcast.Send(mensagem);
-            //_centerToSend.RecordMessage(mensagem);
-            //if (_saveOne)
-            //{
-            //    _centerToSend.StopRecording();
-            //    _saveOne = false;
-            //}
-        }
+        _udpBroadcast.Send(mensagem);
     }
 
     public void SetCenterButton()
     {
-        //if (UseOpti)
-        //{
-        //    if (_localOptitrackManager != null) SetUpNewCenter(_localOptitrackManager.GetUnityPositionVector());
-        //}
-        //else
-        {
-            // var human = _localTracker.GetHuman(_localTrackerUi.IdToCheck);
-            var pos = MathHelper.DeslocamentoHorizontal(_marker.transform.position, 0.0f);
-            SetUpNewCenter(pos);
-        }
+        var pos = MathHelper.DeslocamentoHorizontal(_marker.transform.position, 0.0f);
+        SetUpNewCenter(pos);
         _saveMessage = true;
-        //  if (_localOptitrackManager != null ) SetUpNewCenter(_localOptitrackManager.GetUnityPositionVector());
-        // _centroGameObject.GetComponent<MeshRenderer>().enabled = _setUpCentro; // && _localTrackerUi.SetUpCenter;
     }
 
     private void SetUpNewCenter(Vector3 newCenter)
     {
         _reset = true;
-        _setUpCentro = true;
+        IsCentroSetUp = true;
         _centro = MathHelper.DeslocamentoHorizontal(newCenter);
         _centroGameObject.transform.position = _centro.Value;
         SetIndicators(_centro.Value);
@@ -322,19 +291,8 @@ public class HandleVirtualWorld : MonoBehaviour
 
     public void SetForwardPointButton()
     {
-        //if (UseOpti)
-        //{
-        //    if (_localOptitrackManager != null)
-        //    {
-        //        SetUpNewForward(_localOptitrackManager.GetUnityPositionVector());
-        //    }
-        //}
-        //else
-        {
-            // var human = _localTracker.GetHuman(_localTrackerUi.IdToCheck);
-            var pos = MathHelper.DeslocamentoHorizontal(_marker.transform.position, 0.0f);
-            SetUpNewForward(pos);
-        }
+        var pos = MathHelper.DeslocamentoHorizontal(_marker.transform.position, 0.0f);
+        SetUpNewForward(pos);
         _saveMessage = true;
     }
 
@@ -352,39 +310,30 @@ public class HandleVirtualWorld : MonoBehaviour
         var fileInfo = info.GetFiles();
         var length = fileInfo.Length;
         _canUseSaveFile = length != 0;
-        
         if (length == 0) return;
-
         var file = fileInfo[0];
-        //foreach (var file in fileInfo)
+        var fs = file.Open(FileMode.Open);
+        using (var bs = new BufferedStream(fs))
+        using (var sr = new StreamReader(bs))
         {
-            var fs =  file.Open(FileMode.Open);
-            using (var bs = new BufferedStream(fs))
-            using (var sr = new StreamReader(bs))
+            string line;
+            while ((line = sr.ReadLine()) != null)
             {
-                string line;
-                // int l = 0;
-                while ((line = sr.ReadLine()) != null)
+                var lineText = line.Split(MessageSeparators.SET);
+                switch (lineText[0])
                 {
-                    var lineText = line.Split(MessageSeparators.SET);
-                    switch (lineText[0])
-                    {
-                        case "CenterPos":
-                            //  _centro       = CommonUtils.ConvertRpcStringToVector3(lineText[1]);
-                            SetUpNewCenter(CommonUtils.ConvertRpcStringToVector3(lineText[1]));
-                            // MyDebug.Log("CenterPos = " + _centro);
-                            break;
-                        case "ForwardPos":
-                            //_forwardPoint = CommonUtils.ConvertRpcStringToVector3(lineText[1]);
-                            SetUpNewForward(CommonUtils.ConvertRpcStringToVector3(lineText[1]));
-                            break;
-                        default:
-                            break;
-                    } //  MyDebug.Log("Print : " + l++ + ",  " + line);
-                }
+                    case "CenterPos":
+                        SetUpNewCenter(CommonUtils.ConvertRpcStringToVector3(lineText[1]));
+                        break;
+                    case "ForwardPos":
+                        SetUpNewForward(CommonUtils.ConvertRpcStringToVector3(lineText[1]));
+                        break;
+                    default:
+                        break;
+                } 
             }
         }
-        _saveMessage = false; 
+        _saveMessage = false;
     }
 
     private void SetIndicators(Vector3 center)
@@ -414,7 +363,7 @@ public class HandleVirtualWorld : MonoBehaviour
         _forwardGameObject.GetComponent<MeshRenderer>().enabled = false;
         
         _reset = true;
-        _setUpForward =  _setUpCentro = false;
+        _setUpForward =  IsCentroSetUp = false;
         _forwardPoint = null;
         _centro       = null;
     }
@@ -521,5 +470,158 @@ public class HandleVirtualWorld : MonoBehaviour
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-    /*.
-     */
+/*
+
+private void SendMensagem()
+{
+    var mensagem = "";
+    // var mens = "";
+
+    if (_setUpCentro && _centro.HasValue)
+    {
+        var center = "CenterPos" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(_centro.Value);
+        var humans = _localTracker.GetHumans();
+
+        var mensaHumans = ""; 
+        if (humans != null) 
+        {
+            foreach (var h in humans)
+            {
+                var mid = h.Value.Skeleton.GetMidSpine();
+                var desvio = _centro.Value - h.Value.Position;
+
+                mensaHumans += MessageSeparators.L2;
+                mensaHumans += "Id" + MessageSeparators.SET + h.Value.ID;
+
+                mensaHumans += MessageSeparators.L4; // "Desvio" + MessageSeparators.SET +
+                mensaHumans += CommonUtils.convertVectorToStringRPC(desvio);
+                mensaHumans += MessageSeparators.L4;
+                mensaHumans += CommonUtils.convertVectorToStringRPC(h.Value.Position);
+                mensaHumans += MessageSeparators.L4;
+                mensaHumans += CommonUtils.convertVectorToStringRPC(mid);
+
+                MyDebug.DrawLine(h.Value.Position, h.Value.Position + desvio, Color.blue);
+            }
+            //foreach (var g in guardar1)
+            //{
+            //    MyDebug.DrawLine();
+            //}
+            mensagem = center + mensaHumans;
+            // mens = center;
+            // _saveCenter.RecordMessage(center);
+        }
+    }
+
+    if (_setUpCentro && _centro.HasValue && _setUpForward && _forwardPoint.HasValue)
+    {
+        mensagem += MessageSeparators.L2;
+        // mens += MessageSeparators.L2;
+        // _saveCenter.RecordMessage("" + MessageSeparators.L2);
+    }
+
+    if (_setUpForward && _forwardPoint.HasValue)
+    {
+        var forward = "ForwardPos" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(_forwardPoint.Value);
+        mensagem += forward;
+        // mens += forward;
+        // _saveCenter.RecordMessage(forward);
+    }
+
+    // mensagem += MessageSeparators.L2 + "Force" + MessageSeparators.SET + Force;
+    // mensagem += MessageSeparators.L2 + "Reset" + MessageSeparators.SET + SendReset;
+
+    //_mensagem = mensagem;
+
+
+    _udpBroadcast.Send(mensagem);
+    if (Send)
+    {
+        //_udpBroadcast.Send(mensagem);
+        //_centerToSend.RecordMessage(mensagem);
+        //if (_saveOne)
+        //{
+        //    _centerToSend.StopRecording();
+        //    _saveOne = false;
+        //}
+    }
+}
+
+
+    
+    public void SetCenterButton()
+    {
+        //if (UseOpti)
+        //{
+        //    if (_localOptitrackManager != null) SetUpNewCenter(_localOptitrackManager.GetUnityPositionVector());
+        //}
+        //else
+        {
+            // var human = _localTracker.GetHuman(_localTrackerUi.IdToCheck);
+            var pos = MathHelper.DeslocamentoHorizontal(_marker.transform.position, 0.0f);
+            SetUpNewCenter(pos);
+        }
+        _saveMessage = true;
+        //  if (_localOptitrackManager != null ) SetUpNewCenter(_localOptitrackManager.GetUnityPositionVector());
+        // _centroGameObject.GetComponent<MeshRenderer>().enabled = _setUpCentro; // && _localTrackerUi.SetUpCenter;
+    }
+
+    public void SetForwardPointButton()
+    {
+        //if (UseOpti)
+        //{
+        //    if (_localOptitrackManager != null)
+        //    {
+        //        SetUpNewForward(_localOptitrackManager.GetUnityPositionVector());
+        //    }
+        //}
+        //else
+        {
+            // var human = _localTracker.GetHuman(_localTrackerUi.IdToCheck);
+            var pos = MathHelper.DeslocamentoHorizontal(_marker.transform.position, 0.0f);
+            SetUpNewForward(pos);
+        }
+        _saveMessage = true;
+    }
+
+     public void SetSaveFilesButton()
+    {
+        var info = new DirectoryInfo(_path);
+        var fileInfo = info.GetFiles();
+        var length = fileInfo.Length;
+        _canUseSaveFile = length != 0;
+        
+        if (length == 0) return;
+
+        var file = fileInfo[0];
+        //foreach (var file in fileInfo)
+        {
+            var fs =  file.Open(FileMode.Open);
+            using (var bs = new BufferedStream(fs))
+            using (var sr = new StreamReader(bs))
+            {
+                string line;
+                // int l = 0;
+                while ((line = sr.ReadLine()) != null)
+                {
+                    var lineText = line.Split(MessageSeparators.SET);
+                    switch (lineText[0])
+                    {
+                        case "CenterPos":
+                            //  _centro       = CommonUtils.ConvertRpcStringToVector3(lineText[1]);
+                            SetUpNewCenter(CommonUtils.ConvertRpcStringToVector3(lineText[1]));
+                            // MyDebug.Log("CenterPos = " + _centro);
+                            break;
+                        case "ForwardPos":
+                            //_forwardPoint = CommonUtils.ConvertRpcStringToVector3(lineText[1]);
+                            SetUpNewForward(CommonUtils.ConvertRpcStringToVector3(lineText[1]));
+                            break;
+                        default:
+                            break;
+                    } //  MyDebug.Log("Print : " + l++ + ",  " + line);
+                }
+            }
+        }
+        _saveMessage = false; 
+    }
+
+ */

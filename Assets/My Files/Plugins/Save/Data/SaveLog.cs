@@ -34,17 +34,20 @@ public class SaveLog
     private string _folderDestino;
     private string _startMessage;
     private string _endMessage;
-    private string _nameFolder;
+    private string _folderName;
     private string _saveHeader;
     private string _directory;
+    private string _fimTest;
     private string _fimCiclo;
     private string _docName;
     private string _target;
     private string _format;
     private string _versao;
     private string _sigla;
+    private string _defaultName;
+    private string _lastMessage;
 
-    public int NumColunas   { get; private set; }
+    private int _numColunas; //  { get; private set; }
 
     public int FinalNum     { get; private set; }
 
@@ -57,7 +60,9 @@ public class SaveLog
     private bool _isRecording;
     private bool _isInitiate;
     private bool _oversize;
-
+    
+  
+    /////////////////////////////////////////////////////////////////////////////
     public SaveLog(string userFolder)
     {
         SetUp(userFolder);
@@ -71,9 +76,6 @@ public class SaveLog
     ~SaveLog()
     {
         StopRecording();
-        //if (!_isInitiate) return;
-        //ResetRecord();
-        //if (File.Exists(_target + _currentDocName)) File.SetAttributes(_target + _currentDocName, FileAttributes.ReadOnly);      
     }
 
     private void SetUp(string userFolder)
@@ -85,57 +87,60 @@ public class SaveLog
 
         _directory = System.IO.Directory.GetCurrentDirectory();
         
-        _nameFolder = "Log Data";
+        _folderName = "Log Data";
+        _defaultName = "Default User Name - Time " + DateTime.Now.ToString("yyyyMMddTHHmmss");
 
         SetUpUserFolder(userFolder);
-        
         Separador = ";";
 
         _format = ".csv";
         _sigla  = "LD";
-        _versao = "V3";
+        _versao = "V4";
 
         _startMessage = "INICIO";
         _endMessage   = "FIM";
 
+        UserLevelName    = null;
+
         _caminhoCompleto = null;
         _saveHeader      = null;
-
+        _fimTest         = null;
+        _lastMessage     = null;
         _specialTypeDocName = 0;
 
         _target = _directory + "\\" + _currentFolderDestino + "\\";
         _cont = 0;
-        NumColunas = 0;
-        
+        _numColunas = 0;
+
         FinalNum = -1;
-        UserLevelName = null;
     }
 
-public void SetUpUserFolder(string userFolder)
+    public void SetUpUserFolder(string userFolder)
     {
         _currentUserFolder = userFolder;
-        var sessao = "Time " + DateTime.Now.ToString("yyyyMMddTHHmmss");
-        _currentFolderDestino =
-            _defaultFolderDestino =
-                _currentUserFolder == null
-                    ? "Files" + "\\" + "Saved Files" + "\\" + _nameFolder
-                    : "Files" + "\\" + "Saved Files" + "\\" + _currentUserFolder + "\\" + sessao + "\\" + _nameFolder;
-
-        _isInitiate = false;
+        SetUpUserFolder();
     }
 
     public void SetUpUserFolder()
-    {
+    { 
         var sessao = "Time " + DateTime.Now.ToString("yyyyMMddTHHmmss");
-        _currentFolderDestino =
-            _defaultFolderDestino =
-                _currentUserFolder == null
-                    ? "Files" + "\\" + "Saved Files" + "\\" + _nameFolder
-                    : "Files" + "\\" + "Saved Files" + "\\" + _currentUserFolder + "\\" + sessao + "\\" + _nameFolder;
 
+        const string constPath = "Files" + "\\" + "Saved Files"; // + "\\";
+
+        var tempPath = "\\";
+
+        tempPath += (_currentUserFolder == null ? _defaultName : _currentUserFolder) + "\\";
+
+
+        if (UserLevelName != null) tempPath += UserLevelName + "\\";
+
+        tempPath += sessao + "\\";
+        
+        _currentFolderDestino = _defaultFolderDestino = constPath + tempPath + _folderName;
+        
         _isInitiate = false;
-    }
-    
+    } 
+
     public void ResetFinalNum()
     {
         FinalNum = -1;
@@ -145,8 +150,8 @@ public void SetUpUserFolder(string userFolder)
     {
         //_recordingName = null;
         _isInitiate = false;
-        _cont = 0;
-        NumColunas = 0;
+        _cont       = 0;
+        _numColunas = 0;
     }
 
     private void CheckFileSize()
@@ -162,47 +167,86 @@ public void SetUpUserFolder(string userFolder)
 
     public void RecordMessage(string message)
     {
-        if (message.Contains("Registo"))
-        {
-            _isInitiate = false;
-            _saveHeader = message;
-            StopRecording();
-        }
-        else
-        {
-            if (!_isInitiate)
-            {
-                SetUpFileAndDirectory();
-                if (_saveHeader != null)
-                    WriteStringInDoc(_saveHeader + " (*)", true);
-            }
-        }
-
-        if (!_isInitiate) SetUpFileAndDirectory();
+        if (message == _lastMessage) return;
+        _lastMessage = message;
 
         if (message == _endMessage)
         {
-            StopRecording();
             Debug.Log(_endMessage);
+            StopRecording();
+            return;
+        }
+
+        // Debug.Log("message =  " + message);
+        if (message.Contains("Registo")) StopRecording();
+
+        if (!_isInitiate)
+        {
+            SetUpFileAndDirectory(message);
+            if (message.Contains("Registo"))
+            {
+                _saveHeader = message;
+                WriteStringInDoc(_saveHeader, true);
+                return;
+            }
+
+            var newHeader = _saveHeader != null ? _saveHeader + " (*)" : message;
+
+            SetUpLevelNameAndFinalNum(message);
+
+            WriteStringInDoc(newHeader, true);
+            return;
+        }
+
+        if (!message.Contains("Registo"))
+            SetUpLevelNameAndFinalNum(message);
+        
+            WriteStringInDoc(message, true);
+     
+        
+        CheckFileSize();
+    }
+
+    private void SetUpLevelNameAndFinalNum(string message)
+    {
+        char[] del = {';'};
+        var lineText = message.Split(del);
+        FinalNum = int.Parse(lineText[1]);
+        var userLevelName = lineText[2];
+        if (userLevelName != null && userLevelName != UserLevelName)
+        {
+            UserLevelName = userLevelName;
+            SetUpUserFolder();
+        }
+        UserLevelName = userLevelName;
+        // Debug.Log("FinalNum = " + FinalNum);
+        // Debug.Log("UserLevelName = " + UserLevelName);
+    }
+
+    public void EndLog()
+    {
+
+        Debug.Log("End Log");
+        if (!_isInitiate) return;
+
+        if (_fimTest != null)
+        {
+            WriteStringInDoc(_fimTest, true);
+            StopRecording();
         }
         else
         {
-           
-            if (!message.Contains("Registo"))
-            {
-                char[] del = { ';' };
-                var lineText = message.Split(del);
-                FinalNum = int.Parse(lineText[1]);
-                UserLevelName = lineText[2];
-
-            }
-            // Debug.Log("FinalNum = " + FinalNum);
-            WriteStringInDoc(message, true);
+            Debug.Log("(_fimTest == null) > Isto não deve acontecer < ");
+            if (_lastMessage == _endMessage) return;
+            GetNumCol(_lastMessage);
+            SetUpFimCiclo();
+            SetUpEnd();
+            WriteStringInDoc(_fimTest, true);
+            StopRecording();
         }
-
-        CheckFileSize();
     }
-    
+
+
     private void SetUpFileAndDirectory()
     {
          _target = _directory + "\\" + _currentFolderDestino + "\\";
@@ -217,19 +261,50 @@ public void SetUpUserFolder(string userFolder)
         _isInitiate = true;
     }
 
-    // ReSharper disable once UnusedMember.Local
-    private void SetUpFileAndDirectory(string first)
+    private void SetUpFileAndDirectory(string mensagem)
     {
-        // _target = _directory + "\\" +_CurrentFolderDestino ;
-        SetUpDirectory();
-        SetFileName();
-        //SetUpHeader(first);
-        _isInitiate = true;
+        SetUpFileAndDirectory();
+        GetNumCol(mensagem);
+        SetUpFimCiclo();
+        SetUpEnd();
     }
+
+    private void GetNumCol(string s)
+    {
+        char[] del = Separador.ToCharArray();
+        _numColunas = s.Split(del).Length;
+    }
+
+    private void SetUpFimCiclo()
+    {
+        if (_numColunas == 0) return;
+        _fimCiclo = "";
+        for (var i = 0; i < _numColunas - 1; i++)
+        {
+            _fimCiclo += "0" + Separador;
+        }
+        _fimCiclo += "0";
+    }
+
+    private void SetUpEnd()
+    {
+        if (_numColunas == 0) return;
+        _fimTest = "";
+        for (var i = 0; i < _numColunas - 1; i++)
+        {
+            _fimTest += "END" + Separador;
+        }
+        _fimTest += "END";
+    }
+
     private void SetUpHeader()
     {
         // if (first.Contains("Registo")) return;
-        WriteStringInDoc(_saveHeader, true);
+        if (_saveHeader != null)
+        {
+            Debug.Log("ERRO");
+            WriteStringInDoc(_saveHeader, true);
+        }
     }
     
     private void SetUpHeader(string first)
@@ -240,13 +315,11 @@ public void SetUpUserFolder(string userFolder)
 
     private void WriteStringInDoc(string registo, bool isAppend)
     {
-        //Debug.Log("registo > " + registo);
         _doc = new StreamWriter(_target + _currentDocName, isAppend);
         _doc.WriteLine(registo);
         _doc.Close();
     }
-
-    // ReSharper disable once UnusedMember.Local
+    
     private void WriteStringInDoc(string registo)
     {
         _doc = new StreamWriter(_target + _currentDocName);
@@ -362,6 +435,71 @@ public void SetUpUserFolder(string userFolder)
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-    /*
-     
-     */
+/*
+        
+        // else
+        //{
+        //    if (!_isInitiate)
+        //    {
+        //        SetUpFileAndDirectory(message); 
+        //        if (_saveHeader != null) WriteStringInDoc(_saveHeader + " (*)", true);
+        //    } 
+        //}
+       var sessao = "Time " + DateTime.Now.ToString("yyyyMMddTHHmmss");
+       _currentFolderDestino =
+           _defaultFolderDestino =
+               _currentUserFolder == null
+                   ? "Files" + "\\" + "Saved Files" + "\\" + _folderName
+                   : "Files" + "\\" + "Saved Files" + "\\" + _currentUserFolder + "\\" + sessao + "\\" + _folderName;
+
+       _isInitiate = false;
+
+  /
+//if (_currentUserFolder == null)
+//{
+//    tempPath = null;
+//}
+//{
+//    tempPath = _currentUserFolder + "\\" + sessao ;
+//}
+//   _folderName + "\\" + _folderName
+
+public void SetUpUserFolder(string userFolder)
+    {
+        _currentUserFolder = userFolder;
+
+        var sessao = "Time " + DateTime.Now.ToString("yyyyMMddTHHmmss");
+        _currentFolderDestino =
+            _defaultFolderDestino =
+                _currentUserFolder == null
+                    ? "Files" + "\\" + "Saved Files" + "\\" + _nameFolder
+                    : "Files" + "\\" + "Saved Files" + "\\" + _currentUserFolder + "\\" + sessao + "\\" + _nameFolder;
+
+        _isInitiate = false;
+    }
+    
+    _currentUserFolder = userFolder;
+        var sessao = "Time " + DateTime.Now.ToString("yyyyMMddTHHmmss");
+        _currentFolderDestino =
+            _defaultFolderDestino =
+                _currentUserFolder == null
+                    ? "Files" + "\\" + "Saved Files" + "\\" + _nameFolder
+                    : "Files" + "\\" + "Saved Files" + "\\" + _currentUserFolder + "\\" + sessao + "\\" + _nameFolder;
+
+    // if (!_isInitiate) return;
+    // ResetRecord();
+    // if (File.Exists(_target + _currentDocName)) File.SetAttributes(_target + _currentDocName, FileAttributes.ReadOnly);      
+
+    
+    private void SetUpFileAndDirectory(string first)
+    {
+        
+        
+        // _target = _directory + "\\" +_CurrentFolderDestino ;
+        SetUpDirectory();
+        SetFileName();
+        //SetUpHeader(first);
+        _isInitiate = true;
+    }
+
+ */

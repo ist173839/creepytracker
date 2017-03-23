@@ -18,7 +18,8 @@ using System.Text;
 public class MyUdpListener : MonoBehaviour
 {
     private int _finalNum; // { get; set; }
-
+    private string _userLevelName;
+    
     private List<string> _stringsToParseColicoes;
     private SaveColicoes _saveColicoes;
     private IPEndPoint   _anyIpColicoes;
@@ -53,10 +54,12 @@ public class MyUdpListener : MonoBehaviour
 
         _portLog      = 60839;
         _saveLog      = new SaveLog();
-        
+
+        _finalNum = -1;
+        _userLevelName = null;
         //_portRecord   = 57839;
         //_saveRecord   = new SaveRecord();
-        
+
         //_portStatus   = 61839;
         //_saveStatus   = new SaveStatus();
     }
@@ -86,7 +89,13 @@ public class MyUdpListener : MonoBehaviour
         // _saveRecord.SetUpUserFolder();
         // _saveStatus.SetUpUserFolder();
     }
-    
+
+    public void EndTest()
+    {
+        _saveLog.EndLog();
+        _saveColicoes.EndLog();
+    }
+
     private void UdpRestart()
     {
         if (_udpClientColicoes != null) _udpClientColicoes.Close();
@@ -122,7 +131,6 @@ public class MyUdpListener : MonoBehaviour
     {
         var receiveBytes = _udpClientColicoes.EndReceive(ar, ref _anyIpColicoes);
         _stringsToParseColicoes.Add(Encoding.ASCII.GetString(receiveBytes));
-
         _udpClientColicoes.BeginReceive(new AsyncCallback(this.ReceiveCallbackColicoes), null);
     }
     
@@ -139,20 +147,60 @@ public class MyUdpListener : MonoBehaviour
     //    _stringsToParseRecord.Add(Encoding.ASCII.GetString(receiveBytes));
     //    _udpClientRecord.BeginReceive(new AsyncCallback(this.ReceiveCallbackRecord), null);
     //}
-    
+
     //private void ReceiveCallbackStatus(IAsyncResult ar)
     //{
     //    var receiveBytes = _udpClientStatus.EndReceive(ar, ref _anyIpLog);
     //    _stringsToParseStatus.Add(Encoding.ASCII.GetString(receiveBytes));
     //    _udpClientStatus.BeginReceive(new AsyncCallback(this.ReceiveCallbackStatus), null);
     //}
-    
+
     // ReSharper disable once ArrangeTypeMemberModifiers
     // ReSharper disable once UnusedMember.Local
+
     void FixedUpdate()
     {
         PressToRestart();
         UpdateMessages();
+    }
+
+    private void UpdateMessages()
+    {
+        while (_stringsToParseLog.Count > 0)
+        {
+            var stringToParse = _stringsToParseLog.First();
+            _stringsToParseLog.RemoveAt(0);
+            _saveLog.RecordMessage(stringToParse);
+        }
+
+        if (_saveLog.UserLevelName != null && _userLevelName != _saveLog.UserLevelName)
+        {
+
+            _userLevelName = _saveColicoes.UserLevelName = _saveLog.UserLevelName;
+        }
+
+
+        while (_stringsToParseColicoes.Count > 0)
+        {
+            var stringToParse = _stringsToParseColicoes.First();
+            _stringsToParseColicoes.RemoveAt(0);
+            _saveColicoes.RecordMessage(stringToParse);
+        }
+
+
+        //while (_stringsToParseStatus.Count > 0)
+        //{
+        //    var stringToParse = _stringsToParseStatus.First();
+        //    _stringsToParseStatus.RemoveAt(0);
+        //    _saveStatus.RecordMessage(stringToParse);
+        //}
+        
+        //while (_stringsToParseRecord.Count > 0)
+        //{
+        //    var stringToParse = _stringsToParseRecord.First();
+        //    _stringsToParseRecord.RemoveAt(0);
+        //    _saveRecord.RecordMessage(stringToParse);
+        //}
     }
 
     public int GetFinalNum()
@@ -172,37 +220,6 @@ public class MyUdpListener : MonoBehaviour
         if (!Input.GetKeyUp("r")) return;
         UdpRestart();
         Debug.Log("R Press - Restart Udps");
-    }
-
-    private void UpdateMessages()
-    {
-        while (_stringsToParseColicoes.Count > 0)
-        {
-            var stringToParse = _stringsToParseColicoes.First();
-            _stringsToParseColicoes.RemoveAt(0);
-            _saveColicoes.RecordMessage(stringToParse);
-        }
-
-        while (_stringsToParseLog.Count > 0)
-        {
-            var stringToParse = _stringsToParseLog.First();
-            _stringsToParseLog.RemoveAt(0);
-            _saveLog.RecordMessage(stringToParse);
-        }
-
-        //while (_stringsToParseStatus.Count > 0)
-        //{
-        //    var stringToParse = _stringsToParseStatus.First();
-        //    _stringsToParseStatus.RemoveAt(0);
-        //    _saveStatus.RecordMessage(stringToParse);
-        //}
-        
-        //while (_stringsToParseRecord.Count > 0)
-        //{
-        //    var stringToParse = _stringsToParseRecord.First();
-        //    _stringsToParseRecord.RemoveAt(0);
-        //    _saveRecord.RecordMessage(stringToParse);
-        //}
     }
 
     private void OnApplicationQuit()

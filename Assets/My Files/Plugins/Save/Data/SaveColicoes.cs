@@ -17,10 +17,13 @@ public class SaveColicoes
 {
     private StreamWriter _doc;
 
+    private SpecialTypeDoc _specialTypeDocName;
+
     private DateTime _inicio;
     
     public string Separador { get; private set; }
-    
+    public string UserLevelName;
+
     private string _currentFolderDestino;
     private string _defaultFolderDestino;
     private string _currentUserFolder;
@@ -29,7 +32,7 @@ public class SaveColicoes
     private string _currentDocName;
     private string _recordingName;
     private string _folderDestino;
-    private string _nameFolder;
+    private string _folderName;
     private string _saveHeader;
     private string _endMessage;
     private string _directory;
@@ -40,27 +43,28 @@ public class SaveColicoes
     private string _format;
     private string _versao;
     private string _sigla;
+    private string _defaultName;
+    private string _fimTest;
+    private string _lastMessage;
 
-    public int NumColunas   { get; private set; }
+
+    private int _numColunas;// { get; set; }
 
     private static readonly int TamanhoMaximo = (int) Math.Pow(2, 20); // (2 ^ 30)
 
     private int _cont;
-
-    private SpecialTypeDoc _specialTypeDocName;
-
+    
     private bool _useDefaultDocName;
     private bool _useDefaultFolder;
     private bool _isInitiate;
-    private bool _oversize;
-
-
-    // private string _startMessage;
-
+    
+    //////////////////////////////////////////////////////////////////////////
     public SaveColicoes()
     {
         SetUp(null);
     }
+
+    private bool _oversize;
 
     public SaveColicoes(string userFolder)
     {
@@ -70,32 +74,24 @@ public class SaveColicoes
     public void SetUpUserFolder(string userFolder)
     {
         _currentUserFolder = userFolder;
-
-        var sessao = "Time " + DateTime.Now.ToString("yyyyMMddTHHmmss");
-        _currentFolderDestino =
-            _defaultFolderDestino =
-                _currentUserFolder == null
-                    ? "Files" + "\\" + "Saved Files" + "\\" + _nameFolder
-                    : "Files" + "\\" + "Saved Files" + "\\" + _currentUserFolder + "\\" + sessao + "\\" +  _nameFolder;
-
-        _isInitiate = false;
-
-        //_currentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "Collisions Data";
+        SetUpUserFolder();
     }
 
     public void SetUpUserFolder()
     {
         var sessao = "Time " + DateTime.Now.ToString("yyyyMMddTHHmmss");
 
-        _currentFolderDestino =
-            _defaultFolderDestino =
-                _currentUserFolder == null
-                    ? "Files" + "\\" + "Saved Files" + "\\" + _nameFolder
-                    : "Files" + "\\" + "Saved Files" + "\\" + _currentUserFolder + "\\" + sessao + "\\" + _nameFolder;
-
+        const string constPath = "Files" + "\\" + "Saved Files"; // + "\\";
+        var tempPath = "\\";
+        tempPath += (_currentUserFolder == null ? _defaultName : _currentUserFolder) + "\\";
+        if (UserLevelName != null) tempPath += UserLevelName + "\\";
+        tempPath += sessao + "\\";
+        _currentFolderDestino = _defaultFolderDestino = constPath + tempPath + _folderName;
         _isInitiate = false;
     }
 
+
+    
     ~SaveColicoes()
     {
         StopRecording();
@@ -114,8 +110,8 @@ public class SaveColicoes
 
         _directory = System.IO.Directory.GetCurrentDirectory();
 
-        _nameFolder = "Collisions Data";
-
+        _folderName = "Collisions Data";
+        _defaultName = "Default User Name - Time " + DateTime.Now.ToString("yyyyMMddTHHmmss");
         SetUpUserFolder(userFolder);
 
         Separador = ";";
@@ -128,13 +124,14 @@ public class SaveColicoes
         _caminhoCompleto = null;
         _recordingName   = null;
         _saveHeader      = null;
+        _fimTest         = null;
 
         _specialTypeDocName = SpecialTypeDoc.SolveDuplicate;
 
         _target = _directory + "\\" + _currentFolderDestino + "\\";
 
         _cont = 0;
-        NumColunas = 0;
+        _numColunas = 0;
 
 
         _header = GetHeader();
@@ -147,7 +144,7 @@ public class SaveColicoes
         _recordingName = null;
         _isInitiate = false;
         _cont = 0;
-        NumColunas = 0;
+        _numColunas = 0;
     }
 
     private void CheckFileSize()
@@ -174,7 +171,7 @@ public class SaveColicoes
         {
             if (!_isInitiate)
             {
-                SetUpFileAndDirectory();
+                SetUpFileAndDirectory(message);
                 if (_saveHeader != null)
                     WriteStringInDoc(_saveHeader + " (*)",  true);
                 else
@@ -182,7 +179,7 @@ public class SaveColicoes
             }
         }
 
-        if (!_isInitiate) SetUpFileAndDirectory();
+        if (!_isInitiate) SetUpFileAndDirectory(message);
 
         if (message == _endMessage)
         {
@@ -194,6 +191,8 @@ public class SaveColicoes
 
         CheckFileSize();
     }
+
+
 
     private void SetUpFileAndDirectory()
     {
@@ -209,6 +208,14 @@ public class SaveColicoes
         _isInitiate = true;
     }
 
+    private void SetUpFileAndDirectory(string mensagem)
+    {
+        SetUpFileAndDirectory();
+        GetNumCol(mensagem);
+        SetUpFimCiclo();
+        SetUpEnd();
+    }
+  
     private void WriteStringInDoc(string registo, bool isAppend)
     {
         _doc = new StreamWriter(_target + _currentDocName, isAppend);
@@ -256,6 +263,55 @@ public class SaveColicoes
 
             Debug.Log("New Colision Data File : " + _currentDocName);
         }
+    }
+    
+    public void EndLog()
+    {
+        Debug.Log("End Log");
+        if (!_isInitiate) return;
+
+        if (_fimTest != null)
+        {
+            WriteStringInDoc(_fimTest, true);
+            StopRecording();
+        }
+        else
+        {
+            Debug.Log("(_fimTest == null) > Isto não deve acontecer < ");
+            if (_lastMessage == _endMessage) return;
+            GetNumCol(_lastMessage);
+            SetUpFimCiclo();
+            SetUpEnd();
+            WriteStringInDoc(_fimTest, true);
+            StopRecording();
+        }
+    }
+    private void GetNumCol(string s)
+    {
+        char[] del = Separador.ToCharArray();
+        _numColunas = s.Split(del).Length;
+    }
+
+    private void SetUpFimCiclo()
+    {
+        if (_numColunas == 0) return;
+        _fimCiclo = "";
+        for (var i = 0; i < _numColunas - 1; i++)
+        {
+            _fimCiclo += "0" + Separador;
+        }
+        _fimCiclo += "0";
+    }
+
+    private void SetUpEnd()
+    {
+        if (_numColunas == 0) return;
+        _fimTest = "";
+        for (var i = 0; i < _numColunas - 1; i++)
+        {
+            _fimTest += "END" + Separador;
+        }
+        _fimTest += "END";
     }
 
     private string SolveDuplicateFileNames()
@@ -345,20 +401,58 @@ public class SaveColicoes
     {
         return "Registo" + Separador + "Name" + Separador + "Position Object" + Separador + "Position Player" + Separador + "State" + Separador + "Time";
     }
-
 }
-//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
 /*
   
-   
-        // _header = GetHeader(); 
+      private void SetUpFileAndDirectory()
+    {
+        _target = _directory + "\\" + _currentFolderDestino + "\\";
+        _cont = 0;
+        SetUpDirectory();
+        SetFileName();
+        if (_oversize)
+        {
+            SetUpHeader();
+            _oversize = false;
+        }
+        _isInitiate = true;
+    }
     
-      
+    //public void SetUpUserFolder(string userFolder)
+    //{
+    //    _currentUserFolder = userFolder;
+
+    //    var sessao = "Time " + DateTime.Now.ToString("yyyyMMddTHHmmss");
+    //    _currentFolderDestino =
+    //        _defaultFolderDestino =
+    //            _currentUserFolder == null
+    //                ? "Files" + "\\" + "Saved Files" + "\\" + _folderName
+    //                : "Files" + "\\" + "Saved Files" + "\\" + _currentUserFolder + "\\" + sessao + "\\" +  _folderName;
+
+    //    _isInitiate = false;
+
+    //    //_currentFolderDestino = _defaultFolderDestino = "Saved Files" + "\\" + "Collisions Data";
+    //}
+
+    //public void SetUpUserFolder()
+    //{
+    //    var sessao = "Time " + DateTime.Now.ToString("yyyyMMddTHHmmss");
+    //    _currentFolderDestino =
+    //        _defaultFolderDestino =
+    //            _currentUserFolder == null
+    //                ? "Files" + "\\" + "Saved Files" + "\\" + _folderName
+    //                : "Files" + "\\" + "Saved Files" + "\\" + _currentUserFolder + "\\" + sessao + "\\" + _folderName;
+
+    //    _isInitiate = false;
+    //}
+
+
+    // private string _startMessage;
+    // _header = GetHeader();         
     //  public bool DirectoryChange;
-    
     // private string _header;
-    
-    //private bool _isRecording;
+    // private bool _isRecording;
     
     private void SetUpHeader(string first)
     {
@@ -374,8 +468,6 @@ public class SaveColicoes
         _isInitiate = true;
     }
     
- 
-
     private string GetHeader()
     {
         return "Registo" + Separador + "Name" + Separador + "Position Object" + Separador + "Position Player" + Separador + "State" + Separador + "Time";       
