@@ -106,6 +106,7 @@ public class TrackerUI : MonoBehaviour
         UseRecord     = false;
         ShowIndicator = false;
         SetNewUser    = false;
+       // ShowMarker    = false;
 
         _numberTest = 0;
         // _typeMetodo = 0;

@@ -92,7 +92,7 @@ public class SaveColicoes
 
         if (UserLevelName != null) tempPath += UserLevelName + "\\";
 
-        if (NumTest       != null) tempPath += NumTest       + "\\";
+        if (NumTest       != null) tempPath += "Teste nº " + NumTest + "\\";
 
         tempPath += sessao + "\\";
 
@@ -205,9 +205,7 @@ public class SaveColicoes
 
         CheckFileSize();
     }
-
-
-
+    
     private void SetUpFileAndDirectory()
     {
         _target = _directory + "\\" + _currentFolderDestino + "\\";

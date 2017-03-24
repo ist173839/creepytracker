@@ -139,7 +139,7 @@ public class SaveLog
         
         if (UserLevelName != null) tempPath += UserLevelName + "\\";
 
-        if (NumTest       != null) tempPath += NumTest       + "\\";
+        if (NumTest       != null) tempPath +=  "Teste nº " + NumTest + "\\";
 
         tempPath += sessao + "\\";
         
@@ -174,8 +174,8 @@ public class SaveLog
 
     public void RecordMessage(string message)
     {
-        if (message == _lastMessage) return;
-        _lastMessage = message;
+        //if (message == _lastMessage) return;
+        //_lastMessage = message;
 
         if (message == _endMessage)
         {
@@ -184,7 +184,7 @@ public class SaveLog
             return;
         }
 
-        // Debug.Log("message =  " + message);
+        //Debug.Log("message =  " + message);
         if (message.Contains("Registo")) StopRecording();
 
         if (!_isInitiate)
