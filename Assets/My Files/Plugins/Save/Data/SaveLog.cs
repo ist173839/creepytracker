@@ -24,6 +24,9 @@ public class SaveLog
     public string Separador { get; private set; }
 
     public string UserLevelName;
+    public string NumTest;
+    //  public string TypeMet;
+
 
     private string _currentFolderDestino;
     private string _defaultFolderDestino;
@@ -45,6 +48,7 @@ public class SaveLog
     private string _versao;
     private string _sigla;
     private string _defaultName;
+
     private string _lastMessage;
 
     private int _numColunas; //  { get; private set; }
@@ -100,8 +104,10 @@ public class SaveLog
         _startMessage = "INICIO";
         _endMessage   = "FIM";
 
-        UserLevelName    = null;
-
+        UserLevelName = null;
+        NumTest       = null; // "1";
+        // TypeMet       = "A";
+        
         _caminhoCompleto = null;
         _saveHeader      = null;
         _fimTest         = null;
@@ -130,9 +136,10 @@ public class SaveLog
         var tempPath = "\\";
 
         tempPath += (_currentUserFolder == null ? _defaultName : _currentUserFolder) + "\\";
-
-
+        
         if (UserLevelName != null) tempPath += UserLevelName + "\\";
+
+        if (NumTest       != null) tempPath += NumTest       + "\\";
 
         tempPath += sessao + "\\";
         

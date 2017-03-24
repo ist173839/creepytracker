@@ -18,7 +18,10 @@ using System.Text;
 public class MyUdpListener : MonoBehaviour
 {
     private int _finalNum; // { get; set; }
-    private string _userLevelName;
+
+    private string _userLevelName; 
+    private string _numTest;
+    //private string _typeMetodo;
     
     private List<string> _stringsToParseColicoes;
     private SaveColicoes _saveColicoes;
@@ -57,12 +60,16 @@ public class MyUdpListener : MonoBehaviour
 
         _finalNum = -1;
         _userLevelName = null;
-        //_portRecord   = 57839;
-        //_saveRecord   = new SaveRecord();
+        _numTest       = null;
 
-        //_portStatus   = 61839;
-        //_saveStatus   = new SaveStatus();
-    }
+        //_typeMetodo    = null;
+
+    //_portRecord   = 57839;
+    //_saveRecord   = new SaveRecord();
+
+    //_portStatus   = 61839;
+    //_saveStatus   = new SaveStatus();
+}
     
     // ReSharper disable once ArrangeTypeMemberModifiers
     // ReSharper disable once UnusedMember.Local
@@ -70,7 +77,21 @@ public class MyUdpListener : MonoBehaviour
     {
         UdpRestart();
     }
-    
+
+    public void SetNumTest(string num)
+    {
+        _saveColicoes.NumTest = _saveLog.NumTest = _numTest = num;
+
+        _saveLog.SetUpUserFolder();
+        _saveColicoes.SetUpUserFolder();
+       //  _saveLog.SetUpUserFolder();
+    }
+
+    //public void SetTypeMetodo(string type)
+    //{
+    //    _typeMetodo = type;
+    //}
+
     public void SetNewUser(string nameUser)
     {
         var newUser = nameUser;
@@ -81,7 +102,7 @@ public class MyUdpListener : MonoBehaviour
         // _saveStatus.SetUpUserFolder(newUser);
     }
 
-    public void SetNewSection()
+    public void SetNewSession()
     {
         _saveColicoes.SetUpUserFolder();
         _saveLog.SetUpUserFolder();

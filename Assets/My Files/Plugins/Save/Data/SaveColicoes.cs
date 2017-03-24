@@ -23,6 +23,9 @@ public class SaveColicoes
     
     public string Separador { get; private set; }
     public string UserLevelName;
+    public string NumTest;
+    //  public string TypeMet;
+
 
     private string _currentFolderDestino;
     private string _defaultFolderDestino;
@@ -82,11 +85,19 @@ public class SaveColicoes
         var sessao = "Time " + DateTime.Now.ToString("yyyyMMddTHHmmss");
 
         const string constPath = "Files" + "\\" + "Saved Files"; // + "\\";
+
         var tempPath = "\\";
+
         tempPath += (_currentUserFolder == null ? _defaultName : _currentUserFolder) + "\\";
+
         if (UserLevelName != null) tempPath += UserLevelName + "\\";
+
+        if (NumTest       != null) tempPath += NumTest       + "\\";
+
         tempPath += sessao + "\\";
+
         _currentFolderDestino = _defaultFolderDestino = constPath + tempPath + _folderName;
+
         _isInitiate = false;
     }
 
@@ -120,6 +131,9 @@ public class SaveColicoes
         _format     = ".csv";
         _versao     = "V1";
         _sigla      = "COD";
+
+        UserLevelName = null;
+        NumTest = null;
 
         _caminhoCompleto = null;
         _recordingName   = null;

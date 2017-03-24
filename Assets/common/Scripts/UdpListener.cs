@@ -15,13 +15,10 @@ public class UdpListener : MonoBehaviour
     private IPEndPoint _anyIp;
     private List<byte[]> _stringsToParse; // TMA: Store the bytes from the socket instead of converting to strings. Saves time.
  
-#pragma warning disable 169
     private byte[] _receivedBytes;
-#pragma warning restore 169
 
-#pragma warning disable 169
     private int _number = 0;
-#pragma warning restore 169
+
 
     //so we don't have to create again
     private CloudMessage _message;

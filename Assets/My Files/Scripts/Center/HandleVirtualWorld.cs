@@ -48,10 +48,7 @@ public class HandleVirtualWorld : MonoBehaviour
     public bool CanShowIndicators;
     public bool ShowIndicator;
     public bool ShowMarker;
-    // public bool CanForce;
-    // public bool Send;
-
-
+    
     private bool _canUseSaveFile;
     private bool _setUpForward;
     private bool _saveForward;
@@ -70,6 +67,8 @@ public class HandleVirtualWorld : MonoBehaviour
     private string _path;
 
 
+    // public bool CanForce;
+    // public bool Send;
     // public bool Force;
     ////////////////////////////////////////////////////////////////////////////////////////
 
@@ -116,16 +115,13 @@ public class HandleVirtualWorld : MonoBehaviour
         _countId = 0;
 
         CanShowIndicators = false;
-        ShowMarker = true;
-        // CanForce = false;
-        
+        ShowMarker        = true;
+
         _saveForward = false;
-        _saveMessage = true; 
+        _saveMessage = true;
         _saveCentro  = false;
         _reset       = false;
 
-        // Send  = true;
-        // Force = false;
     }
 
     // Use this for initialization
@@ -133,12 +129,12 @@ public class HandleVirtualWorld : MonoBehaviour
     // ReSharper disable once ArrangeTypeMemberModifiers
     void Start ()
     {
-        _localTrackerUi        = gameObject.GetComponent<TrackerUI>();
-        _localTracker          = gameObject.GetComponent<Tracker>();
+        _localTrackerUi = gameObject.GetComponent<TrackerUI>();
+        _localTracker   = gameObject.GetComponent<Tracker>();
         
-        var info = new DirectoryInfo(_path);
+        var info     = new DirectoryInfo(_path);
         var fileInfo = info.GetFiles();
-        var length = fileInfo.Length;
+        var length   = fileInfo.Length;
 
         _localTrackerUi.UseSaveFile = _canUseSaveFile = length != 0;
     }
@@ -155,26 +151,18 @@ public class HandleVirtualWorld : MonoBehaviour
             var length = fileInfo.Length;
             _canUseSaveFile = length != 0;
         }
-       
-        if (IsCentroSetUp)
+
+        if (IsCentroSetUp && _setUpForward) CanShowIndicators = true;
+
+        if (IsCentroSetUp && _centro.HasValue && _setUpForward && _forwardPoint.HasValue && _reset)
         {
-            // CanForce = true;
-            if (_setUpForward)
-            {
-                CanShowIndicators = true;
-            }
-        }
-        
-        if (IsCentroSetUp && _centro.HasValue && _setUpForward  && _forwardPoint.HasValue && _reset)
-        {
-            // _forward = (_forwardPoint.Value - _centro.Value).normalized;
             _forward = (_forwardPoint.Value - _centro.Value);
             _reset = false;
             Debug.DrawLine(_centro.Value, _centro.Value + _forward * 2.0f, Color.white);
         }
 
         SetRender(ShowIndicator);
-        
+
         if (_setUpForward && _forwardPoint.HasValue)
         {
             _indicadores.transform.rotation = Quaternion.LookRotation(_forward);
@@ -183,25 +171,19 @@ public class HandleVirtualWorld : MonoBehaviour
         SaveMensagem();
         SendMensagem();
 
-        //_localOptitrackManager.RenderMarker(UseOpti && ShowMarker);
-        //_marker.GetComponent<MeshRenderer>().enabled = !UseOpti && ShowMarker;
-        
+
         _marker.GetComponent<MeshRenderer>().enabled = ShowMarker;
-        
+
         _centroGameObject.GetComponent<MeshRenderer>().enabled  = IsCentroSetUp;
         _forwardGameObject.GetComponent<MeshRenderer>().enabled = _setUpForward;
 
-        //if (!UseOpti)
+        var idToCheck = _localTrackerUi.IdToCheck;
+        var humanCheck = _localTracker.GetHuman(idToCheck);
+        if (humanCheck != null)
         {
-            var idToCheck  = _localTrackerUi.IdToCheck;
-            var humanCheck = _localTracker.GetHuman(idToCheck);
-            if (humanCheck != null)
-            {
-                var pos = MathHelper.DeslocamentoHorizontal(humanCheck.gameObject.transform.position, 0.5f);
-                _marker.transform.position = pos;
-            }
+            var pos = MathHelper.DeslocamentoHorizontal(humanCheck.gameObject.transform.position, 0.5f);
+            _marker.transform.position = pos;
         }
-        //  MyDebug.Log("Length = " + length + ", CanUseSaveFile = " + CanUseSaveFile);
     }
 
     private void SaveMensagem()
@@ -472,6 +454,13 @@ public class HandleVirtualWorld : MonoBehaviour
 /////////////////////////////////////////////////////////////////////////////////
 /*
 
+    
+        // CanForce = false;
+        // Send  = true;
+        // Force = false;
+
+    /////////////////////////////////////////////////////////////////////////////////
+
 private void SendMensagem()
 {
     var mensagem = "";
@@ -624,4 +613,63 @@ private void SendMensagem()
         _saveMessage = false; 
     }
 
+
+    //////////////////////////////////////////////////////////////////
+     void Update ()
+    {
+        if (!_canUseSaveFile)
+        {
+            var info = new DirectoryInfo(_path);
+            var fileInfo = info.GetFiles();
+            var length = fileInfo.Length;
+            _canUseSaveFile = length != 0;
+        }
+       
+        if (IsCentroSetUp)
+        {
+            // CanForce = true;
+            if (_setUpForward)
+            {
+                CanShowIndicators = true;
+            }
+        }
+        
+        if (IsCentroSetUp && _centro.HasValue && _setUpForward  && _forwardPoint.HasValue && _reset)
+        {
+            // _forward = (_forwardPoint.Value - _centro.Value).normalized;
+            _forward = (_forwardPoint.Value - _centro.Value);
+            _reset = false;
+            Debug.DrawLine(_centro.Value, _centro.Value + _forward * 2.0f, Color.white);
+        }
+
+        SetRender(ShowIndicator);
+        
+        if (_setUpForward && _forwardPoint.HasValue)
+        {
+            _indicadores.transform.rotation = Quaternion.LookRotation(_forward);
+        }
+
+        SaveMensagem();
+        SendMensagem();
+
+        //_localOptitrackManager.RenderMarker(UseOpti && ShowMarker);
+        //_marker.GetComponent<MeshRenderer>().enabled = !UseOpti && ShowMarker;
+        
+        _marker.GetComponent<MeshRenderer>().enabled = ShowMarker;
+        
+        _centroGameObject.GetComponent<MeshRenderer>().enabled  = IsCentroSetUp;
+        _forwardGameObject.GetComponent<MeshRenderer>().enabled = _setUpForward;
+
+        //if (!UseOpti)
+        {
+            var idToCheck  = _localTrackerUi.IdToCheck;
+            var humanCheck = _localTracker.GetHuman(idToCheck);
+            if (humanCheck != null)
+            {
+                var pos = MathHelper.DeslocamentoHorizontal(humanCheck.gameObject.transform.position, 0.5f);
+                _marker.transform.position = pos;
+            }
+        }
+        //  MyDebug.Log("Length = " + length + ", CanUseSaveFile = " + CanUseSaveFile);
+    }
  */
