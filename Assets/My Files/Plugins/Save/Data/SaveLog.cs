@@ -26,8 +26,7 @@ public class SaveLog
     public string UserLevelName;
     public string NumTest;
     //  public string TypeMet;
-
-
+    
     private string _currentFolderDestino;
     private string _defaultFolderDestino;
     private string _currentUserFolder;
@@ -36,21 +35,20 @@ public class SaveLog
     private string _currentDocName;
     private string _folderDestino;
     private string _startMessage;
+    private string _lastMessage;
+    private string _defaultName;
     private string _endMessage;
     private string _folderName;
     private string _saveHeader;
     private string _directory;
-    private string _fimTest;
     private string _fimCiclo;
+    private string _fimTest;
     private string _docName;
     private string _target;
     private string _format;
     private string _versao;
     private string _sigla;
-    private string _defaultName;
-
-    private string _lastMessage;
-
+    
     private int _numColunas; //  { get; private set; }
 
     public int FinalNum     { get; private set; }
@@ -65,8 +63,8 @@ public class SaveLog
     private bool _isInitiate;
     private bool _oversize;
     
-  
     /////////////////////////////////////////////////////////////////////////////
+    // ReSharper disable once UnusedMember.Global
     public SaveLog(string userFolder)
     {
         SetUp(userFolder);
