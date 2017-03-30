@@ -97,7 +97,8 @@ public class SaveColicoes
         tempPath += sessao + "\\";
 
         _currentFolderDestino = _defaultFolderDestino = constPath + tempPath + _folderName;
-
+        _target = _directory + "\\" + _currentFolderDestino + "\\";
+        if (!System.IO.Directory.Exists(_target)) System.IO.Directory.CreateDirectory(_target);
         _isInitiate = false;
     }
 

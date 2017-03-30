@@ -494,6 +494,7 @@ public class TrackerUI : MonoBehaviour
             if (GUI.Button(new Rect(left + 100, top, 100, 25), "New Session"))
             {
                 _localMyUdpListener.SetNewSession();
+                _localMyUdpListener.ResetFinalNum();
             }
             //top += 35;
             //if (_numberTest   < 0 || _numberTest   >= 3) _numberTest   = 0;
@@ -532,6 +533,11 @@ public class TrackerUI : MonoBehaviour
             {
                 _localMyUdpListener.EndTest();
             }
+
+            //if (GUI.Button(new Rect(left, top, 80, 25), "Start Test")) //+ 70
+            //{
+            //    _localMyUdpListener.EndTest();
+            //}
             top += 25;
 
             UseRecord = GUI.Toggle(new Rect(left, top, 100, 25), UseRecord, "Record");

@@ -142,9 +142,20 @@ public class SaveLog
         tempPath += sessao + "\\";
         
         _currentFolderDestino = _defaultFolderDestino = constPath + tempPath + _folderName;
+
+        _target = _directory + "\\" + _currentFolderDestino + "\\";
         
+        if (!System.IO.Directory.Exists(_target)) System.IO.Directory.CreateDirectory(_target);
+
         _isInitiate = false;
-    } 
+    }
+
+    void StartTest()
+    {
+        
+
+    }
+
 
     public void ResetFinalNum()
     {
@@ -170,47 +181,99 @@ public class SaveLog
         StopRecording();
     }
 
+
+
+
     public void RecordMessage(string message)
     {
-        //if (message == _lastMessage) return;
-        //_lastMessage = message;
-
-        if (message == _endMessage)
+        try
         {
-            Debug.Log(_endMessage);
-            StopRecording();
-            return;
-        }
+            //if (message == _lastMessage) return;
+            //_lastMessage = message;
 
-        //Debug.Log("message =  " + message);
-        if (message.Contains("Registo")) StopRecording();
-
-        if (!_isInitiate)
-        {
-            SetUpFileAndDirectory(message);
-            if (message.Contains("Registo"))
+            if (!System.IO.Directory.Exists(_target))
             {
-                _saveHeader = message;
-                WriteStringInDoc(_saveHeader, true);
+                System.IO.Directory.CreateDirectory(_target);
+                _isInitiate = false;
+            }
+
+            if (message == _endMessage)
+            {
+                Debug.Log(_endMessage);
+                StopRecording();
                 return;
             }
 
-            var newHeader = _saveHeader != null ? _saveHeader + " (*)" : message;
+            //Debug.Log("message =  " + message);
+            if (message.Contains("Registo")) StopRecording();
 
-            SetUpLevelNameAndFinalNum(message);
+            if (!_isInitiate)
+            {
+                SetUpFileAndDirectory(message);
+                if (message.Contains("Registo"))
+                {
+                    _saveHeader = message;
+                    WriteStringInDoc(_saveHeader, true);
+                    return;
+                }
 
-            WriteStringInDoc(newHeader, true);
-            return;
-        }
+                var newHeader = _saveHeader != null ? _saveHeader + " (*)" : message;
 
-        if (!message.Contains("Registo"))
-            SetUpLevelNameAndFinalNum(message);
-        
+                SetUpLevelNameAndFinalNum(message);
+
+                WriteStringInDoc(newHeader, true);
+                return;
+            }
+
+            if (!message.Contains("Registo"))
+                SetUpLevelNameAndFinalNum(message);
+
             WriteStringInDoc(message, true);
-     
-        
-        CheckFileSize();
+
+            CheckFileSize();
+        }
+        catch (Exception  exception)
+        {
+            Debug.Log("Exception in Log RecordMessage");
+            Debug.Log(exception);
+            if (message != null) SolveException(message);
+            throw;
+        }
     }
+
+    private void SolveException(string message)
+    {
+        var sessao = "Time " + DateTime.Now.ToString("yyyyMMddTHHmmss");
+        const string constPath = "Files" + "\\" + "Saved Files" + "\\" + "Exception"; // + "\\";
+        var tempPath = "\\";
+        tempPath += (_currentUserFolder == null ? _defaultName : _currentUserFolder) + "\\";
+        if (UserLevelName != null) tempPath += UserLevelName + "\\";
+        if (NumTest != null) tempPath += "Teste nº " + NumTest + "\\";
+        tempPath += sessao + "\\";
+        _currentFolderDestino = _defaultFolderDestino = constPath + tempPath + _folderName;
+        _target = _directory + "\\" + _currentFolderDestino + "\\";
+        if (!System.IO.Directory.Exists(_target)) System.IO.Directory.CreateDirectory(_target);
+        _cont = 0;
+        SetFileName();
+        if (_oversize)
+        {
+            SetUpHeader();
+            _oversize = false;
+        }
+        GetNumCol(message);
+        SetUpFimCiclo();
+        SetUpEnd();
+
+
+        WriteStringInDoc(message, true);
+        _isInitiate = false;
+    }
+
+    //public void MakeFolder()
+    //{
+    //}
+
+
 
     private void SetUpLevelNameAndFinalNum(string message)
     {
