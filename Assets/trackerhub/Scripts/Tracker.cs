@@ -673,37 +673,38 @@ public class Tracker : MonoBehaviour
 		n.NotifySend (NotificationLevel.INFO, "Calibration complete", "Config file updated", 5000);
 	}
 
-	internal Vector3 GetJointPosition (int id, JointType joint)
-	{
-		var h = _humans [id];
+    internal Vector3 GetJointPosition(int id, JointType joint)
+    {
+        var h = _humans[id];
 
-		var bestBody = h.bodies [0];
-		var confidence = bestBody.Confidence;
-		var lastSensorConfidence = 0;
-		SensorBody lastSensorBody = null;
+        var bestBody   = h.bodies[0];
+        var confidence = bestBody.Confidence;
+        var lastSensorConfidence = 0;
+        SensorBody lastSensorBody = null;
 
-		foreach (var b in h.bodies)
+        foreach (var b in h.bodies)
         {
-			var bConfidence = b.Confidence;
-			if (bConfidence > confidence)
+            var bConfidence = b.Confidence;
+            if (bConfidence > confidence)
             {
-				confidence = bConfidence;
-				bestBody = b;
-			}
+                confidence = bConfidence;
+                bestBody = b;
+            }
 
-			if (b.sensorID == h.SeenBySensor) {
-				lastSensorConfidence = bConfidence;
-				lastSensorBody = b;
-			}
-		}
+            if (b.sensorID == h.SeenBySensor)
+            {
+                lastSensorConfidence = bConfidence;
+                lastSensorBody = b;
+            }
+        }
 
-		if (lastSensorBody == null || (bestBody.sensorID != h.SeenBySensor && confidence > (lastSensorConfidence + 1)))
-			h.SeenBySensor = bestBody.sensorID;
-		else
-			bestBody = lastSensorBody;
+        if (lastSensorBody == null || (bestBody.sensorID != h.SeenBySensor && confidence > (lastSensorConfidence + 1)))
+            h.SeenBySensor = bestBody.sensorID;
+        else
+            bestBody = lastSensorBody;
 
-        return Sensors [bestBody.sensorID].PointSensorToScene (CommonUtils.PointKinectToUnity (bestBody.skeleton.JointsPositions [joint]));
-	}
+        return Sensors[bestBody.sensorID].PointSensorToScene(CommonUtils.PointKinectToUnity(bestBody.skeleton.JointsPositions[joint]));
+    }
 
     internal Vector3 GetJointPosition(int id, JointType joint, Vector3 garbage)
     {
@@ -737,6 +738,14 @@ public class Tracker : MonoBehaviour
 
         return Sensors[bestBody.sensorID].PointSensorToScene(CommonUtils.PointKinectToUnity(bestBody.skeleton.JointsPositions[joint]));
         
+    }
+
+    internal string GetHandState(int id, BodyPropertiesTypes type)
+    {
+        Human      h = _humans[id];
+        SensorBody s = h.bodies[0];
+
+        return s.skeleton.BodyProperties[type];
     }
 
     internal string GetHandState(int id, Side side)
@@ -783,6 +792,7 @@ public class Tracker : MonoBehaviour
             st = GetHandStateFromBody(side, b);
             if (st == "Closed") return st;
         }
+
         return "Unknown";
 
         //return _sensors[bestBody.sensorID].PointSensorToScene(CommonUtils.pointKinectToUnity(body.skeleton.JointsPositions[joint]));
@@ -1094,6 +1104,47 @@ public class Tracker : MonoBehaviour
     }
 
 }
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/*
+
+//<<<<<<< HEAD
+//	internal Vector3 GetJointPosition (int id, JointType joint)
+//=======
+// internal Vector3 getJointPosition (int id, JointType joint, Vector3 garbage)
+    //   internal Vector3 GetJointPosition(int id, JointType joint, Vector3 garbage)  
+	//{
+	//	var h = _humans [id];
+
+	//	var bestBody = h.bodies [0];
+	//	var confidence = bestBody.Confidence;
+	//	var lastSensorConfidence = 0;
+	//	SensorBody lastSensorBody = null;
+
+	//	foreach (var b in h.bodies)
+ //       {
+	//		var bConfidence = b.Confidence;
+	//		if (bConfidence > confidence)
+ //           {
+	//			confidence = bConfidence;
+	//			bestBody = b;
+	//		}
+
+	//		if (b.sensorID == h.SeenBySensor) {
+	//			lastSensorConfidence = bConfidence;
+	//			lastSensorBody = b;
+	//		}
+	//	}
+
+	//	if (lastSensorBody == null || (bestBody.sensorID != h.SeenBySensor && confidence > (lastSensorConfidence + 1)))
+	//		h.SeenBySensor = bestBody.sensorID;
+	//	else
+	//		bestBody = lastSensorBody;
+
+ //       return Sensors [bestBody.sensorID].PointSensorToScene (CommonUtils.PointKinectToUnity (bestBody.skeleton.JointsPositions [joint]));
+	//}
+
+
+ */
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
