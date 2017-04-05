@@ -445,13 +445,16 @@ public class Tracker : MonoBehaviour
 
 		// bring back to life selected dead humans
 		List<Human> undeadHumans = new List<Human> ();
-		foreach (Human h in _deadHumans) {
-			if (h.bodies.Count > 0) {
+		foreach (Human h in _deadHumans)
+        {
+			if (h.bodies.Count > 0)
+            {
 				_humans [h.ID] = h;
 				undeadHumans.Add (h);
 			}
 		}
-		foreach (Human h in undeadHumans) {
+		foreach (Human h in undeadHumans)
+        {
 			_deadHumans.Remove (h);
 		}
 
@@ -520,8 +523,7 @@ public class Tracker : MonoBehaviour
     
    // private static float CalcHorizontalDistance (Vector3 a, Vector3 b)
    
-    private float CalcHorizontalDistance (Vector3 a, Vector3 b)
-
+    private static float CalcHorizontalDistance (Vector3 a, Vector3 b)
 	{
 		var c = new Vector3 (a.x, 0, a.z);
 		var d = new Vector3 (b.x, 0, b.z);
@@ -537,15 +539,16 @@ public class Tracker : MonoBehaviour
 	{
 		_udpBroadcast.RemoveUnicast (key);
 	}
+
     //FOR TCP
-    internal void SetNewCloud(string KinectID, byte[] data, int size, uint id)
+    internal void SetNewCloud(string kinectId, byte[] data, int size, uint id)
     {
         // tirar o id da mensagem que é um int
         
-        if (Sensors.ContainsKey(KinectID))
+        if (Sensors.ContainsKey(kinectId))
         {
-            Sensors[KinectID].lastCloud.SetPoints(data, 0, id, size);
-            Sensors[KinectID].lastCloud.setToView();
+            Sensors[kinectId].lastCloud.SetPoints(data, 0, id, size);
+            Sensors[kinectId].lastCloud.setToView();
         }
     }
 
@@ -575,9 +578,9 @@ public class Tracker : MonoBehaviour
         }
 	}
 
-    internal void SetCloudToView(string KinectID)
+    internal void SetCloudToView(string kinectId)
     {
-        Sensors[KinectID].lastCloud.setToView();
+        Sensors[kinectId].lastCloud.setToView();
     }
 
     internal void SetNewFrame (BodiesMessage bodies)
@@ -673,7 +676,7 @@ public class Tracker : MonoBehaviour
 		n.NotifySend (NotificationLevel.INFO, "Calibration complete", "Config file updated", 5000);
 	}
 
-	internal Vector3 GetJointPosition (int id, JointType joint)
+    internal Vector3 GetJointPosition (int id, JointType joint)
 	{
 		var h = _humans [id];
 
@@ -737,6 +740,14 @@ public class Tracker : MonoBehaviour
 
         return Sensors[bestBody.sensorID].PointSensorToScene(CommonUtils.PointKinectToUnity(bestBody.skeleton.JointsPositions[joint]));
         
+    }
+
+    internal string GetHandState(int id, BodyPropertiesTypes type)
+    {
+        Human h = _humans[id];
+        SensorBody s = h.bodies[0];
+
+        return s.skeleton.BodyProperties[type];
     }
 
     internal string GetHandState(int id, Side side)
@@ -1022,7 +1033,7 @@ public class Tracker : MonoBehaviour
             foreach (Human h in _humans.Values)
             {
                 //GUI.Label(new Rect(10, Screen.height - (n++ * 50), 1000, 50), "Human " + h.ID + " as seen by " + h.seenBySensor);
-                var p = Camera.main.WorldToScreenPoint (h.Skeleton.GetHead () + new Vector3 (0, 0.2f, 0));
+                var p = Camera.main.WorldToScreenPoint (h.Skeleton.GetHead() + new Vector3 (0, 0.2f, 0));
                 if (p.z > 0)
                 {
                     GUI.Label (new Rect (p.x, Screen.height - p.y - 25, 100, 25), "" + h.ID);
@@ -1094,8 +1105,19 @@ public class Tracker : MonoBehaviour
     }
 
 }
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/*
+ 
+    =======
+   
+    internal Vector3 getJointPosition (int id, JointType joint, Vector3 garbage)
+>>>>>>> 38b20e139c2c9db54923b30780c0ff1326ff44e1 
+     
+     */
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 /*
  *
