@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2015
+# Visual Studio 2017
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "creepytracker.Plugins", "creepytracker.Plugins.csproj", "{66BF06C9-8D86-19A3-78DF-B872B92FE36C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "creepytracker", "creepytracker.csproj", "{15BAF592-E391-224A-F217-A35022ED6B99}"
