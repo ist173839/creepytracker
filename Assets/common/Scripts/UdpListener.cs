@@ -101,6 +101,13 @@ public class UdpListener : MonoBehaviour
                         AvatarMessage av     = new AvatarMessage(splitmsg[1], toProcess);
                         gameObject.GetComponent<Tracker>().ProcessAvatarMessage(av);
                     }
+                    else if (Convert.ToChar(toProcess[0]) == 'S')
+                    {
+                        string stringToParse = Encoding.ASCII.GetString(toProcess);
+                        string[] splitmsg = stringToParse.Split(MessageSeparators.L0);
+                        SurfaceMessage av = new SurfaceMessage(splitmsg[1], toProcess);
+                        gameObject.GetComponent<Tracker>().ProcessSurfaceMessage(av);
+                    }
                 }
                 _stringsToParse.RemoveAt(0);
             }
