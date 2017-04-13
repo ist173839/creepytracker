@@ -61,13 +61,24 @@ public class HumanSkeleton : MonoBehaviour
 
     private bool _canSend = false;
     private bool _mirror  = false;
-    
-    //private string handStateLeft = HandState.Unknown.ToString();
+
+
+    ////// Versão usada no Master
+    //private string handStateLeft  = HandState.Unknown.ToString();
     //private string handStateRight = HandState.Unknown.ToString();
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////        Dissertação - Mestrado em Engenharia Informática e de Computadores                                   //////////
+    //////        Francisco Henriques Venda, nº 73839                                                                  //////////
+    //////        Alterações apartir daqui                                                                             //////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////// Versão Alterada
     private string _handLeftState;
     private string _handRightState;
-
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // ReSharper disable once UnusedMember.Local
     // ReSharper disable once ArrangeTypeMemberModifiers
     void Start ()
@@ -136,11 +147,15 @@ public class HumanSkeleton : MonoBehaviour
 		_floorForwardGameObject.tag  = "nocolor";
 		_floorForwardGameObject.transform.parent = transform;
         
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////
         _handLeftState  = "Null";
         _handRightState = "Null";
+	    ////////////////////////////////////////////////////////////////////////////////////////////////////////
+	    ////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 
-	private GameObject CreateSphere (string sphereName, float scale = 0.1f)
+    private GameObject CreateSphere (string sphereName, float scale = 0.1f)
 	{
 		GameObject gameObjectSphere = GameObject.CreatePrimitive (PrimitiveType.Sphere);
 		gameObjectSphere.GetComponent<SphereCollider> ().enabled = false;
@@ -201,9 +216,11 @@ public class HumanSkeleton : MonoBehaviour
 			}
 
             _lastForward = forward;
+
+            ////// Versão usada no Master
             // handStateLeft  = tracker.GetHandState(ID, BodyPropertiesTypes.HandLeftState);
             // handStateRight = tracker.GetHandState(ID, BodyPropertiesTypes.HandRightState);
-            
+
             // Update Joints
             try
             {
@@ -302,12 +319,14 @@ public class HumanSkeleton : MonoBehaviour
 		if (_canSend)
             {
 			string pdu = BodyPropertiesTypes.UID.ToString () + MessageSeparators.SET + ID + MessageSeparators.L2;
-
+            
+            ////// Versão usada no Master
             // pdu += BodyPropertiesTypes.HandLeftState.ToString ()       + MessageSeparators.SET + handStateLeft  + MessageSeparators.L2;
             // pdu += BodyPropertiesTypes.HandLeftConfidence.ToString ()  + MessageSeparators.SET + "Null"         + MessageSeparators.L2;
             // pdu += BodyPropertiesTypes.HandRightState.ToString ()      + MessageSeparators.SET + handStateRight + MessageSeparators.L2;
             // pdu += BodyPropertiesTypes.HandRightConfidence.ToString () + MessageSeparators.SET + "Null"         + MessageSeparators.L2;
-            
+
+            ////// Versão Alterada
             pdu += BodyPropertiesTypes.HandLeftState.ToString ()      + MessageSeparators.SET + _handLeftState  + MessageSeparators.L2;
 			pdu += BodyPropertiesTypes.HandLeftConfidence.ToString()  + MessageSeparators.SET + "Null"          + MessageSeparators.L2;
 			pdu += BodyPropertiesTypes.HandRightState.ToString ()     + MessageSeparators.SET + _handRightState + MessageSeparators.L2;

@@ -31,27 +31,19 @@ public class Tracker : MonoBehaviour
 
     private Dictionary<int, Human> _humans;
 
-    public List<int>    IdIntList;
-    public List<string> IdList;
-
     private List<Human> _deadHumans;
     private List<Human> _humansToKill;
 
+    private List<Surface> _surfaces;
+    
     public CalibrationProcess CalibrationStatus { get; set; }
 
     private UdpBroadcast _udpBroadcast;
 
 
-    //private OptitrackManager _localOptitrackManager;
-
-
-    // ReSharper disable once UnassignedField.Global
-
-    // ReSharper disable once MemberCanBePrivate.Global
-
-    public Material SurfaceMaterial;
     public Material WhiteMaterial;
 
+    public Material SurfaceMaterial;
 
     public string[] UnicastClients
     {
@@ -60,37 +52,69 @@ public class Tracker : MonoBehaviour
             return _udpBroadcast.UnicastClients;
         }
     }
+
     public int ShowHumanBodies = -1;
 
     public bool ColorHumans;
+
     public bool colorHumans;
-    private List<Surface> _surfaces;
-
-    private bool _setUpCentro;
 
 
-    public int CountHuman;
-    public Vector3 Centro;
+    // public List<KneesInfo> RightKneesInfo;
+    // public List<KneesInfo> LeftKneesInfo;
 
-    public bool SendKnees;
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////        Dissertação - Mestrado em Engenharia Informática e de Computadores                                   //////////
+    //////        Francisco Henriques Venda, nº 73839                                                                  //////////
+    //////        Alterações apartir daqui                                                                             //////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    //private OptitrackManager _localOptitrackManager;
+
+    public  Dictionary<string, KneesInfo> RightKneesInfo;
+
+    public  Dictionary<string, KneesInfo> LeftKneesInfo;
+    private Dictionary<string, KneesInfo> _allKneesInfo;
+
+    public List<int> IdIntList;
+    public List<string> IdList;
+    
     private TrackerUI _localTrackerUi;
+
     private SafeWriteFile _safeWriteFile;
     private GameObject _centroGameObject;
-
-
-
-    //public List<KneesInfo> RightKneesInfo;
-    //public List<KneesInfo> LeftKneesInfo;
-
-    public Dictionary<string, KneesInfo> RightKneesInfo;
-    public Dictionary<string, KneesInfo> LeftKneesInfo;
-
-
-    private Dictionary<string, KneesInfo> _allKneesInfo;
+    
     private Vector3? _lastRigthKneePosition;
     private Vector3? _lastLeftKneePosition;
+    
+    public Vector3 Centro;
 
+    public int CountHuman;
 
+    public bool SendKnees;
+
+    private bool _setUpCentro;
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    // ReSharper disable once ArrangeTypeMemberModifiers
+    // ReSharper disable once UnusedMember.Local
+    void Awake()
+    {
+        RightKneesInfo = new Dictionary<string, KneesInfo>();
+        LeftKneesInfo  = new Dictionary<string, KneesInfo>();
+
+        IdList    = new List<string>();
+        IdIntList = new List<int>();
+
+        _safeWriteFile = new SafeWriteFile();
+
+        CountHuman = 0;
+    }
 
     void Start ()
     {
@@ -103,24 +127,15 @@ public class Tracker : MonoBehaviour
         _udpBroadcast  = new UdpBroadcast (TrackerProperties.Instance.BroadcastPort);
         _safeWriteFile = new SafeWriteFile();
 
-        _localTrackerUi = gameObject.GetComponent<TrackerUI>();
-
         _loadConfig();
         _loadSavedSensors();
-
-
-        //_loadConfig ();
-        //_loadSavedSensors ();
-
-
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //_localOptitrackManager = gameObject.GetComponent<OptitrackManager>();
-        CountHuman = 0;
-        IdList         = new List<string>();
-        IdIntList      = new List<int>();
-        RightKneesInfo = new Dictionary<string, KneesInfo>();
-        LeftKneesInfo  = new Dictionary<string, KneesInfo>();
+        _localTrackerUi = gameObject.GetComponent<TrackerUI>();
     }
    
+    // ReSharper disable once UnusedMember.Local
     // ReSharper disable once ArrangeTypeMemberModifiers
     void FixedUpdate ()
 	{
@@ -195,9 +210,9 @@ public class Tracker : MonoBehaviour
                 Debug.Log(e.Message + "\n" + e.StackTrace);
             }
 		}
-
-        // Debug.Log("Send = " + strToSend);
         _udpBroadcast.Send(strToSend);
+        
+        //// FHV -> Alteração -> Guarda dados do Tracker 
         SaveRecordServer(strToSend);
 
 		// set human material
@@ -244,49 +259,9 @@ public class Tracker : MonoBehaviour
         return _humans.ContainsKey(id) ? _humans[id] : null;
     }
 
-    // ReSharper disable once UnusedMember.Local
-    private static Vector3 GetLastPosition(Human human, Side thisSide, Vector3? lastPosition)
-    {
-        // ReSharper disable once MergeConditionalExpression
-        var position = lastPosition != null ? lastPosition.Value : human.Skeleton.GetKnee(thisSide);
-        return position;
-    }
-    
-    // < Change >
-    /// <summary>
-    /// (Pt) Guarda as mensagens enviadas pelo servidor em ficheiros txt
-    /// (En) Store messages sent by the server in txt files
-    /// </summary>
-    /// <param name="strToSend"> Mensagem para Guardar </param>
-    private void SaveRecordServer(string strToSend)
-    {
-        const string noneMessage = "0";
-        if (strToSend == noneMessage)
-        {
-            _safeWriteFile.StopRecording("Terminated Because No Messages");
-            // _safeWriteFile.StopRecording();
-        }
-        else
-        {
-            if (_localTrackerUi == null || _localTrackerUi.UseRecord)
-            {
-                _safeWriteFile.IsRecording = true;
-                _safeWriteFile.Recording(strToSend);
-            }
-            else if (!_localTrackerUi.UseRecord)
-                _safeWriteFile.IsRecording = false;
-        }
 
-        foreach (var sensor in Sensors)
-        {
-            var start   = sensor.Value.SensorGameObject.transform.position;
-            var forward = sensor.Value.SensorGameObject.transform.forward;
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-            Debug.DrawLine(start, start + forward, Color.black);
-        }
-    }
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public void SetHumansVisibility(bool invisible)
     {
         foreach (var h in _humans.Values)
@@ -525,8 +500,6 @@ public class Tracker : MonoBehaviour
 		}
 	}
     
-   // private static float CalcHorizontalDistance (Vector3 a, Vector3 b)
-   
     private static float CalcHorizontalDistance (Vector3 a, Vector3 b)
 	{
 		var c = new Vector3 (a.x, 0, a.z);
@@ -539,12 +512,13 @@ public class Tracker : MonoBehaviour
 		_udpBroadcast.AddUnicast (address, int.Parse (port));
 	}
 
-	internal void RemoveUnicast (string key)
+    internal void RemoveUnicast (string key)
 	{
 		_udpBroadcast.RemoveUnicast (key);
 	}
 
     //FOR TCP
+
     internal void SetNewCloud(string kinectId, byte[] data, int size, uint id)
     {
         // tirar o id da mensagem que é um int
@@ -598,7 +572,7 @@ public class Tracker : MonoBehaviour
 		Sensors [bodies.KinectId].lastBodiesMessage = bodies;
 	}
 
-	internal bool CalibrationStep1 ()
+    internal bool CalibrationStep1 ()
 	{
 		var canNotCalibrate = false;
 		foreach (var sensor in Sensors.Values)
@@ -623,7 +597,7 @@ public class Tracker : MonoBehaviour
 		return !canNotCalibrate;
 	}
 
-	internal void CalibrationStep2 ()
+    internal void CalibrationStep2 ()
 	{
 
 		var avgCenter = new Vector3 ();
@@ -655,7 +629,7 @@ public class Tracker : MonoBehaviour
 		n.NotifySend (NotificationLevel.INFO, "Calibration complete", "Config file updated", 5000);
 	}
 
-	internal void CalibrationStep3 ()
+    internal void CalibrationStep3 ()
 	{
 		foreach (var sensor in Sensors.Values) {
 			if (sensor.lastBodiesMessage != null && sensor.lastBodiesMessage.Bodies.Count == 1 && sensor.Active)
@@ -665,7 +639,7 @@ public class Tracker : MonoBehaviour
 		}
 	}
 
-	internal void CalibrationStep4 ()
+    internal void CalibrationStep4 ()
 	{
 		foreach (var sensor in Sensors.Values)
         {
@@ -747,6 +721,7 @@ public class Tracker : MonoBehaviour
         
     }
 
+    ///// Versão usada no ramo Master
     internal string GetHandState(int id, BodyPropertiesTypes type)
     {
         Human      h = _humans[id];
@@ -754,7 +729,299 @@ public class Tracker : MonoBehaviour
 
         return s.skeleton.BodyProperties[type];
     }
+    
+    internal bool HumanHasBodies (int id)
+	{
+		return _humans.ContainsKey (id) && _humans [id].bodies.Count > 0;
+	}
+    
+    private void _saveConfig ()
+	{
+		var filePath = Application.dataPath + "/" + TrackerProperties.Instance.ConfigFilename;
+		ConfigProperties.Clear (filePath);
 
+		ConfigProperties.WriteComment (filePath, "Config File created in " + DateTime.Now.ToString ("yyyy-MM-dd HH:mm:ss"));
+
+		// save properties
+		ConfigProperties.Save (filePath, "udp.listenport",              "" + TrackerProperties.Instance.ListenPort);
+		ConfigProperties.Save (filePath, "udp.broadcastport",           "" + TrackerProperties.Instance.BroadcastPort);
+		ConfigProperties.Save (filePath, "udp.sendinterval",            "" + TrackerProperties.Instance.SendInterval);
+		ConfigProperties.Save (filePath, "tracker.mergedistance",       "" + TrackerProperties.Instance.MergeDistance);
+		ConfigProperties.Save (filePath, "tracker.confidencethreshold", "" + TrackerProperties.Instance.ConfidenceTreshold);
+//		ConfigProperties.save (filePath, "tracker.filtergain", "" + AdaptiveDoubleExponentialFilterFloat.Gain);
+
+		// save sensors
+		foreach (Sensor s in Sensors.Values)
+        {
+			if (s.Active)
+            {
+				Vector3 p = s.SensorGameObject.transform.position;
+				Quaternion r = s.SensorGameObject.transform.rotation;
+				ConfigProperties.Save (filePath, "kinect." + s.SensorID, "" + s.SensorID + ";" + p.x + ";" + p.y + ";" + p.z + ";" + r.x + ";" + r.y + ";" + r.z + ";" + r.w);
+			}
+		}
+	}
+    
+    private void _loadConfig ()
+	{
+		var filePath = Application.dataPath + "/" + TrackerProperties.Instance.ConfigFilename;
+
+		var port = ConfigProperties.Load (filePath, "udp.listenport");
+		if (port != "") {
+			TrackerProperties.Instance.ListenPort = int.Parse (port);
+		}
+		ResetListening ();
+
+		port = ConfigProperties.Load (filePath, "udp.broadcastport");
+		if (port != "") {
+			TrackerProperties.Instance.BroadcastPort = int.Parse (port);
+		}
+		ResetBroadcast ();
+
+		string aux = ConfigProperties.Load (filePath, "tracker.mergedistance");
+		if (aux != "") {
+			TrackerProperties.Instance.MergeDistance = float.Parse (aux);
+		}
+
+		aux = ConfigProperties.Load (filePath, "tracker.confidencethreshold");
+		if (aux != "") {
+			TrackerProperties.Instance.ConfidenceTreshold = int.Parse (aux);
+		}
+
+		aux = ConfigProperties.Load (filePath, "udp.sendinterval");
+		if (aux != "") {
+			TrackerProperties.Instance.SendInterval = int.Parse (aux);
+		}
+
+		/*
+            aux = ConfigProperties.load (filePath, "tracker.filtergain");
+		    if (aux != "") {
+			    KalmanFilterFloat.Gain = float.Parse (aux);
+		    }
+        */
+	}
+    
+    private void _loadSavedSensors ()
+	{
+		foreach (var line in ConfigProperties.LoadKinects(Application.dataPath + "/" + TrackerProperties.Instance.ConfigFilename)) {
+			var values = line.Split (';');
+
+			var id = values [0];
+
+			var position = new Vector3 (
+				                   float.Parse (values [1].Replace (',', '.')),
+				                   float.Parse (values [2].Replace (',', '.')),
+				                   float.Parse (values [3].Replace (',', '.')));
+
+			Quaternion rotation = new Quaternion (
+				                      float.Parse (values [4].Replace (',', '.')),
+				                      float.Parse (values [5].Replace (',', '.')),
+				                      float.Parse (values [6].Replace (',', '.')),
+				                      float.Parse (values [7].Replace (',', '.')));
+
+			Sensors [id] = new Sensor (id, (GameObject)Instantiate (Resources.Load ("Prefabs/KinectSensorPrefab"), position, rotation));
+		}
+	}
+    
+    public void ResetBroadcast ()
+	{
+		_udpBroadcast.Reset (TrackerProperties.Instance.BroadcastPort);
+	}
+
+    public void ResetListening ()
+	{
+		gameObject.GetComponent<UdpListener> ().UdpRestart ();
+	}
+    
+    public void Save ()
+	{
+		_saveConfig ();
+	}
+    
+    public void HideAllClouds ()
+	{
+		foreach (var s in Sensors.Values)
+        {
+			s.lastCloud.hideFromView ();
+		}
+
+		UdpClient udp = new UdpClient ();
+		string message = CloudMessage.CreateRequestMessage (2,Network.player.ipAddress, TrackerProperties.Instance.ListenPort); 
+		byte[] data = Encoding.UTF8.GetBytes(message);
+		IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Broadcast, TrackerProperties.Instance.ListenPort + 1);
+		udp.Send(data, data.Length, remoteEndPoint);
+	}
+    
+    // ReSharper disable once MemberCanBeMadeStatic.Global
+    public void BroadCastCloudRequests (bool continuous)
+	{
+		UdpClient udp = new UdpClient ();
+		string message = CloudMessage.CreateRequestMessage (continuous ? 1 : 0, Network.player.ipAddress, TrackerProperties.Instance.ListenPort); 
+		byte[] data = Encoding.UTF8.GetBytes (message);
+		IPEndPoint remoteEndPoint = new IPEndPoint (IPAddress.Broadcast, TrackerProperties.Instance.ListenPort + 1);
+		udp.Send (data, data.Length, remoteEndPoint);
+	}
+    
+    // ReSharper disable once ArrangeTypeMemberModifiers
+    // ReSharper disable once UnusedMember.Local
+    // ReSharper disable once InconsistentNaming
+    void OnGUI ()
+    {
+        //int n = 1;
+
+        if (ShowHumanBodies == -1)
+        {
+            foreach (Human h in _humans.Values)
+            {
+                //GUI.Label(new Rect(10, Screen.height - (n++ * 50), 1000, 50), "Human " + h.ID + " as seen by " + h.seenBySensor);
+                var p = Camera.main.WorldToScreenPoint (h.Skeleton.GetHead() + new Vector3 (0, 0.2f, 0));
+                if (p.z > 0)
+                {
+                    GUI.Label (new Rect (p.x, Screen.height - p.y - 25, 100, 25), "" + h.ID);
+                }
+            }
+        }
+
+        foreach (Sensor s in Sensors.Values)
+        {
+            if (s.Active)
+            {
+                var p = Camera.main.WorldToScreenPoint (s.SensorGameObject.transform.position + new Vector3 (0, 0.05f, 0));
+                if (p.z > 0)
+                {
+                    GUI.Label (new Rect (p.x, Screen.height - p.y - 25, 100, 25), "" + s.SensorID);
+                }
+            }
+        }
+    }
+    
+    public void ProcessAvatarMessage(AvatarMessage av)
+    {
+        UdpClient udp = new UdpClient();
+        //Calibration
+       // string message = av.createCalibrationMessage(_sensors);
+        string message = av.createCalibrationMessage(Sensors);
+        byte[] data = Encoding.UTF8.GetBytes(message);
+        IPEndPoint remoteEndPoint = new IPEndPoint(av.ReplyIpAddress, av.Port);
+        Debug.Log("Sent reply with calibration data " + message);
+        udp.Send(data, data.Length, remoteEndPoint);
+        //broadcast
+        string message2 = CloudMessage.CreateRequestMessage(av.Mode, av.ReplyIpAddress.ToString(), av.Port);
+        byte[] data2 = Encoding.UTF8.GetBytes(message2);
+        IPEndPoint remoteEndPoint2 = new IPEndPoint(IPAddress.Broadcast, TrackerProperties.Instance.ListenPort + 1);
+        udp.Send(data2, data2.Length, remoteEndPoint2);
+        Debug.Log("Forwarded request to clients " + message2);
+    }
+
+    public void ProcessSurfaceMessage(SurfaceMessage sm)
+    {
+        UdpClient udp = new UdpClient();
+        string message = sm.createSurfaceMessage(_surfaces);
+        byte[] data = Encoding.UTF8.GetBytes(message);
+        IPEndPoint remoteEndPoint = new IPEndPoint(sm.replyIPAddress, sm.port);
+        Debug.Log("Sent reply with surface's data " + message);
+        udp.Send(data, data.Length, remoteEndPoint);
+    }
+    
+    internal void LoadSurfaces()
+    {
+        _surfaces = new List<Surface>(Surface.loadSurfaces("Surfaces"));
+        foreach (Surface s in _surfaces)
+        {
+            if (Sensors.ContainsKey(s.sensorid))
+            {
+                s.surfaceGO = __createSurfaceGos(s.name, Vector3.zero, Sensors[s.sensorid].SensorGameObject.transform);
+
+                GameObject bl = __createSurfaceGos("bl", s.BottomLeft,  s.surfaceGO.transform);
+                GameObject br = __createSurfaceGos("br", s.BottomRight, s.surfaceGO.transform);
+                GameObject tl = __createSurfaceGos("tl", s.TopLeft,     s.surfaceGO.transform);
+                GameObject tr = __createSurfaceGos("tr", s.TopRight,    s.surfaceGO.transform);
+                
+                gameObject.GetComponent<DoNotify>().NotifySend(NotificationLevel.INFO, "New Surface", "Surface " + s.name + " added", 5000);
+
+                s.saveSurface(bl, br, tl, tr);
+
+                MeshFilter meshFilter = (MeshFilter)s.surfaceGO.AddComponent(typeof(MeshFilter));
+                Mesh m = new Mesh();
+                m.name = s.name + "MESH";
+                m.vertices = new Vector3[]
+                {
+                    bl.transform.localPosition, br.transform.localPosition, tr.transform.localPosition, tl.transform.localPosition
+                };
+
+                m.triangles = new int[]
+                {
+                    0, 1, 3,
+                    1, 2, 3,
+                    3, 1, 0,
+                    3, 2, 1
+                };
+                m.RecalculateNormals();
+                m.RecalculateBounds();
+
+                meshFilter.mesh = m;
+                MeshRenderer renderer = s.surfaceGO.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
+                renderer.material = SurfaceMaterial;
+                MeshCollider collider = s.surfaceGO.AddComponent(typeof(MeshCollider)) as MeshCollider;
+
+
+            }
+        }
+    }
+    
+    internal GameObject __createSurfaceGos(string nameSurface, Vector3 position, Transform parent)
+    {
+        GameObject g = new GameObject();
+        g.transform.parent = parent;
+        g.transform.localRotation = Quaternion.identity;
+
+        g.name = name + "lol";
+        g.transform.localPosition = CommonUtils.PointKinectToUnity(position); 
+
+        return g;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////        Dissertação - Mestrado em Engenharia Informática e de Computadores                                   //////////
+    //////        Francisco Henriques Venda, nº 73839                                                                  //////////
+    //////        Alterações apartir daqui (Em uso)                                                                    //////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// <summary>
+    /// (Pt) Guarda as mensagens enviadas pelo servidor em ficheiros txt
+    /// (En) Store messages sent by the server in txt files
+    /// </summary>
+    /// <param name="strToSend"> Mensagem para Guardar </param>
+    private void SaveRecordServer(string strToSend)
+    {
+        const string noneMessage = "0";
+        if (strToSend == noneMessage)
+        {
+            _safeWriteFile.StopRecording("Terminated Because No Messages");
+            // _safeWriteFile.StopRecording();
+        }
+        else
+        {
+            if (_localTrackerUi == null || _localTrackerUi.UseRecord)
+            {
+                _safeWriteFile.IsRecording = true;
+                _safeWriteFile.Recording(strToSend);
+            }
+            else if (!_localTrackerUi.UseRecord)
+                _safeWriteFile.IsRecording = false;
+        }
+        // Debug
+        foreach (var sensor in Sensors)
+        {
+            var start = sensor.Value.SensorGameObject.transform.position;
+            var forward = sensor.Value.SensorGameObject.transform.forward;
+
+            Debug.DrawLine(start, start + forward, Color.black);
+        }
+    }
+
+    ///// Versão alterada, não é necessario 
     internal string GetHandState(int id, Side side)
     {
         var h = _humans[id];
@@ -817,140 +1084,22 @@ public class Tracker : MonoBehaviour
                 throw new ArgumentOutOfRangeException("side", side, null);
         }
     }
-
-    internal bool HumanHasBodies (int id)
-	{
-		return _humans.ContainsKey (id) && _humans [id].bodies.Count > 0;
-	}
-
-    private void _saveConfig ()
-	{
-		var filePath = Application.dataPath + "/" + TrackerProperties.Instance.ConfigFilename;
-		ConfigProperties.Clear (filePath);
-
-		ConfigProperties.WriteComment (filePath, "Config File created in " + DateTime.Now.ToString ("yyyy-MM-dd HH:mm:ss"));
-
-		// save properties
-		ConfigProperties.Save (filePath, "udp.listenport",              "" + TrackerProperties.Instance.ListenPort);
-		ConfigProperties.Save (filePath, "udp.broadcastport",           "" + TrackerProperties.Instance.BroadcastPort);
-		ConfigProperties.Save (filePath, "udp.sendinterval",            "" + TrackerProperties.Instance.SendInterval);
-		ConfigProperties.Save (filePath, "tracker.mergedistance",       "" + TrackerProperties.Instance.MergeDistance);
-		ConfigProperties.Save (filePath, "tracker.confidencethreshold", "" + TrackerProperties.Instance.ConfidenceTreshold);
-//		ConfigProperties.save (filePath, "tracker.filtergain", "" + AdaptiveDoubleExponentialFilterFloat.Gain);
-
-		// save sensors
-		foreach (Sensor s in Sensors.Values)
-        {
-			if (s.Active)
-            {
-				Vector3 p = s.SensorGameObject.transform.position;
-				Quaternion r = s.SensorGameObject.transform.rotation;
-				ConfigProperties.Save (filePath, "kinect." + s.SensorID, "" + s.SensorID + ";" + p.x + ";" + p.y + ";" + p.z + ";" + r.x + ";" + r.y + ";" + r.z + ";" + r.w);
-			}
-		}
-	}
-
-    private void _loadConfig ()
-	{
-		var filePath = Application.dataPath + "/" + TrackerProperties.Instance.ConfigFilename;
-
-		var port = ConfigProperties.Load (filePath, "udp.listenport");
-		if (port != "") {
-			TrackerProperties.Instance.ListenPort = int.Parse (port);
-		}
-		ResetListening ();
-
-		port = ConfigProperties.Load (filePath, "udp.broadcastport");
-		if (port != "") {
-			TrackerProperties.Instance.BroadcastPort = int.Parse (port);
-		}
-		ResetBroadcast ();
-
-		string aux = ConfigProperties.Load (filePath, "tracker.mergedistance");
-		if (aux != "") {
-			TrackerProperties.Instance.MergeDistance = float.Parse (aux);
-		}
-
-		aux = ConfigProperties.Load (filePath, "tracker.confidencethreshold");
-		if (aux != "") {
-			TrackerProperties.Instance.ConfidenceTreshold = int.Parse (aux);
-		}
-
-		aux = ConfigProperties.Load (filePath, "udp.sendinterval");
-		if (aux != "") {
-			TrackerProperties.Instance.SendInterval = int.Parse (aux);
-		}
-
-		/*
-            aux = ConfigProperties.load (filePath, "tracker.filtergain");
-		    if (aux != "") {
-			    KalmanFilterFloat.Gain = float.Parse (aux);
-		    }
-        */
-	}
-
-    private void _loadSavedSensors ()
-	{
-		foreach (var line in ConfigProperties.LoadKinects(Application.dataPath + "/" + TrackerProperties.Instance.ConfigFilename)) {
-			var values = line.Split (';');
-
-			var id = values [0];
-
-			var position = new Vector3 (
-				                   float.Parse (values [1].Replace (',', '.')),
-				                   float.Parse (values [2].Replace (',', '.')),
-				                   float.Parse (values [3].Replace (',', '.')));
-
-			Quaternion rotation = new Quaternion (
-				                      float.Parse (values [4].Replace (',', '.')),
-				                      float.Parse (values [5].Replace (',', '.')),
-				                      float.Parse (values [6].Replace (',', '.')),
-				                      float.Parse (values [7].Replace (',', '.')));
-
-			Sensors [id] = new Sensor (id, (GameObject)Instantiate (Resources.Load ("Prefabs/KinectSensorPrefab"), position, rotation));
-		}
-	}
-
-    public void ResetBroadcast ()
-	{
-		_udpBroadcast.Reset (TrackerProperties.Instance.BroadcastPort);
-	}
-
-    public void ResetListening ()
-	{
-		gameObject.GetComponent<UdpListener> ().UdpRestart ();
-	}
-
-    public void Save ()
-	{
-		_saveConfig ();
-	}
-
-    public void HideAllClouds ()
-	{
-		foreach (var s in Sensors.Values)
-        {
-			s.lastCloud.hideFromView ();
-		}
-
-		UdpClient udp = new UdpClient ();
-		string message = CloudMessage.CreateRequestMessage (2,Network.player.ipAddress, TrackerProperties.Instance.ListenPort); 
-		byte[] data = Encoding.UTF8.GetBytes(message);
-		IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Broadcast, TrackerProperties.Instance.ListenPort + 1);
-		udp.Send(data, data.Length, remoteEndPoint);
-	}
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
-    // ReSharper disable once MemberCanBeMadeStatic.Global
-	public void BroadCastCloudRequests (bool continuous)
-	{
-		UdpClient udp = new UdpClient ();
-		string message = CloudMessage.CreateRequestMessage (continuous ? 1 : 0, Network.player.ipAddress, TrackerProperties.Instance.ListenPort); 
-		byte[] data = Encoding.UTF8.GetBytes (message);
-		IPEndPoint remoteEndPoint = new IPEndPoint (IPAddress.Broadcast, TrackerProperties.Instance.ListenPort + 1);
-		udp.Send (data, data.Length, remoteEndPoint);
-	}
-    
-    // ReSharper disable once UnusedMember.Local
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////                              Alterações que foram abandonadas                                               //////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private static Vector3 GetLastPosition(Human human, Side thisSide, Vector3? lastPosition)
+    {
+        // ReSharper disable once MergeConditionalExpression
+        var position = lastPosition != null ? lastPosition.Value : human.Skeleton.GetKnee(thisSide);
+        return position;
+    }
+
     private string GetKnees(Human h)
     {
         // CommonUtils.convertVectorToStringRPC
@@ -972,9 +1121,8 @@ public class Tracker : MonoBehaviour
         var stringMeanKneeLeft  = meanKneeLeft  == null ? "null" : CommonUtils.convertVectorToStringRPC(meanKneeLeft.Value);
 
         mensagem +=
-            "MeanKneeRight" + MessageSeparators.SET + stringMeanKneeRight +
-            MessageSeparators.L2 +
-            "MeanKneeLeft" + MessageSeparators.SET + stringMeanKneeLeft;
+            "MeanKneeRight" + MessageSeparators.SET + stringMeanKneeRight + MessageSeparators.L2 +
+            "MeanKneeLeft"  + MessageSeparators.SET + stringMeanKneeLeft;
 
         var meanTrackKneeRight = GetMeanTrackList(RightKneesInfo);
         var meanTrackKneeLeft = GetMeanTrackList(LeftKneesInfo);
@@ -1025,149 +1173,8 @@ public class Tracker : MonoBehaviour
         meanResult /= trackCount;
         return meanResult;
     }
-
-
-    // ReSharper disable once ArrangeTypeMemberModifiers
-    // ReSharper disable once UnusedMember.Local
-    // ReSharper disable once InconsistentNaming
-    void OnGUI ()
-    {
-        //int n = 1;
-
-        if (ShowHumanBodies == -1)
-        {
-            foreach (Human h in _humans.Values)
-            {
-                //GUI.Label(new Rect(10, Screen.height - (n++ * 50), 1000, 50), "Human " + h.ID + " as seen by " + h.seenBySensor);
-                var p = Camera.main.WorldToScreenPoint (h.Skeleton.GetHead() + new Vector3 (0, 0.2f, 0));
-                if (p.z > 0)
-                {
-                    GUI.Label (new Rect (p.x, Screen.height - p.y - 25, 100, 25), "" + h.ID);
-                }
-            }
-        }
-
-        foreach (Sensor s in Sensors.Values)
-        {
-            if (s.Active)
-            {
-                var p = Camera.main.WorldToScreenPoint (s.SensorGameObject.transform.position + new Vector3 (0, 0.05f, 0));
-                if (p.z > 0)
-                {
-                    GUI.Label (new Rect (p.x, Screen.height - p.y - 25, 100, 25), "" + s.SensorID);
-                }
-            }
-        }
-    }
-
-    public void ProcessAvatarMessage(AvatarMessage av)
-    {
-        UdpClient udp = new UdpClient();
-        //Calibration
-       // string message = av.createCalibrationMessage(_sensors);
-        string message = av.createCalibrationMessage(Sensors);
-        byte[] data = Encoding.UTF8.GetBytes(message);
-        IPEndPoint remoteEndPoint = new IPEndPoint(av.ReplyIpAddress, av.Port);
-        Debug.Log("Sent reply with calibration data " + message);
-        udp.Send(data, data.Length, remoteEndPoint);
-        //broadcast
-        string message2 = CloudMessage.CreateRequestMessage(av.Mode, av.ReplyIpAddress.ToString(), av.Port);
-        byte[] data2 = Encoding.UTF8.GetBytes(message2);
-        IPEndPoint remoteEndPoint2 = new IPEndPoint(IPAddress.Broadcast, TrackerProperties.Instance.ListenPort + 1);
-        udp.Send(data2, data2.Length, remoteEndPoint2);
-        Debug.Log("Forwarded request to clients " + message2);
-    }
-
-    public void ProcessSurfaceMessage(SurfaceMessage sm)
-    {
-        UdpClient udp = new UdpClient();
-        string message = sm.createSurfaceMessage(_surfaces);
-        byte[] data = Encoding.UTF8.GetBytes(message);
-        IPEndPoint remoteEndPoint = new IPEndPoint(sm.replyIPAddress, sm.port);
-        Debug.Log("Sent reply with surface's data " + message);
-        udp.Send(data, data.Length, remoteEndPoint);
-    }
-    
-    internal void LoadSurfaces()
-    {
-        _surfaces = new List<Surface>(Surface.loadSurfaces("Surfaces"));
-        foreach (Surface s in _surfaces)
-        {
-            if (Sensors.ContainsKey(s.sensorid))
-            {
-                s.surfaceGO = __createSurfaceGos(s.name, Vector3.zero, Sensors[s.sensorid].SensorGameObject.transform);
-
-                GameObject bl = __createSurfaceGos("bl", s.BottomLeft,  s.surfaceGO.transform);
-                GameObject br = __createSurfaceGos("br", s.BottomRight, s.surfaceGO.transform);
-                GameObject tl = __createSurfaceGos("tl", s.TopLeft,     s.surfaceGO.transform);
-                GameObject tr = __createSurfaceGos("tr", s.TopRight,    s.surfaceGO.transform);
-                
-                gameObject.GetComponent<DoNotify>().NotifySend(NotificationLevel.INFO, "New Surface", "Surface " + s.name + " added", 5000);
-                
-                s.saveSurface(bl, br, tl, tr);
-
-                MeshFilter meshFilter = (MeshFilter)s.surfaceGO.AddComponent(typeof(MeshFilter));
-                Mesh m = new Mesh();
-                m.name = s.name + "MESH";
-                m.vertices = new Vector3[]
-                {
-                    bl.transform.localPosition, br.transform.localPosition, tr.transform.localPosition, tl.transform.localPosition
-                };
-
-                m.triangles = new int[]
-                {
-                    0, 1, 3,
-                    1, 2, 3,
-                    3, 1, 0,
-                    3, 2, 1
-                };
-                m.RecalculateNormals();
-                m.RecalculateBounds();
-
-                meshFilter.mesh = m;
-                MeshRenderer renderer = s.surfaceGO.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
-                renderer.material = SurfaceMaterial;
-                MeshCollider collider = s.surfaceGO.AddComponent(typeof(MeshCollider)) as MeshCollider;
-
-
-            }
-        }
-    }
-
-    internal GameObject __createSurfaceGos(string nameSurface, Vector3 position, Transform parent)
-    {
-        GameObject g = new GameObject();
-        g.transform.parent = parent;
-        g.transform.localRotation = Quaternion.identity;
-
-//        g.name = nameSurface;
-//        g.transform.localPosition = CommonUtils.PointKinectToUnity(position); 
-
-        g.name = name + "lol";
-        g.transform.localPosition = CommonUtils.PointKinectToUnity(position);
-
-        return g;
-    }
-
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /*
  * 
@@ -1216,6 +1223,108 @@ public class Tracker : MonoBehaviour
     //<<<<<<< HEAD
 //                gameObject.GetComponent<DoNotify>().NotifySend(NotificationLevel.INFO, "New Surface", "Surface " + s.name + " added", 5000);
 //=======
-
+=======
 
      */
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/*
+
+
+//    // ReSharper disable once UnusedMember.Local
+//    // ReSharper disable once ArrangeTypeMemberModifiers
+//    void Start ()
+//	{
+//		Sensors           = new Dictionary<string, Sensor> ();
+//		_humans           = new Dictionary<int,     Human> ();
+//		_deadHumans       = new List<Human> ();
+//		_humansToKill     = new List<Human> ();
+//		CalibrationStatus = CalibrationProcess.FindCenter;
+
+<<<<<<< HEAD
+gameObject.GetComponent<DoNotify>().NotifySend(NotificationLevel.INFO, "New Surface", "Surface " + s.name + " added", 5000);
+=======
+
+    <<<<<<< HEAD
+        g.name = nameSurface;
+        g.transform.localPosition = CommonUtils.PointKinectToUnity(position); 
+=======
+
+*/
+
+/*
+   
+    
+        //_loadConfig ();
+        //_loadSavedSensors ();
+
+public Material SurfaceMaterial;
+public Material WhiteMaterial;
+
+    
+    
+        return _udpBroadcast.UnicastClients;
+    }
+}
+
+    private bool _setUpCentro;
+
+
+    public int CountHuman;
+    public Vector3 Centro;
+
+    public bool SendKnees;
+    private TrackerUI _localTrackerUi;
+    private SafeWriteFile _safeWriteFile;
+    private GameObject _centroGameObject;
+
+
+
+    //public List<KneesInfo> RightKneesInfo;
+    //public List<KneesInfo> LeftKneesInfo;
+
+    public Dictionary<string, KneesInfo> RightKneesInfo;
+    public Dictionary<string, KneesInfo> LeftKneesInfo;
+    //private OptitrackManager _localOptitrackManager;
+
+
+
+    
+        RightKneesInfo = new Dictionary<string, KneesInfo>();
+        LeftKneesInfo  = new Dictionary<string, KneesInfo>();
+        CountHuman = 0;
+
+    
+        IdList    = new List<string>();
+        IdIntList = new List<int>();
+
+
+    //=======
+//	    Sensors = new Dictionary<string, Sensor> ();
+//		_humans = new Dictionary<int, Human> ();
+//		_deadHumans = new List<Human> ();
+//		_humansToKill = new List<Human> ();
+//	    CalibrationStatus = CalibrationProcess.FindCenter;
+
+//		_udpBroadcast  = new UdpBroadcast (TrackerProperties.Instance.BroadcastPort);
+       
+//        _loadConfig();
+//	    _loadSavedSensors();
+//        ////////////////////////////////////////////////////////////////////////////
+//	    ////////////////////////////////////////////////////////////////////////////
+//        // _localOptitrackManager = gameObject.GetComponent<OptitrackManager>();
+//        _localTrackerUi = gameObject.GetComponent<TrackerUI>();
+//	}
+
+    //<<<<<<< HEAD
+////        g.name = nameSurface;
+////        g.transform.localPosition = CommonUtils.PointKinectToUnity(position); 
+
+//        g.name = name + "lol";
+//        g.transform.localPosition = CommonUtils.PointKinectToUnity(position);
+//=======
+
+ */
+
+
