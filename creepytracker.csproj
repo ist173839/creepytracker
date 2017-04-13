@@ -13,11 +13,13 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile></CompilerResponseFile>
+    <CompilerResponseFile>
+    </CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.6.0f3</UnityVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <LangVersion>4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -101,22 +103,23 @@
     <Compile Include="Assets\Common\Scripts\PointCloudSimple.cs" />
     <Compile Include="Assets\Common\Scripts\TcpKinectListener.cs" />
     <Compile Include="Assets\Common\Scripts\UdpListener.cs" />
-    <Compile Include="Assets\My Files\Plugins\Helpers\Debug\DebugHelper.cs" />
-    <Compile Include="Assets\My Files\Plugins\Helpers\Debug\MyDebug.cs" />
-    <Compile Include="Assets\My Files\Plugins\Helpers\GameObjectHelper.cs" />
-    <Compile Include="Assets\My Files\Plugins\Helpers\Math\MathConstants.cs" />
-    <Compile Include="Assets\My Files\Plugins\Helpers\Math\MathHelper.cs" />
-    <Compile Include="Assets\My Files\Plugins\Helpers\Math\QuaternionToEuler.cs" />
-    <Compile Include="Assets\My Files\Plugins\Helpers\Math\RandomHelper.cs" />
-    <Compile Include="Assets\My Files\Plugins\Helpers\ObterStringValues.cs" />
-    <Compile Include="Assets\My Files\Plugins\Helpers\StringHelper.cs" />
-    <Compile Include="Assets\My Files\Plugins\Save\Data\SaveColicoes.cs" />
-    <Compile Include="Assets\My Files\Plugins\Save\Data\SaveLog.cs" />
-    <Compile Include="Assets\My Files\Plugins\Save\Info\SafeWriteFile.cs" />
-    <Compile Include="Assets\My Files\Plugins\Save\Info\SaveCenter.cs" />
-    <Compile Include="Assets\My Files\Plugins\Save\Info\SaveCenterToSend.cs" />
-    <Compile Include="Assets\My Files\Scripts\Center\HandleVirtualWorld.cs" />
-    <Compile Include="Assets\My Files\Scripts\Listener\MyUdpListener.cs" />
+    <Compile Include="Assets\My Files - FHV\Plugins\Helpers\Debug\DebugHelper.cs" />
+    <Compile Include="Assets\My Files - FHV\Plugins\Helpers\Debug\MyDebug.cs" />
+    <Compile Include="Assets\My Files - FHV\Plugins\Helpers\GameObjectHelper.cs" />
+    <Compile Include="Assets\My Files - FHV\Plugins\Helpers\Math\MathConstants.cs" />
+    <Compile Include="Assets\My Files - FHV\Plugins\Helpers\Math\MathHelper.cs" />
+    <Compile Include="Assets\My Files - FHV\Plugins\Helpers\Math\QuaternionToEuler.cs" />
+    <Compile Include="Assets\My Files - FHV\Plugins\Helpers\Math\RandomHelper.cs" />
+    <Compile Include="Assets\My Files - FHV\Plugins\Helpers\MiscellaneousHelper.cs" />
+    <Compile Include="Assets\My Files - FHV\Plugins\Helpers\ObterStringValues.cs" />
+    <Compile Include="Assets\My Files - FHV\Plugins\Helpers\StringHelper.cs" />
+    <Compile Include="Assets\My Files - FHV\Plugins\Save\Data\SaveColicoes.cs" />
+    <Compile Include="Assets\My Files - FHV\Plugins\Save\Data\SaveLog.cs" />
+    <Compile Include="Assets\My Files - FHV\Plugins\Save\Info\SafeWriteFile.cs" />
+    <Compile Include="Assets\My Files - FHV\Plugins\Save\Info\SaveCenter.cs" />
+    <Compile Include="Assets\My Files - FHV\Plugins\Save\Info\SaveCenterToSend.cs" />
+    <Compile Include="Assets\My Files - FHV\Scripts\Center\HandleVirtualWorld.cs" />
+    <Compile Include="Assets\My Files - FHV\Scripts\Listener\MyUdpListener.cs" />
     <Compile Include="Assets\Trackerhub\Plugins\Human.cs" />
     <Compile Include="Assets\Trackerhub\Plugins\Sensor.cs" />
     <Compile Include="Assets\Trackerhub\Plugins\SensorBody.cs" />
@@ -153,8 +156,8 @@
   <ItemGroup>
     <None Include="Assets\Common\Models\Shaders\Skybox-Procedural.shader" />
     <None Include="Assets\Common\Shaders\Grid.shader" />
-    <None Include="Assets\My Files\Shaders\Outlined-Silhouette Only.shader" />
-    <None Include="Assets\My Files\Shaders\Silhouetted Diffuse.shader" />
+    <None Include="Assets\My Files - FHV\Shaders\Outlined-Silhouette Only.shader" />
+    <None Include="Assets\My Files - FHV\Shaders\Silhouetted Diffuse.shader" />
     <None Include="Assets\Shaders\GS Billboard.shader" />
     <None Include="Assets\Shaders\VertexColor.shader" />
     <None Include="Assets\Shaders\simpleBillboard.shader" />

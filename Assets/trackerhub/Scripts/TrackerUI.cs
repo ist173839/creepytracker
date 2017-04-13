@@ -72,8 +72,13 @@ public class TrackerUI : MonoBehaviour
     private bool _continuous;
     private bool _hideHumans;
 
-    ////////////////////////////////////////////////////////////////
-     
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////        Dissertação - Mestrado em Engenharia Informática e de Computadores                                   //////////
+    //////        Francisco Henriques Venda, nº 73839                                                                  //////////
+    //////        Alterações apartir daqui                                                                             //////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private readonly List<string> _numberTestList = new List<string> { "1", "2", "3" };
     private int _numberTest;
 
@@ -93,8 +98,8 @@ public class TrackerUI : MonoBehaviour
     public float Extra;
     public float FinalNum;
 
-  
-    ////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // ReSharper disable once ArrangeTypeMemberModifiers
     // ReSharper disable once UnusedMember.Local
@@ -475,6 +480,14 @@ public class TrackerUI : MonoBehaviour
             top += 35;
             left = Screen.width - 250 + 20;
 
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            //////        Dissertação - Mestrado em Engenharia Informática e de Computadores                                   //////////
+            //////        Francisco Henriques Venda, nº 73839                                                                  //////////
+            //////        Alterações apartir daqui                                                                             //////////
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            
             // FinalNum++;
             GUI.Label(new Rect(left,       top, 180, 25), "EXTRA (FHV) : ", _titleStyle);
             GUI.Label(new Rect(left + 100, top, 180, 25), "Objectivo = " + FinalNum);
@@ -512,7 +525,7 @@ public class TrackerUI : MonoBehaviour
             //    _localMyUdpListener.SetTypeMetodo(_typeMetodoList[_typeMetodo]);
             //}
             top += 35;
-
+            //// Para testes, não é necessario 
             GUI.Label(new Rect(left, top, 80, 40), "Teste nº " + _numberTestList[_numberTest], _titleStyle);
 
             if (GUI.Button(new Rect(left + 70, top, 25, 25), NextTexture))
@@ -521,14 +534,14 @@ public class TrackerUI : MonoBehaviour
                 if (_numberTest < 0 || _numberTest >= 3) _numberTest = 0;
                 _localMyUdpListener.SetNumTest(_numberTestList[_numberTest]);
             }
-
+            //// Para testes, não é necessario 
             if (GUI.Button(new Rect(left + 100, top, 90, 25), "Reset Testes"))
             {
                 _numberTest = 0;
                 _localMyUdpListener.SetNumTest(_numberTestList[_numberTest]);
             }
             top += 30;
-          
+            //// Para testes, não é necessario 
             if (GUI.Button(new Rect(left, top, 80, 25), "End Test")) //+ 70
             {
                 _localMyUdpListener.EndTest();
@@ -539,13 +552,14 @@ public class TrackerUI : MonoBehaviour
             //    _localMyUdpListener.EndTest();
             //}
             top += 25;
-
+            //// Para guardar os dados do tracker num ficheiro, não é necessario 
             UseRecord = GUI.Toggle(new Rect(left, top, 100, 25), UseRecord, "Record");
             
             if (UseSaveFile)
             {
                 if (_localHandleVirtualWorld.CanShowIndicators)
-                {
+                {   
+                    //// Para testes, não é necessario 
                     ShowIndicator = GUI.Toggle(new Rect(left + 100, top, 100, 25), ShowIndicator, "Show Indicators");
                     _localHandleVirtualWorld.ShowIndicator = ShowIndicator;
                 }
@@ -555,6 +569,7 @@ public class TrackerUI : MonoBehaviour
                 }
 
                 top += 30;
+                //// Para testes, não é necessario 
                 if (GUI.Button(new Rect(left, top, 120, 25), "Set Up Safe File"))
                 {
                     UseSaveFile = false;
@@ -567,6 +582,7 @@ public class TrackerUI : MonoBehaviour
                 {
                     if (_localHandleVirtualWorld.CanShowIndicators)
                     {
+                        //// Para testes, não é necessario 
                         ShowIndicator = GUI.Toggle(new Rect(left + 100.0f, top, 100, 25), ShowIndicator, "Show Indicators");
                         _localHandleVirtualWorld.ShowIndicator = ShowIndicator;
                        // moreLeft = 100.0f;
@@ -575,12 +591,14 @@ public class TrackerUI : MonoBehaviour
 
                 top += 30;
                 ShowMarker = _localHandleVirtualWorld.ShowMarker;
+                //// Para marcar o centro e o forward, É necessario até o sistema para centrar o sistema AVR for mudado
                 ShowMarker = GUI.Toggle(new Rect(left, top, 100, 25), ShowMarker, "Show Marker");
                 _localHandleVirtualWorld.ShowMarker = ShowMarker;
                 
                 if (_userTracker.IdIntList.Count > 0)
                 {
                     top += 30;
+                    //// Para marcar o centro e o forward, É necessario até o sistema para centrar o sistema AVR for mudado
                     GUI.Label(new Rect(left, top, 150, 25), "User Id:");
                     if (!_userTracker.IdIntList.Contains(IdToCheck))
                     {
@@ -590,32 +608,39 @@ public class TrackerUI : MonoBehaviour
                 }
 
                 top += 30;
+                //// Para marcar o centro e o forward, É necessario até o sistema para centrar o sistema AVR for mudado
                 if (GUI.Button(new Rect(left, top, 100, 25), "Set Center"))
                 {
                     _localHandleVirtualWorld.SetCenterButton();
                 }
-
+                //// Para marcar o centro e o forward, É necessario até o sistema para centrar o sistema AVR for mudado
                 if (GUI.Button(new Rect(left + 120, top, 100, 25), "Set Forward"))
                 {
                     _localHandleVirtualWorld.SetForwardPointButton();
                 }
 
                 top += 30;
+                //// Para marcar o centro e o forward, É necessario até o sistema para centrar o sistema AVR for mudado
                 if (GUI.Button(new Rect(left, top, 100, 25), "Active File"))
                 {
                     _localHandleVirtualWorld.SetSaveFilesButton();
                 }
-
+                //// Para marcar o centro e o forward, É necessario até o sistema para centrar o sistema AVR for mudado
                 if (GUI.Button(new Rect(left + 120, top, 100, 25), "Reset"))
                 {
                     _localHandleVirtualWorld.ResetWorld();
                 }
 
                 top += 30;
+                //// Para marcar o centro e o forward, É necessario até o sistema para centrar o sistema AVR for mudado
                 if (GUI.Button(new Rect(left, top, 150, 25), "Close Set Up Safe File"))
                 {
                     UseSaveFile = true;
                 }
+
+                /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
             }
 
             // Unicast Settings
