@@ -24,6 +24,7 @@ public enum CalibrationProcess
 	CalcNormal
 }
 
+// ReSharper disable once UnusedMember.Local
 public class Tracker : MonoBehaviour
 {
     public Dictionary<string, Sensor> Sensors { get; private set; }
@@ -35,88 +36,91 @@ public class Tracker : MonoBehaviour
 
     private List<Human> _deadHumans;
     private List<Human> _humansToKill;
-    
+
     public CalibrationProcess CalibrationStatus { get; set; }
 
     private UdpBroadcast _udpBroadcast;
 
-    private SafeWriteFile _safeWriteFile;
 
     //private OptitrackManager _localOptitrackManager;
 
+
     // ReSharper disable once UnassignedField.Global
+
     // ReSharper disable once MemberCanBePrivate.Global
+
+    public Material SurfaceMaterial;
     public Material WhiteMaterial;
-
-    private TrackerUI _localTrackerUi;
-
-    private GameObject _centroGameObject;
 
 
     public string[] UnicastClients
     {
-		get
+        get
         {
-			return _udpBroadcast.UnicastClients;
-		}
-	}
-
-
+            return _udpBroadcast.UnicastClients;
+        }
+    }
     public int ShowHumanBodies = -1;
-    public int CountHuman;
 
     public bool ColorHumans;
     public bool colorHumans;
+    private List<Surface> _surfaces;
 
     private bool _setUpCentro;
 
 
+    public int CountHuman;
     public Vector3 Centro;
 
     public bool SendKnees;
+    private TrackerUI _localTrackerUi;
+    private SafeWriteFile _safeWriteFile;
+    private GameObject _centroGameObject;
+
+
+
     //public List<KneesInfo> RightKneesInfo;
     //public List<KneesInfo> LeftKneesInfo;
 
     public Dictionary<string, KneesInfo> RightKneesInfo;
     public Dictionary<string, KneesInfo> LeftKneesInfo;
 
+
     private Dictionary<string, KneesInfo> _allKneesInfo;
     private Vector3? _lastRigthKneePosition;
     private Vector3? _lastLeftKneePosition;
 
 
-    // ReSharper disable once UnusedMember.Local
-    // ReSharper disable once ArrangeTypeMemberModifiers
-    void Start ()
-	{
-		Sensors           = new Dictionary<string, Sensor> ();
-		_humans           = new Dictionary<int,     Human> ();
-		_deadHumans       = new List<Human> ();
-		_humansToKill     = new List<Human> ();
-		CalibrationStatus = CalibrationProcess.FindCenter;
 
-		_udpBroadcast  = new UdpBroadcast (TrackerProperties.Instance.BroadcastPort);
+    void Start ()
+    {
+        _surfaces = new List<Surface>();
+        Sensors = new Dictionary<string, Sensor> ();
+        _humans = new Dictionary<int, Human> ();
+        _deadHumans = new List<Human> ();
+        _humansToKill = new List<Human> ();
+        CalibrationStatus = CalibrationProcess.FindCenter;
+        _udpBroadcast  = new UdpBroadcast (TrackerProperties.Instance.BroadcastPort);
         _safeWriteFile = new SafeWriteFile();
 
+        _localTrackerUi = gameObject.GetComponent<TrackerUI>();
+
+        _loadConfig();
+        _loadSavedSensors();
+
+
+        //_loadConfig ();
+        //_loadSavedSensors ();
+
+
         //_localOptitrackManager = gameObject.GetComponent<OptitrackManager>();
-	    _localTrackerUi = gameObject.GetComponent<TrackerUI>();
-        
-	    _loadConfig();
-	    _loadSavedSensors();
-
-	    IdList         = new List<string>();
-	    IdIntList      = new List<int>();
-
-	    CountHuman = 0;
-
-
+        CountHuman = 0;
+        IdList         = new List<string>();
+        IdIntList      = new List<int>();
         RightKneesInfo = new Dictionary<string, KneesInfo>();
         LeftKneesInfo  = new Dictionary<string, KneesInfo>();
-
-
     }
-
-    // ReSharper disable once UnusedMember.Local
+   
     // ReSharper disable once ArrangeTypeMemberModifiers
     void FixedUpdate ()
 	{
@@ -1073,11 +1077,21 @@ public class Tracker : MonoBehaviour
         udp.Send(data2, data2.Length, remoteEndPoint2);
         Debug.Log("Forwarded request to clients " + message2);
     }
+
+    public void ProcessSurfaceMessage(SurfaceMessage sm)
+    {
+        UdpClient udp = new UdpClient();
+        string message = sm.createSurfaceMessage(_surfaces);
+        byte[] data = Encoding.UTF8.GetBytes(message);
+        IPEndPoint remoteEndPoint = new IPEndPoint(sm.replyIPAddress, sm.port);
+        Debug.Log("Sent reply with surface's data " + message);
+        udp.Send(data, data.Length, remoteEndPoint);
+    }
     
     internal void LoadSurfaces()
     {
-        Surface [] surfaces = Surface.loadSurfaces("Surfaces");
-        foreach (Surface s in surfaces)
+        _surfaces = new List<Surface>(Surface.loadSurfaces("Surfaces"));
+        foreach (Surface s in _surfaces)
         {
             if (Sensors.ContainsKey(s.sensorid))
             {
@@ -1087,10 +1101,34 @@ public class Tracker : MonoBehaviour
                 GameObject br = __createSurfaceGos("br", s.BottomRight, s.surfaceGO.transform);
                 GameObject tl = __createSurfaceGos("tl", s.TopLeft,     s.surfaceGO.transform);
                 GameObject tr = __createSurfaceGos("tr", s.TopRight,    s.surfaceGO.transform);
-
+                
                 gameObject.GetComponent<DoNotify>().NotifySend(NotificationLevel.INFO, "New Surface", "Surface " + s.name + " added", 5000);
-
+                
                 s.saveSurface(bl, br, tl, tr);
+
+                MeshFilter meshFilter = (MeshFilter)s.surfaceGO.AddComponent(typeof(MeshFilter));
+                Mesh m = new Mesh();
+                m.name = s.name + "MESH";
+                m.vertices = new Vector3[]
+                {
+                    bl.transform.localPosition, br.transform.localPosition, tr.transform.localPosition, tl.transform.localPosition
+                };
+
+                m.triangles = new int[]
+                {
+                    0, 1, 3,
+                    1, 2, 3,
+                    3, 1, 0,
+                    3, 2, 1
+                };
+                m.RecalculateNormals();
+                m.RecalculateBounds();
+
+                meshFilter.mesh = m;
+                MeshRenderer renderer = s.surfaceGO.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
+                renderer.material = SurfaceMaterial;
+                MeshCollider collider = s.surfaceGO.AddComponent(typeof(MeshCollider)) as MeshCollider;
+
 
             }
         }
@@ -1101,10 +1139,83 @@ public class Tracker : MonoBehaviour
         GameObject g = new GameObject();
         g.transform.parent = parent;
         g.transform.localRotation = Quaternion.identity;
-        g.name = nameSurface;
-        g.transform.localPosition = CommonUtils.PointKinectToUnity(position); 
+
+//        g.name = nameSurface;
+//        g.transform.localPosition = CommonUtils.PointKinectToUnity(position); 
+
+        g.name = name + "lol";
+        g.transform.localPosition = CommonUtils.PointKinectToUnity(position);
+
         return g;
     }
 
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+ * 
+
+//<<<<<<< HEAD
+
+    // ReSharper disable once UnusedMember.Local
+
+    // ReSharper disable once ArrangeTypeMemberModifiers
+
+//    void Start ()
+
+//	{
+
+//		Sensors           = new Dictionary<string, Sensor> ();
+
+//		_humans           = new Dictionary<int,     Human> ();
+
+//		_deadHumans       = new List<Human> ();
+
+//		_humansToKill     = new List<Human> ();
+
+//		CalibrationStatus = CalibrationProcess.FindCenter;
+
+//=======
+ 	public string[] UnicastClients
+    {
+		get
+        {
+			return _udpBroadcast.UnicastClients;
+		}
+	}
+
+
+      //    >>>>>>> b8f19cc2489e5b0bb725e99ab5d20315d7961f60
+
+    //        CountHuman = 0;
+
+
+    //    RightKneesInfo = new Dictionary<string, KneesInfo>();
+    //    LeftKneesInfo  = new Dictionary<string, KneesInfo>();
+
+
+    //}
+
+    //<<<<<<< HEAD
+//                gameObject.GetComponent<DoNotify>().NotifySend(NotificationLevel.INFO, "New Surface", "Surface " + s.name + " added", 5000);
+//=======
+
+
+     */

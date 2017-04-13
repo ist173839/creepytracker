@@ -99,6 +99,7 @@
     <Compile Include="Assets\Common\Scripts\GridOverlay.cs" />
     <Compile Include="Assets\Common\Scripts\Logger.cs" />
     <Compile Include="Assets\Common\Scripts\PointCloudSimple.cs" />
+    <Compile Include="Assets\Common\Scripts\SurfaceMessage.cs" />
     <Compile Include="Assets\Common\Scripts\TcpKinectListener.cs" />
     <Compile Include="Assets\Common\Scripts\UdpListener.cs" />
     <Compile Include="Assets\My Files\Plugins\Helpers\Debug\DebugHelper.cs" />
