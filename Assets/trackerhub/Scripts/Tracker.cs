@@ -745,13 +745,22 @@ public class Tracker : MonoBehaviour
 		// save properties
 		ConfigProperties.Save (filePath, "udp.listenport",              "" + TrackerProperties.Instance.ListenPort);
 		ConfigProperties.Save (filePath, "udp.broadcastport",           "" + TrackerProperties.Instance.BroadcastPort);
-		ConfigProperties.Save (filePath, "udp.sendinterval",            "" + TrackerProperties.Instance.SendInterval);
+	    ConfigProperties.Save (filePath, "udp.sensor.listener",         "" + TrackerProperties.Instance.SensorListenPort);
+        ConfigProperties.Save (filePath, "udp.sendinterval",            "" + TrackerProperties.Instance.SendInterval);
 		ConfigProperties.Save (filePath, "tracker.mergedistance",       "" + TrackerProperties.Instance.MergeDistance);
 		ConfigProperties.Save (filePath, "tracker.confidencethreshold", "" + TrackerProperties.Instance.ConfidenceTreshold);
-//		ConfigProperties.save (filePath, "tracker.filtergain", "" + AdaptiveDoubleExponentialFilterFloat.Gain);
+        //=======
+        //ConfigProperties.save(filePath, "udp.listenport", "" + TrackerProperties.Instance.listenPort);
+        //ConfigProperties.save(filePath, "udp.broadcastport", "" + TrackerProperties.Instance.broadcastPort);
+        //ConfigProperties.save(filePath, "udp.sensor.listener", "" + TrackerProperties.Instance.sensorListenPort);
+        //ConfigProperties.save(filePath, "udp.sendinterval", "" + TrackerProperties.Instance.sendInterval);
+        //ConfigProperties.save(filePath, "tracker.mergedistance", "" + TrackerProperties.Instance.mergeDistance);
+        //ConfigProperties.save(filePath, "tracker.confidencethreshold", "" + TrackerProperties.Instance.confidenceTreshold);
+        //>>>>>>> refs/remotes/origin/master
+        //		ConfigProperties.save (filePath, "tracker.filtergain", "" + AdaptiveDoubleExponentialFilterFloat.Gain);
 
-		// save sensors
-		foreach (Sensor s in Sensors.Values)
+        // save sensors
+        foreach (Sensor s in Sensors.Values)
         {
 			if (s.Active)
             {
@@ -777,8 +786,16 @@ public class Tracker : MonoBehaviour
 			TrackerProperties.Instance.BroadcastPort = int.Parse (port);
 		}
 		ResetBroadcast ();
+        
+        // port = ConfigProperties.Load(filePath, "udp.sensor.listen");
+        port = ConfigProperties.Load(filePath, "udp.sensor.listener");
+        if (port != "")
+        {
+            TrackerProperties.Instance.SensorListenPort = int.Parse(port);
+        }
 
-		string aux = ConfigProperties.Load (filePath, "tracker.mergedistance");
+        string aux = ConfigProperties.Load (filePath, "tracker.mergedistance");
+
 		if (aux != "") {
 			TrackerProperties.Instance.MergeDistance = float.Parse (aux);
 		}
@@ -848,7 +865,11 @@ public class Tracker : MonoBehaviour
 		UdpClient udp = new UdpClient ();
 		string message = CloudMessage.CreateRequestMessage (2,Network.player.ipAddress, TrackerProperties.Instance.ListenPort); 
 		byte[] data = Encoding.UTF8.GetBytes(message);
-		IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Broadcast, TrackerProperties.Instance.ListenPort + 1);
+        //<<<<<<< HEAD
+        //		IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Broadcast, TrackerProperties.Instance.ListenPort + 1);
+        //=======
+		IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Broadcast, TrackerProperties.Instance.SensorListenPort);
+
 		udp.Send(data, data.Length, remoteEndPoint);
 	}
     
@@ -858,7 +879,10 @@ public class Tracker : MonoBehaviour
 		UdpClient udp = new UdpClient ();
 		string message = CloudMessage.CreateRequestMessage (continuous ? 1 : 0, Network.player.ipAddress, TrackerProperties.Instance.ListenPort); 
 		byte[] data = Encoding.UTF8.GetBytes (message);
-		IPEndPoint remoteEndPoint = new IPEndPoint (IPAddress.Broadcast, TrackerProperties.Instance.ListenPort + 1);
+        //<<<<<<< HEAD
+        //  IPEndPoint remoteEndPoint = new IPEndPoint (IPAddress.Broadcast, TrackerProperties.Instance.ListenPort + 1);
+        //=======
+		IPEndPoint remoteEndPoint = new IPEndPoint (IPAddress.Broadcast, TrackerProperties.Instance.SensorListenPort);
 		udp.Send (data, data.Length, remoteEndPoint);
 	}
     
@@ -908,7 +932,11 @@ public class Tracker : MonoBehaviour
         //broadcast
         string message2 = CloudMessage.CreateRequestMessage(av.Mode, av.ReplyIpAddress.ToString(), av.Port);
         byte[] data2 = Encoding.UTF8.GetBytes(message2);
-        IPEndPoint remoteEndPoint2 = new IPEndPoint(IPAddress.Broadcast, TrackerProperties.Instance.ListenPort + 1);
+        //<<<<<<< HEAD
+        //        IPEndPoint remoteEndPoint2 = new IPEndPoint(IPAddress.Broadcast, TrackerProperties.Instance.ListenPort + 1);
+        //=======
+        IPEndPoint remoteEndPoint2 = new IPEndPoint(IPAddress.Broadcast, TrackerProperties.Instance.SensorListenPort);
+
         udp.Send(data2, data2.Length, remoteEndPoint2);
         Debug.Log("Forwarded request to clients " + message2);
     }
@@ -1208,8 +1236,7 @@ public class Tracker : MonoBehaviour
 		}
 	}
 
-
-      //    >>>>>>> b8f19cc2489e5b0bb725e99ab5d20315d7961f60
+          //    >>>>>>> b8f19cc2489e5b0bb725e99ab5d20315d7961f60
 
     //        CountHuman = 0;
 
@@ -1324,6 +1351,14 @@ public Material WhiteMaterial;
 //        g.name = name + "lol";
 //        g.transform.localPosition = CommonUtils.PointKinectToUnity(position);
 //=======
+
+
+
+//<<<<<<< HEAD
+//		string aux = ConfigProperties.Load (filePath, "tracker.mergedistance");
+//=======
+
+
 
  */
 

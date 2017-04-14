@@ -8,10 +8,12 @@ public class TrackerProperties : MonoBehaviour
 {
     private static TrackerProperties _singleton;
 
-    public int ListenPort = 56555;
-    public int BroadcastPort = 56839;
-    public int SendInterval = 50;
+    public int ListenPort       = 56555;
+    public int BroadcastPort    = 56839;
+    public int SensorListenPort = 5007;
 
+    public int SendInterval     = 50;
+    
     [Range(0, 1)]  public float MergeDistance = 0.3f;
 
     [Range(0, 17)] public int ConfidenceTreshold = 7;
@@ -42,3 +44,17 @@ public class TrackerProperties : MonoBehaviour
         //_singleton = this;
     }
 }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/*
+    //<<<<<<< HEAD
+    //=======
+
+    //    public int listenPort = 57743;
+
+    //    public int broadcastPort = 53804;
+    //public int sendInterval = 50;
+
+
+ 
+     
+     */
