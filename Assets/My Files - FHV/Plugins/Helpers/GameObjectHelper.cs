@@ -61,7 +61,6 @@ public static class GameObjectHelper
         return objectToResize;
     }
 
-
     public static GameObject MyCreateSphere(string name, float scale = 0.1f)
     {
         return MyCreateSphere(name, false, scale);
@@ -185,31 +184,7 @@ public static class GameObjectHelper
 
         return primitiveGameObject;
     }
-
-
-    // public static GameObject MyCreatePrimitiveObjectMesh(PrimitiveType primitiveType, string name, Transform parent, Vector3 position, Vector3 scale, Quaternion rotation, Material material, Color color = default(Color), bool isRender = false, bool isCollider = false)
-    //{
-    //    var primitiveGameObject = GameObject.CreatePrimitive(primitiveType);
-    //    primitiveGameObject = ResizeMesh(primitiveGameObject, 0.5f, true);
-
-    //    primitiveGameObject.GetComponent<Collider>().enabled = isCollider;
-    //    primitiveGameObject.GetComponent<MeshRenderer>().enabled = isRender;
-    //    primitiveGameObject.GetComponent<Renderer>().material = material;
-    //    primitiveGameObject.GetComponent<Renderer>().material.color = color;
-
-    //    primitiveGameObject.transform.position = position;
-    //    primitiveGameObject.transform.rotation = rotation;
-    //    //primitiveGameObject.transform.localScale = scale;
-
-
-    //    if (parent != null) primitiveGameObject.transform.parent = parent;
-    //    primitiveGameObject.name = name;
-
-    //    return primitiveGameObject;
-    //}
-
-
-
+    
     public static GameObject MyCreateObject(GameObject theObject, string name, Transform parent, Vector3 position, Vector3 scale, Quaternion rotation, Material material, Color color = default(Color), bool isRender = false, bool isCollider = false)
     {
         var customGameObject = theObject;
@@ -275,7 +250,6 @@ public static class GameObjectHelper
         return primitiveGameObject;
     }
 
-
     public static GameObject MyCreateObject(GameObject theObject, string name, Vector3 position, Transform parent, Material material, Color color = default(Color), bool isRender = false, bool isCollider = false, float scale = 0.1f)
     {
         var primitiveGameObject = theObject;
@@ -294,8 +268,7 @@ public static class GameObjectHelper
 
         return primitiveGameObject;
     }
-
-
+    
     public static Mesh CreateMesh(float width, float height)
     {
         var m = new Mesh
@@ -315,8 +288,7 @@ public static class GameObjectHelper
 
         return m;
     }
-
-
+    
     public static GameObject CreatePlane(float width, float height, Material material)
     {
         return CreatePlane(width, height, material, Color.green, true);
@@ -358,6 +330,9 @@ public static class GameObjectHelper
     }
 
 
+}
+/*
+ 
     public static Vector3 GetObjectPosition(Indicator ind)
     {
 
@@ -378,4 +353,23 @@ public static class GameObjectHelper
         }
         
     }
-}
+       
+    // public static GameObject MyCreatePrimitiveObjectMesh(PrimitiveType primitiveType, string name, Transform parent, Vector3 position, Vector3 scale, Quaternion rotation, Material material, Color color = default(Color), bool isRender = false, bool isCollider = false)
+    //{
+    //    var primitiveGameObject = GameObject.CreatePrimitive(primitiveType);
+    //    primitiveGameObject = ResizeMesh(primitiveGameObject, 0.5f, true);
+    //    primitiveGameObject.GetComponent<Collider>().enabled = isCollider;
+    //    primitiveGameObject.GetComponent<MeshRenderer>().enabled = isRender;
+    //    primitiveGameObject.GetComponent<Renderer>().material = material;
+    //    primitiveGameObject.GetComponent<Renderer>().material.color = color;
+    //    primitiveGameObject.transform.position = position;
+    //    primitiveGameObject.transform.rotation = rotation;
+    //    //primitiveGameObject.transform.localScale = scale;
+    //    if (parent != null) primitiveGameObject.transform.parent = parent;
+    //    primitiveGameObject.name = name;
+    //    return primitiveGameObject;
+    //}
+         
+     
+     
+     */
