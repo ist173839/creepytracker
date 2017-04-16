@@ -53,26 +53,6 @@ public static class DebugHelper
         MyDebug.DrawLine(transformPosition, transformPosition + transformForward, Color.blue);
     }
     
-    public static void DebugIndicatorPlane(Indicator ind, Plane indPlane, float distanciaPreAviso, float distanciaAviso, float distanciaPerigo, float y = 0.0f)
-    {
-        var position            = MathHelper.DeslocamentoHorizontal(ind.ObjectIndicator.transform.position, y);
-        var positionPlusNormal  = MathHelper.DeslocamentoHorizontal(ind.ObjectIndicator.transform.position + indPlane.normal, y);
-    
-        MyDebug.DrawLine(position, positionPlusNormal, Color.blue);
-
-        var objIndName = GameObject.Find(ind.Name);
-
-        var debugPosStart = MathHelper.DeslocamentoHorizontal(objIndName.transform.position - objIndName.transform.forward * 2.5f, y);
-        var debugPosEnd   = MathHelper.DeslocamentoHorizontal(objIndName.transform.position + objIndName.transform.forward * 2.5f, y);
-         
-       
-        MyDebug.DrawLine(debugPosStart, debugPosEnd, Color.black);
-        
-        DebugLine(debugPosStart, debugPosEnd, objIndName, distanciaPreAviso, Color.gray,   y);
-        DebugLine(debugPosStart, debugPosEnd, objIndName, distanciaAviso,    Color.yellow, y);
-        DebugLine(debugPosStart, debugPosEnd, objIndName, distanciaPerigo,   Color.red,    y);
-    }
-
     // ReSharper disable once MemberCanBePrivate.Global
     public static void DebugLine(Vector3 debugPosStart, Vector3 debugPosEnd, GameObject objIndName, float distancia, Color cor, float y = 0.0f)
     {
@@ -83,24 +63,6 @@ public static class DebugHelper
         posPreAvisoEnd   += MathHelper.DeslocamentoHorizontal(objIndName.transform.up * distancia, y);
 
         MyDebug.DrawLine(posPreAvisoStart, posPreAvisoEnd, cor);
-    }
-
-    // ReSharper disable once UnusedMember.Global
-    public static void DebugGetDiffObstacle(Vector3 player, Indicator ind)
-    {
-        var playerV3 = new Vector3(player.x, 0.0f, player.z);
-        var indV3 = new Vector3(ind.ObjectIndicator.transform.position.x, 0.0f, ind.ObjectIndicator.transform.position.z);
-        MyDebug.DrawLine(playerV3, indV3, Color.black);
-        MyDebug.DrawLine(indV3, indV3 + Vector3.forward * ind.Raio * 0.5f, Color.cyan);
-        MyDebug.DrawLine(ind.ObjectIndicator.transform.position, ind.ObjectIndicator.transform.position + Vector3.forward * ind.Raio * 0.5f, Color.cyan);
-    }
-
-    // ReSharper disable once UnusedMember.Global
-    public static void DebugGetDistObstacle(Vector3 player, Indicator ind)
-    {
-        var playerV3 = new Vector3(player.x, 0.0f, player.z);
-        var indV3 = new Vector3(ind.ObjectIndicator.transform.position.x, 0.0f, ind.ObjectIndicator.transform.position.z);
-        MyDebug.DrawLine(playerV3, indV3, Color.black);
     }
 
     // ReSharper disable once UnusedMember.Global
@@ -134,6 +96,44 @@ public static class DebugHelper
     }
 }
 /////////////////////////////////////////////////////////////////////////////////////
-    /*
-     
-     */
+/*
+ public static void DebugIndicatorPlane(Indicator ind, Plane indPlane, float distanciaPreAviso, float distanciaAviso, float distanciaPerigo, float y = 0.0f)
+{
+    var position            = MathHelper.DeslocamentoHorizontal(ind.ObjectIndicator.transform.position, y);
+    var positionPlusNormal  = MathHelper.DeslocamentoHorizontal(ind.ObjectIndicator.transform.position + indPlane.normal, y);
+
+    MyDebug.DrawLine(position, positionPlusNormal, Color.blue);
+
+    var objIndName = GameObject.Find(ind.Name);
+
+    var debugPosStart = MathHelper.DeslocamentoHorizontal(objIndName.transform.position - objIndName.transform.forward * 2.5f, y);
+    var debugPosEnd   = MathHelper.DeslocamentoHorizontal(objIndName.transform.position + objIndName.transform.forward * 2.5f, y);
+
+
+    MyDebug.DrawLine(debugPosStart, debugPosEnd, Color.black);
+
+    DebugLine(debugPosStart, debugPosEnd, objIndName, distanciaPreAviso, Color.gray,   y);
+    DebugLine(debugPosStart, debugPosEnd, objIndName, distanciaAviso,    Color.yellow, y);
+    DebugLine(debugPosStart, debugPosEnd, objIndName, distanciaPerigo,   Color.red,    y);
+} 
+
+    public static void DebugGetDiffObstacle(Vector3 player, Indicator ind)
+    {
+        var playerV3 = new Vector3(player.x, 0.0f, player.z);
+        var indV3 = new Vector3(ind.ObjectIndicator.transform.position.x, 0.0f, ind.ObjectIndicator.transform.position.z);
+        MyDebug.DrawLine(playerV3, indV3, Color.black);
+        MyDebug.DrawLine(indV3, indV3 + Vector3.forward * ind.Raio * 0.5f, Color.cyan);
+        MyDebug.DrawLine(ind.ObjectIndicator.transform.position, ind.ObjectIndicator.transform.position + Vector3.forward * ind.Raio * 0.5f, Color.cyan);
+    }
+
+
+    public static void DebugGetDistObstacle(Vector3 player, Indicator ind)
+    {
+        var playerV3 = new Vector3(player.x, 0.0f, player.z);
+        var indV3 = new Vector3(ind.ObjectIndicator.transform.position.x, 0.0f, ind.ObjectIndicator.transform.position.z);
+        MyDebug.DrawLine(playerV3, indV3, Color.black);
+    }
+
+
+
+ */

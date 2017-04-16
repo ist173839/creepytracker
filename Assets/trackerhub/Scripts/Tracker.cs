@@ -24,6 +24,7 @@ public enum CalibrationProcess
 	CalcNormal
 }
 
+// ReSharper disable once UnusedMember.Local
 public class Tracker : MonoBehaviour
 {
     public Dictionary<string, Sensor> Sensors { get; private set; }
@@ -32,31 +33,35 @@ public class Tracker : MonoBehaviour
 
     private List<Human> _deadHumans;
     private List<Human> _humansToKill;
-    private List<Surface> _surfaces;
 
+    private List<Surface> _surfaces;
+    
     public CalibrationProcess CalibrationStatus { get; set; }
 
     private UdpBroadcast _udpBroadcast;
 
-    public Material WhiteMaterial;
-    public Material SurfaceMaterial;
 
+    public Material WhiteMaterial;
+
+    public Material SurfaceMaterial;
 
     public string[] UnicastClients
     {
-		get
+        get
         {
-			return _udpBroadcast.UnicastClients;
-		}
-	}
+            return _udpBroadcast.UnicastClients;
+        }
+    }
 
     public int ShowHumanBodies = -1;
 
     public bool ColorHumans;
+
     public bool colorHumans;
 
-    //public List<KneesInfo> RightKneesInfo;
-    //public List<KneesInfo> LeftKneesInfo;
+
+    // public List<KneesInfo> RightKneesInfo;
+    // public List<KneesInfo> LeftKneesInfo;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -66,9 +71,11 @@ public class Tracker : MonoBehaviour
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
     //private OptitrackManager _localOptitrackManager;
 
     public  Dictionary<string, KneesInfo> RightKneesInfo;
+
     public  Dictionary<string, KneesInfo> LeftKneesInfo;
     private Dictionary<string, KneesInfo> _allKneesInfo;
 
@@ -79,8 +86,7 @@ public class Tracker : MonoBehaviour
 
     private SafeWriteFile _safeWriteFile;
     private GameObject _centroGameObject;
-
-
+    
     private Vector3? _lastRigthKneePosition;
     private Vector3? _lastLeftKneePosition;
     
@@ -94,7 +100,7 @@ public class Tracker : MonoBehaviour
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+    
     // ReSharper disable once ArrangeTypeMemberModifiers
     // ReSharper disable once UnusedMember.Local
     void Awake()
@@ -106,28 +112,29 @@ public class Tracker : MonoBehaviour
         IdIntList = new List<int>();
 
         _safeWriteFile = new SafeWriteFile();
+
         CountHuman = 0;
     }
 
     void Start ()
-	{
+    {
         _surfaces = new List<Surface>();
-	    Sensors = new Dictionary<string, Sensor> ();
-		_humans = new Dictionary<int, Human> ();
-		_deadHumans = new List<Human> ();
-		_humansToKill = new List<Human> ();
-	    CalibrationStatus = CalibrationProcess.FindCenter;
+        Sensors = new Dictionary<string, Sensor> ();
+        _humans = new Dictionary<int, Human> ();
+        _deadHumans = new List<Human> ();
+        _humansToKill = new List<Human> ();
+        CalibrationStatus = CalibrationProcess.FindCenter;
+        _udpBroadcast  = new UdpBroadcast (TrackerProperties.Instance.BroadcastPort);
+        _safeWriteFile = new SafeWriteFile();
 
-		_udpBroadcast  = new UdpBroadcast (TrackerProperties.Instance.BroadcastPort);
-       
         _loadConfig();
-	    _loadSavedSensors();
-        ////////////////////////////////////////////////////////////////////////////
-	    ////////////////////////////////////////////////////////////////////////////
-        // _localOptitrackManager = gameObject.GetComponent<OptitrackManager>();
+        _loadSavedSensors();
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //_localOptitrackManager = gameObject.GetComponent<OptitrackManager>();
         _localTrackerUi = gameObject.GetComponent<TrackerUI>();
-	}
-
+    }
+   
     // ReSharper disable once UnusedMember.Local
     // ReSharper disable once ArrangeTypeMemberModifiers
     void FixedUpdate ()
@@ -738,16 +745,11 @@ public class Tracker : MonoBehaviour
 		// save properties
 		ConfigProperties.Save (filePath, "udp.listenport",              "" + TrackerProperties.Instance.ListenPort);
 		ConfigProperties.Save (filePath, "udp.broadcastport",           "" + TrackerProperties.Instance.BroadcastPort);
-	    ConfigProperties.Save(filePath, "udp.sensor.listener",          "" + TrackerProperties.Instance.SensorListenPort);
+        ConfigProperties.Save (filePath, "udp.sensor.listener",         "" + TrackerProperties.Instance.SensorListenPort);
 	    ConfigProperties.Save (filePath, "udp.sendinterval",            "" + TrackerProperties.Instance.SendInterval);
 	    ConfigProperties.Save (filePath, "tracker.mergedistance",       "" + TrackerProperties.Instance.MergeDistance);
 	    ConfigProperties.Save (filePath, "tracker.confidencethreshold", "" + TrackerProperties.Instance.ConfidenceTreshold);
-
-	    //ConfigProperties.save (filePath, "udp.sendinterval", "" + TrackerProperties.Instance.sendInterval);
-		//ConfigProperties.save (filePath, "tracker.mergedistance", "" + TrackerProperties.Instance.mergeDistance);
-		//ConfigProperties.save (filePath, "tracker.confidencethreshold", "" + TrackerProperties.Instance.confidenceTreshold);
-        //ConfigProperties.save (filePath, "tracker.filtergain", "" + AdaptiveDoubleExponentialFilterFloat.Gain);
-
+        
 		// save sensors
 		foreach (Sensor s in Sensors.Values)
         {
@@ -775,17 +777,22 @@ public class Tracker : MonoBehaviour
 			TrackerProperties.Instance.BroadcastPort = int.Parse (port);
 		}
 		ResetBroadcast ();
-
-//<<<<<<< HEAD
+////<<<<<<< HEAD
 //		string aux = ConfigProperties.Load (filePath, "tracker.mergedistance");
+//
+//        port = ConfigProperties.Load(filePath, "udp.sensor.listen");
 //=======
-        port = ConfigProperties.Load(filePath, "udp.sensor.listen");
+        
+        // port = ConfigProperties.Load(filePath, "udp.sensor.listen");
+        port = ConfigProperties.Load(filePath, "udp.sensor.listener");
+
         if (port != "")
         {
             TrackerProperties.Instance.SensorListenPort = int.Parse(port);
         }
 
         string aux = ConfigProperties.Load (filePath, "tracker.mergedistance");
+
 		if (aux != "") {
 			TrackerProperties.Instance.MergeDistance = float.Parse (aux);
 		}
@@ -855,8 +862,14 @@ public class Tracker : MonoBehaviour
 		UdpClient udp = new UdpClient ();
 		string message = CloudMessage.CreateRequestMessage (2,Network.player.ipAddress, TrackerProperties.Instance.ListenPort); 
 		byte[] data = Encoding.UTF8.GetBytes(message);
+
         //IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Broadcast, TrackerProperties.Instance.ListenPort + 1);
-        IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Broadcast, TrackerProperties.Instance.SensorListenPort);
+        //IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Broadcast, TrackerProperties.Instance.SensorListenPort);
+
+        //<<<<<<< HEAD
+        //		IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Broadcast, TrackerProperties.Instance.ListenPort + 1);
+        //=======
+		IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Broadcast, TrackerProperties.Instance.SensorListenPort);
 		udp.Send(data, data.Length, remoteEndPoint);
 	}
     
@@ -866,9 +879,10 @@ public class Tracker : MonoBehaviour
 		UdpClient udp = new UdpClient ();
 		string message = CloudMessage.CreateRequestMessage (continuous ? 1 : 0, Network.player.ipAddress, TrackerProperties.Instance.ListenPort); 
 		byte[] data = Encoding.UTF8.GetBytes (message);
-
-		//IPEndPoint remoteEndPoint = new IPEndPoint (IPAddress.Broadcast, TrackerProperties.Instance.ListenPort + 1);
-
+        //IPEndPoint remoteEndPoint = new IPEndPoint (IPAddress.Broadcast, TrackerProperties.Instance.ListenPort + 1);
+        //<<<<<<< HEAD
+        //  IPEndPoint remoteEndPoint = new IPEndPoint (IPAddress.Broadcast, TrackerProperties.Instance.ListenPort + 1);
+        //=======
 		IPEndPoint remoteEndPoint = new IPEndPoint (IPAddress.Broadcast, TrackerProperties.Instance.SensorListenPort);
 		udp.Send (data, data.Length, remoteEndPoint);
 	}
@@ -919,9 +933,10 @@ public class Tracker : MonoBehaviour
         //broadcast
         string message2 = CloudMessage.CreateRequestMessage(av.Mode, av.ReplyIpAddress.ToString(), av.Port);
         byte[] data2 = Encoding.UTF8.GetBytes(message2);
-
         //IPEndPoint remoteEndPoint2 = new IPEndPoint(IPAddress.Broadcast, TrackerProperties.Instance.ListenPort + 1);
-
+        //<<<<<<< HEAD
+        //        IPEndPoint remoteEndPoint2 = new IPEndPoint(IPAddress.Broadcast, TrackerProperties.Instance.ListenPort + 1);
+        //=======
         IPEndPoint remoteEndPoint2 = new IPEndPoint(IPAddress.Broadcast, TrackerProperties.Instance.SensorListenPort);
 
         udp.Send(data2, data2.Length, remoteEndPoint2);
@@ -1136,9 +1151,8 @@ public class Tracker : MonoBehaviour
         var stringMeanKneeLeft  = meanKneeLeft  == null ? "null" : CommonUtils.convertVectorToStringRPC(meanKneeLeft.Value);
 
         mensagem +=
-            "MeanKneeRight" + MessageSeparators.SET + stringMeanKneeRight +
-            MessageSeparators.L2 +
-            "MeanKneeLeft" + MessageSeparators.SET + stringMeanKneeLeft;
+            "MeanKneeRight" + MessageSeparators.SET + stringMeanKneeRight + MessageSeparators.L2 +
+            "MeanKneeLeft"  + MessageSeparators.SET + stringMeanKneeLeft;
 
         var meanTrackKneeRight = GetMeanTrackList(RightKneesInfo);
         var meanTrackKneeLeft = GetMeanTrackList(LeftKneesInfo);
@@ -1191,6 +1205,88 @@ public class Tracker : MonoBehaviour
     }
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/*
+
+    
+	    //ConfigProperties.save (filePath, "udp.sendinterval", "" + TrackerProperties.Instance.sendInterval);
+		//ConfigProperties.save (filePath, "tracker.mergedistance", "" + TrackerProperties.Instance.mergeDistance);
+		//ConfigProperties.save (filePath, "tracker.confidencethreshold", "" + TrackerProperties.Instance.confidenceTreshold);
+        //ConfigProperties.save (filePath, "tracker.filtergain", "" + AdaptiveDoubleExponentialFilterFloat.Gain);
+    
+
+	    //ConfigProperties.Save (filePath, "udp.sensor.listener",         "" + TrackerProperties.Instance.SensorListenPort);
+        //ConfigProperties.Save (filePath, "udp.sendinterval",            "" + TrackerProperties.Instance.SendInterval);
+		//ConfigProperties.Save (filePath, "tracker.mergedistance",       "" + TrackerProperties.Instance.MergeDistance);
+		//ConfigProperties.Save (filePath, "tracker.confidencethreshold", "" + TrackerProperties.Instance.ConfidenceTreshold);
+        //=======
+        //ConfigProperties.save(filePath, "udp.listenport", "" + TrackerProperties.Instance.listenPort);
+        //ConfigProperties.save(filePath, "udp.broadcastport", "" + TrackerProperties.Instance.broadcastPort);
+        //ConfigProperties.save(filePath, "udp.sensor.listener", "" + TrackerProperties.Instance.sensorListenPort);
+        //ConfigProperties.save(filePath, "udp.sendinterval", "" + TrackerProperties.Instance.sendInterval);
+        //ConfigProperties.save(filePath, "tracker.mergedistance", "" + TrackerProperties.Instance.mergeDistance);
+        //ConfigProperties.save(filePath, "tracker.confidencethreshold", "" + TrackerProperties.Instance.confidenceTreshold);
+        //>>>>>>> refs/remotes/origin/master
+        //		ConfigProperties.save (filePath, "tracker.filtergain", "" + AdaptiveDoubleExponentialFilterFloat.Gain);
+
+        // save sensors
+        //foreach (Sensor s in Sensors.Values)
+
+
+*/
+
+
+
+
+/*
+ * 
+
+//<<<<<<< HEAD
+
+    // ReSharper disable once UnusedMember.Local
+
+    // ReSharper disable once ArrangeTypeMemberModifiers
+
+//    void Start ()
+
+//	{
+
+//		Sensors           = new Dictionary<string, Sensor> ();
+
+//		_humans           = new Dictionary<int,     Human> ();
+
+//		_deadHumans       = new List<Human> ();
+
+//		_humansToKill     = new List<Human> ();
+
+//		CalibrationStatus = CalibrationProcess.FindCenter;
+
+//=======
+ 	public string[] UnicastClients
+    {
+		get
+        {
+			return _udpBroadcast.UnicastClients;
+		}
+	}
+
+          //    >>>>>>> b8f19cc2489e5b0bb725e99ab5d20315d7961f60
+
+    //        CountHuman = 0;
+
+
+    //    RightKneesInfo = new Dictionary<string, KneesInfo>();
+    //    LeftKneesInfo  = new Dictionary<string, KneesInfo>();
+
+
+    //}
+
+    //<<<<<<< HEAD
+//                gameObject.GetComponent<DoNotify>().NotifySend(NotificationLevel.INFO, "New Surface", "Surface " + s.name + " added", 5000);
+//=======
+=======
+
+     */
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*
@@ -1216,3 +1312,87 @@ gameObject.GetComponent<DoNotify>().NotifySend(NotificationLevel.INFO, "New Surf
 =======
 
 */
+
+/*
+   
+    
+        //_loadConfig ();
+        //_loadSavedSensors ();
+
+public Material SurfaceMaterial;
+public Material WhiteMaterial;
+
+    
+    
+        return _udpBroadcast.UnicastClients;
+    }
+}
+
+    private bool _setUpCentro;
+
+
+    public int CountHuman;
+    public Vector3 Centro;
+
+    public bool SendKnees;
+    private TrackerUI _localTrackerUi;
+    private SafeWriteFile _safeWriteFile;
+    private GameObject _centroGameObject;
+
+
+
+    //public List<KneesInfo> RightKneesInfo;
+    //public List<KneesInfo> LeftKneesInfo;
+
+    public Dictionary<string, KneesInfo> RightKneesInfo;
+    public Dictionary<string, KneesInfo> LeftKneesInfo;
+    //private OptitrackManager _localOptitrackManager;
+
+
+
+    
+        RightKneesInfo = new Dictionary<string, KneesInfo>();
+        LeftKneesInfo  = new Dictionary<string, KneesInfo>();
+        CountHuman = 0;
+
+    
+        IdList    = new List<string>();
+        IdIntList = new List<int>();
+
+
+    //=======
+//	    Sensors = new Dictionary<string, Sensor> ();
+//		_humans = new Dictionary<int, Human> ();
+//		_deadHumans = new List<Human> ();
+//		_humansToKill = new List<Human> ();
+//	    CalibrationStatus = CalibrationProcess.FindCenter;
+
+//		_udpBroadcast  = new UdpBroadcast (TrackerProperties.Instance.BroadcastPort);
+       
+//        _loadConfig();
+//	    _loadSavedSensors();
+//        ////////////////////////////////////////////////////////////////////////////
+//	    ////////////////////////////////////////////////////////////////////////////
+//        // _localOptitrackManager = gameObject.GetComponent<OptitrackManager>();
+//        _localTrackerUi = gameObject.GetComponent<TrackerUI>();
+//	}
+
+    //<<<<<<< HEAD
+////        g.name = nameSurface;
+////        g.transform.localPosition = CommonUtils.PointKinectToUnity(position); 
+
+//        g.name = name + "lol";
+//        g.transform.localPosition = CommonUtils.PointKinectToUnity(position);
+//=======
+
+
+
+//<<<<<<< HEAD
+//		string aux = ConfigProperties.Load (filePath, "tracker.mergedistance");
+//=======
+
+
+
+ */
+
+

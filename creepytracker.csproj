@@ -128,29 +128,6 @@
     <Compile Include="Assets\Trackerhub\Scripts\Tracker.cs" />
     <Compile Include="Assets\Trackerhub\Scripts\TrackerProperties.cs" />
     <Compile Include="Assets\Trackerhub\Scripts\TrackerUI.cs" />
-    <Compile Include="Assets\Z_Outros\Plugins\Geral\CenterServer.cs" />
-    <Compile Include="Assets\Z_Outros\Plugins\Geral\CreateAndControlVirtualWorld.cs" />
-    <Compile Include="Assets\Z_Outros\Plugins\Geral\ReadMatrix.cs" />
-    <Compile Include="Assets\Z_Outros\Plugins\Listen\ListenBase.cs" />
-    <Compile Include="Assets\Z_Outros\Plugins\OptiTrack\DirectMulticastSocketClient.cs" />
-    <Compile Include="Assets\Z_Outros\Plugins\Play\EmulateSaveData.cs" />
-    <Compile Include="Assets\Z_Outros\Plugins\Save Data\SafeCenter.cs" />
-    <Compile Include="Assets\Z_Outros\Plugins\Save Data\SaveAvr.cs" />
-    <Compile Include="Assets\Z_Outros\Plugins\Save Data\SaveRecord.cs" />
-    <Compile Include="Assets\Z_Outros\Plugins\Save Data\SaveStatus.cs" />
-    <Compile Include="Assets\Z_Outros\Plugins\Save Data\WriteMatrix.cs" />
-    <Compile Include="Assets\Z_Outros\Plugins\Set Up\EmulateSaveDataSetUp.cs" />
-    <Compile Include="Assets\Z_Outros\Plugins\Virtual World\Indicator.cs" />
-    <Compile Include="Assets\Z_Outros\Plugins\Virtual World\IndicatorSetUp.cs" />
-    <Compile Include="Assets\Z_Outros\Scripts\Geral\MyKnees.cs" />
-    <Compile Include="Assets\Z_Outros\Scripts\Listener\MyUdpListenerAvr.cs" />
-    <Compile Include="Assets\Z_Outros\Scripts\Listener\MyUdpListenerColicoes.cs" />
-    <Compile Include="Assets\Z_Outros\Scripts\Listener\MyUdpListenerRecord.cs" />
-    <Compile Include="Assets\Z_Outros\Scripts\OptiTrack\ApplyTransformation.cs" />
-    <Compile Include="Assets\Z_Outros\Scripts\OptiTrack\ObjectTracker.cs" />
-    <Compile Include="Assets\Z_Outros\Scripts\OptiTrack\OptiDrawScript.cs" />
-    <Compile Include="Assets\Z_Outros\Scripts\OptiTrack\OptiObjects.cs" />
-    <Compile Include="Assets\Z_Outros\Scripts\OptiTrack\OptitrackManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Common\Models\Shaders\Skybox-Procedural.shader" />
