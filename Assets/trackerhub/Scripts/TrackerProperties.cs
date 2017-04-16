@@ -10,7 +10,9 @@ public class TrackerProperties : MonoBehaviour
 
     public int ListenPort = 56555;
     public int BroadcastPort = 56839;
+    public int SensorListenPort = 5007;
     public int SendInterval = 50;
+   // public int sendInterval = 50;
 
     [Range(0, 1)]  public float MergeDistance = 0.3f;
 

@@ -738,10 +738,15 @@ public class Tracker : MonoBehaviour
 		// save properties
 		ConfigProperties.Save (filePath, "udp.listenport",              "" + TrackerProperties.Instance.ListenPort);
 		ConfigProperties.Save (filePath, "udp.broadcastport",           "" + TrackerProperties.Instance.BroadcastPort);
-		ConfigProperties.Save (filePath, "udp.sendinterval",            "" + TrackerProperties.Instance.SendInterval);
-		ConfigProperties.Save (filePath, "tracker.mergedistance",       "" + TrackerProperties.Instance.MergeDistance);
-		ConfigProperties.Save (filePath, "tracker.confidencethreshold", "" + TrackerProperties.Instance.ConfidenceTreshold);
-//		ConfigProperties.save (filePath, "tracker.filtergain", "" + AdaptiveDoubleExponentialFilterFloat.Gain);
+	    ConfigProperties.Save(filePath, "udp.sensor.listener",          "" + TrackerProperties.Instance.SensorListenPort);
+	    ConfigProperties.Save (filePath, "udp.sendinterval",            "" + TrackerProperties.Instance.SendInterval);
+	    ConfigProperties.Save (filePath, "tracker.mergedistance",       "" + TrackerProperties.Instance.MergeDistance);
+	    ConfigProperties.Save (filePath, "tracker.confidencethreshold", "" + TrackerProperties.Instance.ConfidenceTreshold);
+
+	    //ConfigProperties.save (filePath, "udp.sendinterval", "" + TrackerProperties.Instance.sendInterval);
+		//ConfigProperties.save (filePath, "tracker.mergedistance", "" + TrackerProperties.Instance.mergeDistance);
+		//ConfigProperties.save (filePath, "tracker.confidencethreshold", "" + TrackerProperties.Instance.confidenceTreshold);
+        //ConfigProperties.save (filePath, "tracker.filtergain", "" + AdaptiveDoubleExponentialFilterFloat.Gain);
 
 		// save sensors
 		foreach (Sensor s in Sensors.Values)
@@ -771,7 +776,16 @@ public class Tracker : MonoBehaviour
 		}
 		ResetBroadcast ();
 
-		string aux = ConfigProperties.Load (filePath, "tracker.mergedistance");
+//<<<<<<< HEAD
+//		string aux = ConfigProperties.Load (filePath, "tracker.mergedistance");
+//=======
+        port = ConfigProperties.Load(filePath, "udp.sensor.listen");
+        if (port != "")
+        {
+            TrackerProperties.Instance.SensorListenPort = int.Parse(port);
+        }
+
+        string aux = ConfigProperties.Load (filePath, "tracker.mergedistance");
 		if (aux != "") {
 			TrackerProperties.Instance.MergeDistance = float.Parse (aux);
 		}
@@ -841,7 +855,8 @@ public class Tracker : MonoBehaviour
 		UdpClient udp = new UdpClient ();
 		string message = CloudMessage.CreateRequestMessage (2,Network.player.ipAddress, TrackerProperties.Instance.ListenPort); 
 		byte[] data = Encoding.UTF8.GetBytes(message);
-		IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Broadcast, TrackerProperties.Instance.ListenPort + 1);
+        //IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Broadcast, TrackerProperties.Instance.ListenPort + 1);
+        IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Broadcast, TrackerProperties.Instance.SensorListenPort);
 		udp.Send(data, data.Length, remoteEndPoint);
 	}
     
@@ -851,7 +866,10 @@ public class Tracker : MonoBehaviour
 		UdpClient udp = new UdpClient ();
 		string message = CloudMessage.CreateRequestMessage (continuous ? 1 : 0, Network.player.ipAddress, TrackerProperties.Instance.ListenPort); 
 		byte[] data = Encoding.UTF8.GetBytes (message);
-		IPEndPoint remoteEndPoint = new IPEndPoint (IPAddress.Broadcast, TrackerProperties.Instance.ListenPort + 1);
+
+		//IPEndPoint remoteEndPoint = new IPEndPoint (IPAddress.Broadcast, TrackerProperties.Instance.ListenPort + 1);
+
+		IPEndPoint remoteEndPoint = new IPEndPoint (IPAddress.Broadcast, TrackerProperties.Instance.SensorListenPort);
 		udp.Send (data, data.Length, remoteEndPoint);
 	}
     
@@ -901,7 +919,11 @@ public class Tracker : MonoBehaviour
         //broadcast
         string message2 = CloudMessage.CreateRequestMessage(av.Mode, av.ReplyIpAddress.ToString(), av.Port);
         byte[] data2 = Encoding.UTF8.GetBytes(message2);
-        IPEndPoint remoteEndPoint2 = new IPEndPoint(IPAddress.Broadcast, TrackerProperties.Instance.ListenPort + 1);
+
+        //IPEndPoint remoteEndPoint2 = new IPEndPoint(IPAddress.Broadcast, TrackerProperties.Instance.ListenPort + 1);
+
+        IPEndPoint remoteEndPoint2 = new IPEndPoint(IPAddress.Broadcast, TrackerProperties.Instance.SensorListenPort);
+
         udp.Send(data2, data2.Length, remoteEndPoint2);
         Debug.Log("Forwarded request to clients " + message2);
     }
