@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+// ReSharper disable once UnusedMember.Global
+// ReSharper disable once CheckNamespace
 public class KalmanFilterVector3
 {
 	private KalmanFilterFloat _x;
@@ -32,7 +34,4 @@ public class KalmanFilterVector3
 		_y.Value = v.y;
 		_z.Value = v.z;
 	}
-
-
-	
 }

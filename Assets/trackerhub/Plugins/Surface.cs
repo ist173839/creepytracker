@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
+// ReSharper disable once CheckNamespace
 public class Surface
 {
     public string name;
@@ -85,7 +86,7 @@ public class Surface
         return r;
     }
 
-    internal void saveSurface(GameObject bl, GameObject br, GameObject tl, GameObject tr)
+    internal void SaveSurface(GameObject bl, GameObject br, GameObject tl, GameObject tr)
     {
         cBottomLeft = bl.transform.position;
         cBottomRight = br.transform.position;
@@ -111,7 +112,7 @@ public class Surface
         }
     }
 
-    private string _pointToString(Vector3 p)
+    private static string _pointToString(Vector3 p)
     {
         return ("" + p.x + ":" + p.y + ":" + p.z).Replace(',', '.');
     }

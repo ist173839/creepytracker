@@ -14,25 +14,14 @@ public class Human
     private HumanSkeleton skeleton;
     public HumanSkeleton Skeleton
     {
-        get
-        {
-            return skeleton;
-        }
+        get { return skeleton; }
     }
 
     private Vector3 position;
     public Vector3 Position
     {
-        get
-        {
-            return position;
-        }
-
-        set
-        {
-            position = value;
-            gameObject.transform.position = position;
-        }
+        get { return position; }
+        set { position = value; gameObject.transform.position = position; }
     }
 
     public Human(GameObject gameObject, Tracker tracker)
@@ -41,7 +30,6 @@ public class Human
         bodies = new List<SensorBody>();
         this.gameObject = gameObject;
         this.gameObject.name = "Human " + ID;
-
 
         skeleton = this.gameObject.GetComponent<HumanSkeleton>();
         skeleton.tracker = tracker;
@@ -59,3 +47,11 @@ public class Human
         return "Sensor" + MessageSeparators.SET + SeenBySensor + MessageSeparators.L2 + Skeleton.GetPdu();
     }
 }
+
+///////////////////////////////
+/*
+ =======
+        skeleton.updateSkeleton();
+>>>>>>> refs/remotes/mauriciosousa/master
+     
+     */

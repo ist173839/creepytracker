@@ -42,13 +42,18 @@ public class HandleVirtualWorld : MonoBehaviour
     private GameObject _helpers;
     private GameObject _marker;
 
+    private Vector3? _forwardPoint;
+    private Vector3? _centro;
+
+    private Vector3 _forward;
+
     public bool IsCentroSetUp { get; private set; }
 
     public bool IsSaveFilePossible;
     public bool CanShowIndicators;
     public bool ShowIndicator;
     public bool ShowMarker;
-    
+
     private bool _canUseSaveFile;
     private bool _setUpForward;
     private bool _saveForward;
@@ -58,14 +63,8 @@ public class HandleVirtualWorld : MonoBehaviour
 
     private int _countId;
     private int _port;
-
-    private Vector3 _forward;
-
-    private Vector3? _forwardPoint;
-    private Vector3? _centro;
-
+    
     private string _path;
-
 
     // public bool CanForce;
     // public bool Send;
@@ -192,14 +191,14 @@ public class HandleVirtualWorld : MonoBehaviour
 
         if (IsCentroSetUp && _centro.HasValue && !_saveCentro)
         {
-            var center = "CenterPos" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(_centro.Value);
+            var center = "CenterPos" + MessageSeparators.SET + CommonUtils.ConvertVectorToStringRPC(_centro.Value);
             _saveCenter.RecordMessage(center);
             _saveCentro = true;
         }
 
         if (_setUpForward && _forwardPoint.HasValue && !_saveForward)
         {
-            var forward = "ForwardPos" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(_forwardPoint.Value);
+            var forward = "ForwardPos" + MessageSeparators.SET + CommonUtils.ConvertVectorToStringRPC(_forwardPoint.Value);
             _saveCenter.RecordMessage(forward);
             _saveForward = true;
         }
@@ -216,7 +215,7 @@ public class HandleVirtualWorld : MonoBehaviour
         
         if (IsCentroSetUp && _centro.HasValue)
         {
-            var center = "CenterPos" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(_centro.Value);
+            var center = "CenterPos" + MessageSeparators.SET + CommonUtils.ConvertVectorToStringRPC(_centro.Value);
             var humans = _localTracker.GetHumans();
           
             var mensaHumans = ""; 
@@ -230,11 +229,11 @@ public class HandleVirtualWorld : MonoBehaviour
                     mensaHumans += MessageSeparators.L2;
                     mensaHumans += "Id" + MessageSeparators.SET + h.Value.ID;
                     mensaHumans += MessageSeparators.L4; // "Desvio" + MessageSeparators.SET +
-                    mensaHumans += CommonUtils.convertVectorToStringRPC(desvio);
+                    mensaHumans += CommonUtils.ConvertVectorToStringRPC(desvio);
                     mensaHumans += MessageSeparators.L4;
-                    mensaHumans += CommonUtils.convertVectorToStringRPC(h.Value.Position);
+                    mensaHumans += CommonUtils.ConvertVectorToStringRPC(h.Value.Position);
                     mensaHumans += MessageSeparators.L4;
-                    mensaHumans += CommonUtils.convertVectorToStringRPC(mid);
+                    mensaHumans += CommonUtils.ConvertVectorToStringRPC(mid);
                     
                     MyDebug.DrawLine(h.Value.Position, h.Value.Position + desvio, Color.blue);
                 }
@@ -249,7 +248,7 @@ public class HandleVirtualWorld : MonoBehaviour
 
         if (_setUpForward && _forwardPoint.HasValue)
         {
-            var forward = "ForwardPos" + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(_forwardPoint.Value);
+            var forward = "ForwardPos" + MessageSeparators.SET + CommonUtils.ConvertVectorToStringRPC(_forwardPoint.Value);
             mensagem += forward;
         }
         _udpBroadcast.Send(mensagem);

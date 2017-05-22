@@ -5,9 +5,9 @@ using UnityEngine;
 using System.Net;
 using System;
 
+// ReSharper disable once CheckNamespace
 public class SurfaceMessage
 {
-
     public IPAddress replyIPAddress;
     public int port;
 
@@ -24,10 +24,10 @@ public class SurfaceMessage
         foreach (Surface s in surfaces)
         {
             res += s.name + MessageSeparators.L1
-                + CommonUtils.convertVectorToStringRPC(s.cBottomLeft) + MessageSeparators.L1
-                + CommonUtils.convertVectorToStringRPC(s.cBottomRight) + MessageSeparators.L1
-                + CommonUtils.convertVectorToStringRPC(s.cTopLeft) + MessageSeparators.L1
-                + CommonUtils.convertVectorToStringRPC(s.cTopRight)
+                + CommonUtils.ConvertVectorToStringRPC(s.cBottomLeft) + MessageSeparators.L1
+                + CommonUtils.ConvertVectorToStringRPC(s.cBottomRight) + MessageSeparators.L1
+                + CommonUtils.ConvertVectorToStringRPC(s.cTopLeft) + MessageSeparators.L1
+                + CommonUtils.ConvertVectorToStringRPC(s.cTopRight)
                 + MessageSeparators.L1;
         }
         return res;

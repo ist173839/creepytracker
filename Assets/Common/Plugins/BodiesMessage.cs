@@ -16,6 +16,12 @@ public static class MessageSeparators
     public const char SET = '=';
 }
 
+public enum HandScreenSpace
+{
+    HandLeftPosition,
+    HandRightPosition
+}
+
 public enum BodyPropertiesTypes
 {
     UID,
@@ -28,8 +34,12 @@ public enum BodyPropertiesTypes
 
 public class Skeleton
 {
+    //public Dictionary<BodyPropertiesTypes, string> BodyProperties;
+    //public Dictionary<Kinect.JointType, Vector3> JointsPositions;
     public Dictionary<BodyPropertiesTypes, string> BodyProperties;
     public Dictionary<Kinect.JointType, Vector3> JointsPositions;
+    public Dictionary<HandScreenSpace, Vector3> HandScreenPositions;
+
     public string Message;
 
     public Kinect.TrackingState TrackingStateKneeRight;
@@ -52,38 +62,44 @@ public class Skeleton
 
     public void _start()
     {
-        JointsPositions = new Dictionary<Windows.Kinect.JointType, Vector3>();
         BodyProperties = new Dictionary<BodyPropertiesTypes, string>();
-        _lastForwardBody = Vector3.zero;
+        JointsPositions = new Dictionary<Windows.Kinect.JointType, Vector3>();
+        HandScreenPositions = new Dictionary<HandScreenSpace, Vector3>();
+       _lastForwardBody = Vector3.zero;
     }
+    //<<<<<<< HEAD:Assets/Common/Plugins/BodiesMessage.cs
+    //        JointsPositions = new Dictionary<Windows.Kinect.JointType, Vector3>();
+    //        BodyProperties = new Dictionary<BodyPropertiesTypes, string>();
+    //        _lastForwardBody = Vector3.zero;
+    //    }
 
     public Skeleton(Kinect.Body body)
     {
         _start();
         Message = ""
-            + BodyPropertiesTypes.UID.ToString() + MessageSeparators.SET + body.TrackingId
-            + MessageSeparators.L2 + BodyPropertiesTypes.Confidence.ToString()          + MessageSeparators.SET + BodyConfidence(body)
-            + MessageSeparators.L2 + BodyPropertiesTypes.HandLeftState.ToString()       + MessageSeparators.SET + body.HandLeftState
-            + MessageSeparators.L2 + BodyPropertiesTypes.HandLeftConfidence.ToString()  + MessageSeparators.SET + body.HandLeftConfidence
-            + MessageSeparators.L2 + BodyPropertiesTypes.HandRightState.ToString()      + MessageSeparators.SET + body.HandRightState
-            + MessageSeparators.L2 + BodyPropertiesTypes.HandRightConfidence.ToString() + MessageSeparators.SET + body.HandRightConfidence;
+                  + BodyPropertiesTypes.UID.ToString() + MessageSeparators.SET + body.TrackingId
+                  + MessageSeparators.L2 + BodyPropertiesTypes.Confidence.ToString()          + MessageSeparators.SET + BodyConfidence(body)
+                  + MessageSeparators.L2 + BodyPropertiesTypes.HandLeftState.ToString()       + MessageSeparators.SET + body.HandLeftState
+                  + MessageSeparators.L2 + BodyPropertiesTypes.HandLeftConfidence.ToString()  + MessageSeparators.SET + body.HandLeftConfidence
+                  + MessageSeparators.L2 + BodyPropertiesTypes.HandRightState.ToString()      + MessageSeparators.SET + body.HandRightState
+                  + MessageSeparators.L2 + BodyPropertiesTypes.HandRightConfidence.ToString() + MessageSeparators.SET + body.HandRightConfidence;
 
         foreach (Kinect.JointType j in Enum.GetValues(typeof(Kinect.JointType)))
         {
-            Message += "" + MessageSeparators.L2 + j.ToString() + MessageSeparators.SET + CommonUtils.convertVectorToStringRPC(body.Joints[j].Position);
+            Message += "" + MessageSeparators.L2 + j.ToString() + MessageSeparators.SET + CommonUtils.ConvertVectorToStringRPC(body.Joints[j].Position);
         }
     }
-
+    
     public Skeleton(string body)
     {
         _start();
 
         Message = body;
+
         var bodyAttributes = new List<string>(body.Split(MessageSeparators.L2));
         foreach (var attr in bodyAttributes)
         {
-            
-            var statement = attr.Split(MessageSeparators.SET);
+            string[] statement = attr.Split(MessageSeparators.SET);
             if (statement.Length == 2)
             {
                 if (Enum.IsDefined(typeof(BodyPropertiesTypes), statement[0]))
@@ -96,9 +112,26 @@ public class Skeleton
                     JointsPositions[((Windows.Kinect.JointType) Enum.Parse(typeof(Windows.Kinect.JointType), statement[0]))] = CommonUtils.ConvertRpcStringToVector3(statement[1]);
                 }
 
-               // ExtraStatement(statement);
+                // ExtraStatement(statement);
+                if (Enum.IsDefined(typeof(HandScreenSpace), statement[0]))
+                {
+                    HandScreenPositions[((HandScreenSpace)Enum.Parse(typeof(HandScreenSpace), statement[0]))] = CommonUtils.ConvertRpcStringToVector3(statement[1]);
+                }
             }
         }
+    }
+
+
+
+    private int BodyConfidence(Kinect.Body body)
+    {
+        var confidence = 0;
+        foreach (Kinect.Joint j in body.Joints.Values)
+        {
+            if (j.TrackingState == Windows.Kinect.TrackingState.Tracked)
+                confidence += 1;
+        }
+        return confidence;
     }
 
     private void ExtraStatement(string[] statement)
@@ -117,17 +150,6 @@ public class Skeleton
             }
         }
     }
-
-    private int BodyConfidence(Kinect.Body body)
-    {
-        var confidence = 0;
-        foreach (Kinect.Joint j in body.Joints.Values)
-        {
-            if (j.TrackingState == Windows.Kinect.TrackingState.Tracked)
-                confidence += 1;
-        }
-        return confidence;
-    }
 }
 
 public class BodiesMessageException : Exception
@@ -140,25 +162,12 @@ public class BodiesMessage
 {
     public string Message { get; internal set; }
     public string KinectId { get; internal set; }
-    
+
     public List<Skeleton> _bodies;
+    public List<Skeleton> Bodies { get { return _bodies;       } }
+    public int NumberOfBodies    { get { return _bodies.Count; } }
 
-    public int NumberOfBodies
-    {
-        get
-        {
-            return _bodies.Count;
-        }
-    }
 
-    public List<Skeleton> Bodies
-    {
-        get
-        {
-            return _bodies;
-        }
-    }
-    
     private void _start()
     {
         _bodies = new List<Skeleton>();
@@ -182,7 +191,8 @@ public class BodiesMessage
         }
         catch (Exception e)
         {
-            throw new BodiesMessageException("Cannot instantiate BodiesMessage");
+            Debug.Log(e.StackTrace);
+            throw new BodiesMessageException("Cannot instantiate BodiesMessage: " + e.Message);
         }
     }
 
@@ -203,6 +213,62 @@ public class BodiesMessage
             }
         }
     }
-
     public BodiesMessage() { }
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/*
+   
+    public int NumberOfBodies
+    {
+        get
+        {
+            return _bodies.Count;
+        }
+    }
+     
+    
+
+    public List<Skeleton> Bodies
+    {
+        get
+        {
+            return _bodies;
+        }
+    }
+    //<<<<<<< HEAD:Assets/Common/Plugins/BodiesMessage.cs
+            
+//            var statement = attr.Split(MessageSeparators.SET);
+//=======
+
+            //  Message += "" + MessageSeparators.L2 + j.ToString() + MessageSeparators.SET + CommonUtils.ConvertVectorToStringRPC(body.Joints[j].Position);
+
+*/
+
+
+/*
+public Skeleton(Kinect.Body body)
+{
+ _start();
+ Message = ""
+     + BodyPropertiesTypes.UID.ToString() + MessageSeparators.SET + body.TrackingId
+     + MessageSeparators.L2 + BodyPropertiesTypes.Confidence.ToString() + MessageSeparators.SET + BodyConfidence(body)
+     + MessageSeparators.L2 + BodyPropertiesTypes.HandLeftState.ToString() + MessageSeparators.SET + body.HandLeftState
+     + MessageSeparators.L2 + BodyPropertiesTypes.HandLeftConfidence.ToString() + MessageSeparators.SET + body.HandLeftConfidence
+     + MessageSeparators.L2 + BodyPropertiesTypes.HandRightState.ToString() + MessageSeparators.SET + body.HandRightState
+     + MessageSeparators.L2 + BodyPropertiesTypes.HandRightConfidence.ToString() + MessageSeparators.SET + body.HandRightConfidence;
+
+ foreach (Kinect.JointType j in Enum.GetValues(typeof(Kinect.JointType)))
+ {
+     Message += "" + MessageSeparators.L2 + j.ToString() + MessageSeparators.SET + CommonUtils.ConvertVectorToStringRPC(body.Joints[j].Position);
+ }
+}
+
+  */
+
+
+
+
+
+
+

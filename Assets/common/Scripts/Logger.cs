@@ -51,8 +51,7 @@ class LogMessage
 // ReSharper disable once UnusedMember.Global
 public class Logger : MonoBehaviour
 {
-    
-	public int max;
+	public int Max;
 	private List<LogMessage> _messages;
 
 	void Start ()
@@ -89,7 +88,7 @@ public class Logger : MonoBehaviour
 	{
 		LogMessage n = new LogMessage (logLevel, message);
 
-        if (_messages.Count >= max)
+        if (_messages.Count >= Max)
         {
 			_messages.RemoveAt (0);
 		}

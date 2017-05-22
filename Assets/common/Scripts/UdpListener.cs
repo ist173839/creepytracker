@@ -10,7 +10,6 @@ using System.Text;
 // ReSharper disable once CheckNamespace
 public class UdpListener : MonoBehaviour
 {
-
     private UdpClient _udpClient = null;
     private IPEndPoint _anyIp;
     private List<byte[]> _stringsToParse; // TMA: Store the bytes from the socket instead of converting to strings. Saves time.
@@ -18,8 +17,7 @@ public class UdpListener : MonoBehaviour
     private byte[] _receivedBytes;
 
     private int _number = 0;
-
-
+    
     //so we don't have to create again
     private CloudMessage _message;
 
@@ -111,10 +109,8 @@ public class UdpListener : MonoBehaviour
                 }
                 _stringsToParse.RemoveAt(0);
             }
-            catch (Exception)
-            {
-                _stringsToParse.RemoveAt(0);
-            }
+            catch (Exception /*e*/) { _stringsToParse.RemoveAt(0); }
+
         }
     }
 
@@ -131,3 +127,16 @@ public class UdpListener : MonoBehaviour
         OnApplicationQuit();
     }
 }
+
+
+
+/*
+ * 
+            catch (Exception)
+            {
+                _stringsToParse.RemoveAt(0);
+            }
+
+     
+     
+     */

@@ -13,10 +13,15 @@ public class CommonUtils
         return new Vector3(p.X, p.Y, p.Z);
     }
 
-    internal static string convertVectorToStringRPC(Vector3 v)
+    internal static string ConvertVectorToStringRPC(Vector3 v)
     {
         return "" + Math.Round(v.x, DecimalsRound) + MessageSeparators.L3 + Math.Round(v.y, DecimalsRound) + MessageSeparators.L3 + Math.Round(v.z, DecimalsRound);
     }
+
+    internal static string ConvertCameraDepthPointToStringRpc(Kinect.DepthSpacePoint p)
+    {
+        return "" + Math.Round(p.X, 3) + MessageSeparators.L3 + Math.Round(p.Y, 3) + MessageSeparators.L3 + 0;
+    } 
 
     internal static string ConvertQuaternionToStringRpc(Quaternion v)
     {
@@ -29,9 +34,9 @@ public class CommonUtils
         return new Vector3(float.Parse(p[0].Replace(',','.')), float.Parse(p[1].Replace(',', '.')), float.Parse(p[2].Replace(',', '.')));
     }
 
-    internal static string convertVectorToStringRPC(Kinect.CameraSpacePoint position)
+    internal static string ConvertVectorToStringRPC(Kinect.CameraSpacePoint position)
     {
-        return convertVectorToStringRPC(new Vector3(position.X, position.Y, position.Z));
+        return ConvertVectorToStringRPC(new Vector3(position.X, position.Y, position.Z));
     }
 
     internal static Quaternion ConvertRpcStringToQuaternion(string v)
@@ -115,3 +120,6 @@ public class CommonUtils
         return new Color32(r, g, b, a);
     }
 }
+//////////////////////////////////
+
+//    internal static string ConvertQuaternionToStringRpc(Quaternion v)

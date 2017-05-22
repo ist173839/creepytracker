@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class RPCServer : MonoBehaviour {
+public class RPCServer : MonoBehaviour
+{
 
     public GameObject TrackerGameObject;
 
@@ -124,7 +125,7 @@ public class RPCServer : MonoBehaviour {
     }
 
     [RPC]
-    public void newFrameFromSensor(string bodies)
+    public void NewFrameFromSensor(string bodies)
     {
         try
         {

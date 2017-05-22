@@ -64,12 +64,11 @@ public class TrackerUI : MonoBehaviour
     public float RotStep   = 2.00f;
     public float TransStep = 0.02f;
     
-    private string _newUnicastAddress;
-	private string _newUnicastPort;
+   
     private string _user;
     private string _userInicial;
 
-    private bool _continuous;
+	private bool _continuous;
     private bool _hideHumans;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -105,7 +104,7 @@ public class TrackerUI : MonoBehaviour
     // ReSharper disable once UnusedMember.Local
     void Awake()
     {
-        IconSize = 60;
+        
         ////////////////////////////////////////////////////////////////
         
         UseRecord     = false;
@@ -126,34 +125,20 @@ public class TrackerUI : MonoBehaviour
     void Start ()
 	{
 		_userTracker = gameObject.GetComponent<Tracker> ();
-
+        //<<<<<<< HEAD
+	    //=======
+	    IconSize = 60;
         _menuAction = MenuAction.None;
-	    _currentCloudSensor = 0;
-	    _titleStyle = new GUIStyle
-	    {
-	        fontStyle = FontStyle.Bold,
-	        normal    =
-	        {
-	            textColor = Color.white
-	        }
-	    };
-	    _continuous = false;
-	    _hideHumans = false;
-
-	    _newUnicastAddress = "";
-	    _newUnicastPort    = "";
+		_currentCloudSensor = 0;
+		_titleStyle = new GUIStyle ();
+		_titleStyle.fontStyle = FontStyle.Bold;
+		_titleStyle.normal.textColor = Color.white;
+		_continuous = false;
+        _hideHumans = false;
 
 	    _packetsPerSec = 1000 / TrackerProperties.Instance.SendInterval;
+	}
 
-	    ////////////////////////////////////////////////////////////////////
-	    _localHandleVirtualWorld = gameObject.GetComponent<HandleVirtualWorld>();
-	    _localMyUdpListener      = gameObject.GetComponent<MyUdpListener>();
-	    ShowMarker               = _localHandleVirtualWorld.ShowMarker;
-
-	    //_localMyUdpListener.SetTypeMetodo(_typeMetodoList[_typeMetodo]);
-	    _localMyUdpListener.SetNumTest(_numberTestList[_numberTest]);
-	    ////////////////////////////////////////////////////////////////////
-    }
 
     // ReSharper disable once ArrangeTypeMemberModifiers
     // ReSharper disable once UnusedMember.Local
@@ -710,3 +695,48 @@ public class TrackerUI : MonoBehaviour
 	}
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+/*
+ //>>>>>>> refs/remotes/mauriciosousa/master
+
+     private string _newUnicastAddress;
+	private string _newUnicastPort;
+
+
+     //   _menuAction = MenuAction.None;
+	    //_currentCloudSensor = 0;
+	    //_titleStyle = new GUIStyle
+	    //{
+	    //    fontStyle = FontStyle.Bold,
+	    //    normal    =
+	    //    {
+	    //        textColor = Color.white
+	    //    }
+	    //};
+	    //_continuous = false;
+	    //_hideHumans = false;
+
+	    //_newUnicastAddress = "";
+	    //_newUnicastPort    = "";
+
+	    //packetsPerSec = 1000 / TrackerProperties.Instance.SendInterval;
+
+	    //////////////////////////////////////////////////////////////////////
+	    //_localHandleVirtualWorld = gameObject.GetComponent<HandleVirtualWorld>();
+	    //_localMyUdpListener      = gameObject.GetComponent<MyUdpListener>();
+	    //ShowMarker               = _localHandleVirtualWorld.ShowMarker;
+
+	    ////_localMyUdpListener.SetTypeMetodo(_typeMetodoList[_typeMetodo]);
+	    //_localMyUdpListener.SetNumTest(_numberTestList[_numberTest]);
+	    ////////////////////////////////////////////////////////////////////
+   // }
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     */

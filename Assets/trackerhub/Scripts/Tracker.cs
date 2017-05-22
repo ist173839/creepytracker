@@ -27,42 +27,39 @@ public enum CalibrationProcess
 // ReSharper disable once UnusedMember.Local
 public class Tracker : MonoBehaviour
 {
-    public Dictionary<string, Sensor> Sensors { get; private set; }
+    private Dictionary<string, Sensor> _sensors;
+
+    public Dictionary<string, Sensor> Sensors { get { return _sensors; } }
 
     private Dictionary<int, Human> _humans;
-
+    
     private List<Human> _deadHumans;
+
     private List<Human> _humansToKill;
 
     private List<Surface> _surfaces;
     
-    public CalibrationProcess CalibrationStatus { get; set; }
-
     private UdpBroadcast _udpBroadcast;
 
-
+    private CalibrationProcess _calibrationStatus;
+    public CalibrationProcess CalibrationStatus 
+    {
+        get { return _calibrationStatus; }
+        set { _calibrationStatus = value; }
+    }
+    
     public Material WhiteMaterial;
-
     public Material SurfaceMaterial;
 
-    public string[] UnicastClients
-    {
-        get
-        {
-            return _udpBroadcast.UnicastClients;
-        }
-    }
+    public string[] UnicastClients { get { return _udpBroadcast.UnicastClients; } }
 
     public int ShowHumanBodies = -1;
 
     public bool ColorHumans;
 
-    public bool colorHumans;
-
-
+    // public bool colorHumans;
     // public List<KneesInfo> RightKneesInfo;
     // public List<KneesInfo> LeftKneesInfo;
-
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //////        Dissertação - Mestrado em Engenharia Informática e de Computadores                                   //////////
@@ -70,9 +67,7 @@ public class Tracker : MonoBehaviour
     //////        Alterações apartir daqui                                                                             //////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-    //private OptitrackManager _localOptitrackManager;
+    // private OptitrackManager _localOptitrackManager;
 
     public  Dictionary<string, KneesInfo> RightKneesInfo;
 
@@ -119,7 +114,7 @@ public class Tracker : MonoBehaviour
     void Start ()
     {
         _surfaces = new List<Surface>();
-        Sensors = new Dictionary<string, Sensor> ();
+        _sensors = new Dictionary<string, Sensor> ();
         _humans = new Dictionary<int, Human> ();
         _deadHumans = new List<Human> ();
         _humansToKill = new List<Human> ();
@@ -127,8 +122,8 @@ public class Tracker : MonoBehaviour
         _udpBroadcast  = new UdpBroadcast (TrackerProperties.Instance.BroadcastPort);
         _safeWriteFile = new SafeWriteFile();
 
-        _loadConfig();
-        _loadSavedSensors();
+        LoadConfig();
+        LoadSavedSensors();
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //_localOptitrackManager = gameObject.GetComponent<OptitrackManager>();
@@ -145,27 +140,37 @@ public class Tracker : MonoBehaviour
 
 	    if (Input.GetKeyDown (KeyCode.C)) ColorHumans = !ColorHumans;
 
-		foreach (var s in Sensors.Values)
+
+		foreach (Sensor s in _sensors.Values)
         {
 			s.UpdateBodies ();
 		}
 
 		MergeHumans();
 
-		var deadHumansToRemove = _deadHumans.Where(h => DateTime.Now > h.TimeOfDeath.AddMilliseconds(0)).ToList();
+        // var deadHumansToRemove = _deadHumans.Where(h => DateTime.Now > h.TimeOfDeath.AddMilliseconds(0)).ToList();
 
-	    //foreach (var h in _deadHumans)
+        //foreach (var h in _deadHumans)
         //{
         //   if (DateTime.Now > h.timeOfDeath.AddMilliseconds (1000)) deadHumansToRemove.Add (h);
-        //}
+	    //}
+	    //List<Human> deadHumansToRemove = new List<Human>();
 
-		foreach (var h in deadHumansToRemove)
+        //foreach (var h in deadHumansToRemove)
+		List<Human> deadHumansToRemove = new List<Human> ();
+		foreach (Human h in _deadHumans)
+        {
+			if (DateTime.Now > h.TimeOfDeath.AddMilliseconds (1000))
+				deadHumansToRemove.Add (h);
+		}
+
+		foreach (Human h in deadHumansToRemove)
         {
 			Destroy (h.gameObject);
 			_deadHumans.Remove (h);
 		}
 
-		foreach (var h in _humansToKill)
+	    foreach (Human h in _humansToKill)
         {
 			Destroy (h.gameObject);
 		}
@@ -175,54 +180,51 @@ public class Tracker : MonoBehaviour
 		// udp broadcast
 		var strToSend = "" + _humans.Count;
 
-
 	    CountHuman = _humans.Count;
 
-        foreach (var h in _humans.Values)
+		foreach (Human h in _humans.Values)
         {
+
             IdList.Add(h.ID.ToString()); // "SpecialHuman " +
             idIntList.Add(h.ID);
-             
-            // udpate Human Skeleton
-            h.UpdateSkeleton ();
-            
-            // get PDU
-            try
+
+            // update Human Skeleton
+             h.UpdateSkeleton();
+
+			// get PDU
+			try
             {
-                strToSend += MessageSeparators.L1 + h.GetPdu();
-                //GetKnees(h);
-                // strToSend += SetCentro();
-            }
-			catch (Exception e)
-            {
-                Debug.Log(e.Message + "\n" + e.StackTrace + "\n");
-            }
+				strToSend += MessageSeparators.L1 + h.GetPdu();
+			}
+            catch (Exception e)
+			{
+			    Debug.Log(e.Message + "\n" + e.StackTrace);
+			}
 		}
 
-		foreach (var h in _deadHumans)
+		foreach (Human h in _deadHumans)
         {
-            try
-            {
-                strToSend += MessageSeparators.L1 + h.GetPdu(); 
-            }
-            catch (Exception e)
-            {
-                Debug.Log(e.Message + "\n" + e.StackTrace);
-            }
-		}
+			try {
+				strToSend += MessageSeparators.L1 + h.GetPdu();
+			}
+			catch (Exception e)
+			{
+			    Debug.Log(e.Message + "\n" + e.StackTrace);
+			}
+              
+        }
         _udpBroadcast.Send(strToSend);
         
         //// FHV -> Alteração -> Guarda dados do Tracker 
         SaveRecordServer(strToSend);
 
 		// set human material
-
-		foreach (var h in _humans.Values)
+        foreach (Human h in _humans.Values)
         {
-			if (h.SeenBySensor != null && colorHumans)
-				CommonUtils.ChangeGameObjectMaterial (h.gameObject, Sensors [h.SeenBySensor].Material);
+			if (h.SeenBySensor != null && ColorHumans)
+				CommonUtils.ChangeGameObjectMaterial(h.gameObject, Sensors [h.SeenBySensor].Material);
 			else if (!ColorHumans)
-				CommonUtils.ChangeGameObjectMaterial (h.gameObject, WhiteMaterial);
+				CommonUtils.ChangeGameObjectMaterial(h.gameObject, WhiteMaterial);
 		}
 
 		// show / hide human bodies
@@ -230,19 +232,20 @@ public class Tracker : MonoBehaviour
 		if (ShowHumanBodies != -1 && !_humans.ContainsKey (ShowHumanBodies))
 			ShowHumanBodies = -1;
 
-		foreach (var h in _humans.Values)
+		foreach (Human h in _humans.Values)
         {
-			var humanCollider = h.gameObject.GetComponent<CapsuleCollider> ();
-			if (humanCollider != null)
-				humanCollider.enabled = (ShowHumanBodies == -1);
+			CapsuleCollider collider = h.gameObject.GetComponent<CapsuleCollider> ();
+			if (collider != null)
+				collider.enabled = (ShowHumanBodies == -1);
 
 			foreach (Transform child in h.gameObject.transform)
             {
 				if (child.gameObject.GetComponent<Renderer> () != null)
 					child.gameObject.GetComponent<Renderer> ().enabled = (ShowHumanBodies == -1);
 			}
-
-			foreach (var b in h.bodies) {
+            
+			foreach (SensorBody b in h.bodies)
+            {
 				b.gameObject.GetComponent<Renderer> ().enabled = (ShowHumanBodies == h.ID);
 			}
 		}
@@ -270,236 +273,176 @@ public class Tracker : MonoBehaviour
         }
     }
 
-    private void MergeHumans ()
-	{
-		var aloneBodies = new List<SensorBody> ();
+    private void MergeHumans()
+    {
+        List<SensorBody> alone_bodies = new List<SensorBody>();
 
-		// refresh existing bodies
-		foreach (Sensor s in Sensors.Values)
+        // refresh existing bodies
+        foreach (Sensor s in Sensors.Values)
         {
-			if (s.Active)
+            if (s.Active)
             {
-				foreach (KeyValuePair<string, SensorBody> sensorBody in s.bodies)
+                foreach (KeyValuePair<string, SensorBody> sensorBody in s.bodies)
                 {
-					bool alone = true;
+                    bool alone = true;
 
-					foreach (KeyValuePair<int, Human> h in _humans)
-					{
-					    SensorBody bodyToRemove = null;
-						foreach (SensorBody humanBody in h.Value.bodies)
-                        {
-							if (sensorBody.Value.sensorID == humanBody.sensorID && sensorBody.Value.ID == humanBody.ID)
-                            {
-                                //************* NEW DM STUFF *******************
-                                // check body distance from other human bodies
-                                int nFarBodies = 0;
-                                foreach (SensorBody b in h.Value.bodies)
-                                {
-                                    if (CalcHorizontalDistance(b.WorldPosition, humanBody.WorldPosition) >
-                                        TrackerProperties.Instance.MergeDistance)
-                                    {
-                                        nFarBodies++;
-                                    }
-                                }
-                                if (h.Value.bodies.Count > 1 && nFarBodies == (h.Value.bodies.Count - 1))
-                                {
-                                    bodyToRemove = humanBody;
-                                    alone = false;
-                                    break;
-                                }
-                                else
-                                //************* END DM STUFF *******************
-                                {
-
-                                    humanBody.LocalPosition = sensorBody.Value.LocalPosition;
-                                    humanBody.lastUpdated = sensorBody.Value.lastUpdated;
-                                    humanBody.updated = sensorBody.Value.updated;
-
-                                    alone = false;
-                                    break;
-                                }
-                            }
-						}
-                        //************* NEW DM STUFF *******************
-					    if (bodyToRemove != null)
-					    {
-					        h.Value.bodies.Remove(bodyToRemove);
-					        break;
-					    }
-                        //************* END DM STUFF *******************
-                        if (!alone)
-							break;
-					}
-
-					if (alone)
-						aloneBodies.Add (sensorBody.Value);
-				}
-			}
-		}
-
-		// refresh existing humans
-		foreach (KeyValuePair<int, Human> h in _humans)
-        {
-			Vector3 position = new Vector3 ();
-			int numberOfBodies = 0;
-			List<SensorBody> deadBodies = new List<SensorBody> ();
-
-			foreach (SensorBody b in h.Value.bodies)
-            {
-				if (b.updated && Sensors [b.sensorID].Active)
-					position = (position * (float)numberOfBodies++ + b.WorldPosition) / (float) numberOfBodies;
-				else
-					deadBodies.Add (b);
-			}
-
-			foreach (SensorBody b in deadBodies) {
-				h.Value.bodies.Remove (b);
-			}
-
-			if (h.Value.bodies.Count == 0) {
-				h.Value.TimeOfDeath = DateTime.Now;
-				_deadHumans.Add (h.Value);
-			} else {
-				h.Value.Position = position;
-			}
-		}
-		foreach (Human h in _deadHumans) {
-			_humans.Remove (h.ID);
-		}
-
-		// new bodies
-		foreach (var b in aloneBodies)
-        {
-			var hasHuman = false;
-
-			// try to fit in existing humans
-			foreach (KeyValuePair<int, Human> h in _humans)
-            {
-                //************* NEW DM STUFF *******************
-                // if the human has a body from the same sensor it cannot have another
-                var canHaveThisBody = true;
-                foreach (SensorBody humanBody in h.Value.bodies)
-                {
-                    if (humanBody.sensorID == b.sensorID)
+                    foreach (KeyValuePair<int, Human> h in _humans)
                     {
-                        canHaveThisBody = false;
+                        foreach (SensorBody humanBody in h.Value.bodies)
+                        {
+                            if (sensorBody.Value.sensorID == humanBody.sensorID && sensorBody.Value.ID == humanBody.ID)
+                            {
+                                humanBody.LocalPosition = sensorBody.Value.LocalPosition;
+                                humanBody.lastUpdated = sensorBody.Value.lastUpdated;
+                                humanBody.updated = sensorBody.Value.updated;
+                                alone = false;
+                                break;
+                            }
+                        }
+                        if (!alone) break;
+                    }
+                    if (alone) alone_bodies.Add(sensorBody.Value);
+                }
+            }
+        }
+
+        // refresh existing humans
+        foreach (KeyValuePair<int, Human> h in _humans)
+        {
+
+            Vector3 position = new Vector3();
+            int numberOfBodies = 0;
+            List<SensorBody> deadBodies = new List<SensorBody>();
+            foreach (SensorBody b in h.Value.bodies)
+            {
+                if (b.updated && Sensors[b.sensorID].Active)
+                    position = (position * (float) numberOfBodies++ + b.WorldPosition) / (float) numberOfBodies;
+                else
+                    deadBodies.Add(b);
+            }
+            
+            foreach (SensorBody b in deadBodies)
+            {
+                h.Value.bodies.Remove(b);
+            }
+            
+            if (h.Value.bodies.Count == 0)
+            {
+                h.Value.TimeOfDeath = DateTime.Now;
+                _deadHumans.Add(h.Value);
+            }
+            else
+            {
+                h.Value.Position = position;
+            }
+        }
+
+        foreach (Human h in _deadHumans)
+        {
+            _humans.Remove(h.ID);
+        }
+
+        // new bodies
+        foreach (SensorBody b in alone_bodies)
+        {
+            bool hasHuman = false;
+            // try to fit in existing humans
+            foreach (KeyValuePair<int, Human> h in _humans)
+            {
+                if (CalcHorizontalDistance(b.WorldPosition, h.Value.Position) < TrackerProperties.Instance.MergeDistance)
+                {
+                    h.Value.Position = (h.Value.Position * (float)h.Value.bodies.Count + b.WorldPosition) / (float)(h.Value.bodies.Count + 1);
+                    h.Value.bodies.Add(b);
+                    hasHuman = true;
+                    break;
+                }
+            }
+
+            if (!hasHuman)
+            {
+                // try to fit in dead humans
+                foreach (Human h in _deadHumans)
+                {
+                    if (CalcHorizontalDistance(b.WorldPosition, h.Position) < TrackerProperties.Instance.MergeDistance)
+                    {
+                        h.Position = (h.Position * (float)h.bodies.Count + b.WorldPosition) / (float)(h.bodies.Count + 1);
+                        h.bodies.Add(b);
+                        hasHuman = true;
                         break;
                     }
                 }
-                if (!canHaveThisBody)
-                    continue;
-                //************* END DM STUFF *******************
-
-                if (CalcHorizontalDistance (b.WorldPosition, h.Value.Position) < TrackerProperties.Instance.MergeDistance)
+                if (!hasHuman)
                 {
-					h.Value.Position = (h.Value.Position * (float)h.Value.bodies.Count + b.WorldPosition) / (float)(h.Value.bodies.Count + 1);
-					h.Value.bodies.Add (b);
-					hasHuman = true;
-					break;
-				}
-			}
-
-			if (!hasHuman) {
-				// try to fit in dead humans
-				foreach (Human h in _deadHumans) {
-					if (CalcHorizontalDistance (b.WorldPosition, h.Position) < TrackerProperties.Instance.MergeDistance) {
-						h.Position = (h.Position * (float)h.bodies.Count + b.WorldPosition) / (float)(h.bodies.Count + 1);
-						h.bodies.Add (b);
-						hasHuman = true;
-						break;
-					}
-				}
-
-				if (!hasHuman) {
-					// create new human
-					Human h = new Human ((GameObject)Instantiate (Resources.Load ("Prefabs/Human")), this);
-
-					h.bodies.Add (b);
-					h.Position = b.WorldPosition;
-
-					_humans [h.ID] = h;
-				}
-			}
-		}
-
-		// bring back to life selected dead humans
-		List<Human> undeadHumans = new List<Human> ();
-		foreach (Human h in _deadHumans)
+                    // create new human
+                    Human h = new Human((GameObject)Instantiate(Resources.Load("Prefabs/Human")), this);
+                    h.bodies.Add(b);
+                    h.Position = b.WorldPosition;
+                    _humans[h.ID] = h;
+                }
+            }
+        }
+        
+        // bring back to life selected dead humans
+        List<Human> undeadHumans = new List<Human>();
+        foreach (Human h in _deadHumans)
         {
-			if (h.bodies.Count > 0)
+            if (h.bodies.Count > 0)
             {
-				_humans [h.ID] = h;
-				undeadHumans.Add (h);
-			}
-		}
-		foreach (Human h in undeadHumans)
-        {
-			_deadHumans.Remove (h);
-		}
+                _humans[h.ID] = h;
+                undeadHumans.Add(h);
+            }
+        }
 
-		// merge humans
-		List<Human> mergedHumans = new List<Human> ();
-		foreach (KeyValuePair<int, Human> h1 in _humans)
+        foreach (Human h in undeadHumans)
         {
-			foreach (KeyValuePair<int, Human> h2 in _humans)
+            _deadHumans.Remove(h);
+        }
+        
+        // merge humans
+
+        List<Human> mergedHumans = new List<Human>();
+        foreach (KeyValuePair<int, Human> h1 in _humans)
+        {
+            foreach (KeyValuePair<int, Human> h2 in _humans)
             {
-				if (h1.Value.ID != h2.Value.ID && !mergedHumans.Contains (h2.Value))
+                if (h1.Value.ID != h2.Value.ID && !mergedHumans.Contains(h2.Value))
                 {
-					if (CalcHorizontalDistance (h1.Value.Position, h2.Value.Position) < TrackerProperties.Instance.MergeDistance)
+                    if (CalcHorizontalDistance(h1.Value.Position, h2.Value.Position) < TrackerProperties.Instance.MergeDistance)
                     {
-                        //************* NEW DM STUFF *******************
-                        // if a human has body from a sensor, the other cannot have a body from the same sensor
-                        bool commonSensor = false;
-                        foreach (SensorBody h1body in h1.Value.bodies)
+                        Vector3 position = (h1.Value.Position * (float)h1.Value.bodies.Count + h2.Value.Position * (float)h2.Value.bodies.Count) / (float)(h1.Value.bodies.Count + h2.Value.bodies.Count);
+                        
+                        if (h1.Value.ID < h2.Value.ID)
                         {
-                            foreach (SensorBody h2body in h2.Value.bodies)
+                            h1.Value.Position = position;
+                            foreach (SensorBody b in h2.Value.bodies)
                             {
-                                if (h1body.sensorID == h2body.sensorID)
-                                {
-                                    commonSensor = true;
-                                    break;
-                                }
+                                h1.Value.bodies.Add(b);
                             }
-                            if(commonSensor)
-                                break;
+                            mergedHumans.Add(h2.Value);
                         }
-                        if (commonSensor)
-                        {
-                            continue;
-                        }
-                        //************* END DM STUFF *******************
-
-                        var position = (h1.Value.Position * (float) h1.Value.bodies.Count + h2.Value.Position * (float)h2.Value.bodies.Count) / (float)(h1.Value.bodies.Count + h2.Value.bodies.Count);
-
-						if (h1.Value.ID < h2.Value.ID) {
-							h1.Value.Position = position;
-							foreach (var b in h2.Value.bodies)
-                            {
-								h1.Value.bodies.Add (b);
-							}
-							mergedHumans.Add (h2.Value);
-						}
                         else
                         {
-							h2.Value.Position = position;
-							foreach (var b in h1.Value.bodies)
+                            h2.Value.Position = position;
+                            foreach (SensorBody b in h1.Value.bodies)
                             {
-								h2.Value.bodies.Add (b);
-							}
-							mergedHumans.Add (h1.Value);
-						}
-						break;
-					}
-				}
-			}
-		}
-		foreach (var h in mergedHumans)
+                                h2.Value.bodies.Add(b);
+                            }
+
+                            mergedHumans.Add(h1.Value);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+
+        foreach (Human h in mergedHumans)
         {
-			_humansToKill.Add (h);
-			_humans.Remove (h.ID);
-		}
-	}
-    
+            _humansToKill.Add(h);
+            _humans.Remove(h.ID);
+        }
+    }
+  
     private static float CalcHorizontalDistance (Vector3 a, Vector3 b)
 	{
 		var c = new Vector3 (a.x, 0, a.z);
@@ -517,12 +460,12 @@ public class Tracker : MonoBehaviour
 		_udpBroadcast.RemoveUnicast (key);
 	}
 
-    //FOR TCP
+    ////FOR TCP
 
     internal void SetNewCloud(string kinectId, byte[] data, int size, uint id)
     {
         // tirar o id da mensagem que é um int
-        
+
         if (Sensors.ContainsKey(kinectId))
         {
             Sensors[kinectId].lastCloud.SetPoints(data, 0, id, size);
@@ -532,17 +475,16 @@ public class Tracker : MonoBehaviour
 
     internal void SetNewCloud (CloudMessage cloud)
 	{
-        //if (!Sensors.ContainsKey (cloud.KinectId)) {
-        //	Vector3 position = new Vector3 (Mathf.Ceil (Sensors.Count / 2.0f) * (Sensors.Count % 2 == 0 ? -1.0f : 1.0f), 1, 0);
-        //          Sensors [cloud.KinectId] = new Sensor (cloud.KinectId, (GameObject)Instantiate (Resources.Load ("Prefabs/KinectSensorPrefab"), position, Quaternion.identity));
-        //}
-        //      Sensors[cloud.KinectId].lastCloudupdateCloud (cloud);
-
-        int step = cloud.HeaderSize+3; // TMA: Size in bytes of heading: "CloudMessage" + L0 + 2 * L1. Check the UDPListener.cs from the Client.
+	    //if (!Sensors.ContainsKey (cloud.KinectId)) {
+	    //	Vector3 position = new Vector3 (Mathf.Ceil (Sensors.Count / 2.0f) * (Sensors.Count % 2 == 0 ? -1.0f : 1.0f), 1, 0);
+	    //          Sensors [cloud.KinectId] = new Sensor (cloud.KinectId, (GameObject)Instantiate (Resources.Load ("Prefabs/KinectSensorPrefab"), position, Quaternion.identity));
+	    //}
+	    //      Sensors[cloud.KinectId].lastCloudupdateCloud (cloud);
+        int step = cloud.HeaderSize + 3; // TMA: Size in bytes of heading: "CloudMessage" + L0 + 2 * L1. Check the UDPListener.cs from the Client.
         string[] pdu = cloud.Message.Split(MessageSeparators.L1);
-       
 
-        string kinectId = pdu[0]; 
+        string kinectId = pdu[0];
+        //>>>>>>> refs/remotes/mauriciosousa/master
         uint  id = uint.Parse(pdu[1]);
         step += pdu[0].Length + pdu[1].Length;
 
@@ -654,38 +596,22 @@ public class Tracker : MonoBehaviour
 		n.NotifySend (NotificationLevel.INFO, "Calibration complete", "Config file updated", 5000);
 	}
 
-    internal Vector3 GetJointPosition(int id, JointType joint)
+    internal Vector3 GetHandScreenSpace(int id, HandScreenSpace type)
     {
-        var h = _humans[id];
+        Human h = _humans[id];
+        SensorBody s = h.bodies[0];
 
-        var bestBody   = h.bodies[0];
-        var confidence = bestBody.Confidence;
-        var lastSensorConfidence = 0;
-        SensorBody lastSensorBody = null;
-
-        foreach (var b in h.bodies)
-        {
-            var bConfidence = b.Confidence;
-            if (bConfidence > confidence)
-            {
-                confidence = bConfidence;
-                bestBody = b;
-            }
-
-            if (b.sensorID == h.SeenBySensor)
-            {
-                lastSensorConfidence = bConfidence;
-                lastSensorBody = b;
-            }
-        }
-
-        if (lastSensorBody == null || (bestBody.sensorID != h.SeenBySensor && confidence > (lastSensorConfidence + 1)))
-            h.SeenBySensor = bestBody.sensorID;
-        else
-            bestBody = lastSensorBody;
-
-        return Sensors[bestBody.sensorID].PointSensorToScene(CommonUtils.PointKinectToUnity(bestBody.skeleton.JointsPositions[joint]));
+        return s.skeleton.HandScreenPositions[type];
     }
+
+    ///// Versão usada no ramo Master
+    internal string GetHandState(int id, BodyPropertiesTypes type)
+    {
+        Human h = _humans[id];
+        SensorBody s = h.bodies[0];
+        return s.skeleton.BodyProperties[type];
+    }
+
 
     internal Vector3 GetJointPosition(int id, JointType joint, Vector3 garbage)
     {
@@ -720,15 +646,6 @@ public class Tracker : MonoBehaviour
         return Sensors[bestBody.sensorID].PointSensorToScene(CommonUtils.PointKinectToUnity(bestBody.skeleton.JointsPositions[joint]));
         
     }
-
-    ///// Versão usada no ramo Master
-    internal string GetHandState(int id, BodyPropertiesTypes type)
-    {
-        Human      h = _humans[id];
-        SensorBody s = h.bodies[0];
-
-        return s.skeleton.BodyProperties[type];
-    }
     
     internal bool HumanHasBodies (int id)
 	{
@@ -743,6 +660,7 @@ public class Tracker : MonoBehaviour
 		ConfigProperties.WriteComment (filePath, "Config File created in " + DateTime.Now.ToString ("yyyy-MM-dd HH:mm:ss"));
 
 		// save properties
+
 		ConfigProperties.Save (filePath, "udp.listenport",              "" + TrackerProperties.Instance.ListenPort);
 		ConfigProperties.Save (filePath, "udp.broadcastport",           "" + TrackerProperties.Instance.BroadcastPort);
         ConfigProperties.Save (filePath, "udp.sensor.listener",         "" + TrackerProperties.Instance.SensorListenPort);
@@ -752,6 +670,17 @@ public class Tracker : MonoBehaviour
         
 		// save sensors
 		foreach (Sensor s in Sensors.Values)
+//=======
+//		ConfigProperties.save (filePath, "udp.listenport", "" + TrackerProperties.Instance.listenPort);
+//		ConfigProperties.save (filePath, "udp.broadcastport", "" + TrackerProperties.Instance.broadcastPort);
+//        ConfigProperties.save (filePath, "udp.sensor.listener", "" + TrackerProperties.Instance.sensorListenPort);
+//        ConfigProperties.save (filePath, "udp.sendinterval", "" + TrackerProperties.Instance.sendInterval);
+//		ConfigProperties.save (filePath, "tracker.mergedistance", "" + TrackerProperties.Instance.mergeDistance);
+//		ConfigProperties.save (filePath, "tracker.confidencethreshold", "" + TrackerProperties.Instance.confidenceTreshold);
+
+//		// save sensors
+//		foreach (Sensor s in _sensors.Values)
+//>>>>>>> refs/remotes/mauriciosousa/master
         {
 			if (s.Active)
             {
@@ -762,19 +691,30 @@ public class Tracker : MonoBehaviour
 		}
 	}
     
-    private void _loadConfig ()
+    private void LoadConfig ()
 	{
 		var filePath = Application.dataPath + "/" + TrackerProperties.Instance.ConfigFilename;
 
 		var port = ConfigProperties.Load (filePath, "udp.listenport");
 		if (port != "") {
 			TrackerProperties.Instance.ListenPort = int.Parse (port);
+
+		//string port = ConfigProperties.load (filePath, "udp.listenport");
+		//if (port != "")
+  //      {
+		//	TrackerProperties.Instance.listenPort = int.Parse (port);
 		}
 		ResetListening ();
 
 		port = ConfigProperties.Load (filePath, "udp.broadcastport");
-		if (port != "") {
+		if (port != "")
+        {
 			TrackerProperties.Instance.BroadcastPort = int.Parse (port);
+        //=======
+		//port = ConfigProperties.load (filePath, "udp.broadcastport");
+		//if (port != "")
+        // {
+		//	TrackerProperties.Instance.broadcastPort = int.Parse (port);
 		}
 		ResetBroadcast ();
 ////<<<<<<< HEAD
@@ -813,12 +753,35 @@ public class Tracker : MonoBehaviour
 			    KalmanFilterFloat.Gain = float.Parse (aux);
 		    }
         */
+//=======
+//        string aux = ConfigProperties.load (filePath, "tracker.mergedistance");
+//		if (aux != "")
+//        {
+//			TrackerProperties.Instance.mergeDistance = float.Parse (aux);
+//		}
+
+//		aux = ConfigProperties.load (filePath, "tracker.confidencethreshold");
+//		if (aux != "")
+//        {
+//			TrackerProperties.Instance.confidenceTreshold = int.Parse (aux);
+//		}
+
+//		aux = ConfigProperties.load (filePath, "udp.sendinterval");
+//		if (aux != "")
+//        {
+//			TrackerProperties.Instance.sendInterval = int.Parse (aux);
+//		}
+//>>>>>>> refs/remotes/mauriciosousa/master
 	}
     
-    private void _loadSavedSensors ()
+    private void LoadSavedSensors ()
 	{
 		foreach (var line in ConfigProperties.LoadKinects(Application.dataPath + "/" + TrackerProperties.Instance.ConfigFilename)) {
 			var values = line.Split (';');
+
+		//foreach (String line in ConfigProperties.loadKinects(Application.dataPath + "/" + TrackerProperties.Instance.configFilename))
+  //      {
+		//	string[] values = line.Split (';');
 
 			var id = values [0];
 
@@ -854,7 +817,9 @@ public class Tracker : MonoBehaviour
     
     public void HideAllClouds ()
 	{
-		foreach (var s in Sensors.Values)
+		//foreach (var s in Sensors.Values)
+
+		foreach (Sensor s in _sensors.Values)
         {
 			s.lastCloud.hideFromView ();
 		}
@@ -923,15 +888,24 @@ public class Tracker : MonoBehaviour
     public void ProcessAvatarMessage(AvatarMessage av)
     {
         UdpClient udp = new UdpClient();
-        //Calibration
-       // string message = av.createCalibrationMessage(_sensors);
-        string message = av.createCalibrationMessage(Sensors);
+
+        // Calibration
+        // string message = av.createCalibrationMessage(_sensors);
+        // Calibration
+        // string message = av.createCalibrationMessage(_sensors);
+        string message = av.createCalibrationMessage(_sensors);
+
         byte[] data = Encoding.UTF8.GetBytes(message);
         IPEndPoint remoteEndPoint = new IPEndPoint(av.ReplyIpAddress, av.Port);
         Debug.Log("Sent reply with calibration data " + message);
         udp.Send(data, data.Length, remoteEndPoint);
-        //broadcast
+
+
+        // Broadcast
+        // string message2 = CloudMessage.createRequestMessage(av.mode, av.replyIPAddress.ToString(), av.port);
+        // Broadcast
         string message2 = CloudMessage.CreateRequestMessage(av.Mode, av.ReplyIpAddress.ToString(), av.Port);
+      
         byte[] data2 = Encoding.UTF8.GetBytes(message2);
         //IPEndPoint remoteEndPoint2 = new IPEndPoint(IPAddress.Broadcast, TrackerProperties.Instance.ListenPort + 1);
         //<<<<<<< HEAD
@@ -969,7 +943,7 @@ public class Tracker : MonoBehaviour
                 
                 gameObject.GetComponent<DoNotify>().NotifySend(NotificationLevel.INFO, "New Surface", "Surface " + s.name + " added", 5000);
 
-                s.saveSurface(bl, br, tl, tr);
+                s.SaveSurface(bl, br, tl, tr);
 
                 MeshFilter meshFilter = (MeshFilter)s.surfaceGO.AddComponent(typeof(MeshFilter));
                 Mesh m = new Mesh();
@@ -992,9 +966,6 @@ public class Tracker : MonoBehaviour
                 meshFilter.mesh = m;
                 MeshRenderer renderer = s.surfaceGO.AddComponent(typeof(MeshRenderer)) as MeshRenderer;
                 renderer.material = SurfaceMaterial;
-                MeshCollider collider = s.surfaceGO.AddComponent(typeof(MeshCollider)) as MeshCollider;
-
-
             }
         }
     }
@@ -1132,7 +1103,7 @@ public class Tracker : MonoBehaviour
 
     private string GetKnees(Human h)
     {
-        // CommonUtils.convertVectorToStringRPC
+        // CommonUtils.ConvertVectorToStringRPC
         // if (!_humans.ContainsKey(h1)) return null;
 
         if (h == null || !_humans.ContainsValue(h)) return null;
@@ -1147,8 +1118,8 @@ public class Tracker : MonoBehaviour
         var meanKneeRight = GetMeanList(RightKneesInfo);
         var meanKneeLeft  = GetMeanList(LeftKneesInfo);
 
-        var stringMeanKneeRight = meanKneeRight == null ? "null" : CommonUtils.convertVectorToStringRPC(meanKneeRight.Value);
-        var stringMeanKneeLeft  = meanKneeLeft  == null ? "null" : CommonUtils.convertVectorToStringRPC(meanKneeLeft.Value);
+        var stringMeanKneeRight = meanKneeRight == null ? "null" : CommonUtils.ConvertVectorToStringRPC(meanKneeRight.Value);
+        var stringMeanKneeLeft  = meanKneeLeft  == null ? "null" : CommonUtils.ConvertVectorToStringRPC(meanKneeLeft.Value);
 
         mensagem +=
             "MeanKneeRight" + MessageSeparators.SET + stringMeanKneeRight + MessageSeparators.L2 +
@@ -1157,8 +1128,8 @@ public class Tracker : MonoBehaviour
         var meanTrackKneeRight = GetMeanTrackList(RightKneesInfo);
         var meanTrackKneeLeft = GetMeanTrackList(LeftKneesInfo);
 
-        var stringMeanTrackKneeRight = meanTrackKneeRight == null ? "null" : CommonUtils.convertVectorToStringRPC(meanTrackKneeRight.Value);
-        var stringMeanTrackKneeLeft = meanTrackKneeLeft == null ? "null" : CommonUtils.convertVectorToStringRPC(meanTrackKneeLeft.Value);
+        var stringMeanTrackKneeRight = meanTrackKneeRight == null ? "null" : CommonUtils.ConvertVectorToStringRPC(meanTrackKneeRight.Value);
+        var stringMeanTrackKneeLeft = meanTrackKneeLeft == null ? "null" : CommonUtils.ConvertVectorToStringRPC(meanTrackKneeLeft.Value);
 
         mensagem +=
             MessageSeparators.L2 +
@@ -1206,6 +1177,82 @@ public class Tracker : MonoBehaviour
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*
+ * 
+//=======
+    //		if (showHumanBodies == -1)
+    //        {
+    //			foreach (Human h in _humans.Values)
+    //            {
+    //				//GUI.Label(new Rect(10, Screen.height - (n++ * 50), 1000, 50), "Human " + h.ID + " as seen by " + h.seenBySensor);
+    //>>>>>>> refs/remotes/mauriciosousa/master
+     
+    //internal Vector3 GetJointPosition(int id, JointType joint)
+    //{
+    //    var h = _humans[id];
+
+    //    var bestBody = h.bodies[0];
+    //    var confidence = bestBody.Confidence;
+    //    var lastSensorConfidence = 0;
+    //    SensorBody lastSensorBody = null;
+
+    //    foreach (var b in h.bodies)
+    //    {
+    //        var bConfidence = b.Confidence;
+    //        if (bConfidence > confidence)
+    //        {
+    //            confidence = bConfidence;
+    //            bestBody = b;
+    //        }
+
+    //        if (b.sensorID == h.SeenBySensor)
+    //        {
+    //            lastSensorConfidence = bConfidence;
+    //            lastSensorBody = b;
+    //        }
+    //    }
+    //}
+
+
+
+    internal Vector3 getJointPosition (int id, JointType joint, Vector3 garbage)
+	{
+		Human h = _humans [id];
+		SensorBody bestBody = h.bodies [0];
+		int confidence = bestBody.Confidence;
+		int lastSensorConfidence = 0;
+		SensorBody lastSensorBody = null;
+
+		foreach (SensorBody b in h.bodies)
+        {
+			int bConfidence = b.Confidence;
+			if (bConfidence > confidence)
+            {
+				confidence = bConfidence;
+				bestBody = b;
+			}
+
+			if (b.sensorID == h.SeenBySensor)
+            {
+				lastSensorConfidence = bConfidence;
+				lastSensorBody = b;
+			}
+		}
+        if (lastSensorBody == null || (bestBody.sensorID != h.SeenBySensor && confidence > (lastSensorConfidence + 1)))
+            h.SeenBySensor = bestBody.sensorID;
+        else
+            bestBody = lastSensorBody;
+
+        return Sensors[bestBody.sensorID].PointSensorToScene(CommonUtils.PointKinectToUnity(bestBody.skeleton.JointsPositions[joint]));
+    }
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     internal string GetHandState(int id, BodyPropertiesTypes type)
+    {
+        Human      h = _humans[id];
+        SensorBody s = h.bodies[0];
+
+        return s.skeleton.BodyProperties[type];
+    }
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     
 	    //ConfigProperties.save (filePath, "udp.sendinterval", "" + TrackerProperties.Instance.sendInterval);
@@ -1232,12 +1279,7 @@ public class Tracker : MonoBehaviour
         //foreach (Sensor s in Sensors.Values)
 
 
-*/
-
-
-
-
-/*
+////////////////////////////////////////////////////////////////////////////////
  * 
 
 //<<<<<<< HEAD
@@ -1396,3 +1438,455 @@ public Material WhiteMaterial;
  */
 
 
+// =======
+//}
+
+
+/*
+ * 
+ * 
+ * 
+ * 
+//<<<<<<< HEAD
+//		foreach (var h in _humans.Values)
+//        {
+//			var humanCollider = h.gameObject.GetComponent<CapsuleCollider> ();
+//			if (humanCollider != null)
+//				humanCollider.enabled = (ShowHumanBodies == -1);
+//=======
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ <<<<<<< HEAD
+					{
+					    SensorBody bodyToRemove = null;
+						foreach (SensorBody humanBody in h.Value.bodies)
+                        {
+							if (sensorBody.Value.sensorID == humanBody.sensorID && sensorBody.Value.ID == humanBody.ID)
+                            {
+                                //************* NEW DM STUFF *******************
+                                // check body distance from other human bodies
+                                int nFarBodies = 0;
+                                foreach (SensorBody b in h.Value.bodies)
+                                {
+                                    if (CalcHorizontalDistance(b.WorldPosition, humanBody.WorldPosition) >
+                                        TrackerProperties.Instance.MergeDistance)
+                                    {
+                                        nFarBodies++;
+                                    }
+                                }
+                                if (h.Value.bodies.Count > 1 && nFarBodies == (h.Value.bodies.Count - 1))
+                                {
+                                    bodyToRemove = humanBody;
+                                    alone = false;
+                                    break;
+                                }
+                                else
+                                //************* END DM STUFF *******************
+                                {
+
+                                    humanBody.LocalPosition = sensorBody.Value.LocalPosition;
+                                    humanBody.lastUpdated = sensorBody.Value.lastUpdated;
+                                    humanBody.updated = sensorBody.Value.updated;
+
+                                    alone = false;
+                                    break;
+                                }
+                            }
+=======
+     ////////////////////////////////////////
+     
+        // private float calcHorizontalDistance (Vector3 a, Vector3 b)
+
+              */
+
+
+
+
+
+/*
+ //<<<<<<< HEAD
+//			foreach (var b in h.bodies)
+//            {
+//				b.gameObject.GetComponent<Renderer> ().enabled = (ShowHumanBodies == h.ID);
+//=======
+     //<<<<<<< HEAD
+//		foreach (var h in _humans.Values)
+//        {
+//			if (h.SeenBySensor != null && colorHumans)
+//				CommonUtils.ChangeGameObjectMaterial (h.gameObject, Sensors [h.SeenBySensor].Material);
+//			else if (!ColorHumans)
+//				CommonUtils.ChangeGameObjectMaterial (h.gameObject, WhiteMaterial);
+//=======
+     
+     
+//////////////////////////////////////////////////////////////
+    // public Dictionary<string, Sensor> Sensors { get; private set; }
+    // public CalibrationProcess CalibrationStatus { get; set; }
+     
+       // private List<Surface> _surfaces;
+
+    //public string[] UnicastClients
+    //{
+    //    get
+    //    {
+    //        return _udpBroadcast.UnicastClients;
+    //    }
+    //}
+     
+     //<<<<<<< HEAD
+//		foreach (var s in Sensors.Values)
+//        {
+//			s.UpdateBodies ();
+//=======
+     	// foreach (var h in _humansToKill)
+     
+
+
+
+
+    // <<<<<<< HEAD
+	 
+        foreach (var h in _humans.Values)
+        {
+
+            IdList.Add(h.ID.ToString()); // "SpecialHuman " +
+            idIntList.Add(h.ID);
+            // udpate Human Skeleton
+            h.UpdateSkeleton ();
+            
+            // get PDU
+            try
+            {
+                strToSend += MessageSeparators.L1 + h.GetPdu();
+                //GetKnees(h);
+                // strToSend += SetCentro();
+            }
+			catch (Exception e)
+            {
+                Debug.Log(e.Message + "\n" + e.StackTrace + "\n");
+            }
+		}
+
+		foreach (var h in _deadHumans)
+        {
+            try
+            {
+                strToSend += MessageSeparators.L1 + h.GetPdu(); 
+            }
+            catch (Exception e)
+            {
+                Debug.Log(e.Message + "\n" + e.StackTrace);
+            }
+// =======
+
+
+
+
+
+
+     */
+///////////////////////////////////////////////////////////////////
+
+
+
+
+/*
+SensorBody bodyToRemove = null;
+                  foreach (SensorBody humanBody in h.Value.bodies)
+                  {
+                      if (sensorBody.Value.sensorID == humanBody.sensorID && sensorBody.Value.ID == humanBody.ID)
+                      {
+                          //************* NEW DM STUFF *******************
+                          // check body distance from other human bodies
+                          int nFarBodies = 0;
+                          foreach (SensorBody b in h.Value.bodies)
+                          {
+                              if (CalcHorizontalDistance(b.WorldPosition, humanBody.WorldPosition) >
+                                  TrackerProperties.Instance.MergeDistance)
+                              {
+                                  nFarBodies++;
+                              }
+                          }
+                          if (h.Value.bodies.Count > 1 && nFarBodies == (h.Value.bodies.Count - 1))
+                          {
+                              bodyToRemove = humanBody;
+                              alone = false;
+                              break;
+                          }
+                          else
+                          //************* END DM STUFF *******************
+                          {
+
+                              humanBody.LocalPosition = sensorBody.Value.LocalPosition;
+                              humanBody.lastUpdated = sensorBody.Value.lastUpdated;
+                              humanBody.updated = sensorBody.Value.updated;
+
+                              alone = false;
+                              break;
+                          }
+                      }
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+//    private void MergeHumans()
+//    {
+//        var aloneBodies = new List<SensorBody>();
+
+//        // refresh existing bodies
+//        foreach (Sensor s in Sensors.Values)
+//        {
+//            if (s.Active)
+//            {
+//                foreach (KeyValuePair<string, SensorBody> sensorBody in s.bodies)
+//                {
+//                    bool alone = true;
+//                    foreach (KeyValuePair<int, Human> h in _humans)
+//                    {
+//                        foreach (SensorBody humanBody in h.Value.bodies)
+//                        {
+//                            if (sensorBody.Value.sensorID == humanBody.sensorID && sensorBody.Value.ID == humanBody.ID)
+//                            {
+//                                humanBody.LocalPosition = sensorBody.Value.LocalPosition;
+//                                humanBody.lastUpdated = sensorBody.Value.lastUpdated;
+//                                humanBody.updated = sensorBody.Value.updated;
+
+//                                alone = false;
+//                                break;
+//                            }
+//                        }
+
+
+//                        //if (bodyToRemove != null)
+//                        //{
+//                        //    h.Value.bodies.Remove(bodyToRemove);
+//                        //    break;
+//                        //}
+
+//                        if (!alone)
+//                            break;
+//                    }
+
+//                    if (alone)
+//                        aloneBodies.Add(sensorBody.Value);
+//                }
+//            }
+//        }
+
+//        // refresh existing humans
+//        foreach (KeyValuePair<int, Human> h in _humans)
+//        {
+//            Vector3 position = new Vector3();
+//            int numberOfBodies = 0;
+//            List<SensorBody> deadBodies = new List<SensorBody>();
+
+//            foreach (SensorBody b in h.Value.bodies)
+//            {
+//                if (b.updated && Sensors[b.sensorID].Active)
+//                    position = (position * (float) numberOfBodies++ + b.WorldPosition) / (float) numberOfBodies;
+//                else
+//                    deadBodies.Add(b);
+//            }
+
+//            foreach (SensorBody b in deadBodies)
+//            {
+//                h.Value.bodies.Remove(b);
+//            }
+
+//            if (h.Value.bodies.Count == 0)
+//            {
+//                h.Value.TimeOfDeath = DateTime.Now;
+//                _deadHumans.Add(h.Value);
+////=======
+////			if (h.Value.bodies.Count == 0)
+////            {
+////				h.Value.timeOfDeath = DateTime.Now;
+//            }
+//            else
+//            {
+//                h.Value.Position = position;
+//            }
+//        }
+//        foreach (Human h in _deadHumans)
+//        {
+//            _humans.Remove(h.ID);
+//        }
+
+//        // new bodies
+//        foreach (var b in aloneBodies)
+//        {
+//            var hasHuman = false;
+//            //=======
+//            //		foreach (SensorBody b in alone_bodies)
+//            //        {
+//            //			bool hasHuman = false;
+//            // try to fit in existing humans
+//            foreach (KeyValuePair<int, Human> h in _humans)
+//            {
+//                //<<<<<<< HEAD
+//                //************* NEW DM STUFF *******************
+//                // if the human has a body from the same sensor it cannot have another
+//                var canHaveThisBody = true;
+//                foreach (SensorBody humanBody in h.Value.bodies)
+//                {
+//                    if (humanBody.sensorID == b.sensorID)
+//                    {
+//                        canHaveThisBody = false;
+//                        break;
+//                    }
+//                }
+//                if (!canHaveThisBody)
+//                    continue;
+//                //************* END DM STUFF *******************
+
+//                if (CalcHorizontalDistance(b.WorldPosition, h.Value.Position) <
+//                    TrackerProperties.Instance.MergeDistance)
+//                    //if (calcHorizontalDistance (b.WorldPosition, h.Value.Position) < TrackerProperties.Instance.mergeDistance)
+
+//                {
+//                    h.Value.Position = (h.Value.Position * (float) h.Value.bodies.Count + b.WorldPosition) /
+//                                       (float) (h.Value.bodies.Count + 1);
+//                    h.Value.bodies.Add(b);
+//                    hasHuman = true;
+//                    break;
+//                }
+//            }
+
+//            if (!hasHuman)
+//            {
+//                // try to fit in dead humans
+//                foreach (Human h in _deadHumans)
+//                {
+//                    if (CalcHorizontalDistance(b.WorldPosition, h.Position) < TrackerProperties.Instance.MergeDistance)
+//                    {
+
+//                        //foreach (Human h in _deadHumans)
+//                        //            {
+//                        //	if (calcHorizontalDistance (b.WorldPosition, h.Position) < TrackerProperties.Instance.mergeDistance)
+//                        //                {
+//                        h.Position = (h.Position * (float) h.bodies.Count + b.WorldPosition) /
+//                                     (float) (h.bodies.Count + 1);
+//                        h.bodies.Add(b);
+//                        hasHuman = true;
+//                        break;
+//                    }
+//                }
+
+//                if (!hasHuman)
+//                {
+//                    // create new human
+//                    Human h = new Human((GameObject) Instantiate(Resources.Load("Prefabs/Human")), this);
+
+//                    h.bodies.Add(b);
+//                    h.Position = b.WorldPosition;
+
+//                    _humans[h.ID] = h;
+//                }
+//            }
+//        }
+
+//        // bring back to life selected dead humans
+//        List<Human> undeadHumans = new List<Human>();
+//        foreach (Human h in _deadHumans)
+//        {
+//            if (h.bodies.Count > 0)
+//            {
+//                _humans[h.ID] = h;
+//                undeadHumans.Add(h);
+//            }
+//        }
+//        foreach (Human h in undeadHumans)
+//        {
+//            _deadHumans.Remove(h);
+//        }
+
+//        // merge humans
+//        List<Human> mergedHumans = new List<Human>();
+//        foreach (KeyValuePair<int, Human> h1 in _humans)
+//        {
+//            foreach (KeyValuePair<int, Human> h2 in _humans)
+//            {
+//                if (h1.Value.ID != h2.Value.ID && !mergedHumans.Contains(h2.Value))
+//                {
+//                    if (CalcHorizontalDistance(h1.Value.Position, h2.Value.Position) <
+//                        TrackerProperties.Instance.MergeDistance)
+//                    {
+//                        //************* NEW DM STUFF *******************
+//                        // if a human has body from a sensor, the other cannot have a body from the same sensor
+//                        bool commonSensor = false;
+//                        foreach (SensorBody h1body in h1.Value.bodies)
+//                        {
+//                            foreach (SensorBody h2body in h2.Value.bodies)
+//                            {
+//                                if (h1body.sensorID == h2body.sensorID)
+//                                {
+//                                    commonSensor = true;
+//                                    break;
+//                                }
+//                            }
+//                            if (commonSensor)
+//                                break;
+//                        }
+//                        if (commonSensor)
+//                        {
+//                            continue;
+//                        }
+//                        //************* END DM STUFF *******************
+
+//                        var position =
+//                            (h1.Value.Position * (float) h1.Value.bodies.Count +
+//                             h2.Value.Position * (float) h2.Value.bodies.Count) /
+//                            (float) (h1.Value.bodies.Count + h2.Value.bodies.Count);
+
+//                        if (CalcHorizontalDistance(h1.Value.Position, h2.Value.Position) <
+//                            TrackerProperties.Instance.MergeDistance)
+//                        {
+//                            Vector3 position =
+//                                (h1.Value.Position * (float) h1.Value.bodies.Count +
+//                                 h2.Value.Position * (float) h2.Value.bodies.Count) /
+//                                (float) (h1.Value.bodies.Count + h2.Value.bodies.Count);
+
+
+//                            if (h1.Value.ID < h2.Value.ID)
+//                            {
+//                                h1.Value.Position = position;
+
+//                                foreach (var b in h2.Value.bodies)
+//                                    //foreach (SensorBody b in h2.Value.bodies)
+//                                {
+//                                    h1.Value.bodies.Add(b);
+//                                }
+//                                mergedHumans.Add(h2.Value);
+
+//                            }
+//                            else
+//                            {
+//                                h2.Value.Position = position;
+//                                foreach (var b in h1.Value.bodies)
+
+
+//                                    //} else
+//                                    //                  {
+//                                    //	h2.Value.Position = position;
+//                                    //	foreach (SensorBody b in h1.Value.bodies)
+//                                {
+//                                    h2.Value.bodies.Add(b);
+//                                }
+//                                mergedHumans.Add(h1.Value);
+//                            }
+//                            break;
+//                        }
+//                    }
+//                }
+//            }
+//            foreach (var h in mergedHumans)
+//                //foreach (Human h in mergedHumans)
+//            {
+//                _humansToKill.Add(h);
+//                _humans.Remove(h.ID);
+//            }
+//        }
+//    }
+*/
