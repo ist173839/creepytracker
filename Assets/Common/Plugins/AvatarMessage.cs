@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 
+//<<<<<<< HEAD:Assets/Common/Plugins/AvatarMessage.cs
 // ReSharper disable once CheckNamespace
 public class AvatarMessage
 {
@@ -13,6 +14,13 @@ public class AvatarMessage
     public int Port;
     // ReSharper disable once FieldCanBeMadeReadOnly.Global
     public int Mode;
+//=======
+//public class AvatarMessage
+//{
+//    public IPAddress replyIPAddress;
+//    public int port;
+//    public int mode;
+//>>>>>>> refs/remotes/mauriciosousa/master:Assets/common/Scripts/AvatarMessage.cs
 
     public AvatarMessage(string message, byte[] receivedBytes)
     {

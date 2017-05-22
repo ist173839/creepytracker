@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -26,11 +25,13 @@ public class PointCloudSimple : MonoBehaviour
     int pointCount;
     int l;
     int h;
+    int _countPack = 0;
 
     Vector3[] posBucket;
     Color[] colBucket;
-    
+
     byte[] buffer;
+
 
     void ReadFileWithColor(string f)
     {
@@ -74,6 +75,7 @@ public class PointCloudSimple : MonoBehaviour
         setToView();
     }
 
+
     [StructLayout(LayoutKind.Explicit)]
     struct UnionArray
     {
@@ -85,7 +87,9 @@ public class PointCloudSimple : MonoBehaviour
 
     }
 
-    int _countPack = 0;
+    //public void setPoints(byte[] receivedBytes, int step, uint newid, int size)
+    //{
+    //int _countPack = 0;
     public void SetPoints(byte[] receivedBytes, int step, uint newid, int size)
     {
         _pointsH = new List<Vector3>();
@@ -310,4 +314,7 @@ public class PointCloudSimple : MonoBehaviour
 //void readFileWithColor(string f)
 
 
- */
+// */
+//=======
+//}
+//>>>>>>> refs/remotes/mauriciosousa/master

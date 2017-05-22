@@ -5,6 +5,7 @@ using Kinect = Windows.Kinect;
 using System;
 using System.Linq;
 
+// ReSharper disable once CheckNamespace
 public static class MessageSeparators
 {
 	public const char L0  = '$'; // header separator

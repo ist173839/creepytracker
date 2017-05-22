@@ -6,7 +6,6 @@
 
 using UnityEngine;
 using System.Collections.Generic;
-using System.Collections;
 using System;
 using System.Linq;
 using Windows.Kinect;
@@ -137,9 +136,12 @@ public class Tracker : MonoBehaviour
 	    //IdIntList      = new List<int>();
 	    IdList = new List<string>();
 	    var  idIntList = new List<int>();
-
-	    if (Input.GetKeyDown (KeyCode.C)) ColorHumans = !ColorHumans;
-
+	    if (Input.GetKeyDown (KeyCode.C))
+            ColorHumans = !ColorHumans;
+//=======
+//		if (Input.GetKeyDown (KeyCode.C))
+//			colorHumans = !colorHumans;
+//>>>>>>> refs/remotes/mauriciosousa/master
 
 		foreach (Sensor s in _sensors.Values)
         {
@@ -416,10 +418,17 @@ public class Tracker : MonoBehaviour
                             h1.Value.Position = position;
                             foreach (SensorBody b in h2.Value.bodies)
                             {
+//<<<<<<< HEAD
                                 h1.Value.bodies.Add(b);
                             }
                             mergedHumans.Add(h2.Value);
                         }
+//=======
+//								h1.Value.bodies.Add (b);
+//							}
+//							mergedHumans.Add (h2.Value);
+//						}
+//>>>>>>> refs/remotes/mauriciosousa/master
                         else
                         {
                             h2.Value.Position = position;
@@ -556,12 +565,13 @@ public class Tracker : MonoBehaviour
 		}
 
 		avgCenter /= sensorCount;
-
+        
 		foreach (var sensor in Sensors.Values)
         {
 			if (sensor.lastBodiesMessage.Bodies.Count == 1 && sensor.Active)
             {
 				sensor.move (avgCenter - sensor.PointSensorToScene (sensor.CalibAuxPoint));   
+
 			}
 		}
 
@@ -573,19 +583,34 @@ public class Tracker : MonoBehaviour
 
     internal void CalibrationStep3 ()
 	{
-		foreach (var sensor in Sensors.Values) {
+//<<<<<<< HEAD
+//		foreach (var sensor in Sensors.Values) {
+//			if (sensor.lastBodiesMessage != null && sensor.lastBodiesMessage.Bodies.Count == 1 && sensor.Active)
+//            {
+//				sensor.CalibrationStep3 ();
+//=======
+		foreach (Sensor sensor in _sensors.Values)
+        {
 			if (sensor.lastBodiesMessage != null && sensor.lastBodiesMessage.Bodies.Count == 1 && sensor.Active)
             {
-				sensor.CalibrationStep3 ();
+				sensor.CalibrationStep3();
+
 			}
 		}
 	}
 
     internal void CalibrationStep4 ()
 	{
-		foreach (var sensor in Sensors.Values)
+//<<<<<<< HEAD
+//		foreach (var sensor in Sensors.Values)
+//        {
+//			if (sensor.lastBodiesMessage != null && sensor.lastBodiesMessage.Bodies.Count == 1 && sensor.Active) {
+//				sensor.CalibrationStep4();
+//=======
+		foreach (Sensor sensor in _sensors.Values)
         {
-			if (sensor.lastBodiesMessage != null && sensor.lastBodiesMessage.Bodies.Count == 1 && sensor.Active) {
+			if (sensor.lastBodiesMessage != null && sensor.lastBodiesMessage.Bodies.Count == 1 && sensor.Active)
+            {
 				sensor.CalibrationStep4();
 			}
 		}
@@ -710,69 +735,41 @@ public class Tracker : MonoBehaviour
 		if (port != "")
         {
 			TrackerProperties.Instance.BroadcastPort = int.Parse (port);
-        //=======
-		//port = ConfigProperties.load (filePath, "udp.broadcastport");
-		//if (port != "")
-        // {
-		//	TrackerProperties.Instance.broadcastPort = int.Parse (port);
 		}
-		ResetBroadcast ();
-////<<<<<<< HEAD
-//		string aux = ConfigProperties.Load (filePath, "tracker.mergedistance");
-//
-//        port = ConfigProperties.Load(filePath, "udp.sensor.listen");
-//=======
-        
-        // port = ConfigProperties.Load(filePath, "udp.sensor.listen");
-        port = ConfigProperties.Load(filePath, "udp.sensor.listener");
 
-        if (port != "")
+		ResetBroadcast ();
+       
+
+	    port = ConfigProperties.Load(filePath, "udp.sensor.listener");
+
+
+	    if (port != "")
         {
             TrackerProperties.Instance.SensorListenPort = int.Parse(port);
         }
 
-        string aux = ConfigProperties.Load (filePath, "tracker.mergedistance");
+	    string aux = "";
+	    aux = ConfigProperties.Load (filePath, "tracker.mergedistance");
 
-		if (aux != "") {
-			TrackerProperties.Instance.MergeDistance = float.Parse (aux);
-		}
+	    if (aux != "")
+	    {
+	        TrackerProperties.Instance.MergeDistance = float.Parse(aux);
+	    }
 
-		aux = ConfigProperties.Load (filePath, "tracker.confidencethreshold");
-		if (aux != "") {
-			TrackerProperties.Instance.ConfidenceTreshold = int.Parse (aux);
+	    aux = ConfigProperties.Load (filePath, "tracker.confidencethreshold");
+		if (aux != "")
+        {
+			TrackerProperties.Instance.ConfidenceTreshold = int.Parse(aux);
 		}
 
 		aux = ConfigProperties.Load (filePath, "udp.sendinterval");
-		if (aux != "") {
-			TrackerProperties.Instance.SendInterval = int.Parse (aux);
+		if (aux != "")
+        {
+			TrackerProperties.Instance.SendInterval = int.Parse(aux);
 		}
-
-		/*
-            aux = ConfigProperties.load (filePath, "tracker.filtergain");
-		    if (aux != "") {
-			    KalmanFilterFloat.Gain = float.Parse (aux);
-		    }
-        */
-//=======
-//        string aux = ConfigProperties.load (filePath, "tracker.mergedistance");
-//		if (aux != "")
-//        {
-//			TrackerProperties.Instance.mergeDistance = float.Parse (aux);
-//		}
-
-//		aux = ConfigProperties.load (filePath, "tracker.confidencethreshold");
-//		if (aux != "")
-//        {
-//			TrackerProperties.Instance.confidenceTreshold = int.Parse (aux);
-//		}
-
-//		aux = ConfigProperties.load (filePath, "udp.sendinterval");
-//		if (aux != "")
-//        {
-//			TrackerProperties.Instance.sendInterval = int.Parse (aux);
-//		}
-//>>>>>>> refs/remotes/mauriciosousa/master
 	}
+
+	//}
     
     private void LoadSavedSensors ()
 	{
@@ -780,7 +777,7 @@ public class Tracker : MonoBehaviour
 			var values = line.Split (';');
 
 		//foreach (String line in ConfigProperties.loadKinects(Application.dataPath + "/" + TrackerProperties.Instance.configFilename))
-  //      {
+        // {
 		//	string[] values = line.Split (';');
 
 			var id = values [0];
@@ -1890,3 +1887,68 @@ SensorBody bodyToRemove = null;
 //        }
 //    }
 */
+
+
+//////////////////////////////////////////////////////////////////////////
+
+
+
+/*
+    aux = ConfigProperties.load (filePath, "tracker.filtergain");
+    if (aux != "") {
+        KalmanFilterFloat.Gain = float.Parse (aux);
+    }
+*/
+//=======
+//        string aux = ConfigProperties.load (filePath, "tracker.mergedistance");
+//		if (aux != "")
+//        {
+//			TrackerProperties.Instance.mergeDistance = float.Parse (aux);
+//		}
+
+//		aux = ConfigProperties.load (filePath, "tracker.confidencethreshold");
+//		if (aux != "")
+//        {
+//			TrackerProperties.Instance.confidenceTreshold = int.Parse (aux);
+//		}
+
+//		aux = ConfigProperties.load (filePath, "udp.sendinterval");
+//		if (aux != "")
+//        {
+//			TrackerProperties.Instance.sendInterval = int.Parse (aux);
+//		}
+//>>>>>>> refs/remotes/mauriciosousa/master
+
+
+/////////////////////////////////////////////////
+
+
+
+////<<<<<<< HEAD
+//		string aux = ConfigProperties.Load (filePath, "tracker.mergedistance");
+//
+//        port = ConfigProperties.Load(filePath, "udp.sensor.listen");
+//=======
+
+// port = ConfigProperties.Load(filePath, "udp.sensor.listen");
+//port = ConfigProperties.load(filePath, "udp.sensor.listener");
+
+//// string
+//aux = ConfigProperties.load(filePath, "udp.sendinterval");
+//if (aux != "")
+//{
+//    TrackerProperties.Instance.sendInterval = int.Parse(aux);
+//}
+
+//      aux = ConfigProperties.load (filePath, "tracker.mergedistance");
+//if (aux != "")
+//      {
+//	TrackerProperties.Instance.mergeDistance = float.Parse (aux);
+//} 
+
+
+//=======
+//port = ConfigProperties.load (filePath, "udp.broadcastport");
+//if (port != "")
+// {
+//	TrackerProperties.Instance.broadcastPort = int.Parse (port);

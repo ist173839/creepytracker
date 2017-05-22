@@ -123,3 +123,6 @@ public class CommonUtils
 //////////////////////////////////
 
 //    internal static string ConvertQuaternionToStringRpc(Quaternion v)
+//=======
+//}
+//>>>>>>> refs/remotes/mauriciosousa/master

@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -33,7 +32,8 @@ public class ConfigProperties
 					index = lines.IndexOf(line);
 				}
 			}
-            if (index > - 1)
+
+			if (index > - 1)
 			{
 				lines[index] = property + "=" + value;
 			}
@@ -65,7 +65,7 @@ public class ConfigProperties
 					return line.Split('=')[1];
 				}
 			}
-            Debug.Log("no property '" + property + "' in file '" + filename + "'");
+            Debug.Log("No property '" + property + "' in file '" + filename + "'");
 		}
 		else
 			Debug.Log("'" + filename + "' not found");

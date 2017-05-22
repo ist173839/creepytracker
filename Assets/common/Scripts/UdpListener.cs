@@ -8,6 +8,7 @@ using System.Text;
 
 // ReSharper disable once ClassNeverInstantiated.Global
 // ReSharper disable once CheckNamespace
+
 public class UdpListener : MonoBehaviour
 {
     private UdpClient _udpClient = null;
@@ -33,8 +34,13 @@ public class UdpListener : MonoBehaviour
         if (_udpClient != null) _udpClient.Close();
 
         _stringsToParse = new List<byte[]>();
+//<<<<<<< HEAD
         _anyIp = new IPEndPoint(IPAddress.Any, TrackerProperties.Instance.ListenPort);
         _udpClient = new UdpClient(_anyIp);
+//=======
+//		_anyIP = new IPEndPoint(IPAddress.Any, TrackerProperties.Instance.listenPort);
+//        _udpClient = new UdpClient(_anyIP);
+//>>>>>>> refs/remotes/mauriciosousa/master
         _udpClient.BeginReceive(new AsyncCallback(this.ReceiveCallback), null);
         Debug.Log("[UDPListener] Receiving in port: " + TrackerProperties.Instance.ListenPort);
     }
@@ -140,3 +146,6 @@ public class UdpListener : MonoBehaviour
      
      
      */
+//=======
+//}
+//>>>>>>> refs/remotes/mauriciosousa/master

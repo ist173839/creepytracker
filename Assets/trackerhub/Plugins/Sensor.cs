@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System;
 
@@ -99,7 +98,7 @@ public class Sensor
 	{
 		return SensorGameObject.transform.localToWorldMatrix.MultiplyPoint (p);
 	}
-
+//<<<<<<< HEAD
 
 	internal void UpdateBodies ()
 	{
@@ -107,19 +106,36 @@ public class Sensor
 
         //Debug.Log("bodiesMessage = " + bodiesMessage.Message);
 
+//=======
+    
+//	internal void updateBodies ()
+//	{
+//		BodiesMessage bodiesMessage = lastBodiesMessage;
+//>>>>>>> refs/remotes/mauriciosousa/master
 
 		if (bodiesMessage == null) return;
 
-		foreach (KeyValuePair<string, SensorBody> sb in bodies) {
+		foreach (KeyValuePair<string, SensorBody> sb in bodies)
+        {
 			sb.Value.updated = false;
 		}
 
 		// refresh bodies position
-		foreach (Skeleton sk in bodiesMessage.Bodies) {
+		foreach (Skeleton sk in bodiesMessage.Bodies)
+        {
 			SensorBody b;
 
-			if (int.Parse (sk.BodyProperties [BodyPropertiesTypes.Confidence]) < TrackerProperties.Instance.ConfidenceTreshold) {
-				if (bodies.ContainsKey (sk.ID)) {
+//<<<<<<< HEAD
+			if (int.Parse (sk.BodyProperties [BodyPropertiesTypes.Confidence]) < TrackerProperties.Instance.ConfidenceTreshold)
+            {
+				if (bodies.ContainsKey (sk.ID))
+                {
+//=======
+//			if (int.Parse (sk.bodyProperties [BodyPropertiesTypes.Confidence]) < TrackerProperties.Instance.confidenceTreshold)
+//            {
+//				if (bodies.ContainsKey (sk.ID))
+//                {
+//>>>>>>> refs/remotes/mauriciosousa/master
 					b = bodies [sk.ID];
 					b.updated = true;
 					b.lastUpdated = DateTime.Now;
@@ -133,6 +149,7 @@ public class Sensor
 			}
             else
             {   // new bodies
+
 				b = new SensorBody (sk.ID, SensorGameObject.transform);
 				b.gameObject.GetComponent<Renderer> ().material = Material;
 				bodies [sk.ID] = b;
@@ -229,7 +246,6 @@ public class Sensor
     // ReSharper disable once MemberCanBeMadeStatic.Local
 	private Vector3 ComputeBestFitNormal (Vector3[] v, int n)
 	{
-
 		// Zero out sum
 		Vector3 result = Vector3.zero;
 
@@ -277,10 +293,10 @@ public class Sensor
 
 		Vector3 minv = new Vector3 ();
 		float min = float.PositiveInfinity;
-
-		foreach (Vector3 v in _floorValues) {
+        
+		foreach (Vector3 v in _floorValues)
+        {
 			Vector3 tmp = PointSensorToScene (v);
-
 			if (tmp.y < min)
 				minv = tmp;
 		}
@@ -305,8 +321,6 @@ public class Sensor
 				CommonUtils.Colors [k] = CommonUtils.Colors [n];
 				CommonUtils.Colors [n] = value;
 			}
-
-
 
 			_materials = new List<Material> ();
 			for (int i = 0; i < CommonUtils.Colors.Count; i++) {

@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 
 public enum LogLevel
@@ -87,7 +85,6 @@ public class Logger : MonoBehaviour
 	public void SaveLog (LogLevel logLevel, string message)
 	{
 		LogMessage n = new LogMessage (logLevel, message);
-
         if (_messages.Count >= Max)
         {
 			_messages.RemoveAt (0);

@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
 using UnityEngine;
 
@@ -38,26 +36,29 @@ public class KinectStream
 // ReSharper disable once UnusedMember.Global
 public class TcpKinectListener : MonoBehaviour
 {
+    // ReSharper disable once ArrangeTypeMemberModifiers
+    // ReSharper disable once UnusedMember.Local
     private List<KinectStream> _kinectStreams;
 
     private TcpListener _server;
+
+    //public bool showNetworkDetails = true;
+
+    private int TcpListeningPort;
+
 
     public bool ShowNetworkDetails = true;
 
     private bool _running;
 
-    private int TcpListeningPort;
 
     void Awake() { }
 
 
-    // ReSharper disable once ArrangeTypeMemberModifiers
-    // ReSharper disable once UnusedMember.Local
+  
     void Start()
     {
-
         //_threads = new List<Thread>();
-
         _kinectStreams = new List<KinectStream>();
 
         TcpListeningPort = TrackerProperties.Instance.ListenPort;
@@ -73,7 +74,6 @@ public class TcpKinectListener : MonoBehaviour
 
     private void AcceptClients(object o)
     {
-
         while (_running)
         {
             TcpClient newclient = _server.AcceptTcpClient();
@@ -82,7 +82,11 @@ public class TcpKinectListener : MonoBehaviour
             clientThread.Start(newclient);
         }
     }
+    //<<<<<<< HEAD
 
+
+    //    private void clientHandler(object o)
+    //=======
 
     private void clientHandler(object o)
     {
@@ -150,6 +154,7 @@ public class TcpKinectListener : MonoBehaviour
                 byte[] sizeb = { message[4], message[5], message[6], message[7] };
                 int size = BitConverter.ToInt32(sizeb, 0);
                 kstream.size = size;
+//<<<<<<< HEAD
 
                 while (size > 0)
                 {
@@ -159,6 +164,16 @@ public class TcpKinectListener : MonoBehaviour
                     }
                     catch (Exception e)
                     {
+//=======
+               
+//                while (size > 0)
+//                { 
+//                    try
+//                    {
+//                        bytesRead = ns.Read(buffer, 0, size);
+//                    }catch(Exception e)
+//                    { 
+//>>>>>>> refs/remotes/mauriciosousa/master
                         Debug.Log(e.Message);
                         _running = false;
                         break;

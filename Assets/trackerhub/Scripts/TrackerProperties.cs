@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 // ReSharper disable once ClassNeverInstantiated.Global
 // ReSharper disable once CheckNamespace
+
+
 public class TrackerProperties : MonoBehaviour
 {
     private static TrackerProperties _singleton;
@@ -43,13 +45,14 @@ public class TrackerProperties : MonoBehaviour
             return _singleton;
         }
     }
-
+    
     // ReSharper disable once UnusedMember.Local
     // ReSharper disable once ArrangeTypeMemberModifiers
     void Start()
     {
         //_singleton = this;
     }
+
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*

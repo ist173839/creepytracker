@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 // ReSharper disable once UnusedMember.Global
 // ReSharper disable once CheckNamespace
