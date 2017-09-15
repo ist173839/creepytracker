@@ -1,10 +1,7 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
-
-
 
 public class PointCloudSimple : MonoBehaviour
 {
@@ -27,8 +24,6 @@ public class PointCloudSimple : MonoBehaviour
     int h;
     Vector3[] posBucket;
     Color[] colBucket;
-    byte[] buffer;
-
 
     void readFileWithColor(string f)
     {
@@ -39,7 +34,7 @@ public class PointCloudSimple : MonoBehaviour
 
         string line = "";
         int i = 0;
-        Mesh m = new Mesh();
+
         while (!sr.EndOfStream)
         {
             line = sr.ReadLine();
@@ -83,6 +78,7 @@ public class PointCloudSimple : MonoBehaviour
 
     }
     int countPack = 0;
+
     public void setPoints(byte[] receivedBytes, int step, uint newid, int size)
     {
 
@@ -210,6 +206,7 @@ public class PointCloudSimple : MonoBehaviour
         lowres_cloud[lowres_nclouds].vertices = pointsL.ToArray();
         lowres_cloud[lowres_nclouds].colors = colorsL.ToArray();
         lowres_cloud[lowres_nclouds].SetIndices(indL.ToArray(), MeshTopology.Points, 0);
+
     }
 
     public void setToView()
@@ -217,8 +214,11 @@ public class PointCloudSimple : MonoBehaviour
         MeshFilter[] filters = GetComponentsInChildren<MeshFilter>();
         // Note that there are 8 MeshFilter -> [HR HR HR HR LR LR LR LR]
         int lr = lowres_nclouds + 4;  // Therefore, the low resolution clouds start at index 4
+        Debug.Log(filters.Length);
+
         for (int i = 0; i < filters.Length; i++)
         {
+
             MeshFilter mf = filters[i];
             if (i <= highres_nclouds)
             {
@@ -259,10 +259,10 @@ public class PointCloudSimple : MonoBehaviour
         for (int i = 0; i < 4; i++)
         {
             GameObject a = new GameObject("highres_cloud" + i);
-            MeshFilter mf = a.AddComponent<MeshFilter>();
             MeshRenderer mr = a.AddComponent<MeshRenderer>();
+            MeshFilter mf = a.AddComponent<MeshFilter>();
             mr.material = mat;
-            a.transform.parent = this.gameObject.transform;
+            a.transform.SetParent(this.gameObject.transform);
             a.transform.localPosition = Vector3.zero;
             a.transform.localRotation = Quaternion.identity;
             a.transform.localScale = new Vector3(1, 1, 1);
@@ -270,10 +270,10 @@ public class PointCloudSimple : MonoBehaviour
         for (int i = 0; i < 4; i++)
         {
             GameObject a = new GameObject("lowres_cloud" + i);
-            MeshFilter mf = a.AddComponent<MeshFilter>();
             MeshRenderer mr = a.AddComponent<MeshRenderer>();
+            MeshFilter mf = a.AddComponent<MeshFilter>();
             mr.material = other;
-            a.transform.parent = this.gameObject.transform;
+            a.transform.SetParent(this.gameObject.transform);
             a.transform.localPosition = Vector3.zero;
             a.transform.localRotation = Quaternion.identity;
             a.transform.localScale = new Vector3(1, 1, 1);
@@ -299,10 +299,8 @@ public class PointCloudSimple : MonoBehaviour
             colBucket[i] = new Color();
         }
 
-        buffer = new byte[4]; // Buffer for the x, y and z floats
         pointCount = 0;
         l = 0;
         h = 0;
     }
-
 }

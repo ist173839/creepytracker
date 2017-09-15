@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System;
 
@@ -13,25 +12,14 @@ public class Human
     private HumanSkeleton skeleton;
     public HumanSkeleton Skeleton
     {
-        get
-        {
-            return skeleton;
-        }
+        get { return skeleton; }
     }
 
     private Vector3 position;
     public Vector3 Position
     {
-        get
-        {
-            return position;
-        }
-
-        set
-        {
-            position = value;
-            gameObject.transform.position = position;
-        }
+        get { return position; }
+        set { position = value; gameObject.transform.position = position; }
     }
 
     public Human(GameObject gameObject, Tracker tracker)
@@ -41,7 +29,6 @@ public class Human
         this.gameObject = gameObject;
         this.gameObject.name = "Human " + ID;
 
-
         skeleton = this.gameObject.GetComponent<HumanSkeleton>();
         skeleton.tracker = tracker;
         skeleton.ID = ID;
@@ -50,7 +37,7 @@ public class Human
 
     internal void updateSkeleton()
     {
-        Skeleton.updateSkeleton();
+        skeleton.updateSkeleton();
     }
 
     internal string getPDU()

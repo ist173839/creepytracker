@@ -1,13 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
+﻿using System.Collections.Generic;
 using System.Net;
-using System;
 
 public class SurfaceMessage
 {
-
     public IPAddress replyIPAddress;
     public int port;
 
@@ -30,6 +25,9 @@ public class SurfaceMessage
                 + CommonUtils.convertVectorToStringRPC(s.cTopRight)
                 + MessageSeparators.L1;
         }
+
+
+
         return res;
     }
 }

@@ -6,13 +6,12 @@ using System.Net.Sockets;
 using System.Linq;
 using System.Text;
 
-public class UdpListener : MonoBehaviour {
-
+public class UdpListener : MonoBehaviour
+{
     private UdpClient _udpClient = null;
     private IPEndPoint _anyIP;
     private List<byte[]> _stringsToParse; // TMA: Store the bytes from the socket instead of converting to strings. Saves time.
     private byte[] _receivedBytes;
-    private int number = 0;
     //so we don't have to create again
     CloudMessage message;
 
@@ -29,11 +28,8 @@ public class UdpListener : MonoBehaviour {
         }
 
         _stringsToParse = new List<byte[]>();
-        
 		_anyIP = new IPEndPoint(IPAddress.Any, TrackerProperties.Instance.listenPort);
-        
         _udpClient = new UdpClient(_anyIP);
-
         _udpClient.BeginReceive(new AsyncCallback(this.ReceiveCallback), null);
 
 		Debug.Log("[UDPListener] Receiving in port: " + TrackerProperties.Instance.listenPort);
@@ -94,7 +90,7 @@ public class UdpListener : MonoBehaviour {
                 }
                 _stringsToParse.RemoveAt(0);
             }
-            catch (Exception exc) { _stringsToParse.RemoveAt(0); }
+            catch (Exception /*e*/) { _stringsToParse.RemoveAt(0); }
         }
     }
 
