@@ -86,7 +86,7 @@ public class Sensor
 		_material = _chooseMaterial ();
 		CommonUtils.ChangeGameObjectMaterial (_sensorGameObject, _material);
 		GameObject cloudobj = new GameObject ("PointCloud");
-		cloudobj.transform.parent = sensorGameObject.transform;
+		cloudobj.transform.SetParent(sensorGameObject.transform);
 		cloudobj.transform.localPosition = Vector3.zero;
 		cloudobj.transform.localRotation = Quaternion.identity;
 		cloudobj.transform.localScale = new Vector3 (-1, 1, 1);

@@ -502,8 +502,14 @@ public class Tracker : MonoBehaviour
             if (pdu[2] == "") {
                 Sensors[kinectId].lastCloud.setToView();
             }
+//<<<<<<< HEAD
             else
                 Sensors[kinectId].lastCloud.SetPoints(cloud.ReceivedBytes,step,id,cloud.ReceivedBytes.Length);
+//=======
+//            else { 
+//                Sensors[KinectId].lastCloud.setPoints(cloud.receivedBytes,step,id,cloud.receivedBytes.Length);
+//            }
+//>>>>>>> refs/remotes/origin/master
         }
 	}
 
@@ -918,10 +924,26 @@ public class Tracker : MonoBehaviour
     {
         UdpClient udp = new UdpClient();
         string message = sm.createSurfaceMessage(_surfaces);
+        message += MessageSeparators.L0 + _calibrationToMessage();
         byte[] data = Encoding.UTF8.GetBytes(message);
         IPEndPoint remoteEndPoint = new IPEndPoint(sm.replyIPAddress, sm.port);
         Debug.Log("Sent reply with surface's data " + message);
         udp.Send(data, data.Length, remoteEndPoint);
+    }
+    private string _calibrationToMessage()
+    {
+        string ret = "";
+        foreach (Sensor s in _sensors.Values)
+        {
+            if (s.Active)
+            {
+                Vector3 p = s.SensorGameObject.transform.position;
+                Quaternion r = s.SensorGameObject.transform.rotation;
+                char c = MessageSeparators.L3;
+                ret += s.SensorID + c + p.x + c + p.y + c + p.z + c + r.x + c + r.y + c + r.z + c + r.w + MessageSeparators.L2;
+            }
+        }
+        return ret;
     }
     
     internal void LoadSurfaces()
