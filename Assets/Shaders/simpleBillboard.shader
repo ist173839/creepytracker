@@ -115,11 +115,11 @@ Shader "Custom/Simple Billboard"
 					v[2] = float4(p[0].pos - halfS * right - halfS * up, 1.0f);
 					v[3] = float4(p[0].pos - halfS * right + halfS * up, 1.0f);
 
-<<<<<<< HEAD
-					float4x4 vp = UnityObjectToClipPos(unity_WorldToObject);
-=======
+//<<<<<<< HEAD
+//					float4x4 vp = UnityObjectToClipPos(unity_WorldToObject);
+//=======
 					//float4 vp = UnityObjectToClipPos(unity_WorldToObject);
->>>>>>> refs/remotes/mauriciosousa/master
+//>>>>>>> refs/remotes/mauriciosousa/master
 					FS_INPUT pIn;
 					pIn.pos = UnityObjectToClipPos(v[0]);
 					pIn.tex0 = float2(1.0f, 0.0f);
