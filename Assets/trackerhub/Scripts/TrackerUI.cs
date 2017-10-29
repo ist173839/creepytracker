@@ -141,16 +141,16 @@ public class TrackerUI : MonoBehaviour
     void Update ()
 	{   
         // if (!_localHandleVirtualWorld.CanUseSaveFile) _localHandleVirtualWorld.ShowMarker = false;
-        if (UseSaveFile)
-        {
-            if (!_localHandleVirtualWorld.CanShowIndicators)
-            {
-                _localHandleVirtualWorld.SetSaveFilesButton();
-            }
-            _localHandleVirtualWorld.ShowMarker = false;
-        }
+	    if (UseSaveFile && _localHandleVirtualWorld != null)
+	    {
+	        if (!_localHandleVirtualWorld.CanShowIndicators)
+	        {
+	            _localHandleVirtualWorld.SetSaveFilesButton();
+	        }
+	        _localHandleVirtualWorld.ShowMarker = false;
+	    }
 
-        if (_userTracker.IdIntList.Count > 0)
+	    if (_userTracker.IdIntList.Count > 0)
 	    if (!_userTracker.IdIntList.Contains(IdToCheck))
 	        IdToCheck = _userTracker.IdIntList[0];
 
@@ -557,7 +557,7 @@ public class TrackerUI : MonoBehaviour
                 //// Para guardar os dados do tracker num ficheiro, não é necessario 
                 UseRecord = GUI.Toggle(new Rect(left, top, 100, 25), UseRecord, "Record");
 
-                if (UseSaveFile)
+                if (UseSaveFile && _localHandleVirtualWorld != null)
                 {
                     if (_localHandleVirtualWorld.CanShowIndicators)
                     {
@@ -581,17 +581,22 @@ public class TrackerUI : MonoBehaviour
                 else
                 {
                     //  var moreLeft = 0.0f;
-                    if (_localHandleVirtualWorld.CanShowIndicators || _localHandleVirtualWorld.IsCentroSetUp)
+
+                    if (_localHandleVirtualWorld != null)
                     {
-                        if (_localHandleVirtualWorld.CanShowIndicators)
+                        if (_localHandleVirtualWorld.CanShowIndicators || _localHandleVirtualWorld.IsCentroSetUp)
                         {
-                            //// Para testes, não é necessario 
-                            ShowIndicator = GUI.Toggle(new Rect(left + 100.0f, top, 100, 25), ShowIndicator,
-                                "Show Indicators");
-                            _localHandleVirtualWorld.ShowIndicator = ShowIndicator;
-                            // moreLeft = 100.0f;
+                            if (_localHandleVirtualWorld.CanShowIndicators)
+                            {
+                                //// Para testes, não é necessario 
+                                ShowIndicator = GUI.Toggle(new Rect(left + 100.0f, top, 100, 25), ShowIndicator,
+                                    "Show Indicators");
+                                _localHandleVirtualWorld.ShowIndicator = ShowIndicator;
+                                // moreLeft = 100.0f;
+                            }
                         }
                     }
+                   
 
                     top += 30;
                     ShowMarker = _localHandleVirtualWorld.ShowMarker;
