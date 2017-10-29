@@ -212,9 +212,15 @@ public class PointCloudSimple : MonoBehaviour
         highres_cloud[highres_nclouds].colors = _colorsH.ToArray();
         highres_cloud[highres_nclouds].SetIndices(_indH.ToArray(), MeshTopology.Points, 0);
 
+//<<<<<<< HEAD
+//        lowres_cloud[lowres_nclouds].vertices = _pointsL.ToArray();
+//        lowres_cloud[lowres_nclouds].colors = _colorsL.ToArray();
+//        lowres_cloud[lowres_nclouds].SetIndices(_indL.ToArray(), MeshTopology.Points, 0);
+//=======
         lowres_cloud[lowres_nclouds].vertices = _pointsL.ToArray();
-        lowres_cloud[lowres_nclouds].colors = _colorsL.ToArray();
+        lowres_cloud[lowres_nclouds].colors   = _colorsL.ToArray();
         lowres_cloud[lowres_nclouds].SetIndices(_indL.ToArray(), MeshTopology.Points, 0);
+//>>>>>>> refs/remotes/origin/master
     }
 
     public void setToView()
@@ -222,8 +228,11 @@ public class PointCloudSimple : MonoBehaviour
         MeshFilter[] filters = GetComponentsInChildren<MeshFilter>();
         // Note that there are 8 MeshFilter -> [HR HR HR HR LR LR LR LR]
         int lr = lowres_nclouds + 4;  // Therefore, the low resolution clouds start at index 4
+        Debug.Log(filters.Length);
+
         for (int i = 0; i < filters.Length; i++)
         {
+
             MeshFilter mf = filters[i];
             if (i <= highres_nclouds)
             {
@@ -265,8 +274,9 @@ public class PointCloudSimple : MonoBehaviour
         {
             GameObject a = new GameObject("highres_cloud" + i);
             MeshRenderer mr = a.AddComponent<MeshRenderer>();
+            MeshFilter mf = a.AddComponent<MeshFilter>();
             mr.material = mat;
-            a.transform.parent = this.gameObject.transform;
+            a.transform.SetParent(this.gameObject.transform);
             a.transform.localPosition = Vector3.zero;
             a.transform.localRotation = Quaternion.identity;
             a.transform.localScale = new Vector3(1, 1, 1);
@@ -275,8 +285,9 @@ public class PointCloudSimple : MonoBehaviour
         {
             GameObject a = new GameObject("lowres_cloud" + i);
             MeshRenderer mr = a.AddComponent<MeshRenderer>();
+            MeshFilter mf = a.AddComponent<MeshFilter>();
             mr.material = other;
-            a.transform.parent = this.gameObject.transform;
+            a.transform.SetParent(this.gameObject.transform);
             a.transform.localPosition = Vector3.zero;
             a.transform.localRotation = Quaternion.identity;
             a.transform.localScale = new Vector3(1, 1, 1);
